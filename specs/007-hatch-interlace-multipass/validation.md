@@ -21,3 +21,8 @@ Real desktop smoke passed all existing CAM/project/render/shutdown stages, gener
 110 paths with interlace N=3 and two distinct recipe passes, and verified both pass settings
 and shared path identity. Screenshot inspected; controls remain scrollable in the small host
 window. Source copper and selection are preserved. Hosted validation remains the delivery gate.
+
+Windows [CI run 36274251472](https://github.com/ozkurkuran/MikroCAM/actions/runs/36274251472)
+passed 995 tests and 310 subtests (two original placeholders skipped), with clean dependency
+consistency. [PR 7](https://github.com/ozkurkuran/MikroCAM/pull/7) follows merged slice 006.
+All twelve tasks are complete.

@@ -2,7 +2,7 @@
 
 **Feature Branch**: `007-hatch-interlace-multipass`
 **Created**: 2026-09-27
-**Status**: Specified
+**Status**: Implemented
 **Input**: Roadmap 7: interlace N and per-pass power, frequency, pulse width and speed.
 
 ## User Scenarios & Testing
