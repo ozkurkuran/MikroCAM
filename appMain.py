@@ -1809,6 +1809,12 @@ class App(QtCore.QObject):
         self.paste_tool = SolderPaste(self)
         self.paste_tool.install(icon=QtGui.QIcon(self.resource_location + '/solderpastebis32.png'))
 
+        def show_laser_cam():
+            from mikrocam.ui.laser_cam import open_laser_cam
+            open_laser_cam(self)
+
+        self.ui.menu_plugins.addAction(_('Laser CAM')).triggered.connect(show_laser_cam)
+
         self.calculator_tool = ToolCalculator(self)
         self.calculator_tool.install(icon=QtGui.QIcon(self.resource_location + '/calculator32.png'), separator=True)
 
