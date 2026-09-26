@@ -205,3 +205,14 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   widget access, deletion during setup, actual deferred Qt destruction, repeated deletion and
   the real Follow checkbox path. Nine tests pass after reproducing the failures first.
 - MikroCAM commit: `fix: keep plot workers independent of widget lifetime` (this commit).
+
+## 2026-09-27 — Preserve selected milling machining flags
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `97ea33b1d84a2e39b9c35880a28e001d227ac2d0` (remaining level-change flag corrections).
+- Destination: `appPlugins/ToolMilling.py`, `on_level_changed()`; inherited notices retained.
+- Adaptation: remove Beginner/Advanced writes that reset the selected tool's extra-cut and
+  exclusion-area flags. Preserve the stored extra-cut length. Upstream diagnostic prints
+  are not imported; offset type/value and job-type writes are outside this correction.
+- Regression: real level changes retain explicit true flags through both transition orders.
+- MikroCAM commit: `fix: preserve selected milling machining flags` (this commit).

@@ -102,3 +102,17 @@ def cutout_fixture(qtbot, mode):
         if isinstance(widget, QtWidgets.QWidget):
             qtbot.addWidget(widget)
     return ui
+
+
+@pytest.mark.parametrize('levels', [(False, True, False), (True, False, True)], ids=['basic-first', 'advanced-first'])
+@pytest.mark.parametrize('flag', ['tools_mill_extracut', 'tools_mill_area_exclusion'])
+def test_milling_level_switch_preserves_selected_advanced_machining_flags(qtbot, levels, flag):
+    from appPlugins.ToolMilling import ToolMilling
+    tool, data = milling_fixture(qtbot)
+    data.update(tools_mill_extracut=True, tools_mill_area_exclusion=True, tools_mill_extracut_length=.65)
+    observed = []
+    for checked in levels:
+        ToolMilling.on_level_changed(tool, checked)
+        observed.append(data[flag])
+    assert observed == [True, True, True]
+    assert data['tools_mill_extracut_length'] == .65
