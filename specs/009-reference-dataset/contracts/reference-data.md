@@ -1,0 +1,101 @@
+# Capture, comparison and CLI contracts
+
+## Pure core API
+`compare_geometry(expected_wkb: str, actual_wkb: str, *, distance_mm: float,
+area_mm2: float) -> GeometryComparison` validates finite valid 2D canonical ISO WKB;
+normalizes ring/component ordering for set comparison, requires structural topology equality,
+discrete vertex Hausdorff <= distance_mm and symmetric-difference area <= area_mm2.
+Identical valid geometry has a zero-metric fast path. Bounds deltas are report evidence,
+not an extra implicit tolerance. If topology or area already fails, hausdorff_mm is null
+(not computed); the result remains a definite difference. Invalid/oversized/nonplanar inputs or tolerances raise ValueError.
+
+`compare_geometry_sets(expected: Sequence[str], actual: Sequence[str], *, distance_mm,
+area_mm2) -> GeometryComparison` unions each validated batch before applying the same
+physical-set metrics. Legacy may store one MultiPolygon where Evo stores many polygons;
+raw batch counts are diagnostic only. Union preserves material holes/components while
+removing internal partition edges. Raw captures remain unchanged. The aggregate union
+input is bounded at 4,000,000 vertices per side; the actual Altium Evo Gerber has 2,005,189.
+Individual captured geometries, CNC paths and drill records retain their original bounds.
+Tool inventory and CNC ordering are compared separately, so union does not discard their
+manufacturing multiplicity or direction.
+
+`compare_paths(expected: Sequence[ReferencePath], actual: Sequence[ReferencePath], *,
+distance_mm: float) -> PathComparison` compares path order/count, exact kind tuples and
+ordered XY coordinate counts/positions, including direction and repeated vertices.
+Only Point/LineString paths are accepted. Invalid values raise ValueError.
+Core limits: 64 MiB decoded WKB/geometry, 200,000 paths and 2,000,000 aggregate vertices.
+Developer gzip codecs reject decoded JSON beyond 512 MiB/artifact.
+Excellon comparison retains source_units metadata and explicit tools (ID, diameter_mm,
+ordered drills/slots), using distance tolerance for diameters/coordinates and exact IDs/counts.
+Every stage uses the same exact keys with tools=[] and source_units=null where unavailable.
+Core imports stdlib/Shapely/NumPy only; file/provenance/JSON/engine loading belongs to developer tooling.
+
+`ReferenceTool(id, diameter_mm, drills, slots)` is frozen; coordinates are immutable XY
+tuples, including ordered duplicate drill hits and oriented slot endpoint pairs. Unused
+declared tools may have no hits; their metadata remains present. `compare_tools(expected,
+actual, *, distance_mm) -> ToolComparison(matches, differing_indices, expected_count,
+actual_count)` requires unique IDs within each nonempty sequence and preserves tool order,
+diameters, hit/slot counts and corresponding coordinates. Diameter and point differences
+use the explicit distance tolerance. Empty overall successful Excellon output is rejected
+by the capture/codec boundary. Tool sequences share the path/aggregate vertex limits.
+
+## Capture CLI
+`python tests/reference/capture.py --engine legacy8994|evo|current --source PATH
+--python PATH --manifest PATH --config PATH --output NEW_DIRECTORY [--revision SHA]
+[--timeout-seconds 120]`.
+Baseline expected revisions are fixed: legacy8994 `6ba378bca139aa306f8c94f09461a98f95d3c75b`,
+evo `d0a86cf4f1ac41a206b20f316d4a29f28a93bbff`. Current requires explicit revision.
+Reject dirty source, wrong SHA, invalid corpus/config or existing output directories. Each board
+runs in an isolated subprocess with bounded positive timeout. Freeze/record parser/CAM APIs
+and explicit settings after probes; never patch baseline source/functions or invent outputs.
+Factory defaults may provide host plumbing; actual parser/CAM parameters must be overridden
+explicitly and recorded, rather than claiming factory configs were never loaded.
+Qt settings/AppData are sandboxed before imports; no QApplication GUI, OpenGL, network or hardware.
+On timeout/failure retain stage context and clean only owned child processes. Capture cannot
+claim comparable success for failed stages. Report capture completeness separately from CAM success.
+Output is normalized deterministic JSON1 gzip (`mtime=0`); wall-clock timing/logs are auxiliary
+evidence and not a source of false result changes. Repeat capture compares normalized content.
+
+## Compare CLI
+`python tests/reference/compare.py --baseline legacy8994|evo --goldens DIRECTORY
+--candidate DIRECTORY --manifest PATH --config PATH --distance-mm NUMBER
+--area-mm2 NUMBER --report PATH`.
+Candidate artifacts must declare engine=current; replaying selected baseline artifacts is
+indeterminate. Reproducibility of baseline captures is checked independently by byte hashes.
+Both tolerances are required, finite nonboolean/nonnegative; no relative/default widening.
+Validate strict schemas, hashes, source identity and common requested configuration before
+comparing outputs. Expected engine-specific optimization is evidence, not a false common-config mismatch.
+Never overwrite corpus/goldens or capture a missing expected result from current code.
+
+Exit codes: **0** = every requested comparable stage matches; **1** = valid measured difference
+with no indeterminate stages; **2** = invalid input/provenance/config or any indeterminate stage.
+Error versus success may be reported as a difference in status, but an unavailable/error baseline
+still makes the overall result indeterminate. Missing stages and repeated failures cannot be green.
+Always identify board/input/stage and preserve diagnostics/available metrics. Reports stay outside
+goldens. Deliberate replacement of expected records is a separate reviewed data change, no update flag.
+
+Raw G-code is retained for audit. `compare_gcode(expected, actual, *, distance_mm)` in
+`core/reference_gcode.py` compares nonempty executable blocks of default-preprocessor words.
+Comments, blank lines, letter case and whitespace do not count. X/Y numeric words use
+absolute component tolerance; every other numeric word is exact (Z, feed, spindle, dwell,
+mode, tool, etc.). Numeric spelling such as `1.0` versus `1.000` is equivalent. Block and
+word order and duplicate words remain significant. Unsupported syntax is indeterminate,
+not silently ignored. Limits are 64 MiB UTF-8 input, 4,000,000 executable blocks, 64 characters
+per numeric token and comment nesting 64. Blocks are consumed incrementally. Reports retain
+the total difference_count and the first 100 differing_blocks indices; every remaining
+block is still validated, including unsupported tails. This narrow saved-output comparison complements
+ordered engine-parsed paths; it adds no modal interpreter, simulation or machine preflight.
+
+Capture exits 0 when every selected board has a complete validated artifact, even when actual
+CAM stages are recorded as errors; its summary reports that count and is not a comparison match.
+Input, runtime, provenance or publication failures exit 2. Child timeout/failure becomes explicit
+contextual error stages, never invented geometry. Capture output files are published atomically
+without overwriting earlier artifacts. The optional `--board ID` limits capture to one admitted
+board; omitting it captures the complete corpus. Source identity/hashes are checked again before
+publishing each board, and children verify input bytes before invoking actual parsers.
+
+## Frozen artifact inventory
+`goldens/inventory.json` is schema 1, kind `mikrocam.reference-inventory`, with an
+`artifacts` array of exact `{path, sha256, bytes}` records. Relative paths are
+`legacy8994/<board-id>.json.gz` or `evo/<board-id>.json.gz`; every admitted board occurs
+once per engine. SHA256 and byte count bind the exact deterministic compressed artifact.

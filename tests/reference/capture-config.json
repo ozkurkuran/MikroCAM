@@ -1,0 +1,82 @@
+{
+  "kind": "mikrocam.reference-config",
+  "schema_version": 1,
+  "parameters": {
+    "parser": {
+      "gerber": {
+        "units": "MM",
+        "gerber_def_units": "MM",
+        "gerber_def_zeros": "L",
+        "gerber_circle_steps": 64,
+        "gerber_simp_tolerance": 0.001,
+        "gerber_simplification": false,
+        "gerber_buffering": "full",
+        "gerber_extra_buffering": 0.0,
+        "gerber_clean_apertures": true,
+        "gerber_use_buffer_for_union": true,
+        "global_tolerance": 0.01
+      },
+      "excellon": {
+        "zeros": "L",
+        "excellon_format_upper_mm": 3,
+        "excellon_format_lower_mm": 3,
+        "excellon_format_upper_in": 2,
+        "excellon_format_lower_in": 4,
+        "excellon_units": "MM",
+        "circle_steps": 64
+      }
+    },
+    "isolation": {
+      "offset_mm": 0.1
+    },
+    "cnc": {
+      "append": false,
+      "tooldia": 0.2,
+      "offset": 0,
+      "tolerance": 0,
+      "z_cut": -0.1,
+      "z_move": 2,
+      "feedrate": 120,
+      "feedrate_z": 60,
+      "feedrate_rapid": 300,
+      "spindlespeed": 10000,
+      "spindle_direction": "CW",
+      "dwell": false,
+      "dwelltime": 0,
+      "multidepth": false,
+      "depthpercut": 0.1,
+      "toolchange": false,
+      "toolchangez": 2,
+      "toolchangexy": "",
+      "extracut": false,
+      "extracut_length": 0,
+      "startz": 2,
+      "endz": 2,
+      "endxy": "0,0",
+      "pp_geometry_name": "default",
+      "tool_no": 1,
+      "is_first": true,
+      "coords_decimals": 4,
+      "fr_decimals": 2,
+      "steps_per_circle": 64,
+      "coords_type": "G90"
+    }
+  },
+  "stages": {
+    "copper": [
+      "gerber",
+      "isolation",
+      "cnc"
+    ],
+    "drill": [
+      "excellon"
+    ],
+    "outline": [
+      "gerber"
+    ],
+    "drill-map": [],
+    "native": [],
+    "notice": [],
+    "archive": []
+  }
+}

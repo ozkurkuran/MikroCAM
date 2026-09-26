@@ -12,6 +12,16 @@ MikroCAM derives from FlatCAM Evo's `Beta_1.0` baseline at
 [THIRD_PARTY_CHANGES.md](THIRD_PARTY_CHANGES.md) records source imports and local adaptations.
 Individual source notices continue to apply.
 
+## PCB reference designs
+
+The manufacturing inputs, editable hardware sources and retained notices under
+[`tests/reference/boards`](tests/reference/boards/manifest.json) are reference data with
+their original terms: MIT, BSD-3-Clause, CC-BY-3.0 or CERN-OHL-W-2.0 as identified per board.
+The application MIT license does not relicense these designs or their derived reference
+captures. Original bytes and attribution are retained; the manifest records immutable
+source revisions, file/member paths and SHA256 values. See
+[`tests/reference/README.md`](tests/reference/README.md) for the inventory and reproduction workflow.
+
 ## Dependencies retain their own terms
 
 The application MIT license does not relicense dependencies, vendored components, fonts,
