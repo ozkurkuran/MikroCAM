@@ -1,0 +1,13 @@
+# Optional raster import and image tracing; no browser is needed for core CAM.
+# svgtrace 2023.1+ pins NumPy <2, so keep the compatible 2023.0.1 API.
+-r requirements.txt
+affine==3.0.1
+attrs==26.1.0
+certifi==2026.7.22
+click==8.5.0
+greenlet==3.5.6
+install-playwright==1.0.2
+playwright==1.63.0
+pyee==13.0.1
+rasterio==1.5.1
+svgtrace==2023.0.1

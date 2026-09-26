@@ -179,41 +179,32 @@ class App(QtCore.QObject):
     cmd_line_shellfile = ''
     cmd_line_shellvar = ''
     cmd_line_headless = None
+    args = []
 
     cmd_line_help = (
         "FlatCam.py --shellfile=<cmd_line_shellfile>\n"
         "FlatCam.py --shellvar=<1,'C:\\path',23>\n"
         "FlatCam.py --headless=1"
     )
-    try:
-        # Multiprocessing pool will spawn additional processes with 'multiprocessing-fork' flag
-        cmd_line_options, args = getopt.getopt(
-            sys.argv[1:],
-            "h:",
-            [
-                "shellfile=",
-                "shellvar=",
-                "headless=",
-                "multiprocessing-fork="
-            ]
-        )
-    except getopt.GetoptError:
-        print(cmd_line_help)
-        sys.exit(2)
-
-    for opt, arg in cmd_line_options:
-        if opt == '-h':
-            print(cmd_line_help)
-            sys.exit()
-        elif opt == '--shellfile':
-            cmd_line_shellfile = arg
-        elif opt == '--shellvar':
-            cmd_line_shellvar = arg
-        elif opt == '--headless':
-            try:
-                cmd_line_headless = eval(arg)
-            except NameError:
-                pass
+    @classmethod
+    def configure_command_line(cls, argv):
+        """Parse application options explicitly, never while importing this module."""
+        options, cls.args = getopt.getopt(
+            argv, 'h', ['shellfile=', 'shellvar=', 'headless=', 'multiprocessing-fork='])
+        cls.cmd_line_shellfile = cls.cmd_line_shellvar = ''
+        cls.cmd_line_headless = None
+        for opt, arg in options:
+            if opt == '-h':
+                print(cls.cmd_line_help)
+                raise SystemExit(0)
+            if opt == '--shellfile':
+                cls.cmd_line_shellfile = arg
+            elif opt == '--shellvar':
+                cls.cmd_line_shellvar = arg
+            elif opt == '--headless':
+                if arg not in ('0', '1'):
+                    raise getopt.GetoptError('--headless must be 0 or 1')
+                cls.cmd_line_headless = int(arg)
 
     # ################################### Version and VERSION DATE ##################################################
     version = "Unstable"
@@ -715,7 +706,7 @@ class App(QtCore.QObject):
         # ########################################## OS-specific #####################################################
 
         portable = False
-        self.cmd_line_headless = 0
+        self.cmd_line_headless = 0 if self.cmd_line_headless is None else self.cmd_line_headless
 
         # Folder for user settings.
         if sys.platform == 'win32':
@@ -747,7 +738,7 @@ class App(QtCore.QObject):
                                 portable = bool(literal_eval(value))
                             except (ValueError, SyntaxError):
                                 portable = False
-                        elif key == 'headless':
+                        elif key == 'headless' and type(self).cmd_line_headless is None:
                             self.cmd_line_headless = 1 if value.lower() == 'true' else 0
             except FileNotFoundError as e:
                 self.log.error(str(e))
