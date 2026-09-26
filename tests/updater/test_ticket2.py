@@ -240,7 +240,8 @@ class TestLauncher(unittest.TestCase):
         ):
             self.assertTrue(launch_update(app, manifest, archive, relaunch_argv=["FlatCAM.exe"]))
 
-        self.assertEqual(str(install / "updater" / "FlatCAMUpdater.exe"), popen_calls[0][0][0])
+        # Windows runners may spell the same directory with an 8.3 short name.
+        self.assertTrue((install / "updater" / "FlatCAMUpdater.exe").samefile(popen_calls[0][0][0]))
         self.assertEqual(0x208 if sys.platform == "win32" else 0, popen_calls[0][1]["creationflags"])
 
     def test_source_launch_copies_helper_outside_install(self):
@@ -329,7 +330,7 @@ class TestUpdaterApplication(unittest.TestCase):
         restore = root / "data" / "update" / "restore"
         restore.mkdir(parents=True)
         validated = updater_app._validate_job(_rollback_job(root, install, restore))
-        self.assertEqual(install.resolve(), validated["install"])
+        self.assertTrue(install.samefile(validated["install"]))
 
     def test_archive_checksum_failure_and_zip_slip_do_not_mutate_install(self):
         root = Path(tempfile.mkdtemp(prefix="flatcam-ticket2-archive-"))
