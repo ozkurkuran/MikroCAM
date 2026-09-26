@@ -186,3 +186,24 @@ def test_atomic_publication_failure_leaves_no_target_or_temporary(tmp_path, monk
     with pytest.raises(OSError, match='publication'):
         codec.write_capture(tmp_path / 'capture.gz', capture)
     assert {path.name for path in tmp_path.iterdir()} == before
+
+
+def test_decoded_json_limit_counts_utf8_bytes_and_accepts_exact_boundary(tmp_path, monkeypatch):
+    import reference.reference_data as codec
+    capture, _, _ = example_capture(tmp_path)
+    capture['stages'][1].update(status='error', geometry_wkb=[], diagnostic='Parser error: \u03c0')
+    text = codec.capture_to_json(capture)
+    byte_count = len(text.encode('utf-8'))
+    assert byte_count > len(text)
+    path = tmp_path / 'bounded.gz'
+    path.write_bytes(gzip.compress(text.encode('utf-8')))
+    monkeypatch.setattr(codec, 'MAX_JSON_BYTES', byte_count)
+    assert codec.capture_from_json(text) == capture
+    assert codec.capture_to_json(capture) == text
+    assert codec.load_capture(path) == capture
+    monkeypatch.setattr(codec, 'MAX_JSON_BYTES', byte_count - 1)
+    for operation in (lambda: codec.capture_from_json(text), lambda: codec.capture_to_json(capture),
+                      lambda: codec.load_capture(path), lambda: codec.write_capture(tmp_path / 'rejected.gz', capture)):
+        with pytest.raises(ValueError, match='limit|size'):
+            operation()
+    assert not (tmp_path / 'rejected.gz').exists()

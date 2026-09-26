@@ -8,7 +8,7 @@ import re
 import zipfile
 
 
-MAX_JSON_BYTES = 128 * 1024 * 1024
+MAX_JSON_BYTES = 512 * 1024 * 1024
 BASELINE_REVISIONS = {'legacy8994': '6ba378bca139aa306f8c94f09461a98f95d3c75b',
                       'evo': 'd0a86cf4f1ac41a206b20f316d4a29f28a93bbff'}
 ROLES = {'copper', 'drill', 'outline', 'drill-map', 'native', 'notice', 'archive'}
