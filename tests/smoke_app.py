@@ -1,0 +1,232 @@
+"""Desktop CAM and normal shutdown smoke, adapted from the 8.994 reference.
+
+Run with the checkout's Python: .venv/Scripts/python.exe tests/smoke_app.py
+Requires a real desktop/OpenGL context; never connects to manufacturing hardware.
+"""
+import multiprocessing
+import os
+from pathlib import Path
+import sys
+import tempfile
+import threading
+import time
+import traceback
+import uuid
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def pump_until(qapp, predicate, errors, stage, timeout=20):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        qapp.processEvents()
+        assert not errors, f'Asynchronous exception during {stage}'
+        if predicate():
+            return
+        time.sleep(0.02)
+    raise TimeoutError(f'Timed out during {stage}')
+
+
+def assert_object(app, name, kind):
+    obj = app.collection.get_by_name(name)
+    assert obj is not None, f'Missing {name}'
+    assert obj.kind == kind, (name, obj.kind)
+    assert obj.obj_options['name'] == name
+    if kind == 'cncjob':
+        assert obj.gcode_parsed, f'Empty toolpath for {name}'
+        assert any(not path['geom'].is_empty for path in obj.gcode_parsed)
+    else:
+        assert obj.solid_geometry, f'Empty geometry for {name}'
+    return obj
+
+
+def cam_journey(app, qapp, sandbox, errors):
+    from PyQt6 import QtCore, QtWidgets
+    fixtures = ROOT / 'assets/examples/files'
+    app.f_handlers.open_gerber(str(fixtures / 'test.gbr'), outname='smoke_gerber')
+    app.f_handlers.open_excellon(str(fixtures / 'test.txt'), outname='smoke_drill')
+    pump_until(qapp, lambda: len(app.collection.get_names()) == 2, errors, 'file import')
+    gerber = assert_object(app, 'smoke_gerber', 'gerber')
+    assert_object(app, 'smoke_drill', 'excellon')
+    print('GERBER_OK', gerber.bounds(), flush=True)
+    print('EXCELLON_OK', flush=True)
+    gerber.isolate(dia=0.2, passes=1, combine=True, outname='smoke_iso', plot=True)
+    pump_until(qapp, lambda: app.collection.get_by_name('smoke_iso') is not None,
+               errors, 'isolation')
+    geometry = assert_object(app, 'smoke_iso', 'geometry')
+    print('ISOLATE_OK', flush=True)
+    geometry.generatecncjob(outname='smoke_cnc', dia=0.2, z_cut=-0.1, z_move=2.0,
+                            feedrate=120, use_thread=False)
+    pump_until(qapp, lambda: app.collection.get_by_name('smoke_cnc') is not None,
+               errors, 'CNC generation')
+    cnc = assert_object(app, 'smoke_cnc', 'cncjob')
+    assert cnc.gcode and cnc.gcode_parsed
+    gcode = cnc.gcode
+    print('CNC_OK', len(gcode), flush=True)
+    pump_until(qapp, lambda: app.workers._pending_count == 0, errors, 'plot completion')
+    expected = {obj.obj_options['name']: obj.kind for obj in app.collection.get_list()}
+    assert expected == {'smoke_gerber': 'gerber', 'smoke_drill': 'excellon',
+                        'smoke_iso': 'geometry', 'smoke_cnc': 'cncjob'}
+    project = sandbox / 'smoke.FlatPrj'
+    app.f_handlers.save_project(str(project), silent=True)
+    assert project.is_file() and project.stat().st_size > 0
+    print('PROJECT_SAVE_OK', flush=True)
+    app.should_we_save = False
+    accepted = []
+    def accept_project_settings():
+        for dialog in qapp.topLevelWidgets():
+            if not isinstance(dialog, QtWidgets.QMessageBox) or not dialog.isVisible():
+                continue
+            if dialog.windowTitle() != 'Import Settings':
+                errors.append(RuntimeError(f'Unexpected dialog: {dialog.windowTitle()}'))
+                dialog.reject()
+                continue
+            for button in dialog.buttons():
+                if dialog.buttonRole(button) == QtWidgets.QMessageBox.ButtonRole.YesRole:
+                    accepted.append(dialog.windowTitle())
+                    button.click()
+                    break
+    dialog_timer = QtCore.QTimer()
+    dialog_timer.timeout.connect(accept_project_settings)
+    dialog_timer.start(50)
+    app.f_handlers.open_project(str(project), plot=True)
+    try:
+        pump_until(qapp, lambda: app.collection.get_by_name('smoke_cnc') is not None
+                   and app.collection.get_by_name('smoke_cnc') is not cnc
+                   and app.workers._pending_count == 0, errors, 'project reopen')
+    finally:
+        dialog_timer.stop()
+    assert accepted == ['Import Settings'], 'Project settings were not confirmed'
+    actual = {obj.obj_options['name']: obj.kind for obj in app.collection.get_list()}
+    assert actual == expected
+    for name, kind in expected.items():
+        assert_object(app, name, kind)
+    reopened = app.collection.get_by_name('smoke_cnc')
+    assert reopened.gcode == gcode and reopened.gcode_parsed
+    print('PROJECT_ROUNDTRIP_OK', actual, flush=True)
+
+
+def render_and_quit(app, qapp, errors):
+    from PyQt6 import QtCore
+    import numpy as np
+    app.collection.set_active('smoke_gerber')
+    app.ui.splitter.setSizes([300, 700])
+    app.on_zoom_fit()
+    ready_at = time.monotonic() + 2.5
+    pump_until(qapp, lambda: time.monotonic() >= ready_at, errors, 'desktop render')
+    assert qapp.platformName() not in {'offscreen', 'minimal'}, 'Desktop rendering required'
+    assert app.use_3d_engine, 'Smoke requires the real VisPy/OpenGL canvas'
+    pixels = app.plotcanvas.render()
+    assert pixels.size and np.ptp(pixels[..., :3]) > 0, 'Empty canvas rendering'
+    screenshot = ROOT / '.venv/startup-smoke.png'
+    image = app.ui.grab()
+    assert not image.isNull() and image.save(str(screenshot))
+    print('RENDER_OK', screenshot, flush=True)
+    app.should_we_save = False
+    QtCore.QTimer.singleShot(0, lambda: app.quit_application(silent=True))
+    qapp.exec()
+    assert not errors, 'Exception during normal shutdown'
+    assert not any(thread.isRunning() for thread in app.workers.threads)
+    if hasattr(app, 'listen_th'):
+        assert not app.listen_th.isRunning()
+        assert app.new_launch.thread_exit
+    assert not any(process.is_alive() for process in app.pool._pool)
+    assert not multiprocessing.active_children(), 'Application child process survived shutdown'
+    print('SHUTDOWN_OK', flush=True)
+
+
+def run_smoke(sandbox, state):
+    from PyQt6 import QtCore, QtWidgets
+    from qt_settings_sandbox import install_settings_sandbox
+    os.environ['APPDATA'] = str(sandbox / 'appdata')
+    settings = sandbox / 'settings'
+    install_settings_sandbox(settings)
+    from defaults import AppDefaults
+    AppDefaults.factory_defaults.update(first_run=False, global_version_check=False,
+                                        global_process_number=2, global_worker_number=2)
+    from appMain import App, ArgsThread
+    from appGUI import VisPyPatches
+    VisPyPatches.apply_patches()
+    ArgsThread.address = (rf'\\.\pipe\FlatCAM-smoke-{uuid.uuid4().hex}', 'AF_PIPE')
+    errors = []
+    def exception_hook(exc_type, value, tb):
+        errors.append(value)
+        traceback.print_exception(exc_type, value, tb)
+    sys.excepthook = exception_hook
+    qapp = QtWidgets.QApplication([])
+    # Retain the standard object's reference even if its constructor raises.
+    app = App.__new__(App)
+    state['app'] = app
+    try:
+        app.__init__(qapp=qapp, user_defaults=False)
+        assert Path(app.data_path).is_relative_to(sandbox), 'User data sandbox was bypassed'
+        assert Path(QtCore.QSettings('Open Source', 'FlatCAM_EVO').fileName()).is_relative_to(settings)
+        assert not app.options['first_run'] and not app.options['global_version_check']
+        print('STARTUP_OK', flush=True)
+        app.inform.connect(lambda message: print('INFORM:', message, flush=True))
+        app.workers.thread_exception.connect(lambda error: errors.append(error))
+        pump_until(qapp, lambda: all(worker.receivers(worker.worker_task_signal) > 0
+                   for worker in app.workers.workers), errors, 'worker readiness')
+        cam_journey(app, qapp, sandbox, errors)
+        render_and_quit(app, qapp, errors)
+    except BaseException:
+        traceback.print_exc()
+        if getattr(app, 'workers', None) is not None:
+            try:
+                pump_until(qapp, lambda: app.workers._pending_count == 0, [],
+                           'failed-run plot cleanup', timeout=5)
+            except BaseException:
+                traceback.print_exc()
+        try:
+            app.should_we_save = False
+            app.quit_application(silent=True)
+        except BaseException:
+            traceback.print_exc()
+            # Failed construction may lack lifecycle dependencies. This cannot pass.
+            if getattr(app, 'pool', None) is not None:
+                app.pool.terminate()
+                app.pool.join()
+            if getattr(app, 'workers', None) is not None:
+                app.workers.quit()
+        return 1, (app, qapp)
+    return 0, (app, qapp)
+
+
+def main():
+    os.chdir(ROOT)
+    sys.path.insert(0, str(ROOT))
+    os.environ['QT_API'] = 'pyqt6'
+    state = {}
+    print('SMOKE_PID', os.getpid(), flush=True)
+    def watchdog():
+        print('SMOKE_TIMEOUT: exceeded 85 seconds', file=sys.stderr, flush=True)
+        # These are this smoke process's children, never another application tree.
+        for process in multiprocessing.active_children():
+            print('SMOKE_TIMEOUT_CHILD', process.pid, file=sys.stderr, flush=True)
+            process.terminate()
+            process.join(timeout=2)
+            if process.is_alive():
+                process.kill()
+                process.join(timeout=1)
+        os._exit(1)
+    timeout = threading.Timer(85, watchdog)
+    timeout.daemon = True
+    timeout.start()
+    status, keepalive = 1, None
+    with tempfile.TemporaryDirectory(prefix='evo-smoke-') as temporary:
+        try:
+            status, keepalive = run_smoke(Path(temporary), state)
+        except BaseException:
+            traceback.print_exc()
+    timeout.cancel()
+    sys.stdout.flush()
+    sys.stderr.flush()
+    # Production flatcam.py also bypasses native Qt/VisPy GC after normal cleanup.
+    # Keep the GUI references alive until this point; success needs all assertions.
+    os._exit(status)
+
+
+if __name__ == '__main__':
+    multiprocessing.freeze_support()
+    main()

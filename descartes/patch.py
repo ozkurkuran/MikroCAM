@@ -1,5 +1,4 @@
 """Paths and patches"""
-import numpy as np
 from matplotlib.patches import PathPatch
 from matplotlib.path import Path
 from numpy import asarray, concatenate, ones
@@ -20,8 +19,9 @@ class Polygon(object):
 
     @property
     def exterior(self):
-        return (getattr(self.context, 'exterior', None) 
-                or self.context['coordinates'][0])
+        if hasattr(self.context, 'exterior'):
+            return self.context.exterior
+        return self.context['coordinates'][0] if self.context['coordinates'] else []
 
     @property
     def interiors(self):
@@ -40,15 +40,17 @@ def PolygonPath(polygon):
     def coding(ob):
         # The codes will be all "LINETO" commands, except for "MOVETO"s at the
         # beginning of each subpath
-        n = len(getattr(ob, 'coords', None) or ob)
+        n = len(ob.coords if hasattr(ob, 'coords') else ob)
         vals = ones(n, dtype=Path.code_type) * Path.LINETO
-        vals[0] = Path.MOVETO
+        if n:
+            vals[0] = Path.MOVETO
         return vals
 
-    # vertices = concatenate([asarray(this.exterior)] + [asarray(r) for r in this.interiors])
-    # codes = concatenate([coding(this.exterior)] + [coding(r) for r in this.interiors])
+    def coordinates(ring):
+        values = asarray(ring.coords if hasattr(ring, 'coords') else ring, dtype=float)
+        return values[:, :2] if values.size else values.reshape(0, 2)
 
-    vertices = concatenate([np.array(this.exterior.coords)] + [np.array(r.coords) for r in this.interiors])
+    vertices = concatenate([coordinates(this.exterior)] + [coordinates(r) for r in this.interiors])
     codes = concatenate([coding(this.exterior)] + [coding(r) for r in this.interiors])
     return Path(vertices, codes)
 

@@ -22,7 +22,7 @@
 from svg.path import Line, Arc, CubicBezier, QuadraticBezier, parse_path
 import svg.path
 
-from shapely import LineString, MultiLineString, Point, Polygon
+from shapely import LineString, Point, Polygon
 from shapely.affinity import skew, affine_transform, rotate, scale, translate
 
 import numpy as np
@@ -88,15 +88,22 @@ def path2shapely(path, object_type, res=1.0, units='MM', factor=1.0) -> Polygon 
     :param factor:      correction factor due of virtual units
     :type factor:       float
     :return:            Shapely geometry object
-    :rtype :            Polygon
-    :rtype :            LineString
+    :rtype :            list
     """
 
     points = []
     geometry = []
 
     rings = []
-    closed = False
+
+    def finish(closed=False):
+        nonlocal points
+        if len(points) >= 2:
+            if closed and len(set(points)) >= 3:
+                rings.append(Polygon(points))
+            else:
+                geometry.append(LineString(points))
+        points = []
 
     for component in path:
         # Line
@@ -116,120 +123,57 @@ def path2shapely(path, object_type, res=1.0, units='MM', factor=1.0) -> Polygon 
 
             # How many points to use in the discrete representation.
             length = component.length(res / 10.0)
-            # steps = int(length / res + 0.5)
             steps = int(length) * 2
 
             if units == 'IN':
                 steps *= 25
 
-            # solve error when step is below 1,
-            # it may cause other problems, but LineString needs at least two points
-            # later edit: made the minimum nr of steps to be 10; left it like that to see that steps can be 0
+            # Retain Evo's minimum curve sampling resolution.
             if steps == 0 or steps < 10:
                 steps = 10
-
             frac = 1.0 / steps
-
-            # print length, steps, frac
             for i in range(steps):
                 point = component.point(i * frac)
-                x, y = point.real, point.imag
+                x, y = factor * point.real, factor * point.imag
                 if len(points) == 0 or points[-1] != (x, y):
-                    points.append((factor * x, factor * y))
+                    points.append((x, y))
             end = component.point(1.0)
             points.append((factor * end.real, factor * end.imag))
             continue
 
-        # Move
+        # Move ends an open subpath; only Close creates a polygon ring.
         if isinstance(component, svg.path.Move):
-            if not points:
-                continue
-            else:
-                rings.append(points)
-                if closed is False:
-                    points = []
-                else:
-                    closed = False
-                    start = component.start
-                    x, y = start.real, start.imag
-                    points = [(factor * x, factor * y)]
+            finish()
+            points = [(factor * component.end.real, factor * component.end.imag)]
             continue
 
-        closed = False
-
-        # Close
         if isinstance(component, svg.path.Close):
-            if not points:
-                continue
-            else:
-                rings.append(points)
-                points = []
-                closed = True
+            finish(closed=True)
             continue
         log.warning("I don't know what this is: %s" % str(component))
-        continue
 
-    # if there are still points in points then add them to the last ring
-
-    if points:
-        rings.append(points)
-
-    try:
-        rings = MultiLineString(rings)
-    except Exception as e:
-        log.error("ParseSVG.path2shapely() MString --> %s" % str(e))
-        return None
-
-    rings_len = len(rings.geoms)
-    if rings_len > 0:
-        if rings_len == 1 and not isinstance(rings, MultiLineString):
-            # Polygons are closed and require more than 2 points
-            if Point(rings.geoms[0][0]).almost_equals(Point(rings.geoms[0][-1])) and len(rings.geoms[0]) > 2:
-                geo_element = Polygon(rings.geoms[0])
-            else:
-                geo_element = LineString(rings.geoms[0])
-            geometry.append(geo_element)
-        else:
-            try:
-                poly_list = [Polygon(line.coords) for line in rings.geoms]
-                # if len(poly_list) == 2:
-                #     if poly_list[0].contains(poly_list[1]):
-                #         geo_element = Polygon(rings.geoms[0], rings.geoms[1:])
-                #         geometry.append(geo_element)
-                #     else:
-                #         geometry = poly_list
-                # else:
-                #     geo_element = Polygon(rings.geoms[0], rings.geoms[1:])
-                #     geometry.append(geo_element)
-                contained = []
-                not_contained = []
-                if len(poly_list) > 1:
-                    for p in poly_list[1:]:
-                        if poly_list[0].contains(p):
-                            contained.append(p)
-                        else:
-                            not_contained.append(p)
-                else:
-                    not_contained = poly_list
-
-                if not_contained:
-                    geometry += [poly_list[0]]
-                    geometry += not_contained
-
-                if contained:
-                    geo_element = Polygon(poly_list[0].exterior, [p.exterior for p in contained])
-                    geometry.append(geo_element)
-            except Exception:
-                coords = []
-                for line in rings.geoms:
-                    coords.append(line.coords[0])
-                    coords.append(line.coords[1])
-                try:
-                    geo_element = Polygon(coords)
-                except Exception:
-                    geo_element = LineString(coords)
-                geometry.append(geo_element)
+    finish()
+    geometry.extend(_svg_ring_polygons(rings))
     return geometry
+
+
+def _svg_ring_polygons(rings):
+    """Assign each ring to its nearest containing ring, preserving islands."""
+    parents = []
+    for index, polygon in enumerate(rings):
+        containers = [i for i, other in enumerate(rings)
+                      if i != index and other.area > polygon.area and other.contains(polygon)]
+        parents.append(min(containers, key=lambda i: rings[i].area) if containers else None)
+    depths = []
+    for parent in parents:
+        depth = 0
+        while parent is not None:
+            depth += 1
+            parent = parents[parent]
+        depths.append(depth)
+    return [Polygon(polygon.exterior.coords,
+                    [ring.exterior.coords for i, ring in enumerate(rings) if parents[i] == index])
+            for index, polygon in enumerate(rings) if depths[index] % 2 == 0]
 
 
 def svgrect2shapely(rect, n_points=32, factor=1.0):
