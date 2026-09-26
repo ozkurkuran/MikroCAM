@@ -78,12 +78,6 @@ class ToolDrilling(Excellon, AppTool):
         self.obj_name = ""
         self.excellon_obj = None
 
-        # this holds the resulting GCode
-        self.total_gcode = ''
-
-        # this holds the resulting Parsed Gcode
-        self.total_gcode_parsed = []
-
         self.first_click = False
         self.cursor_pos = None
         self.mouse_is_dragging = False
@@ -2101,6 +2095,8 @@ class ToolDrilling(Excellon, AppTool):
         def job_init(cnc_job_obj, app_obj):
             assert cnc_job_obj.kind == 'cncjob', "Initializer expected a CNCJobObject, got %s" % type(cnc_job_obj)
             app_obj.inform.emit(_("Generating CNCJob..."))
+            # Each queued job owns its output, including jobs submitted before workers start.
+            total_gcode, total_gcode_parsed = '', []
 
             # #########################################################################################################
             # #########################################################################################################
@@ -2301,8 +2297,8 @@ class ToolDrilling(Excellon, AppTool):
                 if start_gcode != '':
                     cnc_job_obj.gc_start = start_gcode
 
-                self.total_gcode = tool_gcode
-                self.total_gcode_parsed = tool_gcode_parsed
+                total_gcode = tool_gcode
+                total_gcode_parsed = tool_gcode_parsed
 
             # ####################### TOOLCHANGE ACTIVE ######################################################
             else:
@@ -2356,12 +2352,12 @@ class ToolDrilling(Excellon, AppTool):
                     if start_gcode != '':
                         cnc_job_obj.gc_start = start_gcode
 
-                    self.total_gcode += tool_gcode
-                    self.total_gcode_parsed += tool_gcode_parsed
+                    total_gcode += tool_gcode
+                    total_gcode_parsed += tool_gcode_parsed
 
-            cnc_job_obj.gcode = self.total_gcode
-            cnc_job_obj.source_file = self.total_gcode
-            cnc_job_obj.gcode_parsed = self.total_gcode_parsed
+            cnc_job_obj.gcode = total_gcode
+            cnc_job_obj.source_file = total_gcode
+            cnc_job_obj.gcode_parsed = total_gcode_parsed
             if cnc_job_obj.gcode == 'fail':
                 return 'fail'
 

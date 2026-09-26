@@ -176,3 +176,16 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Regression: new in-memory records include the milling/drilling laser settings and every
   eligible machining setting before save/reload; backfill excludes unrelated UI namespaces.
 - MikroCAM commit: `fix: populate canonical machining database defaults` (this commit).
+
+## 2026-09-27 — Keep each queued drilling job's output independent
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `6e13950a6b1568539c1b7b1eba459086cdc5ab05`; existing notices retained.
+- Destination: `appPlugins/ToolDrilling.py`, multi-tool CNC job assembly.
+- Adaptation: replace shared plugin output accumulators with initializer-local values.
+  Resetting only when the button is clicked does not isolate jobs already queued together;
+  local ownership also prevents a later job from mutating an earlier parsed-path list.
+- Regression: actual job initializer and two-tool assembly run twice, both sequentially and
+  with both requests queued before workers start; a deterministic CAM boundary isolates
+  assembly behavior. Output and parsed records remain equal and independently owned.
+- MikroCAM commit: `fix: isolate output of queued drilling jobs` (this commit).
