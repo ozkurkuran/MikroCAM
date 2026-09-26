@@ -57,3 +57,15 @@ merely because both engines fail. Both distinct actual baseline outputs remain r
 - Independent read-only review found no confirmed geometry/path defect; its M/SRID coverage
   suggestion is now tested. Empty successful outputs must be contextual errors at the capture
   boundary, and report integration must preserve them as indeterminate.
+
+## Emitted machining instructions and report integration
+Review identified a real coverage gap in comparing only 2D paths/requested settings:
+wrong emitted Z/feed/spindle/dwell could otherwise pass. The spec/plan/contract were amended
+before a narrow numeric-word comparator was implemented. Its initial test run failed with
+the missing module; all 30 tests then passed. Together with geometry/path/drill cases:
+**89 passed in 0.23s**. This is saved-output comparison, not modal simulation/preflight.
+
+Report CLI tests first failed on the absent module, then **14 passed in 2.13s**. They verify
+unchanged offline inputs, contextual missing/corrupt/unsupported evidence, parameter changes,
+runtime/config/input mismatches and exclusive report publication outside input directories.
+Actual baseline/candidate captures and real corpus comparison remain the next integration gate.

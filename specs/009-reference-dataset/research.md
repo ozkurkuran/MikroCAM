@@ -42,6 +42,13 @@
   **Alternative**: Silent skips/default tolerance inflation would make the regression gate untrustworthy.
 
 ## Implementation evidence gates
+Integration review found that equal engine-parsed 2D paths and requested configuration
+cannot detect wrong emitted Z, feed, spindle or dwell. Therefore raw default-preprocessor
+executable words are also compared, ignoring presentation-only comments/whitespace and
+using numeric equality for non-XY words. This is a narrow saved-output comparison, not
+the future modal preflight/streaming feature. Tests must demonstrate each emitted-value
+regression before implementing this addition.
+
 Source/notice admission and exact capture config must be reviewed before corpus/golden creation.
 Capture adapters must match unchanged source APIs; isolation wrappers may provide only explicit
 test context, never altered parser/CAM algorithms. Reproduction and IN probes are implementation

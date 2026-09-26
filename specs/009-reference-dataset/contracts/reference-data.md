@@ -61,5 +61,20 @@ still makes the overall result indeterminate. Missing stages and repeated failur
 Always identify board/input/stage and preserve diagnostics/available metrics. Reports stay outside
 goldens. Deliberate replacement of expected records is a separate reviewed data change, no update flag.
 
-Raw G-code is retained for audit; ordered engine-parsed paths and explicit machining config are
-the comparison surface. This contract adds no lexical G-code interpreter or machine preflight.
+Raw G-code is retained for audit. `compare_gcode(expected, actual, *, distance_mm)` in
+`core/reference_gcode.py` compares nonempty executable blocks of default-preprocessor words.
+Comments, blank lines, letter case and whitespace do not count. X/Y numeric words use
+absolute component tolerance; every other numeric word is exact (Z, feed, spindle, dwell,
+mode, tool, etc.). Numeric spelling such as `1.0` versus `1.000` is equivalent. Block and
+word order and duplicate words remain significant. Unsupported syntax is indeterminate,
+not silently ignored. Limits are 32 MiB UTF-8 input, 500,000 executable blocks, 64 characters
+per numeric token and comment nesting 64. This narrow saved-output comparison complements
+ordered engine-parsed paths; it adds no modal interpreter, simulation or machine preflight.
+
+Capture exits 0 when every selected board has a complete validated artifact, even when actual
+CAM stages are recorded as errors; its summary reports that count and is not a comparison match.
+Input, runtime, provenance or publication failures exit 2. Child timeout/failure becomes explicit
+contextual error stages, never invented geometry. Capture output files are published atomically
+without overwriting earlier artifacts. The optional `--board ID` limits capture to one admitted
+board; omitting it captures the complete corpus. Source identity/hashes are checked again before
+publishing each board, and children verify input bytes before invoking actual parsers.

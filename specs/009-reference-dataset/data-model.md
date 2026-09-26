@@ -37,10 +37,14 @@ optimization is recorded separately: Evo `N`, legacy hardcoded RTree, an expecte
 ## Capture artifact
 Deterministic gzip JSON: `kind='mikrocam.reference-capture'`, `schema_version`, `board_id`,
 `engine`, `source`, `runtime`, `inputs`, `configuration`, `stages`.
-`engine` is legacy8994/evo/current. `source` records revision and relevant source-file SHA256s;
-`runtime` records Python version/architecture, dependency versions and harness revision/hash.
-`inputs` links exact manifest input hashes; `configuration` records requested values/hash and
-effective engine optimization. No machine-local absolute paths are required for portability.
+`engine` is legacy8994/evo/current. `source` has exact `revision` and `files` (ordered
+`{path,sha256}` records for tracked application Python sources). `runtime` has exact
+`python`, `architecture`, `dependencies` (distribution-to-version map) and `harness_sha256`
+(combined capture/codec/settings-helper byte hash). `inputs` is an ordered list of
+`{path,sha256}` for every admitted board file. `configuration` has exact `sha256`,
+`requested` (full configuration envelope) and `effective_optimization`. No machine-local
+absolute paths are required for portability. Comparison requires equal runtime/harness
+evidence and common requested configuration; differing source revisions are expected.
 Each requested stage has `input_path`, `stage` (gerber/excellon/isolation/cnc), `status`
 (ok/error/unsupported), `units='mm'`, `source_units` (MM/IN or null if unavailable),
 `tools` (list, empty for non-Excellon stages), `geometry_wkb` (ordered strings), `paths` (ordered
@@ -67,7 +71,8 @@ Frozen `ReferencePath(kind:tuple[str,...], wkb_hex:str)` accepts valid finite 2D
 only. Frozen `PathComparison(matches, differing_indices, expected_count, actual_count)`
 records explicit tuple indices, including unmatched tail paths. Corresponding paths require
 exact kind, equal vertex count and each corresponding XY pair within Euclidean `distance_mm`.
-This preserves direction, repeated vertices and order; no G-code lexer/interpreter.
+This preserves direction, repeated vertices and order. A separate narrow executable-word
+comparison detects emitted Z/feed/spindle/dwell/mode changes; it does not interpret modal state.
 Tool comparison requires equal IDs and tool/drill/slot counts/order; diameter and corresponding
 drill/slot endpoint differences use distance_mm. Reusable numeric/path comparison stays core-only.
 Tolerances are explicit finite nonboolean real numbers >=0; zero is valid. Malformed/nonplanar

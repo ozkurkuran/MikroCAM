@@ -2,7 +2,8 @@
 **Branch**: `009-reference-dataset` | **Date**: 2026-09-27 | **Spec**: [spec.md](spec.md)
 
 ## Summary / Technical Context
-Pure comparison functions live in `mikrocam/core/reference_compare.py`; developer tooling
+Pure comparison functions live in `mikrocam/core/reference_compare.py` and
+`mikrocam/core/reference_gcode.py`; developer tooling
 under `tests/reference/` validates corpus/provenance, invokes unchanged applications in
 isolated subprocesses and reads/writes strict compressed JSON1 artifacts/reports.
 CPython 3.13 x64, stdlib and existing Shapely/NumPy/pytest. Windows 11 primary, no GUI/hardware.
@@ -57,5 +58,9 @@ Audit and probe first; test schemas then admit inputs; test isolated capture the
 actual two-baseline artifacts; test mismatch/error comparator behavior then implement
 core/CLI; compare current against each baseline and record results. No automatic golden
 overwrite. A fresh output directory and explicit review are required for new captures.
-No complexity exception. Raw G-code remains audit text; ordered parsed-path comparison
-does not expand into a lexical interpreter or machine preflight.
+No complexity exception. Raw G-code remains audit text. A narrow word comparator for the
+captured default preprocessor ignores comments/whitespace, applies distance tolerance to
+X/Y numeric words and compares all remaining numeric words exactly (including Z/F/S/P,
+G/M/T). It preserves block/word order and rejects unsupported syntax. This detects wrong
+emitted machining parameters that 2D paths plus requested settings cannot detect. It does
+not interpret modal state, simulate motion or perform machine preflight.

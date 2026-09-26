@@ -39,6 +39,8 @@ fails; corruption, missing stages and repeated baseline errors are indeterminate
 **Acceptance Scenarios**:
 1. Geometry type/component/ring counts and explicit absolute distance/area tolerances all pass.
 2. CNC path metadata, count, order, vertex count and direction remain significant.
+   Emitted Z, feed, spindle, dwell and mode/tool commands must also remain significant;
+   equal XY paths cannot hide changed machining instructions.
 3. Only entirely comparable matching stages produce success. Errors/unsupported stages are never silently skipped.
 4. Reports identify board/file/stage and evidence; tests/comparison never replace expected records.
 
@@ -63,6 +65,8 @@ must report their context. Both references may differ; that does not authorize w
 - **FR-008**: Require explicit baseline and finite nonnegative absolute distance/area tolerances; no automatic update/widening.
 - **FR-009**: Compare geometry type/component/ring counts, Hausdorff distance and symmetric-difference area;
   ordered paths compare metadata/count/order/vertex count/direction and corresponding coordinates.
+  Actual emitted machining instructions are compared too; unchanged requested settings cannot
+  conceal different emitted Z/feed/spindle/dwell/mode/tool values.
   Drill tool IDs, diameters, multiplicity and ordered drill/slot coordinates remain significant.
 - **FR-010**: Strictly validate schemas/checksums/units/source/config linkage; reject duplicates, unsafe
   paths, corruption, nonfinite/nonplanar/invalid values and missing requested stages.
@@ -87,8 +91,8 @@ Candidate admission is pending; baseline API/configuration/IN/repeat probes have
 headless feasibility and are documented in research.md. Formal codec/config freeze precedes capture. The requirement
 is 10–20 admitted designs, not a promised candidate count. Missing audited coverage is unmet scope.
 Truthfully captured baseline failures satisfy evidence collection but are not comparable successes.
-Raw G-code is audit evidence; comparison uses captured ordered parsed paths plus explicit machining
-config. No new G-code interpreter, controller simulation or future preflight feature.
+Raw G-code is audit evidence; comparison uses captured ordered parsed paths, emitted instructions
+and explicit machining config. No modal interpreter, controller simulation or future preflight feature.
 No product UI, legacy/baseline patches, CAD regeneration, geometry repair, new dependency,
 hardware I/O or automatic golden update. Evidence hazards are wrong source/unit attribution,
 lost ordering and failure-as-success; explicit provenance/config/tolerances/statuses address them.
