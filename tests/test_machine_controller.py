@@ -215,6 +215,7 @@ def test_delayed_report_does_not_reuse_expired_offset_on_same_tick():
     state = receive(controller, fake, b'<Idle|MPos:4,5,6>\n')
     assert state.machine_position_mm == (4, 5, 6)
     assert state.work_position_mm is None and state.work_offset_mm is None
+    assert not state.stale and 'stale' not in state.diagnostic.lower()
 
 
 def test_settings_units_remain_provisional_until_successful_ack():

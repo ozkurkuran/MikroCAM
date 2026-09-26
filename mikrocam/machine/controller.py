@@ -192,7 +192,8 @@ class MachineController:
         self._snapshot = replace(
             self._snapshot, state=status.state, raw_state=status.raw_state,
             machine_position_mm=machine, work_position_mm=work, work_offset_mm=offset,
-            stale=False, last_report_at=self._clock())
+            stale=False, last_report_at=self._clock(),
+            diagnostic='' if self._snapshot.report_units is not None else self._snapshot.diagnostic)
 
     @staticmethod
     def _scale(vector: XYZ | None, factor: float) -> XYZ | None:
