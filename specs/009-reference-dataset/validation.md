@@ -43,3 +43,17 @@ and repeat-identical G-code/path hashes per pair. These are probe findings, not 
 Implementation results must append exact commands, counts and observed limitations. A baseline
 error/unsupported stage remains indeterminate; do not mark it matching or claim all-stage coverage
 merely because both engines fail. Both distinct actual baseline outputs remain retained.
+
+## Pure comparison implementation
+- Initial `pytest -q tests/test_reference_compare.py` failed collection because the core
+  module did not exist. Tool-inventory tests subsequently failed in ten cases before
+  `ReferenceTool`/`compare_tools` existed.
+- Final focused run with CPython 3.13 repro-a: **59 passed in 0.30s**. Deliberate topology,
+  scale, path reversal/order/vertex-count, tool-diameter and duplicate-drill changes fail
+  comparison; tolerance boundaries, malformed/trailing/SRID/Z/M/empty/nonfinite WKB and
+  resource limits are covered. Unused declared drill tools remain metadata, not lost hits.
+- The initial geometry/path implementation plus import-boundary suite passed 93 tests.
+  Full architecture/integration and hosted CI remain delivery tasks.
+- Independent read-only review found no confirmed geometry/path defect; its M/SRID coverage
+  suggestion is now tested. Empty successful outputs must be contextual errors at the capture
+  boundary, and report integration must preserve them as indeterminate.

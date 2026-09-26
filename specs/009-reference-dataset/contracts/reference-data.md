@@ -19,6 +19,15 @@ ordered drills/slots), using distance tolerance for diameters/coordinates and ex
 Every stage uses the same exact keys with tools=[] and source_units=null where unavailable.
 Core imports stdlib/Shapely/NumPy only; file/provenance/JSON/engine loading belongs to developer tooling.
 
+`ReferenceTool(id, diameter_mm, drills, slots)` is frozen; coordinates are immutable XY
+tuples, including ordered duplicate drill hits and oriented slot endpoint pairs. Unused
+declared tools may have no hits; their metadata remains present. `compare_tools(expected,
+actual, *, distance_mm) -> ToolComparison(matches, differing_indices, expected_count,
+actual_count)` requires unique IDs within each nonempty sequence and preserves tool order,
+diameters, hit/slot counts and corresponding coordinates. Diameter and point differences
+use the explicit distance tolerance. Empty overall successful Excellon output is rejected
+by the capture/codec boundary. Tool sequences share the path/aggregate vertex limits.
+
 ## Capture CLI
 `python tests/reference/capture.py --engine legacy8994|evo|current --source PATH
 --python PATH --manifest PATH --config PATH --output NEW_DIRECTORY [--revision SHA]
