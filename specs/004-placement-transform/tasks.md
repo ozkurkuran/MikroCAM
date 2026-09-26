@@ -17,8 +17,8 @@ Independent check: vertex agreement, holes, multipart/empty, inverse, invalid/Z 
 
 ## Polish and delivery
 - [X] T008 Run full suite/architecture/growth checks and record evidence in specs/004-placement-transform/validation.md.
-- [ ] T009 Review hosted feature CI and final code sizes in specs/004-placement-transform/validation.md.
-- [ ] T010 Update docs/ROADMAP.md and deliver the feature PR after preceding slices.
+- [X] T009 Review hosted feature CI and final code sizes in specs/004-placement-transform/validation.md.
+- [X] T010 Update docs/ROADMAP.md and deliver the feature PR after preceding slices.
 
 ## Dependencies and parallel work
 T001–T002 precede tests. T003 precedes T004–T005; T006 precedes T007 and uses the US1 API.

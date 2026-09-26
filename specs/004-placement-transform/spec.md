@@ -2,7 +2,7 @@
 
 **Feature Branch**: `004-placement-transform`
 **Created**: 2026-09-26
-**Status**: Specified
+**Status**: Implemented
 **Input**: Roadmap slice 4: one core coordinate transform for translation, rotation,
 bottom-layer mirroring and origin, shared by laser, preview and later GRBL.
 

@@ -76,7 +76,7 @@ gerçek PCB elde edilir.
 
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
-| 4 | `placement-transform` | `core`'da tek bir koordinat transform'u: öteleme, dönme, ayna (alt katman için), origin. Lazer, önizleme ve ileride GRBL aynı transform'u kullanır. | 2 |
+| 4 | `placement-transform` — **tamamlandı** | Tek core transform: origin, öteleme, dönme ve ayna; nokta/geometri uygulaması ve ters dönüşüm. Windows CI: 694 test + 310 subtest başarılı. [Doğrulama](../specs/004-placement-transform/validation.md). | 2 |
 | 5 | `laserjob-model` | `LaserJob` ve pass listesi içeren recipe (JSON dosyası), serileştirme. CNCJob'dan ayrıdır. Gerber'den `core` geometrisine bridge. | 4 |
 | 6 | `laser-contour-hatch` | Contour modları (dış, iç, iz, pad, kart kenarı); açılı hatch ve cross-hatch; clipping. Evo'ya bağlanan Laser CAM paneli ve kanvas önizlemesi. | 5 |
 | 7 | `hatch-interlace-multipass` | Interlace N; pass başına güç, frekans, pulse genişliği ve hız | 6 |

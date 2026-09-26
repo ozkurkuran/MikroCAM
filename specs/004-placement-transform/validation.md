@@ -23,4 +23,9 @@ placement checks also pass. Import-boundary checks pass; legacy growth is +0 for
 After integrating slice 003, the complete clean-core suite passed **694 tests and 310 subtests**
 in 51.97s, with the same 2 placeholders skipped and 3 SWIG warnings. The runtime module is
 113 lines and the largest method 14 lines; no new dependency or legacy edit. No GUI smoke
-is required for this pure core slice. Hosted validation remains the delivery gate.
+is required for this pure core slice.
+
+Windows [CI run 36272082050](https://github.com/ozkurkuran/MikroCAM/actions/runs/36272082050)
+passed **694 tests and 310 subtests** in 42.83s, with 2 original placeholders skipped;
+`pip check` found no broken requirements. [PR 4](https://github.com/ozkurkuran/MikroCAM/pull/4)
+was retargeted to main after branding PR 3 merged. All ten tasks are complete.
