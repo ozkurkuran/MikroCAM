@@ -18,7 +18,10 @@ expected boundaries for each mode, with placement applied once and source unchan
 1. Outer mode returns exterior rings; inner mode returns holes, including multipart copper.
 2. Trace/pad modes use Gerber feature metadata clipped to final copper; unavailable metadata
    raises an explanation rather than treating every copper island as a pad or trace.
+   Present metadata with no usable remaining area receives the same no-geometry explanation.
 3. Board mode uses an explicitly selected closed outline; open or missing outlines fail.
+   Nested rings use even/odd fill (outer, cutout, island), independent of orientation;
+   touching, crossing or duplicate ring boundaries are rejected as ambiguous.
 
 ### User Story 2 - Fill the chosen area (Priority: P1)
 As a CAM user I can set spacing and angle, add cross hatch, and explicitly choose copper
@@ -28,6 +31,7 @@ or board-minus-copper, so generated segments cover my intended area without cros
 parallel segments at the requested spacing and angle; cross hatch adds the perpendicular set.
 **Acceptance Scenarios**:
 1. All exposure segments lie within the selected area; gaps across holes/islands stay separate.
+   Positive-length overlaps with area boundaries are retained; point-only tangencies are omitted.
 2. Cross hatch adds angle+90 degrees and preserves each family's scan-line identity.
 3. Board-minus-copper requires a valid explicit board containing the copper; no bounding box
    or inferred board size is substituted. Empty results report no paths.

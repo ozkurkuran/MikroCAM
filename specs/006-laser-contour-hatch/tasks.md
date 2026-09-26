@@ -1,30 +1,30 @@
 # Tasks: Laser contour and hatch
 
 ## Foundation
-- [ ] T001 Review host representation/lifecycle in research.md and complete consistency analysis in validation.md.
-- [ ] T002 Write plain path/options tests in tests/test_laser_paths.py before core values.
-- [ ] T003 Implement validated values in mikrocam/core/laser_paths.py.
+- [X] T001 Review host representation/lifecycle in research.md and complete consistency analysis in validation.md.
+- [X] T002 Write plain path/options tests in tests/test_laser_paths.py before core values.
+- [X] T003 Implement validated values in mikrocam/core/laser_paths.py.
 
 ## US1: Contours
-- [ ] T004 [US1] Write analytic feature/outline/contour tests in tests/test_laser_geometry.py and tests/reference/laser_contour_hatch.json.
-- [ ] T005 [US1] Implement metadata/outline helpers in mikrocam/core/laser_features.py.
-- [ ] T006 [US1] Implement contour selection in mikrocam/core/laser_geometry.py.
+- [X] T004 [US1] Write analytic feature/outline/contour tests in tests/test_laser_geometry.py and tests/reference/laser_contour_hatch.json.
+- [X] T005 [US1] Implement metadata/outline helpers in mikrocam/core/laser_features.py.
+- [X] T006 [US1] Implement contour selection in mikrocam/core/laser_geometry.py.
 
 ## US2: Hatch
-- [ ] T007 [US2] Add test-first angled/cross/clipped/invalid/limit/cancel cases in tests/test_laser_geometry.py.
-- [ ] T008 [US2] Implement area selection and deterministic hatch kernel in mikrocam/core/laser_geometry.py.
-- [ ] T009 [US2] Add orchestration/one-placement tests in tests/test_laser_planner.py before domain implementation.
-- [ ] T010 [US2] Implement mikrocam/laser/__init__.py and planner.py.
+- [X] T007 [US2] Add test-first angled/cross/clipped/invalid/limit/cancel cases in tests/test_laser_geometry.py.
+- [X] T008 [US2] Implement area selection and deterministic hatch kernel in mikrocam/core/laser_geometry.py.
+- [X] T009 [US2] Add orchestration/one-placement tests in tests/test_laser_planner.py before domain implementation.
+- [X] T010 [US2] Implement mikrocam/laser/__init__.py and planner.py.
 
 ## US3: Desktop preview
-- [ ] T011 [P] [US3] Write snapshot/owned-preview/unit tests in tests/test_laser_cam_bridge.py.
-- [ ] T012 [US3] Implement thin desktop adapter in mikrocam/bridge/laser_cam.py.
-- [ ] T013 [P] [US3] Add panel/worker smoke tests in tests/test_laser_cam_ui.py.
-- [ ] T014 [US3] Implement translated dock and cancellable worker in mikrocam/ui/laser_cam.py and laser_worker.py; wire one legacy menu action.
-- [ ] T015 [US3] Extend tests/smoke_app.py and run/inspect real desktop preview lifecycle.
+- [X] T011 [P] [US3] Write snapshot/owned-preview/unit tests in tests/test_laser_cam_bridge.py.
+- [X] T012 [US3] Implement thin desktop adapter in mikrocam/bridge/laser_cam.py.
+- [X] T013 [P] [US3] Add panel/worker smoke tests in tests/test_laser_cam_ui.py.
+- [X] T014 [US3] Implement translated dock and cancellable worker in mikrocam/ui/laser_cam.py and laser_worker.py; wire one legacy menu action.
+- [X] T015 [US3] Extend tests/smoke_app.py and run/inspect real desktop preview lifecycle.
 
 ## Delivery
-- [ ] T016 Run full suite/architecture/growth and size checks; record validation.md.
+- [X] T016 Run full suite/architecture/growth and size checks; record validation.md.
 - [ ] T017 Review hosted Windows CI and fix evidenced defects.
 - [ ] T018 Update docs/ROADMAP.md, quickstart.md and deliver PR after prior slices.
 
