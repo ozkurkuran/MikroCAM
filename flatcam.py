@@ -2,6 +2,7 @@
 import sys
 import os
 import traceback
+import getopt
 from datetime import datetime
 
 from PyQt6 import QtWidgets, QtGui, QtCore
@@ -52,6 +53,13 @@ if __name__ == '__main__':
     # QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_X11InitThreads)
     # NOTE: Never talk to the GUI from threads! This is why I commented the above.
     freeze_support()
+
+    try:
+        App.configure_command_line(sys.argv[1:])
+    except getopt.GetoptError as error:
+        print(error, file=sys.stderr)
+        print(App.cmd_line_help, file=sys.stderr)
+        sys.exit(2)
 
     portable = False
     # Folder for user settings.
