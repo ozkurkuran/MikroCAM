@@ -65,8 +65,9 @@ class MachineController:
             try:
                 lines = self._framer.feed(chunk)
             except ValueError as error:
-                self._invalidate()
-                self._diagnose(f'Invalid controller record: {error}')
+                self._invalidate(clear_units=True)
+                self._settings_sent_at = None
+                self._diagnose(f'Invalid controller framing; reconnect to verify units: {error}')
                 lines = ()
             for line in lines:
                 self._consume(line)

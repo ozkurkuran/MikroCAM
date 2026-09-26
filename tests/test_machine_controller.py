@@ -225,6 +225,15 @@ def test_settings_units_remain_provisional_until_successful_ack():
     assert state.report_units is None and state.machine_position_mm is None
 
 
+def test_corrupt_chunk_cannot_hide_reset_and_keep_old_unit_evidence():
+    controller, fake, _ = session()
+    units(controller, fake)
+    receive(controller, fake, b'<Idle|MPos:1,2,3|WCO:1,1,1>\n')
+    receive(controller, fake, b"Grbl 1.1h ['$' for help]\n" + b'x' * 600 + b'\n')
+    state = receive(controller, fake, b'<Idle|MPos:1,2,3>\n')
+    assert state.report_units is None and state.machine_position_mm is None
+
+
 def test_bounded_diagnostic_and_chunk_processing():
     controller, fake, _ = session()
     units(controller, fake)
