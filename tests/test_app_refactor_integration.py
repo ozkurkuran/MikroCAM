@@ -393,6 +393,11 @@ class TestAppFacadeIntegration(unittest.TestCase):
 
                     result = getattr(App, method_name)(app, *args, **kwargs)
 
+                    if (family, method_name) == ('lifecycle', 'version_check'):
+                        # MikroCAM must not delegate to Evo's update channel.
+                        target_method.assert_not_called()
+                        self.assertIsNone(result)
+                        continue
                     target_method.assert_called_once_with(*args, **kwargs)
                     if (family, method_name) in RETURN_FACADES:
                         self.assertIs(result, sentinel)

@@ -1,4 +1,6 @@
 
+from mikrocam.ui import identity as product_identity
+
 import sys
 
 from PyQt6.QtCore import QSettings
@@ -275,6 +277,7 @@ class GeneralAppPrefGroupUI(OptionsGroupUI):
               "This does not upload or send credentials or application data.")
         )
         grid4.addWidget(self.prepare_update_files_btn, 9, 0, 1, 2)
+        product_identity.disable_update_controls(self, _)
 
         # Send Stats CB
         self.send_stats_cb = FCCheckBox(label='%s' % _('Send Statistics'))

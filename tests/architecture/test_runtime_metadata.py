@@ -22,7 +22,9 @@ def project():
 
 def test_project_metadata_identifies_skeleton_without_replacing_requirements(project):
     assert project['name'] == 'mikrocam'
-    version = Version(project['version'])
+    from mikrocam.core.identity import VERSION
+    version = Version(VERSION)
+    assert 'version' not in project and project['dynamic'] == ['version']
     assert not version.is_prerelease and not version.is_devrelease
     assert not project.get('dependencies'), 'Pinned requirements remain authoritative'
     assert not project.get('optional-dependencies')

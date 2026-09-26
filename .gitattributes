@@ -1,0 +1,2 @@
+# License inventory hashes refer to original upstream bytes, on every platform.
+THIRD_PARTY_LICENSES/** -text

@@ -67,7 +67,7 @@ Spec-kit feature numarasını (`001-…`) sırayla verir. `Kısa ad` sütunu, `/
 | --- | --- | --- | --- |
 | 1 | `evo-py313-baseline` — **tamamlandı** | Evo Beta_1.0, Windows 11 / CPython 3.13 x64. Sabitlenmiş bağımlılıklar, iki temiz kurulum, 511 geçen test + 310 subtest ve üç başarılı GUI/CAM duman döngüsü. İki upstream boş Qt test taslağı hâlâ atlanır. [Doğrulama](../specs/001-evo-py313-baseline/validation.md). | Hazırlık |
 | 2 | `foundation-guardrails` — **tamamlandı** | `mikrocam/core` iskeleti, Python sürüm bildirimi, import sınırı ve en büyük on legacy modül için feature başına +50 satır denetimi. Windows CI: 594 test + 310 subtest başarılı; iki upstream taslak atlanır. [Doğrulama](../specs/002-foundation-guardrails/validation.md). | 1 |
-| 3 | `branding-and-notices` | Ürün kimliği tek modülde; MikroCAM adı ve About ekranı (FlatCAM ve Evo telifleri korunur); `LICENSE` (MIT), `NOTICE.md`, `THIRD_PARTY_LICENSES/` (PyQt6 GPLv3 dahil), `THIRD_PARTY_CHANGES.md` | 2 |
+| 3 | `branding-and-notices` — **tamamlandı** | Tek ürün kimliği, MikroCAM başlık/About; kaynak MIT, FlatCAM/Evo telifleri ve 58 bağımlılığın lisansları korunur (PyQt6 GPLv3 dahil). Windows CI: 639 test + 310 subtest; gerçek GUI/CAM duman testi başarılı. Eski artwork ve opsiyonel DLL bildirim açıkları ikili paketleme öncesi NOTICE içinde kayıtlıdır. [Doğrulama](../specs/003-branding-and-notices/validation.md). | 2 |
 
 ### 0.2 — İlk lazer PCB
 
