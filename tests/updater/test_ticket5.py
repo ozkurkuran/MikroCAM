@@ -124,7 +124,7 @@ def _patch_dialogs(monkeypatch, windows_root, output_root, notes=("", True), ans
         monkeypatch.setattr(QtWidgets.QMessageBox, "question", lambda *args, **kwargs: answer)
 
 
-def test_general_preferences_expose_non_persisted_prepare_control(qapp):
+def test_product_preferences_explain_unavailable_prepare_control(qapp):
     from appGUI.preferences.general.GeneralAppPrefGroupUI import GeneralAppPrefGroupUI
     from appGUI.preferences.OptionsGroupUI import OptionsGroupUI
 
@@ -137,10 +137,11 @@ def test_general_preferences_expose_non_persisted_prepare_control(qapp):
         OptionsGroupUI.app = previous_app
 
     assert group.prepare_update_files_btn.text() == "Prepare Update Files"
-    assert "does not upload" in group.prepare_update_files_btn.toolTip()
+    assert not group.prepare_update_files_btn.isEnabled()
+    assert "not available" in group.prepare_update_files_btn.toolTip()
 
 
-def test_general_preferences_expose_automatic_update_toggle_without_disabling_statistics(qapp):
+def test_product_disables_upstream_update_toggle_without_disabling_statistics(qapp):
     from appGUI.preferences.general.GeneralAppPrefGroupUI import GeneralAppPrefGroupUI
     from appGUI.preferences.OptionsGroupUI import OptionsGroupUI
 
@@ -153,7 +154,8 @@ def test_general_preferences_expose_automatic_update_toggle_without_disabling_st
         OptionsGroupUI.app = previous_app
 
     assert group.version_check_cb.text() == "Check for updates automatically"
-    assert "manual" in group.version_check_cb.toolTip().lower()
+    assert not group.version_check_cb.isEnabled()
+    assert "not available" in group.version_check_cb.toolTip().lower()
     group.version_check_cb.setChecked(False)
     assert group.send_stats_cb.isEnabled()
 
@@ -232,7 +234,7 @@ def test_prepare_workflow_cancellation_is_a_no_op(monkeypatch, tmp_path, cancel_
     assert app._release_preparation_in_progress is False
 
 
-def test_prepare_workflow_confirms_current_identity_and_source_root(monkeypatch, tmp_path):
+def test_product_prepare_workflow_cannot_offer_upstream_release_confirmation(monkeypatch, tmp_path):
     from appMain import App
 
     source = _make_source(tmp_path / "source")
@@ -257,11 +259,9 @@ def test_prepare_workflow_confirms_current_identity_and_source_root(monkeypatch,
 
     App.prepare_update_files(app)
 
-    assert "Version: 3.4.5" in question_text[0]
-    assert "Build: 2026/5/01" in question_text[0]
-    assert "Date: 2026/5/01" in question_text[0]
-    assert str(source) in question_text[0]
+    assert question_text == []
     assert app.worker_task.emissions == []
+    assert 'not available' in app.inform.emissions[-1][0]
 
 
 def test_prepare_workflow_rejects_incomplete_inputs_before_worker_dispatch(monkeypatch, tmp_path):
@@ -286,10 +286,10 @@ def test_prepare_workflow_rejects_incomplete_inputs_before_worker_dispatch(monke
 
     assert app.worker_task.emissions == []
     assert app._release_preparation_in_progress is False
-    assert "required" in app.inform.emissions[-1][0].lower()
+    assert "not available" in app.inform.emissions[-1][0].lower()
 
 
-def test_prepare_workflow_dispatches_once_to_worker_stack(monkeypatch, tmp_path):
+def test_product_prepare_workflow_cannot_dispatch_even_after_confirmation(monkeypatch, tmp_path):
     from appMain import App
 
     source = _make_source(tmp_path / "source")
@@ -309,10 +309,10 @@ def test_prepare_workflow_dispatches_once_to_worker_stack(monkeypatch, tmp_path)
     App.prepare_update_files(app)
     App.prepare_update_files(app)
 
-    assert len(app.worker_task.emissions) == 1
-    task = app.worker_task.emissions[0][0]
-    assert task["fcn"] == app._prepare_releases_worker
-    assert app._release_preparation_in_progress is True
+    assert app.worker_task.emissions == []
+    assert app._release_preparation_in_progress is False
+    assert len(app.inform.emissions) == 2
+    assert all('not available' in emission[0] for emission in app.inform.emissions)
 
 
 def test_worker_failure_resets_state_and_logs_full_details(monkeypatch, tmp_path):

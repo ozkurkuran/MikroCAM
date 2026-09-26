@@ -11,6 +11,8 @@
 # Date: 3/10/2019                                          #
 # ##########################################################
 
+from mikrocam.ui import identity as product_identity
+
 from PyQt6 import QtGui, QtCore, QtWidgets
 from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal, QDate, QDateTime
 from PyQt6.QtWidgets import QTextEdit, QCompleter
@@ -4963,7 +4965,7 @@ class _BrowserTextEdit(QTextEdit):
     def clear(self):
         QTextEdit.clear(self)
 
-        text = "!FlatCAM Evo %s? - %s" % (self.version, _("Type >help< to get started"))
+        text = "!%s? - %s" % (product_identity.window_title(), _("Type >help< to get started"))
         text = html.escape(text)
         # hack so I can make text bold because the escape method will replace the '<' and '>' signs with html code
         text = text.replace('!', '<b>')

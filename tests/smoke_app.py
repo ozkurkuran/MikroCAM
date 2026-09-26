@@ -4,6 +4,8 @@ Run with the checkout's Python: .venv/Scripts/python.exe tests/smoke_app.py
 Requires a real desktop/OpenGL context; never connects to manufacturing hardware.
 """
 import multiprocessing
+import json
+import lzma
 import os
 from pathlib import Path
 import sys
@@ -41,6 +43,38 @@ def assert_object(app, name, kind):
     return obj
 
 
+def assert_product_title(app):
+    from mikrocam.core.identity import NAME, VERSION
+    title = app.ui.windowTitle()
+    assert NAME in title and VERSION in title, title
+    assert app.version == 'Unstable', 'Branding changed the host compatibility version'
+
+
+def inspect_about(app, qapp, errors):
+    from PyQt6 import QtCore, QtWidgets
+    from mikrocam.core.identity import NAME, VERSION, REPOSITORY_URL
+    checked = []
+    def inspect_dialog():
+        dialog = qapp.activeModalWidget()
+        try:
+            assert isinstance(dialog, QtWidgets.QDialog), 'About dialog did not open'
+            text = '\n'.join(label.text() for label in dialog.findChildren(QtWidgets.QLabel))
+            for expected in (NAME, VERSION, REPOSITORY_URL, 'Juan Pablo Caram', 'Marius Stanciu', 'GPL'):
+                assert expected in text, f'Missing About attribution/identity: {expected}'
+            screenshot = ROOT / '.venv/about-smoke.png'
+            assert dialog.grab().save(str(screenshot)), 'About screenshot could not be saved'
+            checked.append(True)
+            print('ABOUT_OK', screenshot, flush=True)
+        except BaseException as error:
+            errors.append(error)
+        finally:
+            if dialog is not None:
+                dialog.reject()
+    QtCore.QTimer.singleShot(500, inspect_dialog)
+    app.on_about()
+    assert checked and not errors, f'About check failed: {errors}'
+
+
 def cam_journey(app, qapp, sandbox, errors):
     from PyQt6 import QtCore, QtWidgets
     fixtures = ROOT / 'assets/examples/files'
@@ -71,6 +105,10 @@ def cam_journey(app, qapp, sandbox, errors):
     project = sandbox / 'smoke.FlatPrj'
     app.f_handlers.save_project(str(project), silent=True)
     assert project.is_file() and project.stat().st_size > 0
+    saved = project.read_bytes()
+    if saved.startswith(b'\xfd7zXZ\x00'):
+        saved = lzma.decompress(saved)
+    assert json.loads(saved)['version'] == app.version == 'Unstable'
     print('PROJECT_SAVE_OK', flush=True)
     app.should_we_save = False
     accepted = []
@@ -104,6 +142,7 @@ def cam_journey(app, qapp, sandbox, errors):
         assert_object(app, name, kind)
     reopened = app.collection.get_by_name('smoke_cnc')
     assert reopened.gcode == gcode and reopened.gcode_parsed
+    assert_product_title(app)
     print('PROJECT_ROUNDTRIP_OK', actual, flush=True)
 
 
@@ -164,6 +203,8 @@ def run_smoke(sandbox, state):
         assert Path(QtCore.QSettings('Open Source', 'FlatCAM_EVO').fileName()).is_relative_to(settings)
         assert not app.options['first_run'] and not app.options['global_version_check']
         print('STARTUP_OK', flush=True)
+        assert_product_title(app)
+        inspect_about(app, qapp, errors)
         app.inform.connect(lambda message: print('INFORM:', message, flush=True))
         app.workers.thread_exception.connect(lambda error: errors.append(error))
         pump_until(qapp, lambda: all(worker.receivers(worker.worker_task_signal) > 0
@@ -195,6 +236,7 @@ def run_smoke(sandbox, state):
 
 def main():
     os.chdir(ROOT)
+    (ROOT / '.venv').mkdir(exist_ok=True)
     sys.path.insert(0, str(ROOT))
     os.environ['QT_API'] = 'pyqt6'
     state = {}
