@@ -68,3 +68,11 @@ response timeout, chunk framing/bounds, duplicate connect and repeated lifecycle
 Qt tests use fake transport and assert exact transmitted bytes are a subset of `{b'?', b'$$\n'}`.
 No test opens a real serial device. Hardware release testing, movement, zeroing, preflight,
 streaming, dry-run, terminal and laser control remain outside this contract.
+
+## Review refinements
+A GRBL startup banner cancels the previous settings transaction and immediately schedules
+one fresh `$$` read. Settings responses are nonblocking event-loop state, never a three-second
+blocking wait. Stop preempts them on the next bounded read/worker iteration. Failed or incomplete
+settings reads leave units unknown. A malformed status invalidates position/offset and machine
+state evidence; a new valid report can recover direct coordinates. Read-only status retries do
+not reopen the port. A settings read is retried only after a startup banner or explicit reconnect.

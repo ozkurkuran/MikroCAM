@@ -3,7 +3,7 @@
 ## Setup and contract
 - [x] T001 Review constitution, roadmap, official GRBL/pyserial documentation and existing worker/shutdown integration in research.md.
 - [x] T002 Freeze state, coordinate evidence, transport ownership and TX allowlist in data-model.md and contracts/read-only-grbl.md.
-- [ ] T003 Analyze spec/plan/tasks and record requirements coverage and all eight gates in validation.md before runtime changes.
+- [x] T003 Analyze spec/plan/tasks and record requirements coverage and all eight gates in validation.md before runtime changes.
 
 ## US1: Explicit connection and disconnection (P1)
 **Independent test:** FakeGRBL connects, fails, disconnects and reconnects without any motion or persistent setting writes.

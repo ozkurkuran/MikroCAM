@@ -33,5 +33,9 @@ All eight constitution gates are addressed in plan.md. Implementation review mus
 8. Three stories, 28 tasks.
 
 ## Execution evidence
+Read-only Luna review identified reset settings reacquisition and cancellation versus the
+three-second settings timeout. The contract now explicitly resolves both with nonblocking
+transaction state and a fresh read after a startup banner. All 16 spec checklist items passed;
+check-prerequisites returned the complete feature context. No extension hooks are installed.
 Pending. Record failures before fixes, passing commands, runtime/head, remaining limitations,
 real desktop result and hosted CI before marking the feature complete.
