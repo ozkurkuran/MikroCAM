@@ -69,3 +69,22 @@ Report CLI tests first failed on the absent module, then **14 passed in 2.13s**.
 unchanged offline inputs, contextual missing/corrupt/unsupported evidence, parameter changes,
 runtime/config/input mismatches and exclusive report publication outside input directories.
 Actual baseline/candidate captures and real corpus comparison remain the next integration gate.
+
+## Audited corpus and bounded comparison review
+The admitted corpus contains 10 distinct designs from Eagle, Altium, DipTrace, Fritzing,
+Proteus, EasyEDA and KiCad: 60 source files, 3,612,881 bytes. All 60 committed Git blobs
+were checked against their manifest SHA256, including unchanged archive members. Source
+identities, individual licenses and rejected ambiguous candidates are recorded in the
+manifest, retained notices, reference README and THIRD_PARTY_CHANGES.md.
+
+Actual Altium evidence required raising the decoded JSON/child bound from 128 to 512 MiB;
+the old Evo resource error is excluded from the accepted baseline run. A new UTF-8 boundary
+test checks JSON parse/dump/gzip/publication. G-code comparison streams blocks and records
+total differences plus 100 indices. Topology/area failures omit the unnecessary quadratic
+Hausdorff metric explicitly as null. New behavior tests first failed in three cases, then
+passed. Independent review also reproduced baseline replay and missing-stage-context issues
+in three failing CLI tests; both are fixed without changing capture helper bytes.
+
+Latest focused comparator/CLI run: **110 passed in 4.79s**. Boundary codec/dataset/CLI run:
+**78 passed in 7.28s**; child capture boundary suite: **25 passed**. Full tests, final frozen
+artifacts and hosted CI still require the delivery checks below.

@@ -74,3 +74,37 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - MikroCAM commit: `f983d153ebe4ea8091ccbc5650db053f131ac6ae` (exact-version notice collection).
 - Product identity and update-boundary wiring are independently implemented in `bbd37168`;
   no runtime source from another fork was imported for this branding change.
+
+## 2026-09-27 — Licensed PCB regression inputs (feature 009)
+
+- Reason: preserve ten authentic, distinct PCB designs covering KiCad, EasyEDA, Altium,
+  Eagle and Proteus, plus DipTrace and Fritzing, for independent parser/CAM reference captures.
+- Destination: `tests/reference/boards/**`; the manifest records all 60 retained source
+  files (3,612,881 bytes), original relative paths, archive members and SHA256 values.
+  Original archives and notice files are retained; selected members are extracted verbatim.
+- Source `jaseg/gerbonara` at `736107f7a4fa1f9858d4da93879ca00015893628`:
+  `tests/resources/eagle-newer/` (GYW, MIT), `altium-composite-drill/` (LimeSDR-QPCIe v1.2,
+  CC-BY-3.0), `diptrace/` (FD1 keyboard/mainboard/panel, BSD-3-Clause), `fritzing/`
+  (analog gyro, MIT). Each original per-directory license and README attribution is retained.
+  Gerbonara's root license is not used to infer rights for unidentified third-party fixtures.
+  Its Fritzing README records prior manual Gerber corrections; those bytes remain unchanged here.
+- Source `bothlab/maze-hardware` at `da73d2e3b6f5859b22398242fc484e0d9278aa5f`:
+  Sliding Gate Proteus source/manufacturing archive, selected artwork, original license
+  and documentation (CERN-OHL-W-2.0). PDS source is retained. Gerber drill maps are expressly
+  classified as artwork; they are not relabelled Excellon drill data or synthesized outlines.
+- Source `Kurisu-g/STM32F103-Minimal-System-PCB-` at
+  `a70700ad2be9c5f96b5c2774294fa48912a5d35d`: EasyEDA source and manufacturing archive,
+  top copper, PTH/NPTH and board outline, original MIT license and README.
+- Source `kyo-ta04/Pico2ROMEmu_PCB` at `de3a29370d760e93451975094372e08484cd6777`:
+  KiCad source and production archive, top copper, PTH/NPTH and edge cuts, original MIT
+  license and README.
+- Source `dusjagr/IVcurve_tester` at `f9a75be640c3651594d7e1b18a765c956d8d8d5c`:
+  KiCad MUX-ADG706 source/production archive, top copper, PTH/NPTH and edge cuts, original
+  MIT license and README.
+- Adaptations: only destination organization and newly written provenance metadata; no
+  edits to admitted source bytes. No executable source from these repositories is imported.
+  Reference captures are generated independently by the two unchanged pinned engines,
+  retaining the input designs' terms and attribution where applicable.
+- MikroCAM data/codec commit: `1a407552` (`test: curate ten licensed PCB references with strict provenance codecs`).
+  The capture harness (`a3f60b22`) and comparison logic (`7eaef7d0`, `a055271c`, `613948aa`)
+  are independently implemented, not copied from those projects.

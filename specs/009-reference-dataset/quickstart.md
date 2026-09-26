@@ -1,7 +1,7 @@
-# Quickstart validation (after implementation)
+# Capture and comparison quickstart
 
 Use the existing pinned Python 3.13 x64 environment. No new dependency, desktop or hardware.
-Run from the repository root. Commands below describe the contract; implementation is pending.
+Run from the repository root. Use fresh output/report paths for each run.
 
 1. Run focused tests and offline corpus audit:
    `python -m pytest tests/test_reference_dataset.py tests/test_reference_capture.py tests/test_reference_compare.py -q`.
@@ -9,7 +9,7 @@ Run from the repository root. Commands below describe the contract; implementati
 2. Verify both detached source worktrees are clean at the exact revisions in the contract.
    Do not switch/update/patch them. Freeze capture-config.json only after recorded API probes.
 3. Capture each baseline into a fresh temporary directory, supplying its interpreter/source:
-   `python tests/reference/capture.py --engine evo --source ../MikroCAM-reference-evo --python PYTHON_PATH --manifest tests/reference/boards/manifest.json --config tests/reference/capture-config.json --output NEW_EVO_DIRECTORY`.
+   `python tests/reference/capture.py --engine evo --source ../MikroCAM-reference-evo --python PYTHON_PATH --manifest tests/reference/boards/manifest.json --config tests/reference/capture-config.json --output NEW_EVO_DIRECTORY --timeout-seconds 300`.
    Repeat for legacy8994 with `../FlatCAM-reference-8994`. Repeat each capture into another
    fresh directory and check normalized reproducibility before reviewing tracked goldens.
 4. Capture current using `--engine current --revision CLEAN_CURRENT_SHA` and its source/interpreter.

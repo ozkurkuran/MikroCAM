@@ -1,6 +1,67 @@
-# Compatibility references
+# Compatibility and PCB references
 
 svg_paths.json captures the fixed input and expected geometry from the MIT 8.994 port's
 tests/test_runtime_compatibility.py at baseline-8.994-py313 (6ba378bc). Coordinates and
 areas use absolute tolerance 1e-9. These small regressions are not the later reference-dataset
 feature's multi-CAD golden output collection. Source and adaptations: THIRD_PARTY_CHANGES.md.
+
+## Authentic board corpus
+
+`boards/manifest.json` admits ten distinct board designs, retaining 60 original files
+(3,612,881 bytes). These are data fixtures, not new runtime dependencies or imported
+application code. Files and selected archive members are unchanged; original archives,
+source notices and available editable projects are retained. The manifest binds source
+revision/path, origin evidence, role and byte hashes. `.gitattributes` preserves these bytes.
+
+| Board | Origin | Original terms |
+| --- | --- | --- |
+| GYW workshop export | Eagle | MIT |
+| LimeSDR-QPCIe v1.2 | Altium | CC-BY-3.0 |
+| FD1 keyboard | DipTrace | BSD-3-Clause |
+| FD1 mainboard | DipTrace | BSD-3-Clause |
+| FD1 panel | DipTrace | BSD-3-Clause |
+| Analog gyro | Fritzing | MIT |
+| Sliding Gate | Proteus | CERN-OHL-W-2.0 |
+| STM32F103 minimal system | EasyEDA | MIT |
+| Pico2ROMEmu | KiCad | MIT |
+| I-V curve multiplexer | KiCad | MIT |
+
+Per-board notices apply to the source data and derived captures where applicable; MikroCAM's
+MIT source license does not replace them. The Fritzing fixture includes upstream manual
+Gerber fixes, described in its retained README; MikroCAM does not rewrite that export.
+The Proteus drill-map layers are Gerber artwork, not Excellon holes. Missing optional drill
+or outline layers are not invented. Four Gerbonara candidates without specific redistribution
+evidence and Chibi's version-unspecified CC BY-SA notice were excluded.
+
+## Capture and comparison
+
+The frozen sources are `baseline-8.994-py313` at
+`6ba378bca139aa306f8c94f09461a98f95d3c75b` in the separate reference repository and
+`upstream-evo-baseline` at `d0a86cf4f1ac41a206b20f316d4a29f28a93bbff` in this repository.
+The latter is the preserved initial Evo fork; the running MikroCAM source uses the later
+user-selected Beta_1.0. Their differences are evidence, never silently updated expectations.
+
+Use a clean standard CPython 3.13 x64 environment with `requirements-dev.txt` and
+`requirements-image.txt` to recapture both old sources: 8.994 imports Rasterio eagerly.
+Offline codec/comparison tests need only the existing core/development environment.
+Both engines and the candidate must use the same interpreter/dependency versions and
+capture helper bytes for a controlled comparison. No desktop or manufacturing hardware is used.
+
+From the repository root, run the explicit commands in
+[`specs/009-reference-dataset/quickstart.md`](../../specs/009-reference-dataset/quickstart.md).
+Every capture requires clean declared source and a fresh output directory. Baseline labels
+enforce exact revisions; current capture requires its full explicit revision. Input, source,
+configuration and runtime evidence are recorded in schema-1 compressed JSON. Actual exceptions
+or timeouts are retained per stage; capture completeness does not mean every CAM stage succeeded.
+
+Comparison requires an explicit baseline, distance in mm and area in mm². It checks topology,
+GEOS discrete vertex Hausdorff distance, symmetric-difference area, ordered CNC paths and
+drill/slot multiplicity. A narrow default-preprocessor word comparison also detects emitted
+Z/feed/spindle/dwell/mode/tool changes. Comments and numeric spelling do not count; X/Y words
+use distance tolerance and other numeric words are exact. It does not interpret modal state.
+
+Exit 0 means all comparable stages match, 1 means measured differences with no unavailable
+stage, and 2 means invalid or indeterminate evidence. Repeated baseline failures remain
+indeterminate. Reports are written exclusively outside input directories; there is no
+automatic golden-update option. See the feature validation record for actual captured
+outcomes and observed differences; these developer comparisons do not run the G-code.
