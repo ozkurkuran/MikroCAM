@@ -54,3 +54,11 @@ Capture adapters must match unchanged source APIs; isolation wrappers may provid
 test context, never altered parser/CAM algorithms. Reproduction and IN probes are implementation
 tasks with retained evidence. Core geometry/path comparison is sufficiently specified to test first
 independently while the dataset audit/capture probes proceed.
+
+## Large-board resource evidence
+The actual legacy Altium capture is 104,387,987 decoded JSON bytes and its 16,163,652-byte
+G-code has 722,758 lines. Evo exceeded the original 128 MiB child-output ceiling. This is
+a harness limit, not a parser failure. The artifact/child limit is now 512 MiB; G-code is
+bounded at 64 MiB/4,000,000 blocks and parsed incrementally. Geometry retains its 64 MiB
+WKB and 2,000,000-vertex limits. Once topology/area already fails, quadratic discrete
+Hausdorff is omitted explicitly; no tolerance is widened and no difference becomes a match.

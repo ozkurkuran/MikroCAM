@@ -18,7 +18,7 @@ CLI tolerances are required explicit finite nonnegative `distance_mm` and `area_
 Capture API calls, explicit machining values and IN/repeat feasibility are probe-verified
 in research.md; formal codec/config freeze precedes harness. No guessed fallback settings.
 Core bounds: WKB64MiB decoded/geometry, paths200000, vertices2000000; developer decoded
-gzip JSON128MiB/artifact. Exact tool records preserve diameter/multiplicity and ordered drill/slots.
+gzip JSON512MiB/artifact. Exact tool records preserve diameter/multiplicity and ordered drill/slots.
 
 ## Constitution Check
 | Gate | Result | Evidence |

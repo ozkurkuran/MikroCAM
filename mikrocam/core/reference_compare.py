@@ -62,7 +62,7 @@ class GeometryComparison:
     """GEOS discrete vertex Hausdorff and symmetric-difference area, in mm/mm²."""
     matches: bool
     topology_equal: bool
-    hausdorff_mm: float
+    hausdorff_mm: float | None
     symmetric_difference_mm2: float
     bounds_delta_mm: tuple[float, float, float, float]
 
@@ -74,6 +74,7 @@ def compare_geometry(expected_wkb: str, actual_wkb: str, *, distance_mm: float,
     Topology, absolute distance and absolute area must all pass. Distance is the
     GEOS discrete vertex metric; this is not a continuous maximum-distance proof.
     Bounds deltas are diagnostic evidence, not an additional implicit tolerance.
+    Distance is omitted (None) when topology/area already proves a difference.
     """
     distance = _tolerance(distance_mm, 'distance_mm')
     area = _tolerance(area_mm2, 'area_mm2')
@@ -84,11 +85,13 @@ def compare_geometry(expected_wkb: str, actual_wkb: str, *, distance_mm: float,
         if expected.equals(actual):
             hausdorff, difference = 0.0, 0.0
         else:
-            hausdorff = _metric(expected.hausdorff_distance(actual))
             difference = _metric(expected.symmetric_difference(actual).area)
+            hausdorff = (_metric(expected.hausdorff_distance(actual))
+                         if topology and difference <= area else None)
     except GEOSException as error:
         raise ValueError(f'Reference geometry comparison failed: {error}') from error
-    return GeometryComparison(topology and hausdorff <= distance and difference <= area,
+    return GeometryComparison(topology and hausdorff is not None
+                              and hausdorff <= distance and difference <= area,
                               topology, hausdorff, difference, bounds)
 
 

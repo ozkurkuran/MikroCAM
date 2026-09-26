@@ -71,6 +71,19 @@ def test_line_displacement_uses_distance_even_when_areas_are_zero():
     assert not compare(first, translate(first, yoff=.1), .01, 100).matches
 
 
+def test_definite_area_or_topology_failure_skips_quadratic_distance(monkeypatch):
+    def unexpected_distance(*args):
+        pytest.fail('Hausdorff is unnecessary after a definite failure')
+    monkeypatch.setattr(reference.BaseGeometry, 'hausdorff_distance', unexpected_distance)
+    solid = box(0, 0, 10, 10)
+    shifted = compare(solid, translate(solid, xoff=1), .01, .01)
+    assert not shifted.matches and shifted.hausdorff_mm is None
+    assert shifted.symmetric_difference_mm2 == 20
+    holed = compare(solid, solid.difference(box(4, 4, 6, 6)), 100, 1000)
+    assert not holed.matches and holed.hausdorff_mm is None
+    assert holed.symmetric_difference_mm2 == 4
+
+
 @pytest.mark.parametrize('value', [True, False, -1, float('nan'), float('inf'), '0.1', None])
 @pytest.mark.parametrize('key', ['distance_mm', 'area_mm2'])
 def test_invalid_tolerances_are_errors(value, key):

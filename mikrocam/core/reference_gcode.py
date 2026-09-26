@@ -1,13 +1,17 @@
 """Compare captured default-preprocessor words without interpreting machine state."""
 from dataclasses import dataclass
 from fractions import Fraction
+from collections.abc import Iterator
+from io import StringIO
+from itertools import zip_longest
 import re
 
 from .reference_compare import _tolerance
 
 
-MAX_GCODE_BYTES = 32 * 1024 * 1024
-MAX_BLOCKS = 500_000
+MAX_GCODE_BYTES = 64 * 1024 * 1024
+MAX_BLOCKS = 4_000_000
+MAX_DIFFERENCE_SAMPLE = 100
 _WORD = re.compile(r'([GMXYZFSTPIJKRN])([+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+))', re.IGNORECASE)
 Word = tuple[str, Fraction]
 
@@ -31,7 +35,7 @@ def _words(block: str) -> tuple[Word, ...]:
     return tuple(words)
 
 
-def _blocks(text: str) -> tuple[tuple[Word, ...], ...]:
+def _blocks(text: str) -> Iterator[tuple[Word, ...]]:
     if not isinstance(text, str) or len(text) > MAX_GCODE_BYTES:
         raise ValueError('G-code text exceeds the resource limit or is not a string')
     try:
@@ -39,8 +43,8 @@ def _blocks(text: str) -> tuple[tuple[Word, ...], ...]:
             raise ValueError('G-code text exceeds the resource limit')
     except UnicodeError as error:
         raise ValueError('G-code requires valid text') from error
-    blocks, depth = [], 0
-    for line in text.splitlines():
+    count, depth, has_words = 0, 0, False
+    for line in StringIO(text, newline=None):
         executable = []
         for character in line:
             if character == '(':
@@ -57,23 +61,26 @@ def _blocks(text: str) -> tuple[tuple[Word, ...], ...]:
                 executable.append(character)
         block = ''.join(executable).strip()
         if block:
-            blocks.append(_words(block))
-            if len(blocks) > MAX_BLOCKS:
+            count += 1
+            if count > MAX_BLOCKS:
                 raise ValueError('G-code block count exceeds the resource limit')
+            words = _words(block)
+            has_words = has_words or any(word[0] != '%' for word in words)
+            yield words
     if depth:
         raise ValueError('Unclosed G-code comment')
-    if not blocks or not any(word[0] != '%' for block in blocks for word in block):
+    if not has_words:
         raise ValueError('G-code must contain executable words')
-    return tuple(blocks)
 
 
 @dataclass(frozen=True)
 class GcodeComparison:
-    """Zero-based executable block indices, independent of comment/blank line count."""
+    """Total differences and first 100 zero-based executable block indices."""
     matches: bool
     differing_blocks: tuple[int, ...]
     expected_count: int
     actual_count: int
+    difference_count: int
 
 
 def _differs(first: tuple[Word, ...], second: tuple[Word, ...], tolerance: Fraction) -> bool:
@@ -98,8 +105,12 @@ def compare_gcode(expected: str, actual: str, *, distance_mm: float) -> GcodeCom
     Unsupported text raises ValueError rather than pretending those words match.
     """
     tolerance = Fraction(str(_tolerance(distance_mm, 'distance_mm')))
-    first, second = _blocks(expected), _blocks(actual)
-    differing = tuple(index for index in range(max(len(first), len(second)))
-                      if index >= len(first) or index >= len(second)
-                      or _differs(first[index], second[index], tolerance))
-    return GcodeComparison(not differing, differing, len(first), len(second))
+    differing, total, expected_count, actual_count = [], 0, 0, 0
+    for index, (first, second) in enumerate(zip_longest(_blocks(expected), _blocks(actual))):
+        expected_count += first is not None
+        actual_count += second is not None
+        if first is None or second is None or _differs(first, second, tolerance):
+            total += 1
+            if len(differing) < MAX_DIFFERENCE_SAMPLE:
+                differing.append(index)
+    return GcodeComparison(not total, tuple(differing), expected_count, actual_count, total)

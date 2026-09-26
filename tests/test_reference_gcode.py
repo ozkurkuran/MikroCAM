@@ -55,3 +55,23 @@ def test_input_and_block_limits_are_explicit(monkeypatch):
     monkeypatch.setattr(reference, 'MAX_BLOCKS', 1)
     with pytest.raises(ValueError, match='limit'):
         reference.compare_gcode(PROGRAM, PROGRAM, distance_mm=0)
+
+
+def test_many_differences_retain_total_and_bounded_index_sample():
+    result = reference.compare_gcode('G1 X0\n' * 125, 'G1 X1\n' * 126, distance_mm=0)
+    assert not result.matches and result.difference_count == 126
+    assert result.differing_blocks == tuple(range(100))
+    assert (result.expected_count, result.actual_count) == (125, 126)
+
+
+def test_invalid_tail_is_not_hidden_after_difference_sample_is_full():
+    with pytest.raises(ValueError, match='Unsupported'):
+        reference.compare_gcode('G1 X0\n' * 125, 'G1 X1\n' * 125 + 'G1 XNaN', distance_mm=0)
+
+
+def test_block_parser_streams_and_still_validates_the_consumed_tail():
+    blocks = reference._blocks('G21\nG1 XNaN')
+    assert iter(blocks) is blocks
+    assert next(blocks)[0][0] == 'G'
+    with pytest.raises(ValueError, match='Unsupported'):
+        next(blocks)

@@ -77,7 +77,7 @@ Tool comparison requires equal IDs and tool/drill/slot counts/order; diameter an
 drill/slot endpoint differences use distance_mm. Reusable numeric/path comparison stays core-only.
 Tolerances are explicit finite nonboolean real numbers >=0; zero is valid. Malformed/nonplanar
 WKB and oversized input raise ValueError. Limits: 64 MiB decoded WKB per geometry,
-200,000 ordered paths and 2,000,000 aggregate vertices in core; 128 MiB decoded JSON per
+200,000 ordered paths and 2,000,000 aggregate vertices in core; 512 MiB decoded JSON per
 gzip artifact in developer codecs. Fail explicitly before expensive allocation; never truncate.
 
 ## Comparison report

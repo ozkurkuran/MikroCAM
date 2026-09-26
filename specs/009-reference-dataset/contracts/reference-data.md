@@ -6,14 +6,15 @@ area_mm2: float) -> GeometryComparison` validates finite valid 2D canonical ISO 
 normalizes ring/component ordering for set comparison, requires structural topology equality,
 discrete vertex Hausdorff <= distance_mm and symmetric-difference area <= area_mm2.
 Identical valid geometry has a zero-metric fast path. Bounds deltas are report evidence,
-not an extra implicit tolerance. Invalid/oversized/nonplanar inputs or tolerances raise ValueError.
+not an extra implicit tolerance. If topology or area already fails, hausdorff_mm is null
+(not computed); the result remains a definite difference. Invalid/oversized/nonplanar inputs or tolerances raise ValueError.
 
 `compare_paths(expected: Sequence[ReferencePath], actual: Sequence[ReferencePath], *,
 distance_mm: float) -> PathComparison` compares path order/count, exact kind tuples and
 ordered XY coordinate counts/positions, including direction and repeated vertices.
 Only Point/LineString paths are accepted. Invalid values raise ValueError.
 Core limits: 64 MiB decoded WKB/geometry, 200,000 paths and 2,000,000 aggregate vertices.
-Developer gzip codecs reject decoded JSON beyond 128 MiB/artifact.
+Developer gzip codecs reject decoded JSON beyond 512 MiB/artifact.
 Excellon comparison retains source_units metadata and explicit tools (ID, diameter_mm,
 ordered drills/slots), using distance tolerance for diameters/coordinates and exact IDs/counts.
 Every stage uses the same exact keys with tools=[] and source_units=null where unavailable.
@@ -67,8 +68,10 @@ Comments, blank lines, letter case and whitespace do not count. X/Y numeric word
 absolute component tolerance; every other numeric word is exact (Z, feed, spindle, dwell,
 mode, tool, etc.). Numeric spelling such as `1.0` versus `1.000` is equivalent. Block and
 word order and duplicate words remain significant. Unsupported syntax is indeterminate,
-not silently ignored. Limits are 32 MiB UTF-8 input, 500,000 executable blocks, 64 characters
-per numeric token and comment nesting 64. This narrow saved-output comparison complements
+not silently ignored. Limits are 64 MiB UTF-8 input, 4,000,000 executable blocks, 64 characters
+per numeric token and comment nesting 64. Blocks are consumed incrementally. Reports retain
+the total difference_count and the first 100 differing_blocks indices; every remaining
+block is still validated, including unsupported tails. This narrow saved-output comparison complements
 ordered engine-parsed paths; it adds no modal interpreter, simulation or machine preflight.
 
 Capture exits 0 when every selected board has a complete validated artifact, even when actual
