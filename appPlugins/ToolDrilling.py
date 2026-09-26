@@ -1254,6 +1254,7 @@ class ToolDrilling(Excellon, AppTool):
                     return
 
             self.excellon_tools = new_tools_dict
+            self.excellon_obj.tools = deepcopy(new_tools_dict)
             self.build_tool_ui()
 
     def on_toggle_all_rows(self):

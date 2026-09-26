@@ -108,3 +108,13 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - MikroCAM data/codec commit: `1a407552` (`test: curate ten licensed PCB references with strict provenance codecs`).
   The capture harness (`a3f60b22`) and comparison logic (`7eaef7d0`, `a055271c`, `613948aa`)
   are independently implemented, not copied from those projects.
+
+## 2026-09-27 — Persist drilling database replacements
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit `cec6a094`
+  (drilling ToolDB overwrite fix). Existing FlatCAM Evo copyright headers are retained.
+- Destination: `appPlugins/ToolDrilling.py`, `replace_tools()` only.
+- Adaptation: copy accepted replacement settings into the source Excellon object before
+  the real default-order UI rebuild reloads its tools. Database records remain independent.
+- Regression: exact and tolerance matches survive two rebuilds and reach the actual Qt form.
+- MikroCAM commit: `fix: persist drilling database replacements` (this commit).
