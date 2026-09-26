@@ -150,3 +150,14 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   restore gap-specific controls from the gap combo value, including while signals are blocked.
 - Regression: actual Qt controls retain automatic/manual and Thin/Mouse Bites states separately.
 - MikroCAM commit: `fix: restore cutout and gap controls independently` (this commit).
+
+## 2026-09-27 — Preserve explicit cutout database machining settings
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `f239fcbb8f34b300516f6a97ad50e6798924b07d` (Phase 5 cutout database settings).
+- Destination: `appPlugins/ToolCutOut.py`, database matching and picker callback; notices retained.
+- Adaptation: remove six post-copy assignments that replace dedicated cutout Z, multidepth and
+  pass depth with milling values. Dedicated cutout settings remain authoritative in both routes.
+- Regression: exact, tolerance and picker insertion retain intentionally distinct machining
+  values in stored data and actual Qt controls; original records/files remain unchanged.
+- MikroCAM commit: `fix: preserve explicit cutout database settings` (this commit).
