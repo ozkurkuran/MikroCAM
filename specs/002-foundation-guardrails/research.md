@@ -5,7 +5,9 @@
 Decision: inspect Python AST without importing checked modules. Resolve absolute/relative
 imports, package initializers, aliases and literal importlib/builtin dynamic imports; reject
 unresolved dynamic targets. Enforce the constitutional layer matrix and core's stdlib,
-NumPy/Shapely allowlist. Package root remains stdlib-only. Hardware-facing stdlib imports
+NumPy/Shapely allowlist. Domains access external geometry through core and hardware adapters
+through bridge-facing interfaces; they import only stdlib, core and their own package.
+Package root remains stdlib-only. Hardware-facing stdlib imports
 are excluded from core. This is a development check, not a sandbox against hostile code.
 
 Rationale: deterministic checks do not need Qt or side effects. Synthetic bad modules prove

@@ -77,6 +77,8 @@ Makefile remain available as historical platform setup paths; they are not subst
 for the pinned Windows instructions above. macOS support is outside this slice.
 
 This baseline validates the stated CAM journey, not every tool, editor, controller or
-postprocessor. Distribution packaging, complete dependency notices, product branding and
-CI guardrails follow their own roadmap slices. Feature rules are in
+postprocessor. Distribution packaging, complete dependency notices and product branding
+follow their own roadmap slices. Feature rules are in
 [CLAUDE.md](CLAUDE.md) and the [constitution](.specify/memory/constitution.md).
+
+Architecture checks and Windows CI are now documented in [Development checks](docs/DEVELOPMENT.md).

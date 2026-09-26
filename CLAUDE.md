@@ -14,7 +14,7 @@ PCB CAM + CNC kontrol + fiber lazer CAM. Açık kaynak (MIT), GitHub'da herkese 
 `.specify/memory/constitution.md` her değişiklikte geçerlidir; spec-kit dışındaki küçük işler de
 buna dahildir. Özet:
 
-- Yeni özellik mantığı `mikrocam/` paketine yazılır (`foundation-guardrails` ile oluşturulacak).
+- Yeni özellik mantığı `mikrocam/` paketine yazılır. Koruma testleri `tests/architecture/` içindedir.
   `appMain.py`, `camlib.py` ve diğer legacy dosyalara yalnızca hata düzeltmesi ve kısa bağlantı
   kodu eklenir.
 - Katman yönü: legacy → `mikrocam.ui` → `mikrocam.bridge` → `mikrocam.<alan>` → `mikrocam.core`.
