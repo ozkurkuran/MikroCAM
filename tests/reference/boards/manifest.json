@@ -1,0 +1,626 @@
+{
+  "kind": "mikrocam.reference-dataset",
+  "schema_version": 1,
+  "boards": [
+    {
+      "id": "eagle-newer-gyw",
+      "name": "eagle-newer-gyw",
+      "origin": "Eagle",
+      "design_identity": "https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/eagle-newer/README#eagle-newer-gyw",
+      "source": {
+        "url": "https://github.com/jaseg/gerbonara",
+        "revision": "736107f7a4fa1f9858d4da93879ca00015893628",
+        "origin_evidence": "Gerber X2 header identifies Autodesk EAGLE 9.0.0; README points to GanzYouthWorkshop/GYW-Electro-Curriculum."
+      },
+      "license": {
+        "identifier": "MIT",
+        "evidence": " Original per-board license and attribution retained; https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/eagle-newer/README",
+        "notices": [
+          "eagle-newer-gyw/LICENSE"
+        ]
+      },
+      "files": [
+        {
+          "path": "eagle-newer-gyw/copper_top.gbr",
+          "source_path": "tests/resources/eagle-newer/copper_top.gbr",
+          "sha256": "49b17f6daa646df13351191f3ef5007ad3762adc0d40e665771f4b7e498720db",
+          "source_sha256": "49b17f6daa646df13351191f3ef5007ad3762adc0d40e665771f4b7e498720db",
+          "role": "copper"
+        },
+        {
+          "path": "eagle-newer-gyw/drills.xln",
+          "source_path": "tests/resources/eagle-newer/drills.xln",
+          "sha256": "073f66dac133ad675482d88f684b4d07a4b3a440fb6e211319509a44d217bac1",
+          "source_sha256": "073f66dac133ad675482d88f684b4d07a4b3a440fb6e211319509a44d217bac1",
+          "role": "drill"
+        },
+        {
+          "path": "eagle-newer-gyw/profile.gbr",
+          "source_path": "tests/resources/eagle-newer/profile.gbr",
+          "sha256": "c9dd90e854980aa69d5947f2cc586592b2ac2333cc4a94d101437a40440ca80b",
+          "source_sha256": "c9dd90e854980aa69d5947f2cc586592b2ac2333cc4a94d101437a40440ca80b",
+          "role": "outline"
+        },
+        {
+          "path": "eagle-newer-gyw/README",
+          "source_path": "tests/resources/eagle-newer/README",
+          "sha256": "9f3b8680def4ae8020c21e835b3ca3a4a5eb047eee2dec98174de5a35f5225fe",
+          "source_sha256": "9f3b8680def4ae8020c21e835b3ca3a4a5eb047eee2dec98174de5a35f5225fe",
+          "role": "notice"
+        },
+        {
+          "path": "eagle-newer-gyw/LICENSE",
+          "source_path": "tests/resources/eagle-newer/LICENSE",
+          "sha256": "bd579f1ac72fa67cb66fd84f0a003b93408c9c18024c69fd8727554b45bcc2e7",
+          "source_sha256": "bd579f1ac72fa67cb66fd84f0a003b93408c9c18024c69fd8727554b45bcc2e7",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "altium-limesdr-qpci-e-v1-2",
+      "name": "altium-limesdr-qpci-e-v1-2",
+      "origin": "Altium",
+      "design_identity": "https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/altium-composite-drill/README#altium-limesdr-qpci-e-v1-2",
+      "source": {
+        "url": "https://github.com/jaseg/gerbonara",
+        "revision": "736107f7a4fa1f9858d4da93879ca00015893628",
+        "origin_evidence": "README points to myriadrf/LimeSDR-QPCIe; immutable upstream repo has hardware/1v2/PCB/LimeSDR-QPCIe_1v2.PcbDoc and Gerber OutJob."
+      },
+      "license": {
+        "identifier": "CC-BY-3.0",
+        "evidence": "No outline file unambiguously identified; do not infer from GM1. Original per-board license and attribution retained; https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/altium-composite-drill/README",
+        "notices": [
+          "altium-limesdr-qpci-e-v1-2/LICENSE"
+        ]
+      },
+      "files": [
+        {
+          "path": "altium-limesdr-qpci-e-v1-2/LimeSDR-QPCIe_1v2.GTL",
+          "source_path": "tests/resources/altium-composite-drill/Gerber/LimeSDR-QPCIe_1v2.GTL",
+          "sha256": "0546485a505a89d547dd3db602f50d2d793cb47b3bc6a31972b199676e1dc04c",
+          "source_sha256": "0546485a505a89d547dd3db602f50d2d793cb47b3bc6a31972b199676e1dc04c",
+          "role": "copper"
+        },
+        {
+          "path": "altium-limesdr-qpci-e-v1-2/LimeSDR-QPCIe_1v2-RoundHoles.TXT",
+          "source_path": "tests/resources/altium-composite-drill/NC Drill/LimeSDR-QPCIe_1v2-RoundHoles.TXT",
+          "sha256": "f2c9544a226cc04b7ffc022e9f91195293605293163b6e54c2b698525f21d275",
+          "source_sha256": "f2c9544a226cc04b7ffc022e9f91195293605293163b6e54c2b698525f21d275",
+          "role": "drill"
+        },
+        {
+          "path": "altium-limesdr-qpci-e-v1-2/LimeSDR-QPCIe_1v2-SlotHoles.TXT",
+          "source_path": "tests/resources/altium-composite-drill/NC Drill/LimeSDR-QPCIe_1v2-SlotHoles.TXT",
+          "sha256": "483f1db8bb285a3a6f98e4b4e7db93cdbaa96a31296c0c403aeadedaa35786e3",
+          "source_sha256": "483f1db8bb285a3a6f98e4b4e7db93cdbaa96a31296c0c403aeadedaa35786e3",
+          "role": "drill"
+        },
+        {
+          "path": "altium-limesdr-qpci-e-v1-2/README",
+          "source_path": "tests/resources/altium-composite-drill/README",
+          "sha256": "bdc366fc88ae819b5b8a38dd88f632a9fe4aca00a9837ee43f3d6788477aec7a",
+          "source_sha256": "bdc366fc88ae819b5b8a38dd88f632a9fe4aca00a9837ee43f3d6788477aec7a",
+          "role": "notice"
+        },
+        {
+          "path": "altium-limesdr-qpci-e-v1-2/LICENSE",
+          "source_path": "tests/resources/altium-composite-drill/LICENSE",
+          "sha256": "92954a807a10a7afe47362d36293e7465849e33e419c488c4f1659b30ca8fb28",
+          "source_sha256": "92954a807a10a7afe47362d36293e7465849e33e419c488c4f1659b30ca8fb28",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "diptrace-fd1-keyboard",
+      "name": "diptrace-fd1-keyboard",
+      "origin": "DipTrace",
+      "design_identity": "https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/diptrace/README#diptrace-fd1-keyboard",
+      "source": {
+        "url": "https://github.com/jaseg/gerbonara",
+        "revision": "736107f7a4fa1f9858d4da93879ca00015893628",
+        "origin_evidence": "Header says DipTrace 2.4.0.1; README links codepainters/FD1 hardware, where README says PCBs are in DipTrace format."
+      },
+      "license": {
+        "identifier": "BSD-3-Clause",
+        "evidence": " Original per-board license and attribution retained; https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/diptrace/README",
+        "notices": [
+          "diptrace-fd1-keyboard/LICENSE.txt"
+        ]
+      },
+      "files": [
+        {
+          "path": "diptrace-fd1-keyboard/keyboard_Bottom.gbr",
+          "source_path": "tests/resources/diptrace/keyboard_Bottom.gbr",
+          "sha256": "21537792c6f0825294fc0e8a44e21bf0a72c261ea5886b89d897976adc4173cd",
+          "source_sha256": "21537792c6f0825294fc0e8a44e21bf0a72c261ea5886b89d897976adc4173cd",
+          "role": "copper"
+        },
+        {
+          "path": "diptrace-fd1-keyboard/keyboard.drl",
+          "source_path": "tests/resources/diptrace/keyboard.drl",
+          "sha256": "ba59de66e4b455c08dbb2c2efa238bd6dcaeee06968de06b6b95ab9a312fd8ea",
+          "source_sha256": "ba59de66e4b455c08dbb2c2efa238bd6dcaeee06968de06b6b95ab9a312fd8ea",
+          "role": "drill"
+        },
+        {
+          "path": "diptrace-fd1-keyboard/keyboard_BoardOutline.gbr",
+          "source_path": "tests/resources/diptrace/keyboard_BoardOutline.gbr",
+          "sha256": "aa539fd603ff2af383e8aefcf22c6a73a063ec838e8cf22c617d1699d24170a9",
+          "source_sha256": "aa539fd603ff2af383e8aefcf22c6a73a063ec838e8cf22c617d1699d24170a9",
+          "role": "outline"
+        },
+        {
+          "path": "diptrace-fd1-keyboard/README",
+          "source_path": "tests/resources/diptrace/README",
+          "sha256": "94c791810ef301c8af9d856f913143a76a15124ffee13d3594cf6963ca132ce1",
+          "source_sha256": "94c791810ef301c8af9d856f913143a76a15124ffee13d3594cf6963ca132ce1",
+          "role": "notice"
+        },
+        {
+          "path": "diptrace-fd1-keyboard/LICENSE.txt",
+          "source_path": "tests/resources/diptrace/LICENSE.txt",
+          "sha256": "a349f34ebfd8eee7b34144ac1a763313faaca5d58c3c4cd2c0a0c43f769ce6fb",
+          "source_sha256": "a349f34ebfd8eee7b34144ac1a763313faaca5d58c3c4cd2c0a0c43f769ce6fb",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "diptrace-fd1-mainboard",
+      "name": "diptrace-fd1-mainboard",
+      "origin": "DipTrace",
+      "design_identity": "https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/diptrace/README#diptrace-fd1-mainboard",
+      "source": {
+        "url": "https://github.com/jaseg/gerbonara",
+        "revision": "736107f7a4fa1f9858d4da93879ca00015893628",
+        "origin_evidence": "Header says DipTrace 2.4.0.2; README links codepainters/FD1 hardware, where README says PCBs are in DipTrace format."
+      },
+      "license": {
+        "identifier": "BSD-3-Clause",
+        "evidence": " Original per-board license and attribution retained; https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/diptrace/README",
+        "notices": [
+          "diptrace-fd1-mainboard/LICENSE.txt"
+        ]
+      },
+      "files": [
+        {
+          "path": "diptrace-fd1-mainboard/mainboard_Top.gbr",
+          "source_path": "tests/resources/diptrace/mainboard_Top.gbr",
+          "sha256": "12d6ed3fac734849be2a8abd8f34f7eeccaff5841aaa78f0537048c5c418bf19",
+          "source_sha256": "12d6ed3fac734849be2a8abd8f34f7eeccaff5841aaa78f0537048c5c418bf19",
+          "role": "copper"
+        },
+        {
+          "path": "diptrace-fd1-mainboard/mainboard.drl",
+          "source_path": "tests/resources/diptrace/mainboard.drl",
+          "sha256": "49531417bdce7c8646bedbdca1c91bbe8cc04cf86db5a3e78997464336972a14",
+          "source_sha256": "49531417bdce7c8646bedbdca1c91bbe8cc04cf86db5a3e78997464336972a14",
+          "role": "drill"
+        },
+        {
+          "path": "diptrace-fd1-mainboard/mainboard_BoardOutline.gbr",
+          "source_path": "tests/resources/diptrace/mainboard_BoardOutline.gbr",
+          "sha256": "da07ab271ca37d5739e685228d5c2af83c24303b7fbcd8804763db949afc68fe",
+          "source_sha256": "da07ab271ca37d5739e685228d5c2af83c24303b7fbcd8804763db949afc68fe",
+          "role": "outline"
+        },
+        {
+          "path": "diptrace-fd1-mainboard/README",
+          "source_path": "tests/resources/diptrace/README",
+          "sha256": "94c791810ef301c8af9d856f913143a76a15124ffee13d3594cf6963ca132ce1",
+          "source_sha256": "94c791810ef301c8af9d856f913143a76a15124ffee13d3594cf6963ca132ce1",
+          "role": "notice"
+        },
+        {
+          "path": "diptrace-fd1-mainboard/LICENSE.txt",
+          "source_path": "tests/resources/diptrace/LICENSE.txt",
+          "sha256": "a349f34ebfd8eee7b34144ac1a763313faaca5d58c3c4cd2c0a0c43f769ce6fb",
+          "source_sha256": "a349f34ebfd8eee7b34144ac1a763313faaca5d58c3c4cd2c0a0c43f769ce6fb",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "diptrace-fd1-panel",
+      "name": "diptrace-fd1-panel",
+      "origin": "DipTrace",
+      "design_identity": "https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/diptrace/README#diptrace-fd1-panel",
+      "source": {
+        "url": "https://github.com/jaseg/gerbonara",
+        "revision": "736107f7a4fa1f9858d4da93879ca00015893628",
+        "origin_evidence": "Header says DipTrace 2.4.0.2; README links codepainters/FD1 hardware, where README says PCBs are in DipTrace format."
+      },
+      "license": {
+        "identifier": "BSD-3-Clause",
+        "evidence": " Original per-board license and attribution retained; https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/diptrace/README",
+        "notices": [
+          "diptrace-fd1-panel/LICENSE.txt"
+        ]
+      },
+      "files": [
+        {
+          "path": "diptrace-fd1-panel/panel_Bottom.gbr",
+          "source_path": "tests/resources/diptrace/panel_Bottom.gbr",
+          "sha256": "c27bab1174df54d14ffc5ef58c56954503afd81903d5ec2bf116fdc0b3410d0c",
+          "source_sha256": "c27bab1174df54d14ffc5ef58c56954503afd81903d5ec2bf116fdc0b3410d0c",
+          "role": "copper"
+        },
+        {
+          "path": "diptrace-fd1-panel/panel.drl",
+          "source_path": "tests/resources/diptrace/panel.drl",
+          "sha256": "173f7840330cacd0982c8ee2f4c46ccf5cac772cf437c5236ecd92c9097ac3f7",
+          "source_sha256": "173f7840330cacd0982c8ee2f4c46ccf5cac772cf437c5236ecd92c9097ac3f7",
+          "role": "drill"
+        },
+        {
+          "path": "diptrace-fd1-panel/panel_BoardOutline.gbr",
+          "source_path": "tests/resources/diptrace/panel_BoardOutline.gbr",
+          "sha256": "fbd7fceae784d2bcbe6ca2f40101aa3cd6e3f85ca0b48a95485db1806d13f9cf",
+          "source_sha256": "fbd7fceae784d2bcbe6ca2f40101aa3cd6e3f85ca0b48a95485db1806d13f9cf",
+          "role": "outline"
+        },
+        {
+          "path": "diptrace-fd1-panel/README",
+          "source_path": "tests/resources/diptrace/README",
+          "sha256": "94c791810ef301c8af9d856f913143a76a15124ffee13d3594cf6963ca132ce1",
+          "source_sha256": "94c791810ef301c8af9d856f913143a76a15124ffee13d3594cf6963ca132ce1",
+          "role": "notice"
+        },
+        {
+          "path": "diptrace-fd1-panel/LICENSE.txt",
+          "source_path": "tests/resources/diptrace/LICENSE.txt",
+          "sha256": "a349f34ebfd8eee7b34144ac1a763313faaca5d58c3c4cd2c0a0c43f769ce6fb",
+          "source_sha256": "a349f34ebfd8eee7b34144ac1a763313faaca5d58c3c4cd2c0a0c43f769ce6fb",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "fritzing-analog-gyro",
+      "name": "fritzing-analog-gyro",
+      "origin": "Fritzing",
+      "design_identity": "https://github.com/ohguma/analog_gyro_2021/blob/2459e8f17100f081c9ec1e6031980d122f5d85c2/gyro_328p_6050_2021.fzz#fritzing-analog-gyro",
+      "source": {
+        "url": "https://github.com/jaseg/gerbonara",
+        "revision": "736107f7a4fa1f9858d4da93879ca00015893628",
+        "origin_evidence": "Fixture points to ohguma/analog_gyro_2021; immutable source README says designed in Fritzing and links manufacturing Gerbers. Selected fixture file's first comment says manually fixed for GerberTools issues."
+      },
+      "license": {
+        "identifier": "MIT",
+        "evidence": "No drill or outline in the selected Gerbonara fixture subset. Original per-board license and attribution retained; https://github.com/jaseg/gerbonara/blob/736107f7a4fa1f9858d4da93879ca00015893628/tests/resources/fritzing/README",
+        "notices": [
+          "fritzing-analog-gyro/LICENSE"
+        ]
+      },
+      "files": [
+        {
+          "path": "fritzing-analog-gyro/combined.gtl",
+          "source_path": "tests/resources/fritzing/combined.gtl",
+          "sha256": "79a8a5568025fc52c9966a571e7d1530f7f077c019d92a66ef6e187dda7c7537",
+          "source_sha256": "79a8a5568025fc52c9966a571e7d1530f7f077c019d92a66ef6e187dda7c7537",
+          "role": "copper"
+        },
+        {
+          "path": "fritzing-analog-gyro/README",
+          "source_path": "tests/resources/fritzing/README",
+          "sha256": "746e72a7919127f8ac67869a40255f50a7d289706888fc62b990ef2caadb1e40",
+          "source_sha256": "746e72a7919127f8ac67869a40255f50a7d289706888fc62b990ef2caadb1e40",
+          "role": "notice"
+        },
+        {
+          "path": "fritzing-analog-gyro/LICENSE",
+          "source_path": "tests/resources/fritzing/LICENSE",
+          "sha256": "3b515a775de6ebf500c3f229a3e4390d9cc9f1441ba774f27c60bffb60e67f25",
+          "source_sha256": "3b515a775de6ebf500c3f229a3e4390d9cc9f1441ba774f27c60bffb60e67f25",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "proteus-sliding-gate",
+      "name": "proteus-sliding-gate",
+      "origin": "Proteus",
+      "design_identity": "https://github.com/bothlab/maze-hardware#proteus-sliding-gate",
+      "source": {
+        "url": "https://github.com/bothlab/maze-hardware",
+        "revision": "da73d2e3b6f5859b22398242fc484e0d9278aa5f",
+        "origin_evidence": "Gerber X2 files in CADCAM ZIP identify Labcenter Proteus 8.6-SP3; info.md says original Proteus design and fabrication Gerbers are supplied."
+      },
+      "license": {
+        "identifier": "CERN-OHL-W-2.0",
+        "evidence": "ZIP has PTH and NPTH Gerber drill-map outputs, not Excellon. Mechanical 1 is tagged NonPlated/NPTH and has Profile aperture plus a closed 90x45 mm ring, but is not a separately identified outline layer; do not classify either drill-map as Excellon. Original per-board license and attribution retained; https://github.com/bothlab/maze-hardware",
+        "notices": [
+          "proteus-sliding-gate/LICENSE"
+        ]
+      },
+      "files": [
+        {
+          "path": "proteus-sliding-gate/LICENSE",
+          "source_path": "LICENSE",
+          "sha256": "8eb638315680fb992c8b3c4a606f3d380897c9d42ded8d9a54703a253d4491be",
+          "source_sha256": "8eb638315680fb992c8b3c4a606f3d380897c9d42ded8d9a54703a253d4491be",
+          "role": "notice"
+        },
+        {
+          "path": "proteus-sliding-gate/README.md",
+          "source_path": "README.md",
+          "sha256": "930913c667fb5676c393ad13cec14057220c698bf64d840c3e33e46cb6e4ae0d",
+          "source_sha256": "930913c667fb5676c393ad13cec14057220c698bf64d840c3e33e46cb6e4ae0d",
+          "role": "notice"
+        },
+        {
+          "path": "proteus-sliding-gate/aperture gate - CADCAM Drill TOP-BOT Plated.GBR",
+          "source_path": "SlidingGate/pcb/aperture gate - CADCAM.ZIP!aperture gate - CADCAM Drill TOP-BOT Plated.GBR",
+          "sha256": "5687fa5cec9f32ee9df85a21093c8ce4e145864605f603f21971bdfaddc376f7",
+          "source_sha256": "5687fa5cec9f32ee9df85a21093c8ce4e145864605f603f21971bdfaddc376f7",
+          "role": "drill-map"
+        },
+        {
+          "path": "proteus-sliding-gate/aperture gate - CADCAM Mechanical 1.GBR",
+          "source_path": "SlidingGate/pcb/aperture gate - CADCAM.ZIP!aperture gate - CADCAM Mechanical 1.GBR",
+          "sha256": "32f2a7e06e264b3ef3cf6b99b7852e3d3b8c065745fee050ce8cb9e2efa36a06",
+          "source_sha256": "32f2a7e06e264b3ef3cf6b99b7852e3d3b8c065745fee050ce8cb9e2efa36a06",
+          "role": "drill-map"
+        },
+        {
+          "path": "proteus-sliding-gate/aperture gate - CADCAM Top Copper.GBR",
+          "source_path": "SlidingGate/pcb/aperture gate - CADCAM.ZIP!aperture gate - CADCAM Top Copper.GBR",
+          "sha256": "2d96a566d79431c0b63d464b61213d9b4b30c85cd5fed10ed6dcca615d68eadf",
+          "source_sha256": "2d96a566d79431c0b63d464b61213d9b4b30c85cd5fed10ed6dcca615d68eadf",
+          "role": "copper"
+        },
+        {
+          "path": "proteus-sliding-gate/aperture gate - CADCAM.ZIP",
+          "source_path": "SlidingGate/pcb/aperture gate - CADCAM.ZIP",
+          "sha256": "e71fe4a92cb7570d25d801705f223c0ec2dc0fc8ffb1139eeb389b9c13f499f4",
+          "source_sha256": "e71fe4a92cb7570d25d801705f223c0ec2dc0fc8ffb1139eeb389b9c13f499f4",
+          "role": "archive"
+        },
+        {
+          "path": "proteus-sliding-gate/aperture gate.pdsprj",
+          "source_path": "SlidingGate/pcb/aperture gate.pdsprj",
+          "sha256": "499aaf045ed3f91958d18c18bc758356bd9d45080dac30d136782994dea1ec1f",
+          "source_sha256": "499aaf045ed3f91958d18c18bc758356bd9d45080dac30d136782994dea1ec1f",
+          "role": "native"
+        },
+        {
+          "path": "proteus-sliding-gate/info.md",
+          "source_path": "SlidingGate/info.md",
+          "sha256": "d77493dfc3af89643277338f419b21a48f3c3ff5aa10f1ab0bcb400a4f89cee4",
+          "source_sha256": "d77493dfc3af89643277338f419b21a48f3c3ff5aa10f1ab0bcb400a4f89cee4",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "easyeda-stm32-minimal",
+      "name": "easyeda-stm32-minimal",
+      "origin": "EasyEDA",
+      "design_identity": "https://github.com/Kurisu-g/STM32F103-Minimal-System-PCB-/tree/a70700ad2be9c5f96b5c2774294fa48912a5d35d",
+      "source": {
+        "url": "https://github.com/Kurisu-g/STM32F103-Minimal-System-PCB-",
+        "revision": "a70700ad2be9c5f96b5c2774294fa48912a5d35d",
+        "origin_evidence": "EasyEDA native/manufacturing headers verified at immutable revision; original README retained"
+      },
+      "license": {
+        "identifier": "MIT",
+        "evidence": "https://github.com/Kurisu-g/STM32F103-Minimal-System-PCB-/blob/a70700ad2be9c5f96b5c2774294fa48912a5d35d/LICENSE",
+        "notices": [
+          "easyeda-stm32-minimal/LICENSE"
+        ]
+      },
+      "files": [
+        {
+          "path": "easyeda-stm32-minimal/Drill_NPTH_Through.DRL",
+          "source_path": "Fabrication/Gerber_PCB1_1_2025-12-13.zip!Drill_NPTH_Through.DRL",
+          "sha256": "0beb5e972bc83dac65a68a8ae15dbe00058028d6ea9a0895476e044c27b14397",
+          "source_sha256": "0beb5e972bc83dac65a68a8ae15dbe00058028d6ea9a0895476e044c27b14397",
+          "role": "drill"
+        },
+        {
+          "path": "easyeda-stm32-minimal/Drill_PTH_Through.DRL",
+          "source_path": "Fabrication/Gerber_PCB1_1_2025-12-13.zip!Drill_PTH_Through.DRL",
+          "sha256": "7fb2dd509a452b4ad8b3b14b1ddaffb276b8ee7c41421bf0e039b8111dc636fe",
+          "source_sha256": "7fb2dd509a452b4ad8b3b14b1ddaffb276b8ee7c41421bf0e039b8111dc636fe",
+          "role": "drill"
+        },
+        {
+          "path": "easyeda-stm32-minimal/Gerber_BoardOutlineLayer.GKO",
+          "source_path": "Fabrication/Gerber_PCB1_1_2025-12-13.zip!Gerber_BoardOutlineLayer.GKO",
+          "sha256": "2cd3238c9ea526ff995b2ca13b4d3b13004233e9f93efff9791591fe2c7f33c6",
+          "source_sha256": "2cd3238c9ea526ff995b2ca13b4d3b13004233e9f93efff9791591fe2c7f33c6",
+          "role": "outline"
+        },
+        {
+          "path": "easyeda-stm32-minimal/Gerber_PCB1_1_2025-12-13.zip",
+          "source_path": "Fabrication/Gerber_PCB1_1_2025-12-13.zip",
+          "sha256": "6a7748bf96aab389febf2843441950a7805a5fe0363b078110d94d8ac79d15ae",
+          "source_sha256": "6a7748bf96aab389febf2843441950a7805a5fe0363b078110d94d8ac79d15ae",
+          "role": "archive"
+        },
+        {
+          "path": "easyeda-stm32-minimal/Gerber_TopLayer.GTL",
+          "source_path": "Fabrication/Gerber_PCB1_1_2025-12-13.zip!Gerber_TopLayer.GTL",
+          "sha256": "250fcf761e5e72ac92ca412a39737678cc9bc6c4726f0d23af5c1f4745de9601",
+          "source_sha256": "250fcf761e5e72ac92ca412a39737678cc9bc6c4726f0d23af5c1f4745de9601",
+          "role": "copper"
+        },
+        {
+          "path": "easyeda-stm32-minimal/LICENSE",
+          "source_path": "LICENSE",
+          "sha256": "fd7b5141bc8991b7af4d1183f6ac75ef8f17c3c1796c381b20666282eadce6b7",
+          "source_sha256": "fd7b5141bc8991b7af4d1183f6ac75ef8f17c3c1796c381b20666282eadce6b7",
+          "role": "notice"
+        },
+        {
+          "path": "easyeda-stm32-minimal/ProPrj_stm32_2025-12-13.epro",
+          "source_path": "Hardware/ProPrj_stm32_2025-12-13.epro",
+          "sha256": "66e823abdfdf5571b7648eb047586b3c74efeb98731ec41bb0ddaccf7c3a834e",
+          "source_sha256": "66e823abdfdf5571b7648eb047586b3c74efeb98731ec41bb0ddaccf7c3a834e",
+          "role": "native"
+        },
+        {
+          "path": "easyeda-stm32-minimal/README.md",
+          "source_path": "README.md",
+          "sha256": "bffa5cd78787da6530bd408b4886dcbd42264ae92dc50454521cd07ffc4db8c9",
+          "source_sha256": "bffa5cd78787da6530bd408b4886dcbd42264ae92dc50454521cd07ffc4db8c9",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "kicad-pico2romemu",
+      "name": "kicad-pico2romemu",
+      "origin": "KiCad",
+      "design_identity": "https://github.com/kyo-ta04/Pico2ROMEmu_PCB/tree/de3a29370d760e93451975094372e08484cd6777",
+      "source": {
+        "url": "https://github.com/kyo-ta04/Pico2ROMEmu_PCB",
+        "revision": "de3a29370d760e93451975094372e08484cd6777",
+        "origin_evidence": "KiCad native/manufacturing headers verified at immutable revision; original README retained"
+      },
+      "license": {
+        "identifier": "MIT",
+        "evidence": "https://github.com/kyo-ta04/Pico2ROMEmu_PCB/blob/de3a29370d760e93451975094372e08484cd6777/LICENSE",
+        "notices": [
+          "kicad-pico2romemu/LICENSE"
+        ]
+      },
+      "files": [
+        {
+          "path": "kicad-pico2romemu/LICENSE",
+          "source_path": "LICENSE",
+          "sha256": "8baca363081eb16456ffb2da48f5ebe6e2fa0c96fb7e305f1f1d45ecd26c34c4",
+          "source_sha256": "8baca363081eb16456ffb2da48f5ebe6e2fa0c96fb7e305f1f1d45ecd26c34c4",
+          "role": "notice"
+        },
+        {
+          "path": "kicad-pico2romemu/Pico2ROMEmu_PCB-Edge_Cuts.gm1",
+          "source_path": "production/Pico2ROMEmu_PCB_0.1.zip!Pico2ROMEmu_PCB-Edge_Cuts.gm1",
+          "sha256": "9bab43438f0e66cf9396b2544b04236bf2e06d63503357ddc11571fd43660708",
+          "source_sha256": "9bab43438f0e66cf9396b2544b04236bf2e06d63503357ddc11571fd43660708",
+          "role": "outline"
+        },
+        {
+          "path": "kicad-pico2romemu/Pico2ROMEmu_PCB-F_Cu.gtl",
+          "source_path": "production/Pico2ROMEmu_PCB_0.1.zip!Pico2ROMEmu_PCB-F_Cu.gtl",
+          "sha256": "818a20a99fa2640d28a1a9b48d5644be9531813406225cea1d32d4f28fb78b0d",
+          "source_sha256": "818a20a99fa2640d28a1a9b48d5644be9531813406225cea1d32d4f28fb78b0d",
+          "role": "copper"
+        },
+        {
+          "path": "kicad-pico2romemu/Pico2ROMEmu_PCB-NPTH.drl",
+          "source_path": "production/Pico2ROMEmu_PCB_0.1.zip!Pico2ROMEmu_PCB-NPTH.drl",
+          "sha256": "466cb76b18b74a2be992518beb83769df679ad16332ac5b479a6c8a1bc503dbc",
+          "source_sha256": "466cb76b18b74a2be992518beb83769df679ad16332ac5b479a6c8a1bc503dbc",
+          "role": "drill"
+        },
+        {
+          "path": "kicad-pico2romemu/Pico2ROMEmu_PCB-PTH.drl",
+          "source_path": "production/Pico2ROMEmu_PCB_0.1.zip!Pico2ROMEmu_PCB-PTH.drl",
+          "sha256": "eb3c00ea28fd6343f4ef74dbbd0f534ad77974c05a1751a29b3fbba653efc98a",
+          "source_sha256": "eb3c00ea28fd6343f4ef74dbbd0f534ad77974c05a1751a29b3fbba653efc98a",
+          "role": "drill"
+        },
+        {
+          "path": "kicad-pico2romemu/Pico2ROMEmu_PCB.kicad_pcb",
+          "source_path": "Pico2ROMEmu_PCB.kicad_pcb",
+          "sha256": "1cbb2ca471872f6ba26830456b17ba00cf9eb9128c60d6161c038e602da88ac9",
+          "source_sha256": "1cbb2ca471872f6ba26830456b17ba00cf9eb9128c60d6161c038e602da88ac9",
+          "role": "native"
+        },
+        {
+          "path": "kicad-pico2romemu/Pico2ROMEmu_PCB_0.1.zip",
+          "source_path": "production/Pico2ROMEmu_PCB_0.1.zip",
+          "sha256": "5f1941970c150d4e4011640d4e8ec07cec25073c2cd6e6bd679817f93af01340",
+          "source_sha256": "5f1941970c150d4e4011640d4e8ec07cec25073c2cd6e6bd679817f93af01340",
+          "role": "archive"
+        },
+        {
+          "path": "kicad-pico2romemu/README.md",
+          "source_path": "README.md",
+          "sha256": "bf1ab4c5d95fb4e7eb147433732d7aefadcf3005fa233a7558380ffac0f8ce5f",
+          "source_sha256": "bf1ab4c5d95fb4e7eb147433732d7aefadcf3005fa233a7558380ffac0f8ce5f",
+          "role": "notice"
+        }
+      ]
+    },
+    {
+      "id": "kicad-ivcurve-mux",
+      "name": "kicad-ivcurve-mux",
+      "origin": "KiCad",
+      "design_identity": "https://github.com/dusjagr/IVcurve_tester/tree/f9a75be640c3651594d7e1b18a765c956d8d8d5c",
+      "source": {
+        "url": "https://github.com/dusjagr/IVcurve_tester",
+        "revision": "f9a75be640c3651594d7e1b18a765c956d8d8d5c",
+        "origin_evidence": "KiCad native/manufacturing headers verified at immutable revision; original README retained"
+      },
+      "license": {
+        "identifier": "MIT",
+        "evidence": "https://github.com/dusjagr/IVcurve_tester/blob/f9a75be640c3651594d7e1b18a765c956d8d8d5c/LICENSE",
+        "notices": [
+          "kicad-ivcurve-mux/LICENSE"
+        ]
+      },
+      "files": [
+        {
+          "path": "kicad-ivcurve-mux/LICENSE",
+          "source_path": "LICENSE",
+          "sha256": "41454fd512cf09e2fbb13122bf5c226957f916c8b9262a29d059943d7f97f9b6",
+          "source_sha256": "41454fd512cf09e2fbb13122bf5c226957f916c8b9262a29d059943d7f97f9b6",
+          "role": "notice"
+        },
+        {
+          "path": "kicad-ivcurve-mux/MUX-ADG706-Edge_Cuts.gbr",
+          "source_path": "hardware/MUX-ADG706/gerber_MUX-ADG706.zip!gerber_MUX-ADG706/MUX-ADG706-Edge_Cuts.gbr",
+          "sha256": "59cf31a866c0f0c0005533a67330bd29b07095e7fb8ba2afde95b55c641ae9b5",
+          "source_sha256": "59cf31a866c0f0c0005533a67330bd29b07095e7fb8ba2afde95b55c641ae9b5",
+          "role": "outline"
+        },
+        {
+          "path": "kicad-ivcurve-mux/MUX-ADG706-F_Cu.gbr",
+          "source_path": "hardware/MUX-ADG706/gerber_MUX-ADG706.zip!gerber_MUX-ADG706/MUX-ADG706-F_Cu.gbr",
+          "sha256": "7126e6dd91eef6642fd9ad832e64813b889e3002862cc1863678ce0bb0b21851",
+          "source_sha256": "7126e6dd91eef6642fd9ad832e64813b889e3002862cc1863678ce0bb0b21851",
+          "role": "copper"
+        },
+        {
+          "path": "kicad-ivcurve-mux/MUX-ADG706-NPTH.drl",
+          "source_path": "hardware/MUX-ADG706/gerber_MUX-ADG706.zip!gerber_MUX-ADG706/MUX-ADG706-NPTH.drl",
+          "sha256": "8acaa6ea3a8dbdabde9690115f46da2fce48a9347f09b52156224de810d95cc1",
+          "source_sha256": "8acaa6ea3a8dbdabde9690115f46da2fce48a9347f09b52156224de810d95cc1",
+          "role": "drill"
+        },
+        {
+          "path": "kicad-ivcurve-mux/MUX-ADG706-PTH.drl",
+          "source_path": "hardware/MUX-ADG706/gerber_MUX-ADG706.zip!gerber_MUX-ADG706/MUX-ADG706-PTH.drl",
+          "sha256": "66a598844f7a1b2dd05919766930278b93be26991127601935bff0ee2f2a3daa",
+          "source_sha256": "66a598844f7a1b2dd05919766930278b93be26991127601935bff0ee2f2a3daa",
+          "role": "drill"
+        },
+        {
+          "path": "kicad-ivcurve-mux/MUX-ADG706.kicad_pcb",
+          "source_path": "hardware/MUX-ADG706/MUX-ADG706.kicad_pcb",
+          "sha256": "e752e1e9488e7f3f3594d74313638b65e4eb7d26a9f732d1d53ad4455c9db622",
+          "source_sha256": "e752e1e9488e7f3f3594d74313638b65e4eb7d26a9f732d1d53ad4455c9db622",
+          "role": "native"
+        },
+        {
+          "path": "kicad-ivcurve-mux/README.md",
+          "source_path": "README.md",
+          "sha256": "f7cb93f67bfac10e00ae1f2571a1ca267fa32001b460da487fc253223de242da",
+          "source_sha256": "f7cb93f67bfac10e00ae1f2571a1ca267fa32001b460da487fc253223de242da",
+          "role": "notice"
+        },
+        {
+          "path": "kicad-ivcurve-mux/gerber_MUX-ADG706.zip",
+          "source_path": "hardware/MUX-ADG706/gerber_MUX-ADG706.zip",
+          "sha256": "924f64a627db8e284c791b687f399de4b3e26be6b32a60a482d3a157c3c693f8",
+          "source_sha256": "924f64a627db8e284c791b687f399de4b3e26be6b32a60a482d3a157c3c693f8",
+          "role": "archive"
+        }
+      ]
+    }
+  ]
+}
