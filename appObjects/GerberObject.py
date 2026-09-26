@@ -846,6 +846,7 @@ class GerberObject(FlatCAMObj, Gerber):
     def on_follow_cb_click(self):
         if self.muted_ui:
             return
+        self.read_form_item('follow')
         self.plot()
 
     def on_aperture_table_visibility_change(self):
@@ -910,6 +911,8 @@ class GerberObject(FlatCAMObj, Gerber):
         if not FlatCAMObj.plot(self):
             return
 
+        plot_options = self.obj_options.copy()
+
         if 'color' in kwargs:
             color = kwargs['color']
         else:
@@ -921,12 +924,12 @@ class GerberObject(FlatCAMObj, Gerber):
             face_color = self.fill_color
 
         if 'visible' not in kwargs:
-            visible = self.obj_options['plot']
+            visible = plot_options['plot']
         else:
             visible = kwargs['visible']
 
         # if the Follow Geometry checkbox is checked then plot only the follow geometry
-        if self.ui.follow_cb.get_value():
+        if plot_options['follow']:
             geometry = self.follow_geometry
         else:
             geometry = self.solid_geometry
@@ -957,11 +960,11 @@ class GerberObject(FlatCAMObj, Gerber):
             try:
                 batch = []
                 for g in plot_geometry:
-                    if self.obj_options["solid"]:
+                    if plot_options["solid"]:
                         used_color = color
-                        used_face_color = random_color() if self.obj_options['multicolored'] else face_color
+                        used_face_color = random_color() if plot_options['multicolored'] else face_color
                     else:
-                        used_color = random_color() if self.obj_options['multicolored'] else 'black'
+                        used_color = random_color() if plot_options['multicolored'] else 'black'
                         used_face_color = None
 
                     if self._app_option("gerber_plot_line_enable") is False:
@@ -980,11 +983,11 @@ class GerberObject(FlatCAMObj, Gerber):
 
             except TypeError:
                 # Single geometry, not iterable
-                if self.obj_options["solid"]:
+                if plot_options["solid"]:
                     used_color = color
-                    used_face_color = random_color() if self.obj_options['multicolored'] else face_color
+                    used_face_color = random_color() if plot_options['multicolored'] else face_color
                 else:
-                    used_color = random_color() if self.obj_options['multicolored'] else 'black'
+                    used_color = random_color() if plot_options['multicolored'] else 'black'
                     used_face_color = None
 
                 if self._app_option("gerber_plot_line_enable") is False:
@@ -1000,7 +1003,8 @@ class GerberObject(FlatCAMObj, Gerber):
                 # indexes=self.app.plotcanvas.shape_collection.data.keys()
             )
         except (ObjectDeleted, AttributeError):
-            self.shapes.clear(update=True)
+            if not self.deleted:
+                self.shapes.clear(update=True)
         except Exception as e:
             self.app.log.error("GerberObject.plot() --> %s" % str(e))
 

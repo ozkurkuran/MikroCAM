@@ -736,7 +736,6 @@ class ToolMilling(Excellon, AppTool):
     def on_level_changed(self, checked):
 
         self.target_obj = self.app.collection.get_by_name(self.ui.object_combo.get_value())
-        app_defaults = getattr(self.app, "defaults", None) or AppDefaults.factory_defaults
 
         if not checked:
             self.ui.level.setText('%s' % _('Beginner'))
@@ -752,26 +751,6 @@ class ToolMilling(Excellon, AppTool):
 
             # Tool parameters section
             if self.ui.target_radio.get_value() == 'geo':
-                if self.target_obj:
-                    for tool in self.target_obj.tools:
-                        tool_data = self.target_obj.tools[tool]['data']
-
-                        tool_data['tools_mill_offset_type'] = 0  # 'Path'
-                        tool_data['tools_mill_offset_value'] = 0.0
-                        tool_data['tools_mill_job_type'] = 0    # _('Roughing')
-
-                        # we made the decision here what to do with the hidden parameters
-                        # some will disable some of the hidden features but other are set by
-                        # other plugins so, we hide them, but we do not disable (like the `multidepth`)
-                        # tool_data['tools_mill_multidepth'] = False
-                        tool_data['tools_mill_extracut'] = self.app.options.get(
-                            "tools_mill_extracut",
-                            app_defaults.get("tools_mill_extracut", AppDefaults.factory_defaults.get("tools_mill_extracut")))
-                        tool_data['tools_mill_dwell'] = self.app.options.get(
-                            "tools_mill_dwell",
-                            app_defaults.get("tools_mill_dwell", AppDefaults.factory_defaults.get("tools_mill_dwell")))
-                        tool_data['tools_mill_area_exclusion'] = False
-
                 self.ui.offset_type_lbl.hide()
                 self.ui.offset_type_combo.hide()
                 self.ui.offset_label.hide()
@@ -818,27 +797,27 @@ class ToolMilling(Excellon, AppTool):
             # Tool parameters section
             if self.ui.target_radio.get_value() == 'geo':
                 if self.target_obj:
-                    app_defaults = self.target_obj.obj_options
-                    for tool in self.target_obj.tools:
-                        tool_data = self.target_obj.tools[tool]['data']
-
-                        tool_data['tools_mill_offset_type'] = app_defaults['tools_mill_offset_type']
-                        tool_data['tools_mill_offset_value'] = app_defaults['tools_mill_offset_value']
-                        tool_data['tools_mill_job_type'] = app_defaults['tools_mill_job_type']
-
-                        # we made the decision here what to do with the hidden parameters
-                        # some will disable some of the hidden features but other are set by
-                        # other plugins so, we hide them but, we do not disable (like the `multidepth`)
-                        # tool_data['tools_mill_multidepth'] = app_defaults['tools_mill_multidepth']
-                        tool_data['tools_mill_extracut'] = app_defaults['tools_mill_extracut']
-                        tool_data['tools_mill_dwell'] = app_defaults['tools_mill_dwell']
-                        tool_data['tools_mill_area_exclusion'] = app_defaults['tools_mill_area_exclusion']
+                    table = self.ui.tools_table_mill_geo
+                    rows = {index.row() for index in table.selectedIndexes()}
+                    if len(rows) == 1:
+                        item = table.item(next(iter(rows)), 3)
+                        if item is not None:
+                            tool_data = self.target_obj.tools[int(item.text())]['data']
+                            for key, widget in (
+                                ('tools_mill_offset_type', self.ui.offset_type_combo),
+                                ('tools_mill_offset_value', self.ui.offset_entry),
+                                ('tools_mill_job_type', self.ui.job_type_combo),
+                            ):
+                                if key in tool_data:
+                                    with QtCore.QSignalBlocker(widget):
+                                        widget.set_value(tool_data[key])
+                            self.on_job_changed(self.ui.job_type_combo.get_value())
 
                 self.ui.offset_type_lbl.show()
                 self.ui.offset_type_combo.show()
-                if self.ui.offset_type_combo.get_value() == 3:  # _("Custom")
-                    self.ui.offset_label.show()
-                    self.ui.offset_entry.show()
+                custom_offset = self.ui.offset_type_combo.get_value() == 3
+                self.ui.offset_label.setVisible(custom_offset)
+                self.ui.offset_entry.setVisible(custom_offset)
                 self.ui.offset_type_lbl.show()
                 self.ui.offset_separator_line.show()
                 self.ui.offset_type_lbl.show()
@@ -1154,29 +1133,14 @@ class ToolMilling(Excellon, AppTool):
         if self.target_obj:
             self.ui.param_frame.setDisabled(False)
 
-            # order the tools by tool diameter if it's the case
-            sorted_tools = []
-            for k, v in self.target_obj.tools.items():
-                sorted_tools.append(self.app.dec_format(float(v['tooldia'])))
-
             order = self.ui.order_combo.get_value()
-            if order == 1:  # 'fwd'
-                sorted_tools.sort(reverse=False)
-            elif order == 2:  # 'rev'
-                sorted_tools.sort(reverse=True)
-            else:
-                pass
+            if order in (1, 2):
+                sorted_items = sorted(self.target_obj.tools.items(),
+                                      key=lambda item: item[1]['tooldia'], reverse=order == 2)
+                self.target_obj.tools = {
+                    index: deepcopy(value) for index, (_, value) in enumerate(sorted_items, start=1)
+                }
 
-            # remake the excellon_tools dict in the order above
-            new_id = 1
-            new_tools = {}
-            for tooldia in sorted_tools:
-                for old_tool in self.target_obj.tools:
-                    if self.app.dec_format(float(self.target_obj.tools[old_tool]['tooldia'])) == tooldia:
-                        new_tools[new_id] = deepcopy(self.target_obj.tools[old_tool])
-                        new_id += 1
-
-            self.target_obj.tools = new_tools
             tools = [k for k in self.target_obj.tools]
 
         else:
@@ -1186,6 +1150,8 @@ class ToolMilling(Excellon, AppTool):
         # we have (n+2) rows because there are 'n' tools, each a row, plus the last 2 rows for totals.
         self.ui.tools_table_mill_exc.setRowCount(n + 2)
         self.tool_row = 0
+        self.tot_drill_cnt = 0
+        self.tot_slot_cnt = 0
 
         for tool_no in tools:
             # drill_cnt = 0  # variable to store the nr of drills per tool

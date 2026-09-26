@@ -94,7 +94,7 @@ içe aktarma ve fiziksel PCB kuponu henüz doğrulanmadığı için kilometre ta
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
 | 9 | `reference-dataset` — **tamamlandı** | Yedi CAD kaynağından 10 gerçek PCB; lisans/hash izli 60 dosya ve iki tabandan tekrarlanabilir 20 altın çıktı. Açık toleranslı geometri/yol/G-code karşılaştırması: güncel Evo için 47 eşleşme, iki boş NPTH kaydı belirsiz. Windows CI: 1315 test + 310 subtest. [Doğrulama](../specs/009-reference-dataset/validation.md). | 1 |
-| — | kpkrisnop düzeltmeleri *(spec yok)* | Tool DB değerlerinin Drilling, Milling, Isolation, NCC, Paint ve CutOut'a global default'a düşmeden aktarılması; drill kopyalanması ve dwell parametresinin aktarımı; silinmiş nesne veya widget'a worker'dan erişim. Her biri ayrı cherry-pick ve regresyon testiyle yapılır. | 9 |
+| — | kpkrisnop düzeltmeleri *(spec yok)* — **tamamlandı** | Kanıtlanan Tool DB aktarım/default sorunları; Excellon araç çoğaltılması ve kuyruğa alınmış drill işlerinin çıktı birikmesi; görünüm seviyesi değişirken machining değerlerinin korunması; silme sırasında worker/widget ve geç şekil gönderimi yarışları düzeltildi. Ayrı MIT uyarlama/bağımsız düzeltme commitleri ve davranış regresyonları; Windows tam test: 1369 geçen + 310 subtest, iki upstream taslak atlanır; gerçek masaüstü CAM/proje/lazer/shutdown döngüsü başarılı. [Doğrulama](MECHANICAL_CAM_VALIDATION.md). | 9 |
 
 ### 0.4 — GRBL makine kontrolü
 

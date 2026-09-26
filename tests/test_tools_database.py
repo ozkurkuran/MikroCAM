@@ -968,11 +968,12 @@ class ConsumerChecks(DatabaseCase):
         tool = record(2)
         tool['data']['tools_drill_feedrate_z'] = 321.0
         stub = SimpleNamespace(
-            app=self.app, excellon_obj=object(),
+            app=self.app, excellon_obj=SimpleNamespace(tools={}),
             excellon_tools={1: {'tooldia': 2.4, 'data': {'tools_drill_feedrate_z': 99.0}}},
             tools_db_dict={'1': tool}, build_tool_ui=MagicMock(), blockSignals=MagicMock())
         ToolDrilling.replace_tools(stub)
         self.assertEqual(321.0, stub.excellon_tools[1]['data']['tools_drill_feedrate_z'])
+        self.assertEqual(321.0, stub.excellon_obj.tools[1]['data']['tools_drill_feedrate_z'])
         stub.excellon_tools[1]['data']['tools_drill_feedrate_z'] = 99.0
         self.assertEqual(321.0, tool['data']['tools_drill_feedrate_z'])
 
