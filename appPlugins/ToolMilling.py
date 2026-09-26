@@ -767,9 +767,6 @@ class ToolMilling(Excellon, AppTool):
                         tool_data['tools_mill_extracut'] = self.app.options.get(
                             "tools_mill_extracut",
                             app_defaults.get("tools_mill_extracut", AppDefaults.factory_defaults.get("tools_mill_extracut")))
-                        tool_data['tools_mill_dwell'] = self.app.options.get(
-                            "tools_mill_dwell",
-                            app_defaults.get("tools_mill_dwell", AppDefaults.factory_defaults.get("tools_mill_dwell")))
                         tool_data['tools_mill_area_exclusion'] = False
 
                 self.ui.offset_type_lbl.hide()
@@ -831,7 +828,6 @@ class ToolMilling(Excellon, AppTool):
                         # other plugins so, we hide them but, we do not disable (like the `multidepth`)
                         # tool_data['tools_mill_multidepth'] = app_defaults['tools_mill_multidepth']
                         tool_data['tools_mill_extracut'] = app_defaults['tools_mill_extracut']
-                        tool_data['tools_mill_dwell'] = app_defaults['tools_mill_dwell']
                         tool_data['tools_mill_area_exclusion'] = app_defaults['tools_mill_area_exclusion']
 
                 self.ui.offset_type_lbl.show()

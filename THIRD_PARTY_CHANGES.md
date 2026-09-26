@@ -129,3 +129,14 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Regression: equal displayed diameters retain two distinct tools and two drill hits through
   repeated real Qt table rebuilds in all three order modes.
 - MikroCAM commit: `fix: preserve distinct Excellon milling tools` (this commit).
+
+## 2026-09-27 — Preserve milling dwell through level changes
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `97ea33b1d84a2e39b9c35880a28e001d227ac2d0` (dwell parameter left behind).
+- Destination: `appPlugins/ToolMilling.py`, `on_level_changed()`; inherited notices retained.
+- Adaptation: remove Beginner/Advanced assignments that replace the selected tool's dwell
+  toggle with application/object defaults. The stored duration and toggle remain paired.
+- Regression: real `CNCjob.generate_from_geometry_2()` and default preprocessor retain
+  `G4 P4.2` across both directions of repeated level changes.
+- MikroCAM commit: `fix: preserve milling dwell through level changes` (this commit).
