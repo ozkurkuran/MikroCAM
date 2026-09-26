@@ -1,7 +1,7 @@
 # Quickstart: Laser CAM preview
 
 1. Start MikroCAM using the documented Python 3.13 environment and load a copper Gerber.
-2. Open Tools → Laser CAM. Refresh/select the copper source and optionally a closed outline Gerber.
+2. Open Plugins → Laser CAM. Refresh/select the copper source and optionally a closed outline Gerber.
 3. Load an explicit recipe JSON created by slice 005. Set placement in mm/degrees if required.
 4. Choose contour mode and optionally hatch, spacing, angle and cross hatch. Select copper
    or clearance (board minus copper); clearance needs an explicit containing outline.

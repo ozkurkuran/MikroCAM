@@ -12,6 +12,7 @@ thin PyQt6 dock collects explicit inputs and runs planning in a cancellable work
 CPython 3.13, existing Shapely and PyQt6 only. Three stories, 18 tasks. All geometry remains
 mm; recipe/job schema 1 stays unchanged. The kernel limits candidate scan lines to 50,000
 and emitted paths to 200,000, with cancellation checks between geometric operations.
+Explicit outlines are limited to 500 rings before pairwise ambiguity checks.
 Individual GEOS operations are not interruptible; shutdown waits for the active bounded
 worker to finish before destroying it. No queued overlapping generations.
 
