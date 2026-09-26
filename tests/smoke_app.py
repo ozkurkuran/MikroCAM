@@ -162,16 +162,23 @@ def laser_journey(app, qapp, sandbox, errors):
     panel.source_combo.setCurrentIndex(panel.source_combo.findData('smoke_gerber'))
     recipe_file = sandbox / 'laser-recipe.json'
     recipe_file.write_text(recipe_to_json(LaserRecipe('Synthetic smoke only',
-                           (LaserPass('Reference', 20, 100, 20, 80),))), encoding='utf-8')
+                           (LaserPass('Reference', 20, 100, 20, 80),
+                            LaserPass('Finish', 10, 150, 30, 60)))), encoding='utf-8')
     panel.set_recipe(recipe_from_json(recipe_file.read_text(encoding='utf-8')))
     panel.hatch_enabled.setChecked(True)
     panel.hatch_spacing.setValue(1)
     panel.hatch_angle.setValue(30)
     panel.cross_hatch.setChecked(True)
+    panel.interlace_n.setValue(3)
     panel.translation_x.setValue(5)
     panel.generate()
     pump_until(qapp, lambda: not panel.busy, errors, 'laser preview')
     assert panel.last_plan is not None, panel.status_label.text()
+    assert panel.last_plan.options.interlace_n == 3
+    passes = panel.last_plan.pass_plans
+    assert [value.settings.name for value in passes] == ['Reference', 'Finish']
+    assert passes[0].paths is passes[1].paths is panel.last_plan.paths
+    assert passes[1].settings.speed_mm_s == 150 and passes[1].settings.pulse_width_ns == 60
     first = app._mikrocam_laser_cam_preview
     assert_object(app, first.obj_options['name'], 'geometry')
     pump_until(qapp, lambda: app.workers._pending_count == 0, errors, 'laser preview plotting')
@@ -191,6 +198,7 @@ def laser_journey(app, qapp, sandbox, errors):
     screenshot = ROOT / '.venv/laser-cam-smoke.png'
     assert app.ui.grab().save(str(screenshot))
     print('LASER_PREVIEW_OK', len(panel.last_plan.paths), second.obj_options['name'], screenshot, flush=True)
+    print('LASER_MULTIPASS_OK', len(panel.last_plan.pass_plans), panel.last_plan.options.interlace_n, flush=True)
 
 
 def render_and_quit(app, qapp, errors):
