@@ -19,4 +19,9 @@ upstream placeholders skipped, 3 inherited SWIG warnings). Architecture and grow
 pass; this slice changes no legacy code or dependencies. The largest runtime module is
 145 lines and largest function 23 lines. Independent review found no material defect in
 numeric validation, strict JSON, detached geometry, placement or current-unit conversion.
-No GUI smoke is required for this data/bridge slice. Hosted CI remains the delivery gate.
+No GUI smoke is required for this data/bridge slice.
+
+Windows [CI run 36272577654](https://github.com/ozkurkuran/MikroCAM/actions/runs/36272577654)
+passed **823 tests and 310 subtests** in 43.04s, with 2 original placeholders skipped;
+`pip check` is clean. [PR 5](https://github.com/ozkurkuran/MikroCAM/pull/5) was retargeted
+to main after placement PR 4 merged. All fourteen tasks are complete.

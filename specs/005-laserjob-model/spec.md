@@ -2,7 +2,7 @@
 
 **Feature Branch**: `005-laserjob-model`
 **Created**: 2026-09-27
-**Status**: Specified
+**Status**: Implemented
 **Input**: Roadmap slice 5: separate LaserJob, ordered-pass recipe JSON, serialization and
 Gerber-to-core geometry bridge, using the shared placement.
 

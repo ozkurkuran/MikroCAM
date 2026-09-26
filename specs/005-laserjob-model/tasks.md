@@ -24,8 +24,8 @@ Independent check: equivalent inch/mm geometry, nested shapes, holes, immutable 
 
 ## Polish and delivery
 - [X] T012 Run full suite/architecture/growth checks in specs/005-laserjob-model/validation.md.
-- [ ] T013 Review hosted CI and code sizes in specs/005-laserjob-model/validation.md.
-- [ ] T014 Mark docs/ROADMAP.md completion and deliver the feature PR after prior slices.
+- [X] T013 Review hosted CI and code sizes in specs/005-laserjob-model/validation.md.
+- [X] T014 Mark docs/ROADMAP.md completion and deliver the feature PR after prior slices.
 
 ## Dependencies and parallel work
 T001–T002 gate code. T003 precedes T004–T005; T006 precedes T007–T008. US3 tests and
