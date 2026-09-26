@@ -45,6 +45,12 @@ def test_point_sequences_preserve_order_and_do_not_mutate_sources():
     assert Placement().apply_points([]) == ()
 
 
+@pytest.mark.parametrize(('angle', 'expected'), [(0, (2, 3)), (90, (-3, 2)),
+                                               (180, (-2, -3)), (270, (3, -2)), (450, (-3, 2))])
+def test_cardinal_rotations_have_exact_zero_coefficients(angle, expected):
+    assert Placement(rotation_deg=angle).apply_point((2, 3)) == expected
+
+
 @pytest.mark.parametrize('points', [None, True, 3, '12'])
 def test_malformed_point_sequences_fail_explicitly(points):
     with pytest.raises(ValueError):

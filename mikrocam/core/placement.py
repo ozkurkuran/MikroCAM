@@ -71,8 +71,12 @@ class Placement:
     @property
     def matrix(self) -> Affine2D:
         """Return Shapely-compatible coefficients (a, b, d, e, xoff, yoff)."""
-        angle = math.radians(self.rotation_deg % 360.0)
-        cosine, sine = math.cos(angle), math.sin(angle)
+        degrees = self.rotation_deg % 360.0
+        if degrees in (0.0, 90.0, 180.0, 270.0):
+            cosine, sine = ((1.0, 0.0), (0.0, 1.0), (-1.0, 0.0), (0.0, -1.0))[int(degrees / 90)]
+        else:
+            angle = math.radians(degrees)
+            cosine, sine = math.cos(angle), math.sin(angle)
         mirror = -1.0 if self.mirror_x else 1.0
         a, b, d, e = cosine * mirror, -sine, sine * mirror, cosine
         x, y = self.origin
