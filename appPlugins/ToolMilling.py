@@ -736,7 +736,6 @@ class ToolMilling(Excellon, AppTool):
     def on_level_changed(self, checked):
 
         self.target_obj = self.app.collection.get_by_name(self.ui.object_combo.get_value())
-        app_defaults = getattr(self.app, "defaults", None) or AppDefaults.factory_defaults
 
         if not checked:
             self.ui.level.setText('%s' % _('Beginner'))
@@ -752,19 +751,6 @@ class ToolMilling(Excellon, AppTool):
 
             # Tool parameters section
             if self.ui.target_radio.get_value() == 'geo':
-                if self.target_obj:
-                    for tool in self.target_obj.tools:
-                        tool_data = self.target_obj.tools[tool]['data']
-
-                        tool_data['tools_mill_offset_type'] = 0  # 'Path'
-                        tool_data['tools_mill_offset_value'] = 0.0
-                        tool_data['tools_mill_job_type'] = 0    # _('Roughing')
-
-                        # we made the decision here what to do with the hidden parameters
-                        # some will disable some of the hidden features but other are set by
-                        # other plugins so, we hide them, but we do not disable (like the `multidepth`)
-                        # tool_data['tools_mill_multidepth'] = False
-
                 self.ui.offset_type_lbl.hide()
                 self.ui.offset_type_combo.hide()
                 self.ui.offset_label.hide()
@@ -811,24 +797,27 @@ class ToolMilling(Excellon, AppTool):
             # Tool parameters section
             if self.ui.target_radio.get_value() == 'geo':
                 if self.target_obj:
-                    app_defaults = self.target_obj.obj_options
-                    for tool in self.target_obj.tools:
-                        tool_data = self.target_obj.tools[tool]['data']
-
-                        tool_data['tools_mill_offset_type'] = app_defaults['tools_mill_offset_type']
-                        tool_data['tools_mill_offset_value'] = app_defaults['tools_mill_offset_value']
-                        tool_data['tools_mill_job_type'] = app_defaults['tools_mill_job_type']
-
-                        # we made the decision here what to do with the hidden parameters
-                        # some will disable some of the hidden features but other are set by
-                        # other plugins so, we hide them but, we do not disable (like the `multidepth`)
-                        # tool_data['tools_mill_multidepth'] = app_defaults['tools_mill_multidepth']
+                    table = self.ui.tools_table_mill_geo
+                    rows = {index.row() for index in table.selectedIndexes()}
+                    if len(rows) == 1:
+                        item = table.item(next(iter(rows)), 3)
+                        if item is not None:
+                            tool_data = self.target_obj.tools[int(item.text())]['data']
+                            for key, widget in (
+                                ('tools_mill_offset_type', self.ui.offset_type_combo),
+                                ('tools_mill_offset_value', self.ui.offset_entry),
+                                ('tools_mill_job_type', self.ui.job_type_combo),
+                            ):
+                                if key in tool_data:
+                                    with QtCore.QSignalBlocker(widget):
+                                        widget.set_value(tool_data[key])
+                            self.on_job_changed(self.ui.job_type_combo.get_value())
 
                 self.ui.offset_type_lbl.show()
                 self.ui.offset_type_combo.show()
-                if self.ui.offset_type_combo.get_value() == 3:  # _("Custom")
-                    self.ui.offset_label.show()
-                    self.ui.offset_entry.show()
+                custom_offset = self.ui.offset_type_combo.get_value() == 3
+                self.ui.offset_label.setVisible(custom_offset)
+                self.ui.offset_entry.setVisible(custom_offset)
                 self.ui.offset_type_lbl.show()
                 self.ui.offset_separator_line.show()
                 self.ui.offset_type_lbl.show()

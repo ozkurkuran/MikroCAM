@@ -216,3 +216,18 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   are not imported; offset type/value and job-type writes are outside this correction.
 - Regression: real level changes retain explicit true flags through both transition orders.
 - MikroCAM commit: `fix: preserve selected milling machining flags` (this commit).
+
+## 2026-09-27 — Keep milling level changes read-only for machining settings
+
+- Independent MikroCAM finding during the audit of MIT upstream
+  `kpkrisnop/flatcam` commit `97ea33b1d84a2e39b9c35880a28e001d227ac2d0`.
+  That upstream commit retains the offset/job overwrites; this correction is not a port.
+- Destination: `appPlugins/ToolMilling.py`, `on_level_changed()`; existing notices retained.
+- Correction: remove writes replacing per-tool offset type/value and job type. Entering
+  Advanced restores the one selected tool's actual choices with scoped Qt signal blockers,
+  then refreshes job/custom-offset visibility explicitly. Basic keeps advanced controls hidden.
+  Multiple-tool machining data is preserved; existing signal-blocked states remain unchanged.
+- Regression: real Qt combo signals connected to actual `form_to_storage()` demonstrate
+  no writes during either level sequence, unchanged selected/other tools, visible custom
+  offset 0.42 and Isolation job, and functioning ordinary editing after restoration.
+- MikroCAM commit: `fix: keep milling level changes read-only` (this commit).

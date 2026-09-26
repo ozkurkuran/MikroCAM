@@ -116,3 +116,76 @@ def test_milling_level_switch_preserves_selected_advanced_machining_flags(qtbot,
         observed.append(data[flag])
     assert observed == [True, True, True]
     assert data['tools_mill_extracut_length'] == .65
+
+
+@pytest.mark.parametrize('levels', [(False, True, False), (True, False, True)], ids=['basic-first', 'advanced-first'])
+@pytest.mark.parametrize('already_blocked', [False, True])
+def test_milling_level_is_read_only_for_selected_offset_and_job_settings(qtbot, levels, already_blocked):
+    from PyQt6 import QtCore
+    from appGUI.GUIElements import FCComboBox2, FCDoubleSpinner
+    from appPlugins.ToolMilling import ToolMilling
+    base, data = milling_fixture(qtbot)
+    class SignalHost(QtCore.QObject):
+        def form_to_storage(self, *args):
+            self.form_writes.append(self.sender().objectName())
+            ToolMilling.form_to_storage(self)
+    tool = SignalHost()
+    tool.__dict__.update(vars(base))
+    tool.form_writes = []
+    tool.on_job_changed = lambda index: ToolMilling.on_job_changed(tool, index)
+    for name in ('polish_margin_lbl polish_margin_entry polish_over_lbl polish_over_entry '
+                 'polish_method_lbl polish_method_combo').split():
+        widget = QtWidgets.QWidget()
+        widget.show()
+        setattr(tool.ui, name, widget)
+        qtbot.addWidget(widget)
+    tool.ui.cutzlabel = QtWidgets.QLabel()
+    qtbot.addWidget(tool.ui.cutzlabel)
+    tool.ui.object_combo.currentText = lambda: 'geometry'
+    tool.ui.job_type_combo = FCComboBox2()
+    tool.ui.job_type_combo.addItems(['Roughing', 'Finishing', 'Isolation', 'Polishing'])
+    tool.ui.offset_entry = FCDoubleSpinner()
+    tool.ui.offset_entry.set_range(-10, 10)
+    tool.ui.offset_entry.set_precision(2)
+    for widget in (tool.ui.job_type_combo, tool.ui.offset_entry):
+        qtbot.addWidget(widget)
+    data.update(tools_mill_offset_type=3, tools_mill_offset_value=.42, tools_mill_job_type=2)
+    other_data = dict(data, tools_mill_offset_type=1, tools_mill_offset_value=.7, tools_mill_job_type=1)
+    tool.target_obj.tools[2] = {'data': other_data}
+    before = deepcopy(tool.target_obj.tools)
+    table = tool.ui.tools_table_mill_geo
+    table.setColumnCount(5)
+    table.setRowCount(1)
+    table.setItem(0, 3, QtWidgets.QTableWidgetItem('1'))
+    table.selectRow(0)
+    tool.form_fields = dict(tools_mill_offset_type=tool.ui.offset_type_combo,
+                           tools_mill_offset_value=tool.ui.offset_entry, tools_mill_job_type=tool.ui.job_type_combo)
+    tool.general_form_fields = {}
+    tool.name2option = {}
+    tool.ui_disconnect = tool.ui_connect = lambda: None
+    for key, widget in tool.form_fields.items():
+        widget.setObjectName(key)
+        tool.name2option[key] = key
+        if isinstance(widget, FCComboBox2):
+            widget.currentIndexChanged.connect(tool.form_to_storage)
+            widget.blockSignals(already_blocked)
+    tool.ui.offset_type_combo.currentIndexChanged.connect(lambda index: ToolMilling.on_offset_type_changed(tool, index))
+    for checked in levels:
+        ToolMilling.on_level_changed(tool, checked)
+        assert tool.target_obj.tools == before
+        if checked:
+            assert tool.ui.offset_type_combo.get_value() == 3
+            assert tool.ui.offset_entry.get_value() == .42
+            assert tool.ui.job_type_combo.get_value() == 2
+            assert not tool.ui.offset_entry.isHidden()
+            assert tool.ui.polish_margin_entry.isHidden()
+        else:
+            assert tool.ui.offset_type_combo.isHidden()
+            assert tool.ui.offset_entry.isHidden()
+        assert tool.ui.offset_type_combo.signalsBlocked() is already_blocked
+        assert tool.ui.job_type_combo.signalsBlocked() is already_blocked
+    assert tool.form_writes == []
+    if not already_blocked:
+        tool.ui.offset_type_combo.set_value(1)
+        assert data['tools_mill_offset_type'] == 1  # actual editing still writes via the live signal
+        assert tool.form_writes == ['tools_mill_offset_type']
