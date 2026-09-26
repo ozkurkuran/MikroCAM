@@ -1,6 +1,7 @@
 """Physical serial adapter behavior without opening any hardware device."""
 from dataclasses import FrozenInstanceError
-import importlib
+import importlib.util
+import sys
 from types import SimpleNamespace
 from unittest.mock import Mock
 
@@ -61,7 +62,10 @@ def test_construction_and_unused_close_never_import_or_open_serial(monkeypatch):
             pytest.fail('Inert module/constructor must not import hardware backend')
         return original(name, *args, **kwargs)
     monkeypatch.setattr(builtins, '__import__', guarded_import)
-    module = importlib.reload(serial_transport)
+    spec = importlib.util.spec_from_file_location('_serial_transport_inert_test', serial_transport.__file__)
+    module = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, spec.name, module)
+    spec.loader.exec_module(module)
     transport = module.SerialIO('COM7')
     transport.close()
     transport.close()

@@ -201,7 +201,43 @@ def laser_journey(app, qapp, sandbox, errors):
     print('LASER_MULTIPASS_OK', len(panel.last_plan.pass_plans), panel.last_plan.options.interlace_n, flush=True)
 
 
-def render_and_quit(app, qapp, errors):
+def machine_journey(app, qapp, errors):
+    from unittest.mock import patch
+    from mikrocam.bridge.serial_transport import PortInfo
+    from mikrocam.machine.controller import MachineController
+    from mikrocam.machine.fake import FakeGRBL
+    from mikrocam.machine.models import MachineState
+    from mikrocam.ui.machine_panel import open_machine_panel
+    fake = FakeGRBL(status=b'<Idle|MPos:3,4,5|WCO:1,2,3>\n')
+    with patch('mikrocam.ui.machine_panel.list_ports', return_value=(PortInfo('FAKE', 'Smoke simulator'),)):
+        action = next(action for action in app.ui.menu_plugins.actions() if action.text() == 'Machine')
+        action.trigger()
+        panel = app._mikrocam_machine_panel
+        assert not fake.is_open and not fake.writes
+        assert open_machine_panel(app) is panel
+        panel.controller_factory = lambda port: MachineController(fake)
+        panel.connect_machine()
+        pump_until(qapp, lambda: panel.last_snapshot.machine_position_mm == (3., 4., 5.),
+                   errors, 'simulated machine connection')
+        assert panel.last_snapshot.work_position_mm == (2., 2., 2.)
+        assert panel.last_snapshot.state is MachineState.IDLE
+        assert tuple(label.text() for label in panel.machine_labels) == ('3.000', '4.000', '5.000')
+        worker = panel._worker
+        assert worker is not None and worker.isRunning()
+        assert panel.close()
+        assert not panel.busy and not fake.is_open
+        assert open_machine_panel(app) is panel
+        panel.connect_machine()
+        pump_until(qapp, lambda: panel.last_snapshot.machine_position_mm == (3., 4., 5.),
+                   errors, 'simulated machine reconnection')
+    assert set(fake.writes) == {b'?', b'$$\n'}
+    screenshot = ROOT / '.venv/machine-smoke.png'
+    assert app.ui.grab().save(str(screenshot))
+    print('MACHINE_READ_ONLY_OK', screenshot, flush=True)
+    return fake
+
+
+def render_and_quit(app, qapp, errors, machine_transport):
     from PyQt6 import QtCore
     import numpy as np
     app.collection.set_active('smoke_gerber')
@@ -227,6 +263,8 @@ def render_and_quit(app, qapp, errors):
         assert app.new_launch.thread_exit
     assert not any(process.is_alive() for process in app.pool._pool)
     assert not multiprocessing.active_children(), 'Application child process survived shutdown'
+    assert not app._mikrocam_machine_panel.busy and not machine_transport.is_open
+    print('MACHINE_SHUTDOWN_OK', flush=True)
     print('SHUTDOWN_OK', flush=True)
 
 
@@ -310,7 +348,8 @@ def run_smoke(sandbox, state):
         qapp.processEvents()
         laser_journey(app, qapp, sandbox, errors)
         laser_export_journey(app, qapp, sandbox, errors)
-        render_and_quit(app, qapp, errors)
+        machine_transport = machine_journey(app, qapp, errors)
+        render_and_quit(app, qapp, errors, machine_transport)
     except BaseException:
         traceback.print_exc()
         if getattr(app, 'workers', None) is not None:
