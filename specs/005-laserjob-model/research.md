@@ -17,3 +17,12 @@ Decision: Gerber bridge reads the object's declared units and current solid_geom
 accepts polygon/multipolygon collections, unions overlapping copper, converts inch to mm once,
 then creates a PlanarRegion. Empty or unsupported input fails. No mutation or repair is performed.
 Source-aperture classification for pad/trace modes belongs to the later contour/hatch feature.
+
+Inspected Evo ParseGerber and AppObject/GerberObject conversion paths: parsing initially
+uses file mode (or the host's import default), then object creation may convert geometry to
+application units and updates `obj.units`. Therefore the bridge treats **current obj.units**
+as the geometry boundary declaration, never source_file's original mode or units_found.
+An IN source already converted to MM must not be converted again. Missing/unrecognized current
+units fail; source-unit provenance reporting belongs to the later import-report slice.
+Final solid_geometry incorporates clear-polarity subtraction and preserves polygon holes.
+Per-tool follow data mixes lines, flashed points and region edges, so it is not used as copper.
