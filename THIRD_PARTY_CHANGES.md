@@ -111,13 +111,13 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 
 ## 2026-09-27 — Persist drilling database replacements
 
-- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit `cec6a094`
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit `cec6a094ddc520e129d29ec8855a637ca5296a24`
   (drilling ToolDB overwrite fix). Existing FlatCAM Evo copyright headers are retained.
 - Destination: `appPlugins/ToolDrilling.py`, `replace_tools()` only.
 - Adaptation: copy accepted replacement settings into the source Excellon object before
   the real default-order UI rebuild reloads its tools. Database records remain independent.
 - Regression: exact and tolerance matches survive two rebuilds and reach the actual Qt form.
-- MikroCAM commit: `fix: persist drilling database replacements` (this commit).
+- MikroCAM commit: `e4224b68` (`fix: persist drilling database replacements`).
 
 ## 2026-09-27 — Preserve distinct Excellon milling tools
 
@@ -128,7 +128,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   preserve source order otherwise. Reset displayed totals at each rebuild.
 - Regression: equal displayed diameters retain two distinct tools and two drill hits through
   repeated real Qt table rebuilds in all three order modes.
-- MikroCAM commit: `fix: preserve distinct Excellon milling tools` (this commit).
+- MikroCAM commit: `4aac5778` (`fix: preserve distinct Excellon milling tools`).
 
 ## 2026-09-27 — Preserve milling dwell through level changes
 
@@ -139,7 +139,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   toggle with application/object defaults. The stored duration and toggle remain paired.
 - Regression: real `CNCjob.generate_from_geometry_2()` and default preprocessor retain
   `G4 P4.2` across both directions of repeated level changes.
-- MikroCAM commit: `fix: preserve milling dwell through level changes` (this commit).
+- MikroCAM commit: `e8ac6db5` (`fix: preserve milling dwell through level changes`).
 
 ## 2026-09-27 — Restore cutout and gap controls independently
 
@@ -149,15 +149,30 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Adaptation: use the cutout mode radio value for automatic/manual controls and explicitly
   restore gap-specific controls from the gap combo value, including while signals are blocked.
 - Regression: actual Qt controls retain automatic/manual and Thin/Mouse Bites states separately.
-- MikroCAM commit: `fix: restore cutout and gap controls independently` (this commit).
+- MikroCAM commit: `3c15f77c` (`fix: restore cutout and gap controls independently`).
 
 ## 2026-09-27 — Preserve explicit cutout database machining settings
 
-- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
-  `f239fcbb8f34b300516f6a97ad50e6798924b07d` (Phase 5 cutout database settings).
+- Audit reference: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `f239fcbb8f34b300516f6a97ad50e6798924b07d` (Phase 5 canonical database backfill).
+  This commit retains the milling-to-cutout overwrites upstream; the correction below is
+  independently implemented in MikroCAM, not ported from that source.
 - Destination: `appPlugins/ToolCutOut.py`, database matching and picker callback; notices retained.
-- Adaptation: remove six post-copy assignments that replace dedicated cutout Z, multidepth and
+- Correction: remove six post-copy assignments that replace dedicated cutout Z, multidepth and
   pass depth with milling values. Dedicated cutout settings remain authoritative in both routes.
 - Regression: exact, tolerance and picker insertion retain intentionally distinct machining
   values in stored data and actual Qt controls; original records/files remain unchanged.
-- MikroCAM commit: `fix: preserve explicit cutout database settings` (this commit).
+- MikroCAM commit: `d2d2b71b` (`fix: preserve explicit cutout database settings`).
+
+## 2026-09-27 — Populate canonical machining database defaults
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `f239fcbb8f34b300516f6a97ad50e6798924b07d` (Phase 5 ToolDB defaults).
+- Destination: `defaults.py` and `appDatabase.py`; existing notices and MIT permission retained.
+- Adaptation: retain the six machining namespaces and twelve application-only exclusions;
+  use their canonical factory keys for new records and existing normalization backfill.
+  Current application values are copied for creation; explicit loaded values remain unchanged.
+  Keep existing numeric conversion, segmentation metadata and strict database validation.
+- Regression: new in-memory records include the milling/drilling laser settings and every
+  eligible machining setting before save/reload; backfill excludes unrelated UI namespaces.
+- MikroCAM commit: `fix: populate canonical machining database defaults` (this commit).

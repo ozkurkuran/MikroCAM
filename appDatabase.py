@@ -3,6 +3,7 @@ from PyQt6 import QtGui, QtCore, QtWidgets
 from appGUI.GUIElements import FCEntry, FCButton, FCDoubleSpinner, FCComboBox, FCCheckBox, FCSpinner, \
     FCTree, RadioSet, FCFileSaveDialog, FCLabel, FCComboBox2, FCMessageBox, GLay
 from camlib import to_dict
+from defaults import AppDefaults
 
 import sys
 import simplejson as json
@@ -104,6 +105,7 @@ def normalize_tools_database(records, defaults):
         raise ValueError('Tools DB root: expected a dictionary')
 
     default_values = dict(_database_option_items(defaults))
+    canonical_keys = AppDefaults.get_all_db_tool_keys()
     normalized = deepcopy(records)
     target_labels = ['General', 'Milling', 'Drilling', 'Isolation', 'Paint', 'NCC', 'Cutout']
     shape_labels = ['C1', 'C2', 'C3', 'C4', 'B', 'V', 'L']
@@ -139,7 +141,7 @@ def normalize_tools_database(records, defaults):
                 log.warning('Tools DB record %s: migrated record tools_mill_offset_value to data', tool_id)
 
             for option, default in default_values.items():
-                if option.startswith('tools_'):
+                if option in canonical_keys:
                     data.setdefault(option, deepcopy(default))
 
             data['tools_mill_tool_shape'] = _database_enum(
@@ -2045,111 +2047,21 @@ class ToolsDB2(QtWidgets.QWidget):
         :return: None
         """
 
-        default_data = {}
-        default_data.update({
-            "plot":             True,
-            "tool_target": 0,   # _("General")
+        default_data = {
+            "plot": True,
+            "tool_target": 0,
             "tol_min": 0.0,
             "tol_max": 0.0,
-
-            # Milling
-            "tools_mill_tool_shape":            _database_option(self.app, "tools_mill_tool_shape"),
-            "tools_mill_job_type":         _database_option(self.app, "tools_mill_job_type"),
-            "tools_mill_offset_type":      _database_option(self.app, "tools_mill_offset_type"),
-            "tools_mill_offset_value":     float(_database_option(self.app, "tools_mill_offset_value")),
-
-            "tools_mill_cutz":             float(_database_option(self.app, "tools_mill_cutz")),
-            "tools_mill_multidepth":       _database_option(self.app, "tools_mill_multidepth"),
-            "tools_mill_depthperpass":     float(_database_option(self.app, "tools_mill_depthperpass")),
-            "tools_mill_vtipdia":          float(_database_option(self.app, "tools_mill_vtipdia")),
-            "tools_mill_vtipangle":        float(_database_option(self.app, "tools_mill_vtipangle")),
-            "tools_mill_travelz":          float(_database_option(self.app, "tools_mill_travelz")),
-            "tools_mill_feedrate":         float(_database_option(self.app, "tools_mill_feedrate")),
-            "tools_mill_feedrate_z":       float(_database_option(self.app, "tools_mill_feedrate_z")),
-            "tools_mill_feedrate_rapid":   float(_database_option(self.app, "tools_mill_feedrate_rapid")),
-            "tools_mill_spindlespeed":     _database_option(self.app, "tools_mill_spindlespeed"),
-            "tools_mill_dwell":            _database_option(self.app, "tools_mill_dwell"),
-            "tools_mill_dwelltime":        float(_database_option(self.app, "tools_mill_dwelltime")),
-            "tools_mill_ppname_g":         _database_option(self.app, "tools_mill_ppname_g"),
-            "tools_mill_extracut":         _database_option(self.app, "tools_mill_extracut"),
-            "tools_mill_extracut_length":  float(_database_option(self.app, "tools_mill_extracut_length")),
-            "tools_mill_toolchange":       _database_option(self.app, "tools_mill_toolchange"),
-            "tools_mill_toolchangexy":     _database_option(self.app, "tools_mill_toolchangexy"),
-            "tools_mill_toolchangez":      float(_database_option(self.app, "tools_mill_toolchangez")),
-            "tools_mill_startz":           _database_option(self.app, "tools_mill_startz"),
-            "tools_mill_endz":             float(_database_option(self.app, "tools_mill_endz")),
-            "tools_mill_endxy":            _database_option(self.app, "tools_mill_endxy"),
-            "tools_mill_search_time":      int(_database_option(self.app, "tools_mill_search_time")),
-            "tools_mill_z_p_depth":         float(_database_option(self.app, "tools_mill_z_p_depth")),
-            "tools_mill_f_plunge":         float(_database_option(self.app, "tools_mill_f_plunge")),
-
-            "tools_mill_spindledir":               _database_option(self.app, "tools_mill_spindledir"),
-            "tools_mill_optimization_type":        _database_option(self.app, "tools_mill_optimization_type"),
-            "tools_mill_feedrate_probe":           _database_option(self.app, "tools_mill_feedrate_probe"),
-
-            "seg_x":             _database_option(self.app, "geometry_seg_x"),
-            "seg_y":             _database_option(self.app, "geometry_seg_y"),
-            "tools_mill_area_exclusion":   _database_option(self.app, "tools_mill_area_exclusion"),
-            "tools_mill_area_shape":       _database_option(self.app, "tools_mill_area_shape"),
-            "tools_mill_area_strategy":    _database_option(self.app, "tools_mill_area_strategy"),
-            "tools_mill_area_overz":       _database_option(self.app, "tools_mill_area_overz"),
-            "tools_mill_polish":           _database_option(self.app, "tools_mill_polish"),
-            "tools_mill_polish_margin":    _database_option(self.app, "tools_mill_polish_margin"),
-            "tools_mill_polish_overlap":   _database_option(self.app, "tools_mill_polish_overlap"),
-            "tools_mill_polish_method":    _database_option(self.app, "tools_mill_polish_method"),
-
-            # NCC
-            "tools_ncc_operation":       _database_option(self.app, "tools_ncc_operation"),
-            "tools_ncc_milling_type":    _database_option(self.app, "tools_ncc_milling_type"),
-            "tools_ncc_overlap":         float(_database_option(self.app, "tools_ncc_overlap")),
-            "tools_ncc_margin":          float(_database_option(self.app, "tools_ncc_margin")),
-            "tools_ncc_method":          _database_option(self.app, "tools_ncc_method"),
-            "tools_ncc_connect":         _database_option(self.app, "tools_ncc_connect"),
-            "tools_ncc_contour":         _database_option(self.app, "tools_ncc_contour"),
-            "tools_ncc_offset_choice":  _database_option(self.app, "tools_ncc_offset_choice"),
-            "tools_ncc_offset_value":   float(_database_option(self.app, "tools_ncc_offset_value")),
-
-            # Paint
-            "tools_paint_overlap":       float(_database_option(self.app, "tools_paint_overlap")),
-            "tools_paint_offset":        float(_database_option(self.app, "tools_paint_offset")),
-            "tools_paint_method":        _database_option(self.app, "tools_paint_method"),
-            "tools_paint_connect":        _database_option(self.app, "tools_paint_connect"),
-            "tools_paint_contour":       _database_option(self.app, "tools_paint_contour"),
-
-            # Isolation
-            "tools_iso_passes":         int(_database_option(self.app, "tools_iso_passes")),
-            "tools_iso_overlap":        float(_database_option(self.app, "tools_iso_overlap")),
-            "tools_iso_milling_type":   _database_option(self.app, "tools_iso_milling_type"),
-            "tools_iso_isotype":        _database_option(self.app, "tools_iso_isotype"),
-
-            # Drilling
-            "tools_drill_cutz":             float(_database_option(self.app, "tools_drill_cutz")),
-            "tools_drill_multidepth":       _database_option(self.app, "tools_drill_multidepth"),
-            "tools_drill_depthperpass":     float(_database_option(self.app, "tools_drill_depthperpass")),
-            "tools_drill_travelz":          float(_database_option(self.app, "tools_drill_travelz")),
-
-            "tools_drill_feedrate_z":       float(_database_option(self.app, "tools_drill_feedrate_z")),
-            "tools_drill_feedrate_rapid":   float(_database_option(self.app, "tools_drill_feedrate_rapid")),
-            "tools_drill_spindlespeed":     float(_database_option(self.app, "tools_drill_spindlespeed")),
-            "tools_drill_dwell":            _database_option(self.app, "tools_drill_dwell"),
-            "tools_drill_dwelltime":        float(_database_option(self.app, "tools_drill_dwelltime")),
-
-            "tools_drill_offset":           float(_database_option(self.app, "tools_drill_offset")),
-            "tools_drill_drill_slots":      _database_option(self.app, "tools_drill_drill_slots"),
-            "tools_drill_drill_overlap":    float(_database_option(self.app, "tools_drill_drill_overlap")),
-            "tools_drill_last_drill":       _database_option(self.app, "tools_drill_last_drill"),
-
-            # Cutout
-            "tools_cutout_margin":          float(_database_option(self.app, "tools_cutout_margin")),
-            "tools_cutout_gapsize":         float(_database_option(self.app, "tools_cutout_gapsize")),
-            "tools_cutout_gaps_ff":         _database_option(self.app, "tools_cutout_gaps_ff"),
-            "tools_cutout_convexshape":     _database_option(self.app, "tools_cutout_convexshape"),
-
-            "tools_cutout_gap_type":        _database_option(self.app, "tools_cutout_gap_type"),
-            "tools_cutout_gap_depth":       float(_database_option(self.app, "tools_cutout_gap_depth")),
-            "tools_cutout_mb_dia":          float(_database_option(self.app, "tools_cutout_mb_dia")),
-            "tools_cutout_mb_spacing":      float(_database_option(self.app, "tools_cutout_mb_spacing"))
-        })
+            "seg_x": _database_option(self.app, "geometry_seg_x"),
+            "seg_y": _database_option(self.app, "geometry_seg_y"),
+        }
+        for key, factory_value in AppDefaults.get_all_db_tool_keys().items():
+            value = self.app.options.get(key, factory_value)
+            if isinstance(factory_value, float) and value is not None:
+                value = float(value)
+            elif type(factory_value) is int and value is not None:
+                value = int(value)
+            default_data[key] = deepcopy(value)
 
         temp = []
         for k, v in self.db_tool_dict.items():
