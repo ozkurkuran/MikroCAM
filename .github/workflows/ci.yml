@@ -1,0 +1,80 @@
+name: Windows validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      QT_API: pyqt6
+      QT_QPA_PLATFORM: offscreen
+      PYTHONUTF8: "1"
+      MIKROCAM_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
+    steps:
+      - name: Check out complete history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Select a valid growth baseline
+        run: |
+          $base = $env:MIKROCAM_BASE_REF
+          if ([string]::IsNullOrWhiteSpace($base) -or $base -match '^0+$') {
+            $base = git merge-base HEAD refs/remotes/origin/main
+            if ($LASTEXITCODE -ne 0) {
+              throw 'Cannot determine growth baseline. Fetch origin/main and full history.'
+            }
+            $head = git rev-parse HEAD
+            if ($base -eq $head) {
+              $base = git rev-parse --verify 'HEAD^'
+              if ($LASTEXITCODE -ne 0) {
+                throw 'No predecessor is available for growth validation. Supply valid base history.'
+              }
+            }
+          }
+          if ($base -notmatch '^[0-9a-f]{40}$') {
+            throw "Invalid growth baseline: $base"
+          }
+          git cat-file -e "${base}^{commit}"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Growth baseline $base is unavailable. Fetch this commit and full history."
+          }
+          Write-Host "Growth baseline: $base"
+          Add-Content -LiteralPath $env:GITHUB_ENV -Value "MIKROCAM_BASE_REF=$base" -Encoding utf8
+
+      - name: Set up pinned CPython x64
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version-file: .python-version
+          architecture: x64
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - name: Install pinned dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Check dependency consistency
+        run: python -m pip check
+
+      - name: Run complete suite and architecture checks
+        run: python -m pytest -q --junitxml=test-results/pytest.xml
+
+      - name: Retain test report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-py313-test-results
+          path: test-results/pytest.xml
+          if-no-files-found: warn

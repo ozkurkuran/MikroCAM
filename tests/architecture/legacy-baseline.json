@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "revision": "c388cf4ae58da28049493b47375bb6cdf1e7401f",
+  "budget": 50,
+  "files": {
+    "camlib.py": 8815,
+    "appEditors/appGerberEditor.py": 8427,
+    "appGUI/GUIElements.py": 6350,
+    "appEditors/appGeoEditor.py": 5944,
+    "appGUI/MainGUI.py": 5661,
+    "appEditors/appExcEditor.py": 5660,
+    "appPlugins/ToolMilling.py": 5256,
+    "appMain.py": 4210,
+    "appPlugins/ToolIsolation.py": 4064,
+    "appDatabase.py": 3640
+  }
+}
