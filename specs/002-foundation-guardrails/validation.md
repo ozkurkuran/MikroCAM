@@ -9,7 +9,7 @@ tests, SC-003 requires hosted CI and SC-004 is checked through the documented co
 Three stories and fourteen tasks fit the constitution. No unresolved contradiction or
 clarification. No external interfaces, runtime dependencies or source ports.
 
-Implementation and hosted results will be recorded after execution.
+All fourteen tasks are complete; [feature PR](https://github.com/ozkurkuran/MikroCAM/pull/2).
 
 ## Initial execution and hosted diagnosis
 
@@ -25,3 +25,17 @@ Implementation and hosted results will be recorded after execution.
   parent directory and nonrecursive ls-tree were checked against execution: pytest creates
   the parent, and `git ls-tree -rz` already includes the recursive `-r` flag. No workaround needed.
 - Current tracked legacy growth: +0/50 from c388cf4ae58da28049493b47375bb6cdf1e7401f.
+
+## Final hosted result
+
+[Windows run 36270502616](https://github.com/ozkurkuran/MikroCAM/actions/runs/36270502616),
+revision 86d6fe8d, completed successfully: **594 passed, 2 skipped, 310 subtests passed**
+in 46.12s, with the same three upstream SWIG deprecation warnings. `pip check` was clean.
+Both skips remain the original empty Qt-context placeholders, not new guard exclusions.
+The run checked out full history, selected the PR base, installed CPython 3.13.13 x64 and
+the pinned development environment, ran all tests and retained the JUnit artifact.
+
+The guard suite includes 46 dependency-boundary cases, 28 growth cases and 9 runtime metadata
+cases. New modules are below 600 lines and functions below 80. No application source file
+changed, no runtime dependency was added and GUI smoke is not applicable to this slice.
+No external code port was performed. Branch work is independently authored developer tooling.

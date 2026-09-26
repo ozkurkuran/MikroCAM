@@ -2,7 +2,7 @@
 
 **Feature Branch**: `002-foundation-guardrails`
 **Created**: 2026-09-26
-**Status**: Specified
+**Status**: Implemented
 **Input**: Roadmap slice 2: enforce the constitution before adding product features.
 
 ## User Scenarios & Testing
