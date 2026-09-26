@@ -8,7 +8,7 @@ a ZIP with per-pass files, recipe, manifest and instructions to a same-directory
 file, then atomically replaces the selected destination. Existing pinned ezdxf is an independent
 test reader, not a forbidden core dependency. PyQt export worker/controls integrate the panel.
 
-Resource limits: at most 2,000,000 total emitted paths, 10,000,000 total vertices and 512 MiB
+Resource limits: at most 1,000 passes (1,003 archive entries), 2,000,000 total emitted paths, 10,000,000 total vertices and 512 MiB
 uncompressed geometry bytes across all passes; fail explicitly, never truncate. Files are
 serialized/written per pass rather than materializing all pass copies. Cancellation checks
 between paths and archive entries; atomic replace is the completion boundary.

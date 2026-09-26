@@ -51,7 +51,8 @@ verifies ZIP contents and exits; stale/no-plan and cancelled/error cases publish
 - **FR-002**: Preserve placed mm coordinates, path order, closure and clipped separation with
   explicit SVG axis mapping and DXF unit metadata; do not reapply Placement.
 - **FR-003**: Use the same bounds/frame for every pass; handle single horizontal/vertical
-  paths with a nonzero SVG viewport without adding exposure geometry.
+  paths with a nonzero SVG viewport without adding exposure geometry. Reject derived extent
+  overflow even when individual coordinates are finite.
 - **FR-004**: Include existing recipe JSON and strict schema-1 export manifest with exact
   parameters, safe ordinal filenames, hashes, bounds, mapping, counts and interlace order.
 - **FR-005**: Provide clear LightBurn/EZCAD import instructions: verify mm scale/orientation,
