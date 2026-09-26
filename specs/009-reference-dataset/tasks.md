@@ -31,16 +31,16 @@ changes fail; invalid provenance, missing stages and repeated baseline errors re
 - [x] T016 [US3] Implement frozen GeometryComparison/ReferencePath/PathComparison and pure compare_geometry/compare_paths in mikrocam/core/reference_compare.py using the exact contract; no Qt/host/G-code lexer.
 - [x] T017 [US3] Add emitted-instruction tests before core/reference_gcode.py implementation in tests/test_reference_gcode.py; then add tests/test_reference_compare_cli.py for explicit selected baseline/tolerances, source/input/config mismatch, corrupted artifacts, duplicate JSON, missing stage and repeated error/unsupported outcomes.
 - [x] T018 [US3] Implement read-only comparison CLI and JSON1 report in tests/reference/compare.py; exit0 only all-match, exit1 measured difference, exit2 any invalid/indeterminate, no golden update flag.
-- [ ] T019 [US3] Capture declared clean current revision and compare separately against both retained baselines using tests/reference/capture.py and compare.py; do not automatically pick the closer baseline or widen tolerances.
-- [ ] T020 [US3] Record per-board/input/stage metrics, differences and indeterminate outcomes in specs/009-reference-dataset/validation.md, preserving actual errors instead of silently skipping them.
+- [x] T019 [US3] Capture declared clean current revision and compare separately against both retained baselines using tests/reference/capture.py and compare.py; do not automatically pick the closer baseline or widen tolerances.
+- [x] T020 [US3] Record per-board/input/stage metrics, differences and indeterminate outcomes in specs/009-reference-dataset/validation.md, preserving actual errors instead of silently skipping them.
 
 ## Delivery
-- [ ] T021 Run all reference tests plus full pytest and architecture/growth/size gates; record commands/results in specs/009-reference-dataset/validation.md.
-- [ ] T022 Verify offline comparison leaves goldens/corpus/settings unchanged and no capture children running in tests/test_reference_capture.py and test_reference_compare.py.
+- [x] T021 Run all reference tests plus full pytest and architecture/growth/size gates; record commands/results in specs/009-reference-dataset/validation.md.
+- [x] T022 Verify offline comparison leaves goldens/corpus/settings unchanged and no capture children running in tests/test_reference_capture.py and test_reference_compare.py.
 - [x] T023 Review retained source-file hashes/notices and external dataset provenance in tests/reference/boards/manifest.json and THIRD_PARTY_CHANGES.md without relabeling original licenses.
-- [ ] T024 Record hosted Windows CI evidence and any remaining actual baseline failures in specs/009-reference-dataset/validation.md.
-- [ ] T025 Update developer usage and roadmap completion accurately in specs/009-reference-dataset/quickstart.md and docs/ROADMAP.md after verified delivery.
-- [ ] T026 Review requirement/task/evidence coverage and deliver the feature PR; retain unresolved comparison evidence explicitly in specs/009-reference-dataset/validation.md.
+- [x] T024 Record hosted Windows CI evidence and any remaining actual baseline failures in specs/009-reference-dataset/validation.md.
+- [x] T025 Update developer usage and roadmap completion accurately in specs/009-reference-dataset/quickstart.md and docs/ROADMAP.md after verified delivery.
+- [x] T026 Review requirement/task/evidence coverage and deliver the feature PR; retain unresolved comparison evidence explicitly in specs/009-reference-dataset/validation.md.
 
 ## Dependencies and execution
 T001/T002 gate artifact creation. T003 precedes T004; admission requires T005/T006. T008

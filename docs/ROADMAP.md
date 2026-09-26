@@ -93,7 +93,7 @@ içe aktarma ve fiziksel PCB kuponu henüz doğrulanmadığı için kilometre ta
 
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
-| 9 | `reference-dataset` | 10–20 referans PCB (KiCad, EasyEDA, Altium, Eagle, Proteus); 8.994 ve Evo çıktıları altın referans olarak saklanır; toleranslı karşılaştırma aracı | 1 |
+| 9 | `reference-dataset` — **tamamlandı** | Yedi CAD kaynağından 10 gerçek PCB; lisans/hash izli 60 dosya ve iki tabandan tekrarlanabilir 20 altın çıktı. Açık toleranslı geometri/yol/G-code karşılaştırması: güncel Evo için 47 eşleşme, iki boş NPTH kaydı belirsiz. Windows CI: 1315 test + 310 subtest. [Doğrulama](../specs/009-reference-dataset/validation.md). | 1 |
 | — | kpkrisnop düzeltmeleri *(spec yok)* | Tool DB değerlerinin Drilling, Milling, Isolation, NCC, Paint ve CutOut'a global default'a düşmeden aktarılması; drill kopyalanması ve dwell parametresinin aktarımı; silinmiş nesne veya widget'a worker'dan erişim. Her biri ayrı cherry-pick ve regresyon testiyle yapılır. | 9 |
 
 ### 0.4 — GRBL makine kontrolü

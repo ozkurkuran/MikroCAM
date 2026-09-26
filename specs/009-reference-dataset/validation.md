@@ -134,3 +134,57 @@ diagnostics and leaving CNC/tool sequence comparisons separate. **114 focused te
 independent review found no defect. The actual geometry-set probe measured Altium isolation
 symmetric difference 0.3945467210 mm² and round-drill difference 0.4307060293 mm² between the
 baselines at explicit 1e-6 mm / 1e-6 mm² tolerance; neither is silently widened to a match.
+
+## Current-source comparison and delivery
+The clean current source is `d1d68f56990a67bbc7adc181662dfd2355c377cc` (389 application
+Python files). Captured with the same interpreter, configuration and frozen harness:
+
+```powershell
+python tests/reference/capture.py --engine current --source ../MikroCAM --revision d1d68f56990a67bbc7adc181662dfd2355c377cc --python E:/VSCode/Flatcam/MikroCAM/.venv/repro-b/Scripts/python.exe --manifest tests/reference/boards/manifest.json --config tests/reference/capture-config.json --output .venv/capture-v2-current --timeout-seconds 300
+python tests/reference/compare.py --baseline evo --goldens tests/reference/goldens/evo --candidate .venv/capture-v2-current --manifest tests/reference/boards/manifest.json --config tests/reference/capture-config.json --distance-mm 0.000001 --area-mm2 0.000001 --report .venv/comparison-evo-current.json
+python tests/reference/compare.py --baseline legacy8994 --goldens tests/reference/goldens/legacy8994 --candidate .venv/capture-v2-current --manifest tests/reference/boards/manifest.json --config tests/reference/capture-config.json --distance-mm 0.000001 --area-mm2 0.000001 --report .venv/comparison-legacy8994-current.json
+```
+
+Current capture: 10 boards, 47 ok / 2 empty-NPTH errors, 80,225,221 compressed bytes.
+Its sorted filename/hash inventory digest is
+`096a3414107e1002ba88092ee0644dd742dfd64d7a9383d284a9357c99cae1a7`.
+
+| Baseline | Match | Measured difference | Indeterminate |
+| --- | ---: | ---: | ---: |
+| Evo | 47 | 0 | 2 |
+| Legacy 8.994 | 0 | 47 | 2 |
+
+Both overall reports remain **indeterminate**, with native CLI return mapping 2, because
+empty NPTH errors are not comparable successes. The PowerShell tool wrapper reported exit1
+for these nonzero native commands; CLI tests independently verify return2 precedence.
+Per-stage metrics and diagnostics are retained in `reports/evo-current.json` (SHA256
+`e6ad1b42b2d1c626a7eb326497270fe7497476a8bad5fd627e8f9a173d09e930`)
+and `reports/legacy8994-current.json` (SHA256
+`9859946954ebbcd5a3fbb8a6893b6da25fa49529b7d5a1ad6c4938c743be9f56`).
+
+The comparable stage inventory is 17 Gerber, 10 isolation, 10 CNC and 10 Excellon. All ten
+valid Excellon tool inventories match legacy exactly, but their curve tessellations differ
+(XOR area 0.0011586–0.4307060 mm², identical bounds). Legacy/current Gerber XOR ranges from
+2.9584e-6 to 1.3068 mm²; isolation from 0.0778838 to 1.3496957 mm². Some topology also differs.
+Altium CNC paths change 6211→6179 and executable blocks 722737→989599. The two engines'
+interpretation of circle sampling differs; actual outputs and all other observed differences
+are retained rather than calling every historical difference a new MikroCAM regression.
+Evo/current match all successful stages at the explicit unchanged 1e-6 tolerances.
+
+All 82 protected corpus/golden files were hashed before and after comparison and remain
+unchanged (inventory digest `878e6ab44aa7a829dc79f794da85b2a1a4fddcd330c4c06660fff92e47d99243`).
+All owned capture/comparison processes exited and were reaped. The offline unit tests separately
+verify settings isolation, timeout cleanup, malformed evidence and exclusive report publication.
+
+Full local command: `python -m pytest -q --junitxml=.venv/reference-full-pytest.xml` with
+repro-a CPython 3.13.13: **1315 passed, 2 skipped, 310 subtests passed in 174.59s**. Skips are
+the two inherited empty Qt test placeholders; three inherited SWIG deprecation warnings remain.
+Import boundaries, module/function sizes and legacy growth gates pass; no legacy runtime change
+or GUI modification belongs to this feature. Hosted Windows CI passed in run
+[36278941765](https://github.com/ozkurkuran/MikroCAM/actions/runs/36278941765) on code/data head
+`6c88761a`; the final report/docs update changes no tested implementation.
+
+Delivery review: all 12 requirements / 5 success criteria have evidence mapped above; 3 stories,
+26 tasks, eight constitution gates satisfied. No hidden default widening, source patching,
+fabricated PCB/drill data, golden update flag or FlatCAM-Plus code was used. The two authentic
+empty-NPTH limitations remain explicit. PR: https://github.com/ozkurkuran/MikroCAM/pull/9.

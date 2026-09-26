@@ -1,0 +1,2908 @@
+{
+  "baseline": "evo",
+  "candidate_source": {
+    "files": [
+      {
+        "path": "Bookmark.py",
+        "sha256": "ad12af3cfad9071a0e7e1272ea6df0bac1100954e1a73368b2ec214b34e6c5c4"
+      },
+      {
+        "path": "Utils/VisPy_New_Grid_Turntable.py",
+        "sha256": "ee4fde9b7266e2940ac7f43dbff71cb62f507a0606e27217b70533afc9921605"
+      },
+      {
+        "path": "Utils/camera_example.py",
+        "sha256": "3eee0bdd0e5db6baf32992258e699d2ee0c48f665ed2005c610cee42c8042d68"
+      },
+      {
+        "path": "Utils/custom_titlebar.py",
+        "sha256": "1a31b13d027cd10bc8fc64dcc35fdd6aad0c5ecb103807d68598e57d09a463c8"
+      },
+      {
+        "path": "Utils/remove_bad_profiles_from_pictures.py",
+        "sha256": "2da3a1574184615d1e2042dd03c98f78b9dc46a093f2444ca87e216421f39405"
+      },
+      {
+        "path": "Utils/tree_widgt.py",
+        "sha256": "f4d8751694ea17859d2274a00337090cc938b45708f59c6f8af060a971708607"
+      },
+      {
+        "path": "Utils/vispy_example.py",
+        "sha256": "edd9980f5ed556717e9beb16bfecfb7c3437781bc614e0e9b921ebdb4cf33be8"
+      },
+      {
+        "path": "Utils/vispy_example_pyqt6.py",
+        "sha256": "451d9600b3693cfe8862ba6e418634239469c64b3be7daff8e1984163a929457"
+      },
+      {
+        "path": "Utils/vispy_example_qt6_draw.py",
+        "sha256": "cb532a248ea807b28514fee63af3b4da12154e1c5255c1bb122c31081ea9d367"
+      },
+      {
+        "path": "appCommon/Common.py",
+        "sha256": "395e7ebc1a91f4f8075ca6c53e0ac3250edc19ddb657ce2a98d8b6286d2a770d"
+      },
+      {
+        "path": "appCommon/RegisterFileKeywords.py",
+        "sha256": "f304f03fac13b0bd0ee0c339584a51139fcbe8dfa6ff7a6a899f4e4fc56fbd27"
+      },
+      {
+        "path": "appCommon/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appCommon/bilinear.py",
+        "sha256": "f4f5511c11134be1c1cbd9132402150bee19a2e5f5ef6d2c5b72205b06f6cbbd"
+      },
+      {
+        "path": "appCommon/bilinearInterpolator.py",
+        "sha256": "8325a29d854b70deb23a3cf4dba5c13d280ee5f84f3014cb14e9c788ec264b58"
+      },
+      {
+        "path": "appDatabase.py",
+        "sha256": "2a4b209637c3492d8b54540889679df0fa8279b184c0a39f09584610e6b9c328"
+      },
+      {
+        "path": "appEditors/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appEditors/appExcEditor.py",
+        "sha256": "9830d4d9b81d4502b4e059bf34baeb2d6411e60e7f2aad25c678cea7bc52189d"
+      },
+      {
+        "path": "appEditors/appGCodeEditor.py",
+        "sha256": "ed4a4262852e9640fbd710df3797fa0013dd7e9fbf6d2231ec274f39b146feeb"
+      },
+      {
+        "path": "appEditors/appGeoEditor.py",
+        "sha256": "f8286b10d2168be8f8263787d23d84030753664fdcbbf4d3a703fc647dc92adc"
+      },
+      {
+        "path": "appEditors/appGerberEditor.py",
+        "sha256": "c23b180700398d0c33b944c1d10893626278438c75973b1c57a7b34a78a46de2"
+      },
+      {
+        "path": "appEditors/appTextEditor.py",
+        "sha256": "b69ae467025ac358430b5a6fdb6cfa773f102ebb02f001985611a55990ffb75c"
+      },
+      {
+        "path": "appEditors/exc_plugins/ExcCopyPlugin.py",
+        "sha256": "9f53e0ef5dde498c1ddd39a9d36f611a219e24470c5d2cd53432344fd8282459"
+      },
+      {
+        "path": "appEditors/exc_plugins/ExcDrillArrayPlugin.py",
+        "sha256": "ac919076b3c1ad784c643a7a3302b68e4dde44032b460d274aa9e25da10bf00c"
+      },
+      {
+        "path": "appEditors/exc_plugins/ExcDrillPlugin.py",
+        "sha256": "3788f3110a0467250e46ad28f9d107d0ba53f2b7cae8f1045911ec68a4dd8ae9"
+      },
+      {
+        "path": "appEditors/exc_plugins/ExcResizePlugin.py",
+        "sha256": "6152f79e6a200ac72ec450d4fd90e51a8c9b1c8e2c79488ca2f8ff26ad27707b"
+      },
+      {
+        "path": "appEditors/exc_plugins/ExcSlotArrayPlugin.py",
+        "sha256": "884b4374ce9dee6ca2bbb2990dbb4598cf8f76511d4dbaf15e1c82143a6e90c5"
+      },
+      {
+        "path": "appEditors/exc_plugins/ExcSlotPlugin.py",
+        "sha256": "a197baef00983cd697acfe9eea462aac9d0eab56f2193509054ae397754a9cd1"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoBufferPlugin.py",
+        "sha256": "6c7041b4d92cc0b3438fb34feb870df1cde8abb7cba10690793d585584fd9e0c"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoCirclePlugin.py",
+        "sha256": "67ed58b3523765deed5f17f1bfb582ec58e5eeb922b2b81c3a8c29ecdfed2108"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoCopyPlugin.py",
+        "sha256": "9c96ef88d6211434f2157a7412f55bb85ddb1a381e65a64bcb1f1aeef3f1ce9c"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoPaintPlugin.py",
+        "sha256": "397660c37ce146a81bfceea8cf63084c651f7e7635f4f117cb87489379d2658e"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoPathPlugin.py",
+        "sha256": "f2a715e17358b209fc3024d2cb7055f66488c9f3104e4393a5b7f618187f1aab"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoRectanglePlugin.py",
+        "sha256": "0a9aba97aab7c39f89c21a3f882d2611a4eacfee14adbe83456a43e3c369461a"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoSimplificationPlugin.py",
+        "sha256": "b87e0e5d9c58de5b4012912fa956f94687c8ddfdb0d2cc712f4dd5135825c2eb"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoStitchPlugin.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoTextPlugin.py",
+        "sha256": "a84a0c5ab8e63a2e112c42f1379d5e066f1d21d7fb5b6471aa832d4b0bdd3fdf"
+      },
+      {
+        "path": "appEditors/geo_plugins/GeoTransformationPlugin.py",
+        "sha256": "58d9deb9f32147fe2c5fb0e892948a98febe3ac3cf215e7d9cdba94feffedf2b"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrbBufferPlugin.py",
+        "sha256": "ceb986b39c3c0789732eca8dfd243ac8ac2caea764e3734246f0b4d2978b63b6"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrbCommon.py",
+        "sha256": "9fe7593336d1bb57d843fc1623bcdb73b220205211e377b13a90a24096089661"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrbCopyPlugin.py",
+        "sha256": "a2e5638e8f099a1eecfd36e5d6b2fe537f3ea63bf7410b22f27c1a7642b43c07"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrbPadArrayPlugin.py",
+        "sha256": "3123cb1f99a7a4cdca866ed0a24910d9a31bc6e9dbf153460f415dd53e91280c"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrbPadPlugin.py",
+        "sha256": "3c825e4c52cde7aa6f2ac152fa8c0bd73bb18453662d0fcd5df6df973c6e5355"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrbSimplificationPlugin.py",
+        "sha256": "7f1c81638642e178e7910e45ef35b8c8d8069bfccd8fdd8a5ee578b9bdb5bf72"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrbTrackPlugin.py",
+        "sha256": "de67c131aa16d67cce8d19096b1193d19c02a6f31b5279057f5281879d6f9819"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrbTransformationPlugin.py",
+        "sha256": "58d9deb9f32147fe2c5fb0e892948a98febe3ac3cf215e7d9cdba94feffedf2b"
+      },
+      {
+        "path": "appEditors/grb_plugins/GrberRegionPlugin.py",
+        "sha256": "6d4f0454b9dcec2bc693589a6dfaba414fb651a647cda19e39ca7e5c5d7bed04"
+      },
+      {
+        "path": "appEditors/grb_plugins/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/ColumnarFlowLayout.py",
+        "sha256": "126ff05ab5425346892e53354b1406cbc4f64dabd0701985b091bd976d06e415"
+      },
+      {
+        "path": "appGUI/GUIElements.py",
+        "sha256": "9b3005bd46d6b79307d7033ce2d0c9a7ddf4541d8cad2cc0913978267c0e282d"
+      },
+      {
+        "path": "appGUI/MainGUI.py",
+        "sha256": "3426e46a5dc9fb34e84ff469738c976784e77415336021e5131cae070370c5fd"
+      },
+      {
+        "path": "appGUI/ObjectUI.py",
+        "sha256": "16e7b3e0dd7a8d515995713026db4c1e156e39970b9fe9c62ca149d4952d6d2d"
+      },
+      {
+        "path": "appGUI/PlotCanvas.py",
+        "sha256": "93ab8e9efdbdc19159f23426db3a4eb477d6475cece1e7ff314e958449ab81c4"
+      },
+      {
+        "path": "appGUI/PlotCanvas3d.py",
+        "sha256": "4873ee708f7ae5ae7e018da92de34e5239f2f8b6d183be24b7c35dbaeddb4a91"
+      },
+      {
+        "path": "appGUI/PlotCanvasLegacy.py",
+        "sha256": "4da9a32e07f38b404de45a3e36fcecdc5c50ce1330a31357f7f63846aa0353e6"
+      },
+      {
+        "path": "appGUI/UpdateDialog.py",
+        "sha256": "b9c692dcd23280cddbc02caacaae5e461129da4fead958c933f12e0f5867e8c3"
+      },
+      {
+        "path": "appGUI/VisPyCanvas.py",
+        "sha256": "c37f7534db70b467bb50ad2e0253569a45c28b30056470ec72a4c3318df57dc3"
+      },
+      {
+        "path": "appGUI/VisPyPatches.py",
+        "sha256": "d2b8b3c3eaff70d7794209ef10395ae98498ef2242cd4b899cd84b38b9ba299a"
+      },
+      {
+        "path": "appGUI/VisPyTesselators.py",
+        "sha256": "5de4cfb4948938b4583e6f0922efc9287b9ee4c878b637f289a951093208460c"
+      },
+      {
+        "path": "appGUI/VisPyVisuals.py",
+        "sha256": "873b773b1b50b4968fdf3eb55de1892cdd2e4a887dc551a44548718e1b094cdf"
+      },
+      {
+        "path": "appGUI/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/preferences/OptionUI.py",
+        "sha256": "ee7fb6be1725d8da45f837d9f172166f239eea5c932a4e2c0e45f7af4fc948b8"
+      },
+      {
+        "path": "appGUI/preferences/OptionsGroupUI.py",
+        "sha256": "c6130d7608bc22bd21b61f43318dfd0fd00054b16bc39f3f64f6161fc5505b91"
+      },
+      {
+        "path": "appGUI/preferences/PreferencesSectionUI.py",
+        "sha256": "ba2a23dded09963390d95872a25b7daac34df6027d3ee1c205d53d479c6db1ae"
+      },
+      {
+        "path": "appGUI/preferences/PreferencesUIManager.py",
+        "sha256": "20d23fb0c9ca3400a17dba3c54b57f7d18aa03421737210bd326b581d0b43d84"
+      },
+      {
+        "path": "appGUI/preferences/__init__.py",
+        "sha256": "a88570d204db6654a1c3947197c95c08c4d9f4e7ea65c24bb91f1fd0f002fb6d"
+      },
+      {
+        "path": "appGUI/preferences/cncjob/CNCJobAdvOptPrefGroupUI.py",
+        "sha256": "d9f88b276536a4fda15e44e437f389949b66646a7e361c052f769102c40bb90f"
+      },
+      {
+        "path": "appGUI/preferences/cncjob/CNCJobEditorPrefGroupUI.py",
+        "sha256": "b5f52e3f691b24bbb43954ee201f3b921b3dd8690baed609c214ba2ba9bdc0df"
+      },
+      {
+        "path": "appGUI/preferences/cncjob/CNCJobGenPrefGroupUI.py",
+        "sha256": "0beafd9ce0be513eb3945b8648514ad5661f75718c40a5b8ffb230b456276d43"
+      },
+      {
+        "path": "appGUI/preferences/cncjob/CNCJobOptPrefGroupUI.py",
+        "sha256": "c36f31b3217592a10c7c7f5ecfedc07e19d6efdff05075d45edb39894ef38e9b"
+      },
+      {
+        "path": "appGUI/preferences/cncjob/CNCJobPPGroupUI.py",
+        "sha256": "d891b9a6f44f9d7a8c12d815ba4642cdd2b584e30a21d06b160057c27e1ec54e"
+      },
+      {
+        "path": "appGUI/preferences/cncjob/CNCJobPreferencesUI.py",
+        "sha256": "c1d42a73f34e9c884a7c23100a8abcc296220016066327afd23e3b485f49a004"
+      },
+      {
+        "path": "appGUI/preferences/cncjob/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/preferences/excellon/ExcellonAdvOptPrefGroupUI.py",
+        "sha256": "c7c7bb6e63d79376ea98d14462fa9f46eef34f04d0a4230dd7ab0688079ea857"
+      },
+      {
+        "path": "appGUI/preferences/excellon/ExcellonEditorPrefGroupUI.py",
+        "sha256": "1547ddc6bfc8ea48c6a3668e17d00aedadf1db0a3a3f77c91bee9b9c7dad5ac9"
+      },
+      {
+        "path": "appGUI/preferences/excellon/ExcellonExpPrefGroupUI.py",
+        "sha256": "d316557da4655b8c4350d9b44dc9b971d304366a5830eac85896898c018be740"
+      },
+      {
+        "path": "appGUI/preferences/excellon/ExcellonGenPrefGroupUI.py",
+        "sha256": "e16afcbfec7c74775bf692d17ede05fc921c30a4791bf024b4ab829aacc0d67d"
+      },
+      {
+        "path": "appGUI/preferences/excellon/ExcellonOptPrefGroupUI.py",
+        "sha256": "c21543c4f22b1505c8bf1ef7d7b4eabbe4c9bf276030cc032afc00b231fd0922"
+      },
+      {
+        "path": "appGUI/preferences/excellon/ExcellonPreferencesUI.py",
+        "sha256": "cfa313cef7345da6447fa94b8d60b2d9a696065b069859bfbf1b1f3866a0467f"
+      },
+      {
+        "path": "appGUI/preferences/excellon/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/preferences/general/GeneralAPPSetGroupUI.py",
+        "sha256": "3b46934b49229f587fbce3155ee8a0e97a9546ba1c9a04f1d320bfef18cb3e42"
+      },
+      {
+        "path": "appGUI/preferences/general/GeneralAppPrefGroupUI.py",
+        "sha256": "57f62a14abf33147386c0782211fd70eb4b037640e2a98db4729313919b3d43b"
+      },
+      {
+        "path": "appGUI/preferences/general/GeneralAppSettingsGroupUI.py",
+        "sha256": "c92c94290e11574c5cdbf0c7f7168d333560382e7077c09f12abb599a0952316"
+      },
+      {
+        "path": "appGUI/preferences/general/GeneralGUIPrefGroupUI.py",
+        "sha256": "c71e5a87aa2e396e1f556b2ca110c2042a2a751d1d8d8f474394d06537dae01e"
+      },
+      {
+        "path": "appGUI/preferences/general/GeneralPreferencesUI.py",
+        "sha256": "ca169563f374b08a5f36131b630cdac014384ff6befb3eaf9926b5d68ce25933"
+      },
+      {
+        "path": "appGUI/preferences/general/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/preferences/geometry/GeometryAdvOptPrefGroupUI.py",
+        "sha256": "991bfdc24db9520f700eed30ce78634ed6859ed0a5ac98243165324f2f26ae34"
+      },
+      {
+        "path": "appGUI/preferences/geometry/GeometryEditorPrefGroupUI.py",
+        "sha256": "34d291b33d6f9aaba530c0c98a107d91514baef0844c9f25c774b61bf4721c29"
+      },
+      {
+        "path": "appGUI/preferences/geometry/GeometryExpPrefGroupUI.py",
+        "sha256": "7d4a881596cd8d3f72eea675fedabdf306b4e2362e5b64bddda9872ada1c8b10"
+      },
+      {
+        "path": "appGUI/preferences/geometry/GeometryGenPrefGroupUI.py",
+        "sha256": "234702cb5390746ad4ceaa9a750c4636ce9d2871f8fc3eec3633225eb3a8092d"
+      },
+      {
+        "path": "appGUI/preferences/geometry/GeometryOptPrefGroupUI.py",
+        "sha256": "f407ceb1e49c64e50c336a1c420826efcf18346109a822bd193752d01636cb24"
+      },
+      {
+        "path": "appGUI/preferences/geometry/GeometryPreferencesUI.py",
+        "sha256": "374da865365b39e91c588361a8819e7d8842ae2711fee1a318ed7290c87f1613"
+      },
+      {
+        "path": "appGUI/preferences/geometry/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/preferences/gerber/GerberAdvOptPrefGroupUI.py",
+        "sha256": "982c1e535fcffabe7b19754660243ca464110ed0ba5fe6d2fcf49334441cb600"
+      },
+      {
+        "path": "appGUI/preferences/gerber/GerberEditorPrefGroupUI.py",
+        "sha256": "04a8d07db6abb2f4fa14ec8bf31805396ac8dc42d464f8dcff9e25babba4bb4c"
+      },
+      {
+        "path": "appGUI/preferences/gerber/GerberExpPrefGroupUI.py",
+        "sha256": "588b078783cdbbf47a231ed426e273b2897a5f61eb03f6599946de035bce238f"
+      },
+      {
+        "path": "appGUI/preferences/gerber/GerberGenPrefGroupUI.py",
+        "sha256": "cba594aa5a3cb639f5034880db9fc3b20f33443d3d707d68dda4076d4673f9dd"
+      },
+      {
+        "path": "appGUI/preferences/gerber/GerberOptPrefGroupUI.py",
+        "sha256": "7b11fa83ec5909498b85aa8131a73829b8b79d086e7b5c47ae3315d40134ace9"
+      },
+      {
+        "path": "appGUI/preferences/gerber/GerberPreferencesUI.py",
+        "sha256": "7e6d5a2bb725ee3a8a71f1038ecc8e30bf16dc4966ce38981c50d77b3aaba28b"
+      },
+      {
+        "path": "appGUI/preferences/gerber/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/preferences/tools/Plugins2PreferencesUI.py",
+        "sha256": "8612818605d05e259381c22ce34e137bb4c8f8daee22ef505ce07558cbea1f0b"
+      },
+      {
+        "path": "appGUI/preferences/tools/PluginsEngravingPreferencesUI.py",
+        "sha256": "e33b107eae70c346ea40b5e5754f1e6f6b7b944289c6a001c431f95b72107d4b"
+      },
+      {
+        "path": "appGUI/preferences/tools/PluginsPreferencesUI.py",
+        "sha256": "dd2fa86296ac49929a214b548ed316a368b9720e81649a1e7ba0fd6d5a4fe3b6"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2CThievingPrefGroupUI.py",
+        "sha256": "d931a053fcf5f1018bf9a9f3fdf51a8ad03e6b0c66aaabc6d9a3ee4f56291e9d"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2ExtractPrefGroupUI.py",
+        "sha256": "7eb7ac4e325965e0e7e2600357c985048e0170b2ff41b960d2510e416436086c"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2FiducialsPrefGroupUI.py",
+        "sha256": "2f79ab405df45571eeeac3c03662baccfa8215416c27bedf58e241c6fc0b9277"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2InvertPrefGroupUI.py",
+        "sha256": "8f744d0557ec64b7f127ee725c0dfdaf90c4ab2a18a527a84ad2b6a9b73d9a3f"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2OptimalPrefGroupUI.py",
+        "sha256": "a15e9ee9c0400b6eeae06e7bbd2a10e0e5ce3ebcaebedc9799edb97ce121997c"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2PunchGerberPrefGroupUI.py",
+        "sha256": "20aa33103ce800df1701bcf26e830b786d9b7e21c5795eca54a3e8036b5d4405"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2QRCodePrefGroupUI.py",
+        "sha256": "ae9151a3a7a09240930a7707b521fd63793eef7bd5cc62d5029717214218f427"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2RulesCheckPrefGroupUI.py",
+        "sha256": "c9f579f27d016970b6b92183321a16320b546dcc22a0ebe3b1e09d73c50accc1"
+      },
+      {
+        "path": "appGUI/preferences/tools/Tools2sidedPrefGroupUI.py",
+        "sha256": "f53f243fa6bba559fb84a7071bab586e052cf898fb8371bb35a61401bba7eaa3"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsCalculatorsPrefGroupUI.py",
+        "sha256": "8cc31f9957b5328cee545ba91a87eebf633030029e365f1b8736d78a58684830"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsCutoutPrefGroupUI.py",
+        "sha256": "85fbaa6abc9d9889a7f53c982cffc6df47188c9786e2ee56be177007182bc21a"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsDrillPrefGroupUI.py",
+        "sha256": "2ed1c5b5b0276ea3d4225ef2ef355c3df949a9f7b3de46799bc00c8e4428a06d"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsFilmPrefGroupUI.py",
+        "sha256": "d2b8995236b3c2af1e2211a0b878ac8ae3da71c8618b0420ee8b5c0b3977b7fc"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsISOPrefGroupUI.py",
+        "sha256": "a926d3e9bd6a68ecb3d881dd2ae113559f3da7ebe1ec5b1e9ead1054fac9873f"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsLevelPrefGroupUI.py",
+        "sha256": "e06cf68a46673e2f4bd4fb78ec615d038524e35359810f05b795193c17bfe823"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsMarkersPrefGroupUI.py",
+        "sha256": "238de370277314f97513110b14c73160ceedd812d387f1594ecf8f6aa1f7d3c3"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsMillPrefGroupUI.py",
+        "sha256": "6405f911dd6bbd682ab8e3e440f4e2712d66d2dafea767e9eead4e144161bfdd"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsNCCPrefGroupUI.py",
+        "sha256": "1908a7d8c3c8a2169342b607ef12bab63ba59a365856682007ce2caa0645b302"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsPaintPrefGroupUI.py",
+        "sha256": "b889a815644f3c75ba8eefddbf712c5705c3ce03439b2536d0cec82b0964e68b"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsPanelizePrefGroupUI.py",
+        "sha256": "ecef657531be8e101bb061b036affe0f14b6b3bfdd3a1e64ac748a824c1fcf19"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsSolderpastePrefGroupUI.py",
+        "sha256": "dc374a00a647dd54033e25c62b315580d4f5db8f54c10b20fae7db26f3437d70"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsSubPrefGroupUI.py",
+        "sha256": "8c442d6d471871aac45b5edb4ddf51b8550348555d25673bbc1afc1b2485dfb0"
+      },
+      {
+        "path": "appGUI/preferences/tools/ToolsTransformPrefGroupUI.py",
+        "sha256": "2413c972b2d1d54aa9253c46582ff331bae19ce51ad5ffa2bc403d01ef07e994"
+      },
+      {
+        "path": "appGUI/preferences/tools/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/preferences/utilities/AutoCompletePrefGroupUI.py",
+        "sha256": "b1ddf38658f16d17bfdd0becf1aaec6a9d9fbcea720ac52c1cc8544687386e60"
+      },
+      {
+        "path": "appGUI/preferences/utilities/FAExcPrefGroupUI.py",
+        "sha256": "d8249ef6167ff618e3cd67f11fbd2377e6b39a4908e13b05f75946efdabb569b"
+      },
+      {
+        "path": "appGUI/preferences/utilities/FAGcoPrefGroupUI.py",
+        "sha256": "6325507b794a25091d4134f9e5c16fbe3d00c08a4e57df8d1c030dd90592ccca"
+      },
+      {
+        "path": "appGUI/preferences/utilities/FAGrbPrefGroupUI.py",
+        "sha256": "27e0b67beb0f56ded54954262c6c409435c91c09727dbbce0c9b1c74c9f14bff"
+      },
+      {
+        "path": "appGUI/preferences/utilities/UtilPreferencesUI.py",
+        "sha256": "d905a6462bdaa3eb7edb9c960d2802881e7398bcad566b33e736482940ff8aab"
+      },
+      {
+        "path": "appGUI/preferences/utilities/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/themes/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appGUI/themes/dark_style_sheet.py",
+        "sha256": "825e58fe2de5fc56f96eb78efc8f5d7828e427da276c365d5ecdda761cd30464"
+      },
+      {
+        "path": "appGUI/themes/light_style_sheet.py",
+        "sha256": "245613bad3caf61d84521dc7d2c4861a900975ebfeb17756f9f7bd2d93e6aeea"
+      },
+      {
+        "path": "appHandlers/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appHandlers/appCanvasEvents.py",
+        "sha256": "d81d09a3cd3b0cffd3e916abea25c5fe0bf544264ef4a481af5bfe58b26f3ebd"
+      },
+      {
+        "path": "appHandlers/appEdit.py",
+        "sha256": "ab6b5b4496bfd976c1bff3eb09a2ae992448f1cee03cd2e1681889ac92954f72"
+      },
+      {
+        "path": "appHandlers/appIO.py",
+        "sha256": "55609b41b8128932d2a51ffc72aac4cd67750790a1045221da0ca1ff70f262df"
+      },
+      {
+        "path": "appHandlers/appLifecycle.py",
+        "sha256": "5a2b84aee8ca79f212a72bdd14c5f681c1a0c54acc6174e4fe9eacc9ffb010a2"
+      },
+      {
+        "path": "appHandlers/appObjectOps.py",
+        "sha256": "cb4bf934fcbd6d60911dac532c0b6258f6e7236c447e3fa6af4c6d62900fa455"
+      },
+      {
+        "path": "appHandlers/appPlotManager.py",
+        "sha256": "a76d10876c6dc8bc5cfd595bcbdf3bc6cd66afbc8ae0d1d73f6cd6b2baf99701"
+      },
+      {
+        "path": "appHandlers/appSignalConnector.py",
+        "sha256": "cb71d42f7ae08e58e167e502cc032d160b8d19bb967106406b03707ce16b0246"
+      },
+      {
+        "path": "appHandlers/appUIActions.py",
+        "sha256": "af112c17107f16b6b0227863d907ad4f4b7cca1735887cce7ba11cae1e2ab8a3"
+      },
+      {
+        "path": "appMain.py",
+        "sha256": "70a221a9a03cbcdf12ac917f906968f0570dc9610d186bcc7d1856cf19013ab1"
+      },
+      {
+        "path": "appObjects/AppObject.py",
+        "sha256": "2d6639812912158023714f7a211bba94454cc80667587e7b28f37b690a4905e6"
+      },
+      {
+        "path": "appObjects/AppObjectTemplate.py",
+        "sha256": "f8df58934d4c858c8eb5fb3c81e65b2199d3a77bea7da0ec8bc18061a8fcb281"
+      },
+      {
+        "path": "appObjects/CNCJobObject.py",
+        "sha256": "b6c74d00848b3634840c41451f56f999e28bbd12c8eff749cb9997c69f3af0ce"
+      },
+      {
+        "path": "appObjects/DocumentObject.py",
+        "sha256": "5097a621c1b3c2a009dd38d12fbce203510d681a6502391e5dd38a4b1fd86d3d"
+      },
+      {
+        "path": "appObjects/ExcellonObject.py",
+        "sha256": "139353c2153d6e6daa411e83afd86ca0def03b64a669d8b497baae10c2bf72ff"
+      },
+      {
+        "path": "appObjects/GeometryObject.py",
+        "sha256": "06db1ed4bcda59c04a9f9259614f1b04fa8ad0eb3215e2508cad730a050cef4b"
+      },
+      {
+        "path": "appObjects/GerberObject.py",
+        "sha256": "a520f7f23f7e7bb42f160d5240d4c435a1ebad3544056ccfdb22481710ba8954"
+      },
+      {
+        "path": "appObjects/ObjectCollection.py",
+        "sha256": "c416613d35eba8188ed221980f62ca7efdd63c08afaa70a3262c6ed50ddfffbb"
+      },
+      {
+        "path": "appObjects/ScriptObject.py",
+        "sha256": "226638b34437a943d3801fecbb4539376f023b2781bb8caf9fc16a6408cfbd07"
+      },
+      {
+        "path": "appObjects/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appParsers/ParseDXF.py",
+        "sha256": "9140bc86360df4e8719572d7355f95b0351f1b2278ede3ae3b99ce17c532aa44"
+      },
+      {
+        "path": "appParsers/ParseDXF_Spline.py",
+        "sha256": "d5b46f9b9f2f99b0bbaef705f04e03a0f2eb09782e0ac1ef0f0232174e12fad4"
+      },
+      {
+        "path": "appParsers/ParseExcellon.py",
+        "sha256": "acf5511157c19e1704d43b5b9b2458a65c60c3525a3bc2d9740483c6a24df3ea"
+      },
+      {
+        "path": "appParsers/ParseFont.py",
+        "sha256": "1890764ae48305708fee0a93473916c5ae1c4b826f2c214478375f9030fcc019"
+      },
+      {
+        "path": "appParsers/ParseGerber.py",
+        "sha256": "66c1a2c2eb463fc8c0356994ddcb094eb9904c8dd0d3b5d69889b9e675b333fe"
+      },
+      {
+        "path": "appParsers/ParseHPGL2.py",
+        "sha256": "873b1e80596ef239c2e36a908d12227822e09858518cd35f2558d2223fd747d6"
+      },
+      {
+        "path": "appParsers/ParsePDF.py",
+        "sha256": "2205cf529d17785d2b0ccb7f9b33b81624c21c76d420ee9c2a6b2761766fce7c"
+      },
+      {
+        "path": "appParsers/ParseSVG.py",
+        "sha256": "8adcf2fb8cd281867cf205b6859b41b4e7034630e35dcf37546e915299ca186e"
+      },
+      {
+        "path": "appParsers/PdfStreamParser.py",
+        "sha256": "80cec0a796afac398899c8233577fed093306cb9a0f1c4b9b7f30eb96d8e6bc1"
+      },
+      {
+        "path": "appParsers/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appPlugins/ToolAlignObjects.py",
+        "sha256": "4b90dc3a50fb731948e39868072d4f446fdc905d217374d3bcf2bb3b03ffd2b6"
+      },
+      {
+        "path": "appPlugins/ToolCalculators.py",
+        "sha256": "930561d631f8df0552a5eb4aa40ed6bc093766730b0d2aa01ee6f4412f5367e4"
+      },
+      {
+        "path": "appPlugins/ToolCopperThieving.py",
+        "sha256": "702c8ba3f2a9cd9e799c88076918313f6e6ee7dfbcc361de8c0d4e1e20c2ac10"
+      },
+      {
+        "path": "appPlugins/ToolCutOut.py",
+        "sha256": "5125ec72c82f017e603d025d063d378c83849d4516a9f30cdeb721f215681bc6"
+      },
+      {
+        "path": "appPlugins/ToolDblSided.py",
+        "sha256": "ef4774c8ef70b3f926481d4dec3efb816b8e663ce0faa5e641b3cba6294a81e4"
+      },
+      {
+        "path": "appPlugins/ToolDistance.py",
+        "sha256": "704e8eb7b9b724bea689ff83abcc9a23306abc874b99468e52ae29290d790469"
+      },
+      {
+        "path": "appPlugins/ToolDrilling.py",
+        "sha256": "fa02ef5cb0b49005022354d305f938994a854ebbd7cbf14a2c3c69fdf8a73873"
+      },
+      {
+        "path": "appPlugins/ToolEtchCompensation.py",
+        "sha256": "ef8d1e24e4f0608bf2c41cd38e0ddf0b634b6288db99d6afb50d829d612c111c"
+      },
+      {
+        "path": "appPlugins/ToolExtract.py",
+        "sha256": "fdbec9df2595551f4c8bfb0ee899c4ed9756e3581e210541ca7ff931ffd91301"
+      },
+      {
+        "path": "appPlugins/ToolFiducials.py",
+        "sha256": "4eb45a961a346813b5d84230e3ea8f8b4cbbbc6c2801be5222be9b1aa542ffef"
+      },
+      {
+        "path": "appPlugins/ToolFilm.py",
+        "sha256": "1db65e73e3dfb300fbba8e9b0e377b5eaa2efda23a03f738b596332c7421e640"
+      },
+      {
+        "path": "appPlugins/ToolFollow.py",
+        "sha256": "9f22a1d070ba5dd858147d62fd1b4851cc476fa007f4a4a7e8edff3e15722230"
+      },
+      {
+        "path": "appPlugins/ToolImage.py",
+        "sha256": "5584d0ff58d8e292c5addf4a5d05b293ddebf294737dc568c925fff06771906b"
+      },
+      {
+        "path": "appPlugins/ToolInvertGerber.py",
+        "sha256": "a2ac086482d0d619bcd873b42c4cff88f283e685b9ad22e545376020ae5c9ff6"
+      },
+      {
+        "path": "appPlugins/ToolIsolation.py",
+        "sha256": "d08394bdab034e7f492bf33410d95d3a2394dab58860069ed4f7048949f54eb0"
+      },
+      {
+        "path": "appPlugins/ToolLevelling.py",
+        "sha256": "229fd40d3602ad8e2cdba38faa940440e637aa6f5ac0c373c56f3f16f976c141"
+      },
+      {
+        "path": "appPlugins/ToolMarkers.py",
+        "sha256": "b6dc40dc0b617647d3cba3833e34ce39fd6ae1ff86305af540d66b6a2f132bbe"
+      },
+      {
+        "path": "appPlugins/ToolMilling.py",
+        "sha256": "64e6b1464067275dfbd7f34480d1be1fd7c5da54247f783c63a7b73ab430432c"
+      },
+      {
+        "path": "appPlugins/ToolMove.py",
+        "sha256": "297457e1b0b816595d0161fd418c6af047e02c6f03a450a4be2044c104aea654"
+      },
+      {
+        "path": "appPlugins/ToolNCC/Ncc.py",
+        "sha256": "7d751b7e8f33536d7911f3c213d72098be3c18a0896ff088161448e470a457a6"
+      },
+      {
+        "path": "appPlugins/ToolNCC/NccGen.py",
+        "sha256": "cfe138a3d8bae30dd7c00d3410f9a710b45626096eb7ed00667fd97626a6de7b"
+      },
+      {
+        "path": "appPlugins/ToolNCC/NccUI.py",
+        "sha256": "299776dde49c1d857e90632de754400f9d4de7a63982fb49a3aab48e61d023e3"
+      },
+      {
+        "path": "appPlugins/ToolNCC/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appPlugins/ToolObjectDistance.py",
+        "sha256": "f1ecdb715414a27cffa429f5c588f13965938a389b92166879f52ef5261d2d4f"
+      },
+      {
+        "path": "appPlugins/ToolOptimal.py",
+        "sha256": "174810b205b1f616ad4af9bdc5e4d73ec993cf8d5b6680577e2d665de7f2c644"
+      },
+      {
+        "path": "appPlugins/ToolPaint/Paint.py",
+        "sha256": "c8a21e544d27985c01ce3a0ac9a286d7b5bbd7dde347e1b8843b1eddcd5a9fbc"
+      },
+      {
+        "path": "appPlugins/ToolPaint/PaintGen.py",
+        "sha256": "75c1167a9af46b882735f5d3b5b3f8ca6f05df2dcbee5169e0f297cf70767e29"
+      },
+      {
+        "path": "appPlugins/ToolPaint/PaintUI.py",
+        "sha256": "0529ad4a07f4c6bc663d1e7c3540a755109ef220b0bd966d1cb219a7408d708e"
+      },
+      {
+        "path": "appPlugins/ToolPaint/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appPlugins/ToolPanelize.py",
+        "sha256": "216e83b04a666cf4bf816f9c3c457f4eda63da7ffb14a62f9a72fdb4a7ecd598"
+      },
+      {
+        "path": "appPlugins/ToolPcbWizard.py",
+        "sha256": "e2ddf9a22ad426c41a255367db697b79865f398a21535a44e009f5acd724a27e"
+      },
+      {
+        "path": "appPlugins/ToolPdf/PdfImport.py",
+        "sha256": "bdb598817884714f1879b1673e6c0a94a16e49348ecaec7ef5b4c78bdb429cac"
+      },
+      {
+        "path": "appPlugins/ToolPdf/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "appPlugins/ToolPunchGerber.py",
+        "sha256": "5c0243f660277e2a9d3161def2d5d9de33348b40ab810b3576231341e6885264"
+      },
+      {
+        "path": "appPlugins/ToolQRCode.py",
+        "sha256": "2eea537824619f7ebbea54ced828c8f15c8978a095ad9f06140c8db77f031fbb"
+      },
+      {
+        "path": "appPlugins/ToolReport.py",
+        "sha256": "f7e5cb80691da8f124f03cfb8d2097504f68bf84b690c2e0e9b5695caf4b29cd"
+      },
+      {
+        "path": "appPlugins/ToolRulesCheck.py",
+        "sha256": "58bc62a9855e34ccd073e9f2be390595246fca46660c29940f0f8b78c6cb04c0"
+      },
+      {
+        "path": "appPlugins/ToolShell.py",
+        "sha256": "74eae24801968b3d09247ac655bfb45666105b45d2f34c23eeef9e32cff255c5"
+      },
+      {
+        "path": "appPlugins/ToolSolderPaste.py",
+        "sha256": "8e91e9d324915e6e3c91333d25c305f2f2609ded95dd24470c6208926cc7900b"
+      },
+      {
+        "path": "appPlugins/ToolSub.py",
+        "sha256": "b840f14934f5ef0579e7db83e9b4dfcfb099d707426f669f4d1ea770705bd237"
+      },
+      {
+        "path": "appPlugins/ToolTransform.py",
+        "sha256": "cac535f0a82c4bb7b8f5b407e823e2dd2e5abe65b893c640fee3be201c00e8f9"
+      },
+      {
+        "path": "appPlugins/__init__.py",
+        "sha256": "fb379fd7cac327f37115263c8f9145fa50885914c4f3be7c8d1846fa6bd292bf"
+      },
+      {
+        "path": "appPlugins/levelling_interp.py",
+        "sha256": "3cc9a43eb75f94b6dc9e061219c342d210eeccafb971436939f8600848f2c39c"
+      },
+      {
+        "path": "appPool.py",
+        "sha256": "8d5f2747368b48f127617d83127246bfd2394327dd9dee7ffd9bd816a1028368"
+      },
+      {
+        "path": "appPreProcessor.py",
+        "sha256": "c4081d7e0905c75e561608c996c8fc46301b73f4d6b810fcd9ab2795fd0f6679"
+      },
+      {
+        "path": "appProcess.py",
+        "sha256": "07f84e2837612da12858799753c7c5165686668195901a8a73b2a5c157088e40"
+      },
+      {
+        "path": "appTool.py",
+        "sha256": "2401b7be0349e3a44cfd48e7d186ca9bd9bb89434c705f291bc217af868e3892"
+      },
+      {
+        "path": "appTranslation.py",
+        "sha256": "e111663855d821b52542d8180db39ec0b972d104feabdae8eb7b70f7c0143827"
+      },
+      {
+        "path": "appWorker.py",
+        "sha256": "682c97d498bbadd603e51a1fd811b67ca8477a0f2731a71bfe7dbf960dbedbcb"
+      },
+      {
+        "path": "appWorkerStack.py",
+        "sha256": "2391c2e8cd79c64d81053ed4486021e060d97d0f11139aea0a87afd213d512e0"
+      },
+      {
+        "path": "camlib.py",
+        "sha256": "668bc7d6ef1a68bc11bd18982db15ae4c4988d0ffc22cca5a0cd3b8edc1996af"
+      },
+      {
+        "path": "defaults.py",
+        "sha256": "4bd19035e4296c2972dc2f7b28b113c2af9a0f99d73bb774dd15e26534133802"
+      },
+      {
+        "path": "descartes/__init__.py",
+        "sha256": "b4eecf6c58f1268d6fe5a88cf233995fc69d85d89f8d84692c5367276c7b318e"
+      },
+      {
+        "path": "descartes/patch.py",
+        "sha256": "ccca77f389616662527b147704e125892cf475e11b2973ab66ce077ea229c165"
+      },
+      {
+        "path": "doc/source/_theme/__init__.py",
+        "sha256": "76adebd52559a9fd90b7c72319dd3a7229ea966200356945fee5a6428a53a1e2"
+      },
+      {
+        "path": "doc/source/_theme/sphinx_rtd_theme/__init__.py",
+        "sha256": "76adebd52559a9fd90b7c72319dd3a7229ea966200356945fee5a6428a53a1e2"
+      },
+      {
+        "path": "doc/source/conf.py",
+        "sha256": "94f049bc4a8e75fba54085e5aab2c9d1d9a3791f621cf3f9835d17f4496326c9"
+      },
+      {
+        "path": "docs/superpowers/plans/2026-09-16-tools-database-repair/regression_checks.py",
+        "sha256": "71fd5f13417fe90cdd57bee8261850df618d84f23f1a955b373791aa1e2ed645"
+      },
+      {
+        "path": "flatcam.py",
+        "sha256": "3d2ba950fa370da2943e472f02ac8cdd9da2b3103cbc4522c46d205d7990a160"
+      },
+      {
+        "path": "libs/qdarktheme/__init__.py",
+        "sha256": "bd18ca6c49b0bd9ab694d12ab1286035060d799d0f2555bae6a282594eb7971f"
+      },
+      {
+        "path": "libs/qdarktheme/main.py",
+        "sha256": "abcc610536f9f96774bd285cc364f362585cc17ccd21e7e435d12cc3c65591c3"
+      },
+      {
+        "path": "libs/qdarktheme/qtpy/QtCore/__init__.py",
+        "sha256": "312a2d15cd87ae29bfd93126e4ab297462fc7be9a801c65674a9932a60efdcd9"
+      },
+      {
+        "path": "libs/qdarktheme/qtpy/QtGui/__init__.py",
+        "sha256": "7571d06b7e857f4a77eb23e48838a9ab8de83b0037f14d62c4d912108b33e3f4"
+      },
+      {
+        "path": "libs/qdarktheme/qtpy/QtSvg/__init__.py",
+        "sha256": "232e66da5c9b85dcb35a6ad8dcce40444a7f0c43cde1ece0177f69684d1818b1"
+      },
+      {
+        "path": "libs/qdarktheme/qtpy/QtWidgets/__init__.py",
+        "sha256": "5e521b13fce6efd14d12dae0d1b459e01bf77b23d76f0841bffc49c7dfb1fded"
+      },
+      {
+        "path": "libs/qdarktheme/qtpy/__init__.py",
+        "sha256": "c5a945d65f1e21995cf7a73004f4a6845a3225357074db72157a88b10af0dbf9"
+      },
+      {
+        "path": "libs/qdarktheme/qtpy/qt_compat.py",
+        "sha256": "14c66720a52187b5951afdabeaf622daec0d5896e02d785b9fcc204bdf4a27a8"
+      },
+      {
+        "path": "libs/qdarktheme/qtpy/qt_version.py",
+        "sha256": "aa247f389ac5887bff6a93a61905acd2f70dc984f261e84adaf58058b62277b0"
+      },
+      {
+        "path": "libs/qdarktheme/themes/__init__.py",
+        "sha256": "abaa3fc323d6d76b2a0483642f78502d68d2fc703f93cffce6ac2cc4ec09726b"
+      },
+      {
+        "path": "libs/qdarktheme/themes/dark/__init__.py",
+        "sha256": "5531ebf356e2a160b1b2f22a7683865379f86f179d1214f81575a8d51a9c7310"
+      },
+      {
+        "path": "libs/qdarktheme/themes/dark/palette.py",
+        "sha256": "81d3ea5d1349a825885cb1a360f1ba56a2d1e8ce9f5ac94218a2f8c0e641a0ca"
+      },
+      {
+        "path": "libs/qdarktheme/themes/dark/stylesheet.py",
+        "sha256": "7896468ed2a8293dcbcdeb0d47c3546719a156c8411e985819d8ee0b97a448fa"
+      },
+      {
+        "path": "libs/qdarktheme/themes/dark/svg.py",
+        "sha256": "cf6fddc977065fada6386fb7c619d312fd936dd879ecaeee542b2d6037dcacbc"
+      },
+      {
+        "path": "libs/qdarktheme/themes/light/__init__.py",
+        "sha256": "247c96355958c6fb3d2bb1ef2dfbefd82de224b6aaca44950a1ef6bd31cc2c19"
+      },
+      {
+        "path": "libs/qdarktheme/themes/light/palette.py",
+        "sha256": "9106da41a444d75db4f4d0cc0469261e0740ed398500daa4086989728db7fd3b"
+      },
+      {
+        "path": "libs/qdarktheme/themes/light/stylesheet.py",
+        "sha256": "113e0a9a96f7972bbd9eee77865af63f079aeecf7929e7be6498b1b822033a6a"
+      },
+      {
+        "path": "libs/qdarktheme/themes/light/svg.py",
+        "sha256": "f989277a1415d7875762a61cf055e90c18b653dbb808e32589bd3c9dd5a7dcd1"
+      },
+      {
+        "path": "libs/qdarktheme/util.py",
+        "sha256": "bff4f5a4ee87e84d835b91aa06e48990566d1543135a6d05b9c23ea01bdc7ed3"
+      },
+      {
+        "path": "libs/qdarktheme/widget_gallery/__init__.py",
+        "sha256": "44ee0b2f120653308a7cf1e9484b96fc56464428f5aa8e6d8c63f22d565912ac"
+      },
+      {
+        "path": "libs/qdarktheme/widget_gallery/__main__.py",
+        "sha256": "a00d4eef8442fbad85ee9d9d8b2e3351f998b317ef1e44970c2b69225d182d93"
+      },
+      {
+        "path": "libs/qdarktheme/widget_gallery/mainwindow.py",
+        "sha256": "a3f5f4a722e0ef4c1919a954e8e9cec713f0d55da8e3a443fa51094ce18eed50"
+      },
+      {
+        "path": "libs/qdarktheme/widget_gallery/ui/__init__.py",
+        "sha256": "67d99bd97187258b8dd4f7499482e3fa21e550d930b3cc4ed9fb209c788a501c"
+      },
+      {
+        "path": "libs/qdarktheme/widget_gallery/ui/dock_ui.py",
+        "sha256": "d3614198e3104e926f39d07b32e2af04706487b7c6b7b83489dccb5522587874"
+      },
+      {
+        "path": "libs/qdarktheme/widget_gallery/ui/frame_ui.py",
+        "sha256": "9a23a0db3df0da7b76bc15c300bdf4b19b20bbf8c339ae0fb6fcc1a100a40166"
+      },
+      {
+        "path": "libs/qdarktheme/widget_gallery/ui/widgets_ui.py",
+        "sha256": "d748ac7eaac617e4189bec3415a1a61354d0e0174909b1a252c2b5d3ee9a80a7"
+      },
+      {
+        "path": "make_freeze.py",
+        "sha256": "a660a9a42d5278eeda30ec9bfb718a952cc4b6f13d8303a84acd174b3a53b145"
+      },
+      {
+        "path": "mikrocam/__init__.py",
+        "sha256": "03d12cfe8bfe4dc9927929ddfa6d6ffe4390ba82ef8132332b408c65453212ba"
+      },
+      {
+        "path": "mikrocam/bridge/__init__.py",
+        "sha256": "1bbb7c5ce23582f77ab657cd3529694f8c886c904649d2b0360af284cd059dc8"
+      },
+      {
+        "path": "mikrocam/bridge/gerber.py",
+        "sha256": "c6a616cbce97f47fc198bc562d275f50cd917ccb9201826d12c294be8ef024ec"
+      },
+      {
+        "path": "mikrocam/bridge/laser_cam.py",
+        "sha256": "c52cf96d1409677f7049b65699bc1cf9d5a1e624a5b36a64d823d8429567b5dd"
+      },
+      {
+        "path": "mikrocam/core/__init__.py",
+        "sha256": "d52ddabeb1bc136557852fd14e7937494d052eff73f9af19c282e59024d8bfd3"
+      },
+      {
+        "path": "mikrocam/core/identity.py",
+        "sha256": "4bdeab8c0fe42a7fad11e3d2023ba5a3d27b07646870e3793900d63ab1d12ddf"
+      },
+      {
+        "path": "mikrocam/core/laser_dxf.py",
+        "sha256": "f6cb1dfacc7bfb57a3cbe6576b4d10d91925038871c824546c0f840c67e11caf"
+      },
+      {
+        "path": "mikrocam/core/laser_features.py",
+        "sha256": "6756d6365bf16bf0624ba49d33d4a87070a32e72c95e604c11e28b80214aed33"
+      },
+      {
+        "path": "mikrocam/core/laser_geometry.py",
+        "sha256": "daacc577a5f4a74982a9f34029c65296ec6ac1c8fe3191e4e9c865c7a4150c4b"
+      },
+      {
+        "path": "mikrocam/core/laser_job.py",
+        "sha256": "e546f61c8464a0d9e356f5b2400700d3c362fef5ddb2f4e25efae1f777ec62b3"
+      },
+      {
+        "path": "mikrocam/core/laser_json.py",
+        "sha256": "d61bfd5f08626edbe92589ae5f9700e6bd1d62eb7e5b5e9cebd13e8835c6b5f2"
+      },
+      {
+        "path": "mikrocam/core/laser_manifest.py",
+        "sha256": "ebb8b5f32b5cf8c6a74a073a61e955ff9ddb40bd83466a750e2d223bb626cf08"
+      },
+      {
+        "path": "mikrocam/core/laser_paths.py",
+        "sha256": "f3e448858b49a41727e48114d7bffe1c38e537248daf2c1edd9977fede9627d4"
+      },
+      {
+        "path": "mikrocam/core/laser_svg.py",
+        "sha256": "936e49e5dd40389e1f8bf59685553f969b0b1c8a89567093239fd6fcf9a40c5f"
+      },
+      {
+        "path": "mikrocam/core/placement.py",
+        "sha256": "58d0a53865f0bdee2395e1b194497f4f1de8fbab63ba544f88306f83c1037104"
+      },
+      {
+        "path": "mikrocam/laser/__init__.py",
+        "sha256": "0c96b57ddf345ca8b4a7786ea3cc25fa5b678829cc572b52db5abd1b231f9cdd"
+      },
+      {
+        "path": "mikrocam/laser/export.py",
+        "sha256": "390743702c81df5d28353b66b6cdbdc53f445b63891d0ff5210c40d54e0b6601"
+      },
+      {
+        "path": "mikrocam/laser/interlace.py",
+        "sha256": "c57e3d78c180b25f0b3e7ef7c3d52ae8cfeab5bdb34cb00ed53e9661ad143d86"
+      },
+      {
+        "path": "mikrocam/laser/planner.py",
+        "sha256": "f13250bd341b8a00bb6fbf0c5c13b2a382b40f61f354616e40cadd7dbf2f3a23"
+      },
+      {
+        "path": "mikrocam/ui/__init__.py",
+        "sha256": "0a12683af9cffe5cfadaf6d052a4b3c2737b7eea06ae00beb00e370ceda19051"
+      },
+      {
+        "path": "mikrocam/ui/identity.py",
+        "sha256": "141bf9f4003e997d0e391f1292c1251d038b4324554c4b080da3ad23be2e1840"
+      },
+      {
+        "path": "mikrocam/ui/laser_cam.py",
+        "sha256": "7787302e692101ef3fa462f02553c234402f7f356383d09438af969ccb16f64b"
+      },
+      {
+        "path": "mikrocam/ui/laser_export.py",
+        "sha256": "a46c109ffc034ad1ed5b1345e74e38ea5339d5e3798a4d020aad968a2264929c"
+      },
+      {
+        "path": "mikrocam/ui/laser_recipe.py",
+        "sha256": "8705591da7017cd7a4170234aa84788c56aac5334135d416a2124470a5a0ebb9"
+      },
+      {
+        "path": "mikrocam/ui/laser_worker.py",
+        "sha256": "ed235a9f3b3e44f791e21988c1ea12b7ba7ad2ea810ee68125dc8331768cff6d"
+      },
+      {
+        "path": "preprocessors/Berta_CNC.py",
+        "sha256": "c2a9627687a8a344b363f25461cc85ac805bb915c381a29df19adc9dc3ea63a6"
+      },
+      {
+        "path": "preprocessors/Check_points.py",
+        "sha256": "118b8fc0b9eaf304b3a7b8f61c7f68b53ac7d4e05e08897fe53639ddf909f1a0"
+      },
+      {
+        "path": "preprocessors/Default_no_M6.py",
+        "sha256": "25b57f14579c4a62673233f805e381bf66e332044335cf99cebbe71623c74a50"
+      },
+      {
+        "path": "preprocessors/GRBL_11.py",
+        "sha256": "509facfb6d39033cb4efecf0b78f43e999e589c85de87067394739298fe86ae3"
+      },
+      {
+        "path": "preprocessors/GRBL_11_no_M6.py",
+        "sha256": "2da9a8bff6affd2e72cf315930e159390292d8d45f3c356e761ceb16c7f75bde"
+      },
+      {
+        "path": "preprocessors/GRBL_laser.py",
+        "sha256": "a90e8dada5edb5913a5b79b45ebc68e268ec22a54e2ea7b65fcc4ea80719a8b0"
+      },
+      {
+        "path": "preprocessors/GRBL_laser_z.py",
+        "sha256": "1f1c20a51678996b72ca52047f26130afb67bde86b5c4aa235922cb9b8eb33eb"
+      },
+      {
+        "path": "preprocessors/ISEL_CNC.py",
+        "sha256": "d20ec997ec68034659c0b25ca3852987713feee949e8888c1e5202cdd1d35d49"
+      },
+      {
+        "path": "preprocessors/ISEL_ICP_CNC.py",
+        "sha256": "a24fdfe7c687f2bdaed88490f1fd1284a74dde6e856909a30682ef1a0d1a0a5c"
+      },
+      {
+        "path": "preprocessors/Line_xyz.py",
+        "sha256": "1b93f5997015f357731f2d1f765554a0c0ee95a75f66f71001d281f0128ddfbb"
+      },
+      {
+        "path": "preprocessors/Marlin.py",
+        "sha256": "e6301daa49fef4fb55571f089f4d8d3404186b1a31c14252221d52b036494022"
+      },
+      {
+        "path": "preprocessors/Marlin_laser_FAN_pin.py",
+        "sha256": "f62a44bc8128052bd85193600d204e92736b0df7f8c9e62a553cda6a666aad0f"
+      },
+      {
+        "path": "preprocessors/Marlin_laser_Spindle_pin.py",
+        "sha256": "c17d984f57b5cdda9ac4a2299ef73367efb35beda94e0fde8a219eda3fef8d07"
+      },
+      {
+        "path": "preprocessors/Marlin_laser_z.py",
+        "sha256": "516809dfc5fe3cc933cd96ffbee3a26de36d06ebc6e8b4ef576a00ec82ff7c94"
+      },
+      {
+        "path": "preprocessors/NCCAD9.py",
+        "sha256": "38ea5182e04273d4a88c1a3d1ea254d68320aecab8e2148b47d4d2e954d3924b"
+      },
+      {
+        "path": "preprocessors/Paste_1.py",
+        "sha256": "f18d9354c786405b43d9e0ccab9869c300de043aaaeeab152fc52d2c28199cbf"
+      },
+      {
+        "path": "preprocessors/Paste_GRBL.py",
+        "sha256": "13efc2e40b359133bbb116b5dfbe6480636c41dacd71d50b750af9ecc4175472"
+      },
+      {
+        "path": "preprocessors/Paste_Marlin.py",
+        "sha256": "7cfd98804ea7df8ec73510ffab874fe300e7fc9cbb3418b8b179b59427644dfa"
+      },
+      {
+        "path": "preprocessors/Repetier.py",
+        "sha256": "93d15ead3a872526afbf0c05f34f49472ac9517d591d4a17e2ec9d46aef667f3"
+      },
+      {
+        "path": "preprocessors/Roland_MDX_20.py",
+        "sha256": "a311fef5e118a2ee89ddd99ec086c92431670b80eb6a945dba6a48512b17f0ad"
+      },
+      {
+        "path": "preprocessors/Roland_MDX_540.py",
+        "sha256": "625fd13180e38d22f4675af0a426ac5cc0baf08eb78cb146701b720a815973b9"
+      },
+      {
+        "path": "preprocessors/Toolchange_Manual.py",
+        "sha256": "fdeb6896b23ab37ba99e102c3bab93c2d9fa27dc13322e84b41b6509b6001f59"
+      },
+      {
+        "path": "preprocessors/Toolchange_Probe_MACH3.py",
+        "sha256": "28374dc736dab2a1dbe50f2e0fbdc25083ff8a01aa14ecc019710ed51178a1c3"
+      },
+      {
+        "path": "preprocessors/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "preprocessors/default.py",
+        "sha256": "4627cf6396e9ec99ea427ac6b46931538f1fcef217f43c9d35d3a1c7083a2d65"
+      },
+      {
+        "path": "preprocessors/default_laser.py",
+        "sha256": "8f3f4447c36d47682d5971acbd09023f0a777122531bf9b9d25d9a9fe337d0bd"
+      },
+      {
+        "path": "preprocessors/grbl_laser_eleks_drd.py",
+        "sha256": "426489ccd366bf8ac8641df8427747dc9eb2311d1c5dadb12b94361f998a9026"
+      },
+      {
+        "path": "preprocessors/hpgl.py",
+        "sha256": "d2e36ce9c32752c514b21093bb83e52110f3c15f9e07aca8c939f761836c5270"
+      },
+      {
+        "path": "services/__init__.py",
+        "sha256": "99531a4e80c3edc575ba469ee791318826cc5be6ee12cd19542198681d1ff95f"
+      },
+      {
+        "path": "services/updater/__init__.py",
+        "sha256": "15fe2a351c8126fd09693c0a583545c1583de8c6d92de81a018a2db235137f31"
+      },
+      {
+        "path": "services/updater/checker.py",
+        "sha256": "fa864adbbad55be67b52ebd5b062febdfcfcbca02c3d001698792394153c3e7e"
+      },
+      {
+        "path": "services/updater/launcher.py",
+        "sha256": "be0b5076dd9a31d50b8195739c9a03afd3196a4c91730e3cdf0cc48a93d44a53"
+      },
+      {
+        "path": "services/updater/manifest.py",
+        "sha256": "cb1092d06a5f5a5b9b8c3474c68d5279b7d8027036c61e673bebf95e40bcba75"
+      },
+      {
+        "path": "services/updater/recovery.py",
+        "sha256": "035bc1d19f82d7e843fc57bda66d39f4deef4b9605e6054876b140503a477d48"
+      },
+      {
+        "path": "services/updater/release.py",
+        "sha256": "d69a5dc2b291210edee845c0f2905cfd4eb393f3c07495d1545e10013d1e0260"
+      },
+      {
+        "path": "services/updater/transport.py",
+        "sha256": "1b8242f50ecc72daaf6cfe5b1534e088b118e7ee68fcd5d49c86b5d9764a5575"
+      },
+      {
+        "path": "tclCommands/TclCommand.py",
+        "sha256": "f0945c1830efa734690ab7301c0bfda669e7f8c72deac7cd75d9ff7c5f9c35af"
+      },
+      {
+        "path": "tclCommands/TclCommandAddAperture.py",
+        "sha256": "e4df51ac1e755f7f39d4320414a0f1060ded76511acfdcae726fe768ea96f6f1"
+      },
+      {
+        "path": "tclCommands/TclCommandAddCircle.py",
+        "sha256": "dad0e1e0020e35de08d9cf254a792f71ad2f334eaf68a1d79a79a963dbd73009"
+      },
+      {
+        "path": "tclCommands/TclCommandAddDrill.py",
+        "sha256": "020472907b4bbba9bbc85e50c5eca4858ff1c55ae8f9bc4802f1606ef528f78b"
+      },
+      {
+        "path": "tclCommands/TclCommandAddPolygon.py",
+        "sha256": "2b6eb92de8f09375523e19a1b0a65585e439742b5cd483fa9153be4cc4e8f660"
+      },
+      {
+        "path": "tclCommands/TclCommandAddPolyline.py",
+        "sha256": "fce63cb9f30ef637f866db0da3b3e3aacc5ba6d614f9ebd5749fd81a9c8d1cd8"
+      },
+      {
+        "path": "tclCommands/TclCommandAddRectangle.py",
+        "sha256": "92004629fb47209096a7d2e7c9bbd6b9aa984ec1fbd2231f4f352053acfac2e6"
+      },
+      {
+        "path": "tclCommands/TclCommandAddSlot.py",
+        "sha256": "7d736352b7a53520955899274e41ff0ae256d52eab2d6dc27ca28f1f777acb68"
+      },
+      {
+        "path": "tclCommands/TclCommandAlignDrill.py",
+        "sha256": "77adf9b9db5027e6a333a0c589d960cc7a5575272274957552d91dcde54ac688"
+      },
+      {
+        "path": "tclCommands/TclCommandAlignDrillGrid.py",
+        "sha256": "8b693618db9e8f81f72abe42c6526452c7afe45b383afcbd4d39aebb53897c4e"
+      },
+      {
+        "path": "tclCommands/TclCommandBbox.py",
+        "sha256": "42fdfde183749761f94cd3e21cc6be619f8bb54d27a7346855c2c5df73168d78"
+      },
+      {
+        "path": "tclCommands/TclCommandBounds.py",
+        "sha256": "65512fb7868a27a8004fdfa40cd63500db340b97bd7c40e7bc90cdf14f466831"
+      },
+      {
+        "path": "tclCommands/TclCommandBuffer.py",
+        "sha256": "53771669f4b95980530b0316b0425ed484b8a23e1a3d9875464f9a88676d132b"
+      },
+      {
+        "path": "tclCommands/TclCommandClearShell.py",
+        "sha256": "26df3293b28f6e6cad3ffac9010ae450ee9096373e4f98b42dd6bc605fa5cf96"
+      },
+      {
+        "path": "tclCommands/TclCommandCncjob.py",
+        "sha256": "08f357c621df68876710e32ba47125320f1923afda216ff7f6793af89f4435e6"
+      },
+      {
+        "path": "tclCommands/TclCommandCopperClear.py",
+        "sha256": "9f46d624652f43b96a3afa3ffbcfe08deafced49cf469fb7c96ab74e35d171ea"
+      },
+      {
+        "path": "tclCommands/TclCommandCutout.py",
+        "sha256": "f37f6a52747b3eb8316540618a669f37a8e39d7761ea8def43077fd2d21f8e23"
+      },
+      {
+        "path": "tclCommands/TclCommandDelete.py",
+        "sha256": "ccb6f9c55cdff3b296b54b8cd5880112edd6ddbf92e78bc3cb410807e694e3b0"
+      },
+      {
+        "path": "tclCommands/TclCommandDrillcncjob.py",
+        "sha256": "427a7ca5faeaff256ac71fc74350478819990924068c8deaa41814f1c3f8e129"
+      },
+      {
+        "path": "tclCommands/TclCommandExportDXF.py",
+        "sha256": "afa469ece0eef4ab85f2b2a229e2d5366dcb4dbb2d38e4e7acadc1effcba9eea"
+      },
+      {
+        "path": "tclCommands/TclCommandExportExcellon.py",
+        "sha256": "7ec9b42c4cacef6ebb8a55fa54053f085fe8997a8ff68be000d28a1b1f00124e"
+      },
+      {
+        "path": "tclCommands/TclCommandExportGcode.py",
+        "sha256": "95a581d72a2d2f1e0e7772a3a7984da964805c11ba4ca284656e892cb57e09d6"
+      },
+      {
+        "path": "tclCommands/TclCommandExportGerber.py",
+        "sha256": "f9de4e8879cd13abb941aae7765e38b379c856077291cea293c6545fdbc1ad9f"
+      },
+      {
+        "path": "tclCommands/TclCommandExportSVG.py",
+        "sha256": "151734806cb64c163add4b7feaae6d19cc0fa8d2351e85f5683b5e38f74686d8"
+      },
+      {
+        "path": "tclCommands/TclCommandExteriors.py",
+        "sha256": "fd74febdad616c288b15be3b12eead7265f9a4819fda078e03afb932ff8eff65"
+      },
+      {
+        "path": "tclCommands/TclCommandFollow.py",
+        "sha256": "9e83726858407e14400f2fa56e1f4d0678869418d704a64ad3d5b10fc25b5def"
+      },
+      {
+        "path": "tclCommands/TclCommandGeoCutout.py",
+        "sha256": "8a98d853a6cf3f4755c44a84aee2076bab9d9e3f6def21625a598d7aa905f9b6"
+      },
+      {
+        "path": "tclCommands/TclCommandGeoUnion.py",
+        "sha256": "e8499af98ccc9272f481b707dae99b175f281e6ebe1400de6158bb55dbcef494"
+      },
+      {
+        "path": "tclCommands/TclCommandGetActive.py",
+        "sha256": "fe07d21c4b5aa2dd5989218419a6e1370657b84bd129e8e7819c3a0b9361dfcc"
+      },
+      {
+        "path": "tclCommands/TclCommandGetNames.py",
+        "sha256": "894ccce4d326c9fba7fe694bf167866e588f832536c707b2a2e945a13a89e19d"
+      },
+      {
+        "path": "tclCommands/TclCommandGetPath.py",
+        "sha256": "38bbe2c822b402890cb6a70ea6bd4595435349327be65f007c112eb8fbe76ea1"
+      },
+      {
+        "path": "tclCommands/TclCommandGetSys.py",
+        "sha256": "7cddb787186960e72620894e07947abc000f3e3077e5cab19e9f59db1be97b5b"
+      },
+      {
+        "path": "tclCommands/TclCommandHelp.py",
+        "sha256": "1136a0e596fde0bca50dc18fe35213a03f07b874d57dd368581e92fb9bea0fb6"
+      },
+      {
+        "path": "tclCommands/TclCommandImportSvg.py",
+        "sha256": "dedf646389e80557be63264fc656a161bdd1c738797628bf6cc61e777cef322e"
+      },
+      {
+        "path": "tclCommands/TclCommandInteriors.py",
+        "sha256": "665ae98ca97eebe30f49459db74a34adcfaa7848031367ffd8afa66223c1feb0"
+      },
+      {
+        "path": "tclCommands/TclCommandIsolate.py",
+        "sha256": "3db3132f53edc1cc934e7684c27a7f30067954bf0d0a237ba1767d29cb53f330"
+      },
+      {
+        "path": "tclCommands/TclCommandJoinExcellon.py",
+        "sha256": "75ba15ff83b6b905e802311b1fef91b7139278d1f9d2101a24e51a60930ae04a"
+      },
+      {
+        "path": "tclCommands/TclCommandJoinGeometry.py",
+        "sha256": "1715f8de7cc09ba0e622dcd2d7d66eeb029e047839efc3cd0e5ae6b39cd58f90"
+      },
+      {
+        "path": "tclCommands/TclCommandListPP.py",
+        "sha256": "41976f5976228fc11ec5c208b97762aee13e6f5243e31f3e9655fac0914e8644"
+      },
+      {
+        "path": "tclCommands/TclCommandListSys.py",
+        "sha256": "cbea20d854236e5c97191f365bc59e15e2d69457c7a5df1d026e9df4733a3146"
+      },
+      {
+        "path": "tclCommands/TclCommandMillDrills.py",
+        "sha256": "3504c22e4b78df545253d18590c9bfd2832acb3dca3dbfe717f3cc74f498193a"
+      },
+      {
+        "path": "tclCommands/TclCommandMillSlots.py",
+        "sha256": "4c6c6de1c7f8e7a88672585cee4ce2b6784b993f453e9eb05a4a26c957fb585e"
+      },
+      {
+        "path": "tclCommands/TclCommandMirror.py",
+        "sha256": "db24d571db28d4198c927962e4ce9624049da4f589a852eeeef4b7d3344c984d"
+      },
+      {
+        "path": "tclCommands/TclCommandNew.py",
+        "sha256": "de364a1acf3988a31250e169e326653b27be7cad15cfb55498229503f5e1f3c2"
+      },
+      {
+        "path": "tclCommands/TclCommandNewExcellon.py",
+        "sha256": "a0b01167a2675e2de9b9c0a5b33f42566c966d092844ecf8ed308cd7f67764fd"
+      },
+      {
+        "path": "tclCommands/TclCommandNewGeometry.py",
+        "sha256": "89282ac1274c6ff65897118a1c86d20bde02de7c743add3970c5918260ca1ffd"
+      },
+      {
+        "path": "tclCommands/TclCommandNewGerber.py",
+        "sha256": "12044187199d3073fe9058fa14f4e7ca4a170ae32f9d2345cab16647a16861ba"
+      },
+      {
+        "path": "tclCommands/TclCommandNregions.py",
+        "sha256": "b4073733145db23c97b3248e1049de6182d52ae7e2cef023c772d6c90b6c39b7"
+      },
+      {
+        "path": "tclCommands/TclCommandOffset.py",
+        "sha256": "bcd4e8877875c327d3cf96a14312255027d75b16978e5766d93dc2f86f384832"
+      },
+      {
+        "path": "tclCommands/TclCommandOpenDXF.py",
+        "sha256": "67e02a8a0d9d178e6bed38b0144a98974e358bb7c50c3566392b82b668f6b6ed"
+      },
+      {
+        "path": "tclCommands/TclCommandOpenExcellon.py",
+        "sha256": "954f847e3b912f1faca53dbd9927e0360c7c9b11f7219ef675fb1b3aa70ea7c8"
+      },
+      {
+        "path": "tclCommands/TclCommandOpenFolder.py",
+        "sha256": "e76073d75142631d72e2f1efa433e642dd6aec47baca641837538c435a5d522d"
+      },
+      {
+        "path": "tclCommands/TclCommandOpenGCode.py",
+        "sha256": "a008c0c9c6a4a3dae22bfc3d8b9bbb4c4e7ad6b845193ff891a523c82a3e0a61"
+      },
+      {
+        "path": "tclCommands/TclCommandOpenGerber.py",
+        "sha256": "4dc1929ffe85e26953f7365c3a307eea4256ee93f26d041760d9d922120e6e62"
+      },
+      {
+        "path": "tclCommands/TclCommandOpenProject.py",
+        "sha256": "c3f45947ee83417849f986c519020370edcd96a69e752af3633c22e201e637ff"
+      },
+      {
+        "path": "tclCommands/TclCommandOpenSVG.py",
+        "sha256": "9d191314f4c0efeca06fef009d75e38935671299c94cb3ced6bb7228fa3be328"
+      },
+      {
+        "path": "tclCommands/TclCommandOptions.py",
+        "sha256": "3226da2743e6357440f4eca2602e9f3d0aa4b31b2fd6bb6729e25a0752c19e62"
+      },
+      {
+        "path": "tclCommands/TclCommandPaint.py",
+        "sha256": "6953b26289741afbbc8d199f0f0d0d78b8d2984d3686f053ad5649c03892e1dd"
+      },
+      {
+        "path": "tclCommands/TclCommandPanelize.py",
+        "sha256": "adaaefe84d140f2f3bfaa7fb1ab8e40f5bd5c502f51b39c233a8ed0bae836b78"
+      },
+      {
+        "path": "tclCommands/TclCommandPlotAll.py",
+        "sha256": "22436262de2c668584a6c0d3e52d9f7ae54f909b793f064cfe201bb1cf823dbc"
+      },
+      {
+        "path": "tclCommands/TclCommandPlotObjects.py",
+        "sha256": "4b51fcd53c66953baa2c55762a00d50176f57720bf827f9c62d0c62f684cfbc0"
+      },
+      {
+        "path": "tclCommands/TclCommandQuit.py",
+        "sha256": "151105b8ba3ed5492b2fe4f8ac9d17732614892a27c610740f689fd7582a5144"
+      },
+      {
+        "path": "tclCommands/TclCommandSaveProject.py",
+        "sha256": "0197853842e52c981bff5e1fa25e497b59294d4c1bb66f15fe831927c2afc8aa"
+      },
+      {
+        "path": "tclCommands/TclCommandSaveSys.py",
+        "sha256": "6c2e0f372ead1cd7010771bf3f0074e9d148d09d10e02fcdaef4100b439c8c8e"
+      },
+      {
+        "path": "tclCommands/TclCommandScale.py",
+        "sha256": "aa8de4281321852cff3fca87e1ec0b4b86f2eafd5f8778f237d3664a2b17c5a4"
+      },
+      {
+        "path": "tclCommands/TclCommandSetActive.py",
+        "sha256": "419113e24cb505292fe08e8d65cc7e8c3613c2fe843ce3f1bc8a4e383c94dcdb"
+      },
+      {
+        "path": "tclCommands/TclCommandSetOrigin.py",
+        "sha256": "aa68f1b5cb7a20b67738ab17fae05f20bd83b21cc510506d42d6f0cdd36adb1a"
+      },
+      {
+        "path": "tclCommands/TclCommandSetPath.py",
+        "sha256": "198a5eafffd40071f9daf8c4a8bc1d5ce76aa826fc5146cbdd4d888a18072a89"
+      },
+      {
+        "path": "tclCommands/TclCommandSetSys.py",
+        "sha256": "55fe22c1a81ad6e14a14dc35f74e5c522aa86b1a3da741cd950daf30238ab1b6"
+      },
+      {
+        "path": "tclCommands/TclCommandSkew.py",
+        "sha256": "1e542a25986d89a64b978b5c420857f446f35529a5b33e0f2545fac0109506b0"
+      },
+      {
+        "path": "tclCommands/TclCommandSplitGeometry.py",
+        "sha256": "e8107e045fa80def3e0b1eeca040db8a0d5a2a47c3cd2b80ea55e8fbb4ac8d8f"
+      },
+      {
+        "path": "tclCommands/TclCommandSubtractPoly.py",
+        "sha256": "d3d91f449e82cf6c337d0576de3443112f4008e885d603f9d324fe17fb186e29"
+      },
+      {
+        "path": "tclCommands/TclCommandSubtractRectangle.py",
+        "sha256": "a2e1f834c78ed24b340796b92ae6dcbe3c5b0931fae079ca72376f2e248ae530"
+      },
+      {
+        "path": "tclCommands/TclCommandVersion.py",
+        "sha256": "7de6e04d5761a5e998d628bb3ad5a8ad1d433b34315f5d5ee9bd6d37bbcdbc2a"
+      },
+      {
+        "path": "tclCommands/TclCommandWriteGCode.py",
+        "sha256": "5f67f550f046ad360af2da3a5bc5acf700bf8bb3bdb13e472791a74189ddd438"
+      },
+      {
+        "path": "tclCommands/__init__.py",
+        "sha256": "f5501aa28d3f08c795018f85c5e165947e7c91e4603f750814faffa8d985d263"
+      },
+      {
+        "path": "updater_app.py",
+        "sha256": "20fbfa034af02ca7f52c5a1ce39679efaa3a4001504a359a127e84add084fc6b"
+      }
+    ],
+    "revision": "d1d68f56990a67bbc7adc181662dfd2355c377cc"
+  },
+  "kind": "mikrocam.reference-report",
+  "outcome": "indeterminate",
+  "results": [
+    {
+      "board_id": "eagle-newer-gyw",
+      "diagnostic": null,
+      "input_path": "eagle-newer-gyw/copper_top.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          39,
+          39
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "eagle-newer-gyw",
+      "diagnostic": null,
+      "input_path": "eagle-newer-gyw/copper_top.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          39,
+          39
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "eagle-newer-gyw",
+      "diagnostic": null,
+      "input_path": "eagle-newer-gyw/copper_top.gbr",
+      "metrics": {
+        "gcode": {
+          "actual_count": 23771,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 23771,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 79,
+          "differing_indices": [],
+          "expected_count": 79,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "eagle-newer-gyw",
+      "diagnostic": null,
+      "input_path": "eagle-newer-gyw/drills.xln",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          39,
+          39
+        ],
+        "tools": {
+          "actual_count": 2,
+          "differing_indices": [],
+          "expected_count": 2,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "eagle-newer-gyw",
+      "diagnostic": null,
+      "input_path": "eagle-newer-gyw/profile.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          1,
+          1
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "altium-limesdr-qpci-e-v1-2",
+      "diagnostic": null,
+      "input_path": "altium-limesdr-qpci-e-v1-2/LimeSDR-QPCIe_1v2.GTL",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          3134,
+          3134
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "altium-limesdr-qpci-e-v1-2",
+      "diagnostic": null,
+      "input_path": "altium-limesdr-qpci-e-v1-2/LimeSDR-QPCIe_1v2.GTL",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          660,
+          660
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "altium-limesdr-qpci-e-v1-2",
+      "diagnostic": null,
+      "input_path": "altium-limesdr-qpci-e-v1-2/LimeSDR-QPCIe_1v2.GTL",
+      "metrics": {
+        "gcode": {
+          "actual_count": 989599,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 989599,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 6179,
+          "differing_indices": [],
+          "expected_count": 6179,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "altium-limesdr-qpci-e-v1-2",
+      "diagnostic": null,
+      "input_path": "altium-limesdr-qpci-e-v1-2/LimeSDR-QPCIe_1v2-RoundHoles.TXT",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          4255,
+          4255
+        ],
+        "tools": {
+          "actual_count": 12,
+          "differing_indices": [],
+          "expected_count": 12,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "altium-limesdr-qpci-e-v1-2",
+      "diagnostic": null,
+      "input_path": "altium-limesdr-qpci-e-v1-2/LimeSDR-QPCIe_1v2-SlotHoles.TXT",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          3,
+          3
+        ],
+        "tools": {
+          "actual_count": 2,
+          "differing_indices": [],
+          "expected_count": 2,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "diptrace-fd1-keyboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-keyboard/keyboard_Bottom.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          38,
+          38
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "diptrace-fd1-keyboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-keyboard/keyboard_Bottom.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          38,
+          38
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "diptrace-fd1-keyboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-keyboard/keyboard_Bottom.gbr",
+      "metrics": {
+        "gcode": {
+          "actual_count": 70650,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 70650,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 87,
+          "differing_indices": [],
+          "expected_count": 87,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "diptrace-fd1-keyboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-keyboard/keyboard.drl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          106,
+          106
+        ],
+        "tools": {
+          "actual_count": 6,
+          "differing_indices": [],
+          "expected_count": 6,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "diptrace-fd1-keyboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-keyboard/keyboard_BoardOutline.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          1,
+          1
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "diptrace-fd1-mainboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-mainboard/mainboard_Top.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          123,
+          123
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "diptrace-fd1-mainboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-mainboard/mainboard_Top.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          113,
+          113
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "diptrace-fd1-mainboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-mainboard/mainboard_Top.gbr",
+      "metrics": {
+        "gcode": {
+          "actual_count": 159814,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 159814,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 239,
+          "differing_indices": [],
+          "expected_count": 239,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "diptrace-fd1-mainboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-mainboard/mainboard.drl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          168,
+          168
+        ],
+        "tools": {
+          "actual_count": 13,
+          "differing_indices": [],
+          "expected_count": 13,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "diptrace-fd1-mainboard",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-mainboard/mainboard_BoardOutline.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          1,
+          1
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "diptrace-fd1-panel",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-panel/panel_Bottom.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          58,
+          58
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "diptrace-fd1-panel",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-panel/panel_Bottom.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          21,
+          21
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "diptrace-fd1-panel",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-panel/panel_Bottom.gbr",
+      "metrics": {
+        "gcode": {
+          "actual_count": 117421,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 117421,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 155,
+          "differing_indices": [],
+          "expected_count": 155,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "diptrace-fd1-panel",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-panel/panel.drl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          73,
+          73
+        ],
+        "tools": {
+          "actual_count": 7,
+          "differing_indices": [],
+          "expected_count": 7,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "diptrace-fd1-panel",
+      "diagnostic": null,
+      "input_path": "diptrace-fd1-panel/panel_BoardOutline.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          1,
+          1
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "fritzing-analog-gyro",
+      "diagnostic": null,
+      "input_path": "fritzing-analog-gyro/combined.gtl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          200,
+          200
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "fritzing-analog-gyro",
+      "diagnostic": null,
+      "input_path": "fritzing-analog-gyro/combined.gtl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          200,
+          200
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "fritzing-analog-gyro",
+      "diagnostic": null,
+      "input_path": "fritzing-analog-gyro/combined.gtl",
+      "metrics": {
+        "gcode": {
+          "actual_count": 260047,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 260047,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 401,
+          "differing_indices": [],
+          "expected_count": 401,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "proteus-sliding-gate",
+      "diagnostic": null,
+      "input_path": "proteus-sliding-gate/aperture gate - CADCAM Top Copper.GBR",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          143,
+          143
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "proteus-sliding-gate",
+      "diagnostic": null,
+      "input_path": "proteus-sliding-gate/aperture gate - CADCAM Top Copper.GBR",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          142,
+          142
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "proteus-sliding-gate",
+      "diagnostic": null,
+      "input_path": "proteus-sliding-gate/aperture gate - CADCAM Top Copper.GBR",
+      "metrics": {
+        "gcode": {
+          "actual_count": 196882,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 196882,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 453,
+          "differing_indices": [],
+          "expected_count": 453,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "easyeda-stm32-minimal",
+      "diagnostic": null,
+      "input_path": "easyeda-stm32-minimal/Drill_NPTH_Through.DRL",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          2,
+          2
+        ],
+        "tools": {
+          "actual_count": 1,
+          "differing_indices": [],
+          "expected_count": 1,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "easyeda-stm32-minimal",
+      "diagnostic": null,
+      "input_path": "easyeda-stm32-minimal/Drill_PTH_Through.DRL",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          163,
+          163
+        ],
+        "tools": {
+          "actual_count": 4,
+          "differing_indices": [],
+          "expected_count": 4,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "easyeda-stm32-minimal",
+      "diagnostic": null,
+      "input_path": "easyeda-stm32-minimal/Gerber_BoardOutlineLayer.GKO",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          1,
+          1
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "easyeda-stm32-minimal",
+      "diagnostic": null,
+      "input_path": "easyeda-stm32-minimal/Gerber_TopLayer.GTL",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          100,
+          100
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "easyeda-stm32-minimal",
+      "diagnostic": null,
+      "input_path": "easyeda-stm32-minimal/Gerber_TopLayer.GTL",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          23,
+          23
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "easyeda-stm32-minimal",
+      "diagnostic": null,
+      "input_path": "easyeda-stm32-minimal/Gerber_TopLayer.GTL",
+      "metrics": {
+        "gcode": {
+          "actual_count": 151603,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 151603,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 229,
+          "differing_indices": [],
+          "expected_count": 229,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "kicad-pico2romemu",
+      "diagnostic": null,
+      "input_path": "kicad-pico2romemu/Pico2ROMEmu_PCB-Edge_Cuts.gm1",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          1,
+          1
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "kicad-pico2romemu",
+      "diagnostic": null,
+      "input_path": "kicad-pico2romemu/Pico2ROMEmu_PCB-F_Cu.gtl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          85,
+          85
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "kicad-pico2romemu",
+      "diagnostic": null,
+      "input_path": "kicad-pico2romemu/Pico2ROMEmu_PCB-F_Cu.gtl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          84,
+          84
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "kicad-pico2romemu",
+      "diagnostic": null,
+      "input_path": "kicad-pico2romemu/Pico2ROMEmu_PCB-F_Cu.gtl",
+      "metrics": {
+        "gcode": {
+          "actual_count": 88290,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 88290,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 179,
+          "differing_indices": [],
+          "expected_count": 179,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "kicad-pico2romemu",
+      "diagnostic": "Baseline error: kicad-pico2romemu/kicad-pico2romemu/Pico2ROMEmu_PCB-NPTH.drl/excellon: ValueError: Actual Excellon parser produced no tools; candidate error: kicad-pico2romemu/kicad-pico2romemu/Pico2ROMEmu_PCB-NPTH.drl/excellon: ValueError: Actual Excellon parser produced no tools",
+      "input_path": "kicad-pico2romemu/Pico2ROMEmu_PCB-NPTH.drl",
+      "metrics": {},
+      "outcome": "indeterminate",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "kicad-pico2romemu",
+      "diagnostic": null,
+      "input_path": "kicad-pico2romemu/Pico2ROMEmu_PCB-PTH.drl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          122,
+          122
+        ],
+        "tools": {
+          "actual_count": 4,
+          "differing_indices": [],
+          "expected_count": 4,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "kicad-ivcurve-mux",
+      "diagnostic": null,
+      "input_path": "kicad-ivcurve-mux/MUX-ADG706-Edge_Cuts.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          1,
+          1
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "kicad-ivcurve-mux",
+      "diagnostic": null,
+      "input_path": "kicad-ivcurve-mux/MUX-ADG706-F_Cu.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          38,
+          38
+        ]
+      },
+      "outcome": "match",
+      "stage": "gerber"
+    },
+    {
+      "board_id": "kicad-ivcurve-mux",
+      "diagnostic": null,
+      "input_path": "kicad-ivcurve-mux/MUX-ADG706-F_Cu.gbr",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          37,
+          37
+        ]
+      },
+      "outcome": "match",
+      "stage": "isolation"
+    },
+    {
+      "board_id": "kicad-ivcurve-mux",
+      "diagnostic": null,
+      "input_path": "kicad-ivcurve-mux/MUX-ADG706-F_Cu.gbr",
+      "metrics": {
+        "gcode": {
+          "actual_count": 43850,
+          "difference_count": 0,
+          "differing_blocks": [],
+          "expected_count": 43850,
+          "matches": true
+        },
+        "geometry_counts": [
+          0,
+          0
+        ],
+        "paths": {
+          "actual_count": 83,
+          "differing_indices": [],
+          "expected_count": 83,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "cnc"
+    },
+    {
+      "board_id": "kicad-ivcurve-mux",
+      "diagnostic": "Baseline error: kicad-ivcurve-mux/kicad-ivcurve-mux/MUX-ADG706-NPTH.drl/excellon: ValueError: Actual Excellon parser produced no tools; candidate error: kicad-ivcurve-mux/kicad-ivcurve-mux/MUX-ADG706-NPTH.drl/excellon: ValueError: Actual Excellon parser produced no tools",
+      "input_path": "kicad-ivcurve-mux/MUX-ADG706-NPTH.drl",
+      "metrics": {},
+      "outcome": "indeterminate",
+      "stage": "excellon"
+    },
+    {
+      "board_id": "kicad-ivcurve-mux",
+      "diagnostic": null,
+      "input_path": "kicad-ivcurve-mux/MUX-ADG706-PTH.drl",
+      "metrics": {
+        "geometry": [
+          {
+            "bounds_delta_mm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "hausdorff_mm": 0.0,
+            "matches": true,
+            "symmetric_difference_mm2": 0.0,
+            "topology_equal": true
+          }
+        ],
+        "geometry_counts": [
+          36,
+          36
+        ],
+        "tools": {
+          "actual_count": 2,
+          "differing_indices": [],
+          "expected_count": 2,
+          "matches": true
+        }
+      },
+      "outcome": "match",
+      "stage": "excellon"
+    }
+  ],
+  "schema_version": 1,
+  "tolerances": {
+    "area_mm2": 1e-06,
+    "distance_mm": 1e-06
+  }
+}
