@@ -30,7 +30,7 @@ are retained; these components are not relicensed under the application's MIT li
 
 `vendored/` records qdarktheme 1.1.1, Material design icons, QDarkStyleSheet and Descartes.
 `bundled/` records the complete Unlicense/attribution header from svgtrace's imagetracer.js.
-Descartes's exact1.1.0 source archive omits full license text: its original metadata and
+Descartes's exact 1.1.0 source archive omits full license text: its original metadata and
 unaltered full downstream conda-forge/Debian notices are clearly distinguished. Material
 icons/QDarkStyleSheet license snapshots identify the copied text's immutable revision;
 they do not establish the unrecorded original vendored resource revisions.
