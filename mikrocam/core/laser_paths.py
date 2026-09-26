@@ -2,7 +2,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from .laser_job import LaserJob, PlanarRegion
+from .laser_job import LaserJob, LaserPass, PlanarRegion
 from .placement import Point2D, _finite_real, _point
 
 
@@ -26,6 +26,12 @@ def check_path_count(count: int) -> None:
     """Bound output allocation without silently dropping paths."""
     if count > MAX_PATHS:
         raise ValueError(f'Laser plan exceeds {MAX_PATHS} paths; increase hatch spacing or simplify input')
+
+
+def validate_interlace_n(n: int) -> None:
+    """Keep ordering and planning options on the same strict interlace range."""
+    if type(n) is not int or not 1 <= n <= 1_000_000:
+        raise ValueError('Interlace N must be an integer from 1 to 1000000')
 
 
 @dataclass(frozen=True)
@@ -54,8 +60,10 @@ class PlanOptions:
     angle_deg: float = 0.0
     cross_hatch: bool = False
     region_mode: str = 'copper'
+    interlace_n: int = 1
 
     def __post_init__(self) -> None:
+        validate_interlace_n(self.interlace_n)
         if self.contour_mode not in CONTOUR_MODES:
             raise ValueError('Unsupported contour mode')
         if self.region_mode not in ('copper', 'clearance'):
@@ -99,6 +107,22 @@ class LaserPath:
 
 
 @dataclass(frozen=True)
+class LaserPassPlan:
+    """One explicit recipe pass referencing the shared already-placed paths."""
+    settings: LaserPass
+    paths: tuple[LaserPath, ...]
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.settings, LaserPass):
+            raise ValueError('Pass plan settings must be a LaserPass')
+        if not isinstance(self.paths, tuple) or not self.paths:
+            raise ValueError('Pass plan requires nonempty tuple paths')
+        if not all(isinstance(path, LaserPath) for path in self.paths):
+            raise ValueError('Pass plan paths must be LaserPath values')
+        check_path_count(len(self.paths))
+
+
+@dataclass(frozen=True)
 class LaserPlan:
     """Original job and ordered already-placed mm paths; ephemeral, not a file format."""
     job: LaserJob
@@ -113,3 +137,8 @@ class LaserPlan:
         if not all(isinstance(path, LaserPath) for path in self.paths):
             raise ValueError('Plan paths must be LaserPath values')
         check_path_count(len(self.paths))
+
+    @property
+    def pass_plans(self) -> tuple[LaserPassPlan, ...]:
+        """Expose recipe order without copying or transforming exposure paths."""
+        return tuple(LaserPassPlan(settings, self.paths) for settings in self.job.recipe.passes)
