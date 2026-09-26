@@ -25,8 +25,8 @@
 
 ## Delivery
 - [X] T016 Run full suite/architecture/growth and size checks; record validation.md.
-- [ ] T017 Review hosted Windows CI and fix evidenced defects.
-- [ ] T018 Update docs/ROADMAP.md, quickstart.md and deliver PR after prior slices.
+- [X] T017 Review hosted Windows CI and fix evidenced defects.
+- [X] T018 Update docs/ROADMAP.md, quickstart.md and deliver PR after prior slices.
 
 T001 precedes code; T002 before T003; T004 before T005/T006; T007 before T008;
 T009 before T010. Bridge and UI tests/preparation can run independently against this contract,

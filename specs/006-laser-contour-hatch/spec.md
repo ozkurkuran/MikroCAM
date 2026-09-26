@@ -2,7 +2,7 @@
 
 **Feature Branch**: `006-laser-contour-hatch`
 **Created**: 2026-09-27
-**Status**: Specified
+**Status**: Implemented
 **Input**: Roadmap slice 6: outer/inner/trace/pad/board-edge contours, angled and cross
 hatch with clipping, integrated Laser CAM panel and existing Geometry canvas preview.
 

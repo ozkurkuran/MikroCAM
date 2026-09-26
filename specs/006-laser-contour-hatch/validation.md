@@ -35,3 +35,8 @@ After the cardinal-boundary fix, the complete suite passes **944 tests and 310 s
 in 54.64s (2 original placeholders skipped, 3 inherited SWIG warnings). Import/growth checks
 pass. The final transform fix is covered by exact coordinate/scan tests; the earlier desktop
 smoke used 30-degree hatch, whose behavior is unchanged.
+
+Windows [CI run 36273621144](https://github.com/ozkurkuran/MikroCAM/actions/runs/36273621144)
+passed **944 tests and 310 subtests** in 56.28s; 2 original placeholders skipped and
+`pip check` clean. [PR 6](https://github.com/ozkurkuran/MikroCAM/pull/6) targets main after
+005 merged. All eighteen tasks are complete; physical PCB/export remain later work.
