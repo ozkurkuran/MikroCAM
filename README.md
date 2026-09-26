@@ -1,12 +1,19 @@
-# FlatCAM Evo — MikroCAM development baseline
+# MikroCAM
 
 FlatCAM Evo (c) 2019 by Marius Stanciu, based on FlatCAM, 2D Computer-Aided PCB
 Manufacturing (c) 2014–2018 Juan Pablo Caram. Original copyright and MIT license
 notices remain in [LICENSE](LICENSE).
 
-This repository is the MikroCAM fork of FlatCAM Evo. The current compatibility slice
-keeps Evo's application name, interface and project format. It prepares PCB jobs from
-Gerber and Excellon files and generates CNC G-code.
+MikroCAM is an open-source fork of FlatCAM Evo. It prepares PCB jobs from Gerber and
+Excellon files and generates CNC G-code. Its title and About identify MikroCAM;
+existing Evo project formats, settings namespaces and tool database names are preserved.
+The product version is defined once in `mikrocam/core/identity.py`.
+
+Application source is MIT licensed. Dependencies retain their own terms, including PyQt6
+GPLv3 and Qt LGPL/GPL terms. See [NOTICE](NOTICE.md) and the
+[dependency inventory and full license texts](THIRD_PARTY_LICENSES/README.md).
+Those records also identify inherited asset provenance and optional native-wheel notice gaps
+that must be resolved before a bundled binary distribution.
 
 The selected upstream is Bitbucket `Beta_1.0` at `e046a2a3`, preserved as
 `upstream-evo-beta1-baseline`. The original mekatrol fork remains at
@@ -77,8 +84,15 @@ Makefile remain available as historical platform setup paths; they are not subst
 for the pinned Windows instructions above. macOS support is outside this slice.
 
 This baseline validates the stated CAM journey, not every tool, editor, controller or
-postprocessor. Distribution packaging, complete dependency notices and product branding
-follow their own roadmap slices. Feature rules are in
+postprocessor. Distribution packaging follows its own roadmap slice. Feature rules are in
 [CLAUDE.md](CLAUDE.md) and the [constitution](.specify/memory/constitution.md).
 
 Architecture checks and Windows CI are now documented in [Development checks](docs/DEVELOPMENT.md).
+
+## Updates
+
+MikroCAM does not use Evo's automatic-update channel. Inherited update preferences do not
+enable it, and update/download/revert controls are unavailable in this fork. Obtain source
+updates from [this repository](https://github.com/ozkurkuran/MikroCAM); future binary releases
+will be published through the packaging roadmap slice. Existing upstream updater services
+remain in source for provenance, but the MikroCAM UI does not launch them.

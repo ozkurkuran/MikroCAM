@@ -46,7 +46,7 @@ appGUI/MainGUI.py, appGUI/GUIElements.py, appHandlers/appUIActions.py, appMain.p
 pyproject.toml
 tests/test_product_identity.py, tests/test_product_update_boundary.py, tests/test_dependency_notices.py
 tests/architecture/test_runtime_metadata.py, tests/smoke_app.py
-LICENSE, NOTICE.md, THIRD_PARTY_CHANGES.md, THIRD_PARTY_LICENSES/{inventory.json,README.md,...}
+.gitattributes, LICENSE, NOTICE.md, THIRD_PARTY_CHANGES.md, THIRD_PARTY_LICENSES/{inventory.json,README.md,...}
 docs/ROADMAP.md, README.md
 specs/003-branding-and-notices/
 ```
@@ -57,4 +57,9 @@ specs/003-branding-and-notices/
 | --- | --- | --- |
 | Desktop smoke alongside headless tests | Verify actual title/About rendering and CAM round-trip | Offscreen helpers alone cannot verify real desktop integration. |
 
-No growth/size exception is planned; report measured results before merge.
+No growth/size exception is needed. Tracked legacy growth: -225 lines; all changed legacy
+files combined: -248 lines. Disabled host updater entry-point bodies were replaced with
+thin policy calls instead of retaining unreachable code. Standalone updater services remain
+tested and unchanged. The facade characterization now explicitly asserts version_check
+does not delegate to Evo; affected updater tests assert no queuing/installer invocation.
+License bytes are exempt from Git newline conversion so hashes survive Windows checkout.

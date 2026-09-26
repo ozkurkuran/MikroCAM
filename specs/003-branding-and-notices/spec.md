@@ -69,7 +69,9 @@ to replace MikroCAM with a different upstream application.
 - **FR-003**: FlatCAM and Evo copyrights, authors and applicable source credits MUST be preserved.
 - **FR-004**: MIT LICENSE and NOTICE MUST distinguish application source from dependencies/assets.
 - **FR-005**: All pinned core/development/optional image dependencies MUST have a versioned inventory
-  and source-traceable license texts, including bundled notices supplied with the distributions.
+  and source-traceable full package license texts, including all bundled notices supplied with
+  those distributions. Missing notices for embedded native libraries MUST be explicitly recorded
+  as unresolved binary-distribution audit items, never represented as cleared by the package license.
 - **FR-006**: Dependency notice completeness and product consistency MUST be automatically checked.
 - **FR-007**: Existing project format, compatibility version, settings namespace and tool storage MUST remain unchanged.
 - **FR-008**: MikroCAM update entry points MUST NOT use Evo's update channel; no replacement updater is introduced.
@@ -86,6 +88,8 @@ to replace MikroCAM with a different upstream application.
 
 - **SC-001**: All inspected product identity surfaces agree on name and version after launch and reopen.
 - **SC-002**: 100% of pinned dependencies have an inventory entry and at least one complete license text.
+  Supplied bundled notices are preserved; this measures source-checkout notice coverage, not
+  clearance to redistribute every optional native library or inherited artwork.
 - **SC-003**: The existing CAM round-trip preserves all four objects and generated G-code; full tests and guards pass.
 - **SC-004**: Update entry-point tests produce zero upstream update network calls or installer launches.
 

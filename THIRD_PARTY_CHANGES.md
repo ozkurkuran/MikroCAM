@@ -71,5 +71,6 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Distribution limitations: NOTICE and inventory retain inherited artwork credits and
   explicitly record incomplete per-file provenance, unrecorded resource revisions and the
   Rasterio native-DLL audit gap. This work does not assert a cleared installer/binary release.
-- MikroCAM commit: feature `003-branding-and-notices`; the resulting collection commit is
-  identifiable in Git history with `git log -- THIRD_PARTY_LICENSES/inventory.json`.
+- MikroCAM commit: `f983d153ebe4ea8091ccbc5650db053f131ac6ae` (exact-version notice collection).
+- Product identity and update-boundary wiring are independently implemented in `bbd37168`;
+  no runtime source from another fork was imported for this branding change.
