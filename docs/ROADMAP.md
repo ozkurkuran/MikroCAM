@@ -74,13 +74,18 @@ Spec-kit feature numarasını (`001-…`) sırayla verir. `Kısa ad` sütunu, `/
 **Çıktı:** Gerber'den fiber lazer yolları üretilir ve LightBurn veya EZCAD'de çalıştırılarak ilk
 gerçek PCB elde edilir.
 
+**Yazılım durumu (27.09.2026):** 4–8 dilimleri tamamlandı. Gerber → önizleme → iki geçişli
+SVG/DXF paketleri gerçek MikroCAM masaüstünde doğrulandı. Hedef LightBurn/EZCAD uygulamasında
+içe aktarma ve fiziksel PCB kuponu henüz doğrulanmadığı için kilometre taşının fiziksel
+çıktısı açıktır. [Aktarım ve doğrulama rehberi](LASER_CAM.md).
+
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
 | 4 | `placement-transform` — **tamamlandı** | Tek core transform: origin, öteleme, dönme ve ayna; nokta/geometri uygulaması ve ters dönüşüm. Windows CI: 694 test + 310 subtest başarılı. [Doğrulama](../specs/004-placement-transform/validation.md). | 2 |
 | 5 | `laserjob-model` — **tamamlandı** | Ayrı, değişmez LaserJob ve sıralı pass recipe'leri; katı şema-1 JSON; Gerber'in mevcut birimlerinden mm core verisine köprü. Windows CI: 823 test + 310 subtest başarılı. [Doğrulama](../specs/005-laserjob-model/validation.md). | 4 |
 | 6 | `laser-contour-hatch` — **tamamlandı** | Dış/iç/iz/pad/kart konturları, kırpılmış açılı/çapraz hatch, açık alan seçimi, iptal edilebilir Laser CAM paneli ve Geometry önizlemesi. Gerçek masaüstü döngüsü ve Windows CI: 944 test + 310 subtest başarılı. [Doğrulama](../specs/006-laser-contour-hatch/validation.md). | 5 |
 | 7 | `hatch-interlace-multipass` — **tamamlandı** | Interlace N, boşlukları koruyan sıra; her pass için açık parametreli recipe düzenleyici ve atomik JSON kaydı. İki geçişli masaüstü döngüsü; Windows CI: 995 test + 310 subtest başarılı. [Doğrulama](../specs/007-hatch-interlace-multipass/validation.md). | 6 |
-| 8 | `laser-export-svg-dxf` | LightBurn ve EZCAD'e aktarılabilir SVG/DXF; her pass ayrı katman/renk ya da ayrı dosya olarak | 7 |
+| 8 | `laser-export-svg-dxf` — **yazılım tamamlandı** | Her pass için mm SVG/DXF, recipe ve şemalı eşleme içeren atomik ZIP; iptal edilebilir panel aktarımı. Windows CI: 1110 test + 310 subtest başarılı. Hedef uygulama/fiziksel doğrulama açık. [Doğrulama](../specs/008-laser-export-svg-dxf/validation.md). | 7 |
 
 ### 0.3 — Güvenilir mekanik CAM
 

@@ -15,9 +15,9 @@
 - [X] T010 [US3] Integrate export controls, busy/cancel/shutdown into ui/laser_cam.py.
 - [X] T011 [US3] Extend tests/smoke_app.py to export/read both formats from two-pass plan.
 ## Delivery
-- [ ] T012 Run full regression/architecture/growth/size checks and hosted CI; record validation.md.
+- [X] T012 Run full regression/architecture/growth/size checks and hosted CI; record validation.md.
 - [X] T013 Document target-app/physical verification evidence and remaining external checks honestly.
-- [ ] T014 Update docs/ROADMAP.md/quickstart.md and deliver PR after 007.
+- [X] T014 Update docs/ROADMAP.md/quickstart.md and deliver PR after 007.
 
 T001 gates code; T002 before T003/T004; T005 before T006/T007; T008 before T009/T010.
 UI can be prepared separately against contract; integration and smoke wait for core/domain.

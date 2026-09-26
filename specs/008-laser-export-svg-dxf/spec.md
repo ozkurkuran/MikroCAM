@@ -1,7 +1,7 @@
 # Feature Specification: Per-pass SVG and DXF export
 **Feature Branch**: `008-laser-export-svg-dxf`
 **Created**: 2026-09-27
-**Status**: Specified
+**Status**: Implemented (software export; target-app/physical verification recorded separately)
 **Input**: Roadmap 8: SVG/DXF transfer to LightBurn/EZCAD, each pass separately identifiable.
 
 ## User Scenarios & Testing

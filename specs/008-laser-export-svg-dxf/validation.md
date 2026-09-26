@@ -37,3 +37,11 @@ Target-app import and a physical PCB coupon have not been performed. An asynchro
 question asks which target application is used. This does not block the software export
 implementation, but the roadmap's physical 0.2 milestone remains open. The transfer guide
 and archive README state these limits and exact manual scale/axis/settings/order checks.
+
+## Hosted delivery gate
+Windows [CI run 36274593478](https://github.com/ozkurkuran/MikroCAM/actions/runs/36274593478)
+passes **1110 tests and 310 subtests** in 51.03s; two original placeholders skipped,
+three inherited SWIG warnings and clean `pip check`. Independent read-only review found
+no actionable defect in units/axis/path order, manifest fidelity, atomicity or UI lifecycle.
+[PR 8](https://github.com/ozkurkuran/MikroCAM/pull/8) targets main after 007 merged.
+All fourteen software/delivery tasks are complete. Physical milestone remains explicitly open.
