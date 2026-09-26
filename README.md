@@ -39,6 +39,20 @@ For an explicit console invocation, use `.\.venv\Scripts\python.exe flatcam.py`.
 Runtime and transitive dependency versions are pinned. A separate GDAL installation
 is unnecessary; optional rasterio wheels provide their own GDAL runtime.
 
+## Laser CAM preview and export
+
+Open **Plugins → Laser CAM** after loading a copper Gerber. Choose contours and/or clipped
+hatch, specify placement and interlace N, and load or edit an explicit recipe with named
+passes. Each pass requires power (%), speed (mm/s), frequency (kHz) and pulse width (ns).
+**Generate preview** creates an ordinary Geometry object; regeneration replaces only the
+panel's previous preview. The original Gerber remains unchanged.
+
+After generation, **Export ZIP** saves one SVG or DXF per pass plus `recipe.json`, a versioned
+manifest and import instructions. These are geometry files: configure every pass in the target
+application and verify dimensions, orientation and ordering. Actual LightBurn/EZCAD import
+and physical PCB manufacture remain external validation steps. See the
+[laser transfer guide](docs/LASER_CAM.md).
+
 ## Optional image import and tracing
 
 Core CAM and startup work without rasterio, svgtrace, Playwright or a downloaded browser.

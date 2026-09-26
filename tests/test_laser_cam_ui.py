@@ -394,3 +394,55 @@ def test_cancel_load_dialog_preserves_current_editor_draft(panel, monkeypatch):
     monkeypatch.setattr(QtWidgets.QFileDialog, 'getOpenFileName', lambda *a, **k: ('', ''))
     value.recipe_button.click()
     assert value.recipe_editor.get_recipe() == before
+
+
+def test_export_tracks_only_current_successful_plan(panel, qtbot):
+    value, _host = panel
+    assert not value.export_controls.export_button.isEnabled()
+    value.set_recipe(recipe())
+    value.generate()
+    assert not value.export_controls.isEnabled()
+    qtbot.waitUntil(lambda: not value.busy)
+    assert value.export_controls.export_button.isEnabled()
+    value.rotation.setValue(5)
+    assert value.last_plan is None and not value.export_controls.export_button.isEnabled()
+
+
+@pytest.mark.parametrize('action', ['cancel', 'close', 'hide', 'change', 'shutdown'])
+def test_export_busy_disables_inputs_and_generation_and_routes_lifecycle(panel, qtbot, monkeypatch, tmp_path, action):
+    import mikrocam.ui.laser_export as ui
+    from mikrocam.core.laser_paths import PlanningCancelled
+    value, host = panel
+    entered = threading.Event()
+    def exporting(snapshot, destination, selected, cancelled):
+        entered.set()
+        while not cancelled():
+            threading.Event().wait(0.001)
+        raise PlanningCancelled()
+    monkeypatch.setattr(ui, 'export_plan', exporting)
+    monkeypatch.setattr(QtWidgets.QFileDialog, 'getSaveFileName',
+                        lambda *a, **k: (str(tmp_path / 'export.zip'), ''))
+    value.set_recipe(recipe())
+    value.generate()
+    qtbot.waitUntil(lambda: not value.busy)
+    snapshots = len(host.snapshots)
+    value.export_controls.export_zip()
+    qtbot.waitUntil(entered.is_set)
+    assert value.busy and value.cancel_button.isEnabled()
+    assert not value.generate_button.isEnabled() and not value.recipe_editor.isEnabled()
+    value.generate()
+    assert len(host.snapshots) == snapshots
+    if action == 'cancel':
+        value.cancel_button.click()
+    elif action == 'close':
+        value.close()
+    elif action == 'hide':
+        host.window.show()
+        value.hide()
+    elif action == 'change':
+        value.rotation.setValue(10)
+    else:
+        value.shutdown()
+    qtbot.waitUntil(lambda: not value.busy)
+    assert value.export_controls._worker is None and value.generate_button.isEnabled()
+    assert 'Cancelled' in value.status_label.text()

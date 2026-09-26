@@ -11,6 +11,7 @@ from mikrocam.core.laser_json import recipe_from_json
 from mikrocam.core.laser_paths import CopperFeatures, LaserPlan, PlanOptions
 from mikrocam.core.placement import Placement
 from .laser_recipe import LaserRecipeEditor, save_recipe_file
+from .laser_export import LaserExportControls
 from .laser_worker import LaserWorker
 
 
@@ -45,7 +46,7 @@ class LaserCamPanel(QtWidgets.QDockWidget):
 
     @property
     def busy(self) -> bool:
-        return self._worker is not None
+        return self._worker is not None or self.export_controls.busy
 
     @property
     def recipe(self) -> LaserRecipe | None:
@@ -145,6 +146,16 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         self.status_label = QtWidgets.QLabel(_('Load an explicit recipe to generate paths.'))
         self.status_label.setWordWrap(True)
         layout.addWidget(self.status_label)
+        self.export_controls = LaserExportControls()
+        self.export_controls.status_changed.connect(self.status_label.setText)
+        self.export_controls.busy_changed.connect(self._sync_busy_controls)
+        layout.addWidget(self.export_controls)
+
+    def _sync_busy_controls(self) -> None:
+        self.input_controls.setEnabled(not self.busy)
+        self.generate_button.setEnabled(not self.busy)
+        self.cancel_button.setEnabled(self.busy)
+        self.export_controls.setEnabled(self._worker is None)
 
     def _connect_inputs(self) -> None:
         for control in self._inputs:
@@ -157,6 +168,7 @@ class LaserCamPanel(QtWidgets.QDockWidget):
 
     def _input_changed(self) -> None:
         self.last_plan = None
+        self.export_controls.set_plan(None)
         if self.busy:
             self.cancel()
         else:
@@ -235,6 +247,7 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         if self.busy:
             return
         self.last_plan = None
+        self.export_controls.set_plan(None)
         try:
             job, options, features = self._request()
         except (TypeError, ValueError) as error:
@@ -246,14 +259,13 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         worker.failed.connect(self._worker_error, QtCore.Qt.ConnectionType.QueuedConnection)
         worker.cancelled.connect(self._cancelled, QtCore.Qt.ConnectionType.QueuedConnection)
         worker.finished.connect(self._finished, QtCore.Qt.ConnectionType.QueuedConnection)
-        self.input_controls.setEnabled(False)
-        self.generate_button.setEnabled(False)
-        self.cancel_button.setEnabled(True)
+        self._sync_busy_controls()
         self.status_label.setText(_('Generating preview…'))
         worker.start()
 
     def cancel(self) -> None:
         """Keep the worker alive until finished while invalidating every pending result."""
+        self.export_controls.cancel()
         if self._worker is not None:
             self._worker.cancel()
             self.last_plan = None
@@ -268,6 +280,7 @@ class LaserCamPanel(QtWidgets.QDockWidget):
             self._error(str(error))
             return
         self.last_plan = plan
+        self.export_controls.set_plan(plan)
         self.status_label.setText(_('Preview ready: {name} ({count} passes)').format(
             name=name, count=len(plan.pass_plans)))
 
@@ -293,12 +306,11 @@ class LaserCamPanel(QtWidgets.QDockWidget):
             if worker.is_cancelled():
                 self.status_label.setText(_('Cancelled.'))
             worker.deleteLater()
-        self.input_controls.setEnabled(True)
-        self.generate_button.setEnabled(True)
-        self.cancel_button.setEnabled(False)
+        self._sync_busy_controls()
 
     def shutdown(self) -> None:
         """Cancel and join the bounded worker before Qt destroys its parent widgets."""
+        self.export_controls.shutdown()
         if self._worker is not None:
             self.cancel()
             self._worker.wait()

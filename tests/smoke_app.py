@@ -230,6 +230,47 @@ def render_and_quit(app, qapp, errors):
     print('SHUTDOWN_OK', flush=True)
 
 
+def laser_export_journey(app, qapp, sandbox, errors):
+    from io import StringIO
+    from unittest.mock import patch
+    import xml.etree.ElementTree as ET
+    import zipfile
+    import ezdxf
+    from mikrocam.core.laser_json import recipe_from_json
+    from mikrocam.core.laser_manifest import manifest_from_json
+    panel = app._mikrocam_laser_cam_panel
+    plan = panel.last_plan
+    assert plan is not None and len(plan.pass_plans) == 2
+    controls = panel.export_controls
+    for format in ('svg', 'dxf'):
+        target = sandbox / f'laser-{format}.zip'
+        controls.format_combo.setCurrentIndex(controls.format_combo.findData(format))
+        with patch('PyQt6.QtWidgets.QFileDialog.getSaveFileName', return_value=(str(target), '')):
+            controls.export_zip()
+        pump_until(qapp, lambda: not panel.busy, errors, f'laser {format} export')
+        assert target.is_file(), panel.status_label.text()
+        with zipfile.ZipFile(target) as archive:
+            manifest = manifest_from_json(archive.read('manifest.json').decode('utf-8'))
+            assert manifest['format'] == format and manifest['interlace_n'] == 3
+            assert len(archive.namelist()) == 5
+            assert recipe_from_json(archive.read('recipe.json').decode('utf-8')) == plan.job.recipe
+            for record in manifest['passes']:
+                assert record['path_count'] == len(plan.paths)
+                document = archive.read(record['file']).decode('utf-8')
+                if format == 'svg':
+                    count = len(ET.fromstring(document).findall('{http://www.w3.org/2000/svg}polyline'))
+                else:
+                    drawing = ezdxf.read(StringIO(document))
+                    assert drawing.units == 4 and not drawing.audit().has_errors
+                    count = len(drawing.modelspace())
+                assert count == len(plan.paths)
+        (ROOT / '.venv' / target.name).write_bytes(target.read_bytes())
+        print('LASER_EXPORT_OK', format, target.stat().st_size, flush=True)
+    panel.input_scroll.verticalScrollBar().setValue(0)
+    qapp.processEvents()
+    assert app.ui.grab().save(str(ROOT / '.venv/laser-export-smoke.png'))
+
+
 def run_smoke(sandbox, state):
     from PyQt6 import QtCore, QtWidgets
     from qt_settings_sandbox import install_settings_sandbox
@@ -265,7 +306,10 @@ def run_smoke(sandbox, state):
         pump_until(qapp, lambda: all(worker.receivers(worker.worker_task_signal) > 0
                    for worker in app.workers.workers), errors, 'worker readiness')
         cam_journey(app, qapp, sandbox, errors)
+        app.ui.showMaximized()
+        qapp.processEvents()
         laser_journey(app, qapp, sandbox, errors)
+        laser_export_journey(app, qapp, sandbox, errors)
         render_and_quit(app, qapp, errors)
     except BaseException:
         traceback.print_exc()
