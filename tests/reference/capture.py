@@ -13,7 +13,7 @@ from threading import Thread
 
 BASELINES = {'legacy8994': '6ba378bca139aa306f8c94f09461a98f95d3c75b',
              'evo': 'd0a86cf4f1ac41a206b20f316d4a29f28a93bbff'}
-MAX_CHILD_BYTES = 128 * 1024 * 1024
+MAX_CHILD_BYTES = 512 * 1024 * 1024
 MAX_TIMEOUT_SECONDS = 3600
 
 
