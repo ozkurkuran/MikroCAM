@@ -3,6 +3,8 @@
 # MIT Licence
 # Modified by Marius Stanciu (2019)
 
+from mikrocam.ui import identity as product_identity
+
 from PyQt6 import QtGui, QtWidgets, QtCore
 from PyQt6.QtCore import QPoint, Qt
 
@@ -93,10 +95,6 @@ class AppUIActions(QtCore.QObject):
         """
         self.defaults.report_usage("on_about")
 
-        version = self.app.version
-        version_date = self.app.version_date
-        beta = self.app.beta
-
         class AboutDialog(QtWidgets.QDialog):
             # noinspection PyUnresolvedReferences
             def __init__(self, app, parent):
@@ -113,37 +111,13 @@ class AppUIActions(QtCore.QObject):
                 logo = FCLabel()
                 logo.setPixmap(QtGui.QPixmap(self.app.resource_location + '/app256.png'))
 
-                title_text = _("PCB Manufacturing files Viewer/Editor with Plugins")
-                development_label = _("Development")
-                download_label = _("DOWNLOAD")
-                issue_label = _("Issue tracker")
-
-                devel_link = "https://bitbucket.org/jpcgt/flatcam/src/Beta/"
-                download_link = "https://bitbucket.org/jpcgt/flatcam/downloads/"
-                issues_link = "https://bitbucket.org/jpcgt/flatcam/issues?status=new&status=open/"
-
-                title = FCLabel(
-                    f"<font size=8><B>FlatCAM Evo</B></font><BR>"
-                    f"{title_text}<BR>"
-                    f"<BR><BR>"
-                    f"<BR><BR>"
-                    f'<a href="{devel_link}"><B>{development_label}</B></a><BR>'
-                    f'<a href="{download_link}"><B>{download_label}</B></a><BR>'
-                    f'<a href="{issues_link}"><B>{issue_label}</B></a><BR>'
-                )
+                title = FCLabel(product_identity.about_heading(_))
                 title.setOpenExternalLinks(True)
 
                 closebtn = FCButton(_("Close"))
 
                 tab_widget = QtWidgets.QTabWidget()
-                description_label = FCLabel(
-                    "FlatCAM Evo {version} {beta} ({date}) - {arch}<br>"
-                    "<a href = \"http://flatcam.org/\">http://flatcam.org</a><br>".format(
-                        version=version,
-                        beta=('BETA' if beta else ''),
-                        date=version_date,
-                        arch=platform.architecture()[0])
-                )
+                description_label = FCLabel(product_identity.about_description(platform.architecture()[0], _))
                 description_label.setOpenExternalLinks(True)
 
                 lic_lbl_header = FCLabel(
@@ -1260,11 +1234,11 @@ class AppUIActions(QtCore.QObject):
         # main Items categories
         general_cat = d_properties_tw.addParent(root, _('General'), expanded=True, color=p_color, font=font)
         d_properties_tw.addChild(parent=general_cat,
-                                 title=['%s:' % _("Name"), '%s' % _("FlatCAM Evo")], column1=True)
+                                 title=['%s:' % _("Name"), product_identity.identity.NAME], column1=True)
         d_properties_tw.addChild(parent=general_cat,
-                                 title=['%s:' % _("Version"), '%s' % str(self.app.version)], column1=True)
+                                 title=['%s:' % _("Version"), product_identity.identity.VERSION], column1=True)
         d_properties_tw.addChild(parent=general_cat,
-                                 title=['%s:' % _("Release date"), '%s' % str(self.app.version_date)], column1=True)
+                                 title=['%s:' % _("Release date"), product_identity.identity.RELEASE_DATE], column1=True)
 
         grid_cat = d_properties_tw.addParent(root, _('Grid'), expanded=True, color=p_color, font=font)
         d_properties_tw.addChild(parent=grid_cat,

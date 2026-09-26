@@ -10,6 +10,8 @@
 # File Modified (major mod): Marius Adrian Stanciu         #
 # Date: 3/10/2019                                          #
 # ##########################################################
+from mikrocam.ui import identity as product_identity
+
 from PyQt6.QtCore import QSettings
 
 import platform
@@ -2018,11 +2020,7 @@ class MainGUI(QtWidgets.QMainWindow):
         self.app_icon.addFile(self.app.resource_location + '/app256.png', QtCore.QSize(256, 256))
         self.setWindowIcon(self.app_icon)
 
-        self.setWindowTitle('FlatCAM Evo %s %s - %s' %
-                            (self.app.version,
-                             ('BETA' if self.app.beta else ''),
-                             platform.architecture()[0])
-                            )
+        self.setWindowTitle(product_identity.window_title(architecture=platform.architecture()[0]))
 
         self.filename = ""
         self.units = ""
@@ -2240,11 +2238,7 @@ class MainGUI(QtWidgets.QMainWindow):
         :return: None
         """
         engine = "3D" if self.app.use_3d_engine else "2D"
-        title = (
-            f"FlatCAM Evo {self.app.version} "
-            f"{'BETA' if self.app.beta else ''} - {platform.architecture()[0]} - "
-            f"[{engine}]    {name}"
-        )
+        title = product_identity.window_title(name, engine=engine, architecture=platform.architecture()[0])
         self.setWindowTitle(title)
 
     def on_toggle_gui(self):
