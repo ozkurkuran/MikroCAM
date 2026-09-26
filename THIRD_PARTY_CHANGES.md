@@ -140,3 +140,13 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Regression: real `CNCjob.generate_from_geometry_2()` and default preprocessor retain
   `G4 P4.2` across both directions of repeated level changes.
 - MikroCAM commit: `fix: preserve milling dwell through level changes` (this commit).
+
+## 2026-09-27 — Restore cutout and gap controls independently
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `97ea33b1d84a2e39b9c35880a28e001d227ac2d0` (cutout UI restoration).
+- Destination: `appPlugins/ToolCutOut.py`, `update_ui()`; inherited notices retained.
+- Adaptation: use the cutout mode radio value for automatic/manual controls and explicitly
+  restore gap-specific controls from the gap combo value, including while signals are blocked.
+- Regression: actual Qt controls retain automatic/manual and Thin/Mouse Bites states separately.
+- MikroCAM commit: `fix: restore cutout and gap controls independently` (this commit).
