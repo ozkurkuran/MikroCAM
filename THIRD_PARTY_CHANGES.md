@@ -175,7 +175,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   Keep existing numeric conversion, segmentation metadata and strict database validation.
 - Regression: new in-memory records include the milling/drilling laser settings and every
   eligible machining setting before save/reload; backfill excludes unrelated UI namespaces.
-- MikroCAM commit: `fix: populate canonical machining database defaults` (this commit).
+- MikroCAM commit: `eb91977c55278dcde7d0ce1328a151ab9a05cb86` (`fix: populate canonical machining database defaults`).
 
 ## 2026-09-27 — Keep each queued drilling job's output independent
 
@@ -188,7 +188,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Regression: actual job initializer and two-tool assembly run twice, both sequentially and
   with both requests queued before workers start; a deterministic CAM boundary isolates
   assembly behavior. Output and parsed records remain equal and independently owned.
-- MikroCAM commit: `fix: isolate output of queued drilling jobs` (this commit).
+- MikroCAM commit: `0b4a46e996d69b950f2c3b193d60863481d71ddd` (`fix: isolate output of queued drilling jobs`).
 
 ## 2026-09-27 — Safe plot workers and object deletion
 
@@ -204,7 +204,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Regression: gated queued plots after deletion, real background-thread plotting with forbidden
   widget access, deletion during setup, actual deferred Qt destruction, repeated deletion and
   the real Follow checkbox path. Nine tests pass after reproducing the failures first.
-- MikroCAM commit: `fix: keep plot workers independent of widget lifetime` (this commit).
+- MikroCAM commit: `4a28365f8581867c05e4eb70893c95343b2c68e8` (`fix: keep plot workers independent of widget lifetime`).
 
 ## 2026-09-27 — Preserve selected milling machining flags
 
@@ -215,7 +215,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   exclusion-area flags. Preserve the stored extra-cut length. Upstream diagnostic prints
   are not imported; offset type/value and job-type writes are outside this correction.
 - Regression: real level changes retain explicit true flags through both transition orders.
-- MikroCAM commit: `fix: preserve selected milling machining flags` (this commit).
+- MikroCAM commit: `1b6fdfe7149f481c0a62d0e44306d602d722bc35` (`fix: preserve selected milling machining flags`).
 
 ## 2026-09-27 — Keep milling level changes read-only for machining settings
 
@@ -230,7 +230,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Regression: real Qt combo signals connected to actual `form_to_storage()` demonstrate
   no writes during either level sequence, unchanged selected/other tools, visible custom
   offset 0.42 and Isolation job, and functioning ordinary editing after restoration.
-- MikroCAM commit: `fix: keep milling level changes read-only` (this commit).
+- MikroCAM commit: `06eac8e62b5c7ad566e4d4cbd4dcbc8cc45c0dfa` (`fix: keep milling level changes read-only`).
 
 ## 2026-09-27 — Discard render submissions that finish after deletion
 
@@ -242,4 +242,4 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   then discard late single/batch/mark submissions after their concrete add returns.
 - Regression: five tests first failed, then passed: blocked background submissions finish after
   removal without leaving orphan shapes, and both collection removal routes set the guard first.
-- MikroCAM commit: `fix: discard shapes submitted during object removal` (this commit).
+- MikroCAM commit: `0adafe98ba330e0b453c00ddc5210435c4a05000` (`fix: discard shapes submitted during object removal`).
