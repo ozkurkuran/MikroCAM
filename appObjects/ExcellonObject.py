@@ -1278,12 +1278,13 @@ class ExcellonObject(FlatCAMObj, Excellon):
 
     def plot(self, visible=None, kind=None):
 
-        multicolored = self.ui.multicolored_cb.get_value()
-
         # Does all the required setup and returns False
         # if the 'ptint' option is set to False.
         if not FlatCAMObj.plot(self):
             return
+
+        plot_options = self.obj_options.copy()
+        multicolored = plot_options['multicolored']
 
         if self.app.use_3d_engine:
             def random_color():
@@ -1312,11 +1313,11 @@ class ExcellonObject(FlatCAMObj, Excellon):
         except TypeError:
             self.solid_geometry = [self.solid_geometry]
 
-        visible = visible if visible else self.ui.plot_cb.get_value()
+        visible = visible if visible is not None else plot_options['plot']
 
         try:
             # Plot Excellon (All polygons?)
-            if self.ui.solid_cb.get_value():
+            if plot_options['solid']:
                 # Collect all shapes into one batch, tracking tool boundaries
                 batch = []
                 tool_ranges = {}  # tool -> (start_index, end_index) in batch
@@ -1363,9 +1364,10 @@ class ExcellonObject(FlatCAMObj, Excellon):
             self.shapes.redraw()
         except (ObjectDeleted, AttributeError) as e:
             self.app.log.debug("ExcellonObject.plot() -> %s" % str(e))
-            self.shapes.clear(update=True)
+            if not self.deleted:
+                self.shapes.clear(update=True)
 
-        if multicolored:
+        if multicolored and not self.deleted:
             self.multicolored_build_sig.emit()
 
     def on_multicolored_build(self):

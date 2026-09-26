@@ -419,7 +419,8 @@ class CutOut(AppTool):
         self.ui.margin.set_value(float(tool_dict["tools_cutout_margin"]))
         self.ui.gapsize.set_value(float(tool_dict["tools_cutout_gapsize"]))
         self.ui.gaptype_combo.set_value(tool_dict["tools_cutout_gap_type"])
-        self.on_cutout_type(self.ui.gaptype_combo.get_value())
+        self.on_cutout_type(self.ui.cutout_type_radio.get_value())
+        self.ui.on_gap_type_radio(self.ui.gaptype_combo.get_value())
 
         self.ui.thin_depth_entry.set_value(float(tool_dict["tools_cutout_gap_depth"]))
         self.ui.mb_dia_entry.set_value(float(tool_dict["tools_cutout_mb_dia"]))
@@ -531,9 +532,6 @@ class CutOut(AppTool):
             self.blockSignals(False)
             return
 
-        new_tools_dict["tools_cutout_z"] = deepcopy(new_tools_dict["tools_mill_cutz"])
-        new_tools_dict["tools_cutout_mdepth"] = deepcopy(new_tools_dict["tools_mill_multidepth"])
-        new_tools_dict["tools_cutout_depthperpass"] = deepcopy(new_tools_dict["tools_mill_depthperpass"])
 
         new_tdia = deepcopy(updated_tooldia) if updated_tooldia is not None else deepcopy(truncated_tooldia)
         self.cut_tool_dict.update({
@@ -593,9 +591,6 @@ class CutOut(AppTool):
         tool_from_db['data'] = data
 
         tool_from_db['data']["tools_cutout_tooldia"] = deepcopy(tool["tooldia"])
-        tool_from_db['data']["tools_cutout_z"] = deepcopy(tool_from_db['data']["tools_mill_cutz"])
-        tool_from_db['data']["tools_cutout_mdepth"] = deepcopy(tool_from_db['data']["tools_mill_multidepth"])
-        tool_from_db['data']["tools_cutout_depthperpass"] = deepcopy(tool_from_db['data']["tools_mill_depthperpass"])
 
         self.cut_tool_dict.update(tool_from_db)
         self.cut_tool_dict['solid_geometry'] = []

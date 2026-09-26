@@ -192,7 +192,7 @@ class FlatCAMObj(QtCore.QObject):
             return False
 
         self.clear()
-        return True
+        return not self.deleted
 
     def single_object_plot(self):
         def plot_task():
@@ -209,6 +209,9 @@ class FlatCAMObj(QtCore.QObject):
             raise ObjectDeleted()
         else:
             key = self.shapes.add(tolerance=tol, **kwargs)
+        if self.deleted:
+            self.shapes.clear(update=True)
+            raise ObjectDeleted()
         return key
 
     def add_shapes_batch(self, shapes_data, **kwargs):
@@ -224,7 +227,11 @@ class FlatCAMObj(QtCore.QObject):
         if self.deleted:
             raise ObjectDeleted()
 
-        return self.shapes.add_batch(shapes_data, tolerance=tol, **kwargs)
+        keys = self.shapes.add_batch(shapes_data, tolerance=tol, **kwargs)
+        if self.deleted:
+            self.shapes.clear(update=True)
+            raise ObjectDeleted()
+        return keys
 
     def add_mark_shape(self, **kwargs):
         tol = kwargs['tolerance'] if 'tolerance' in kwargs else self.drawing_tolerance
@@ -233,6 +240,9 @@ class FlatCAMObj(QtCore.QObject):
             raise ObjectDeleted()
         else:
             key = self.mark_shapes.add(tolerance=tol, layer=0, **kwargs)
+        if self.deleted:
+            self.mark_shapes.clear(update=True)
+            raise ObjectDeleted()
         return key
 
     @property
@@ -1019,9 +1029,21 @@ class FlatCAMObj(QtCore.QObject):
         self._drawing_tolerance = value if self.units == 'MM' or not self.units else value / 25.4
 
     def delete(self):
-        # Free resources
-        del self.ui
-        del self.obj_options
-
-        # Set flag
+        if self.deleted:
+            return
+        # Workers must observe deletion before any widget reference is released.
         self.deleted = True
+        try:
+            self.ui_disconnect()
+        except (AttributeError, RuntimeError, TypeError):
+            pass
+        widget = getattr(self, 'ui', None)
+        if widget is not None:
+            try:
+                widget.blockSignals(True)
+                widget.deleteLater()
+            except (AttributeError, RuntimeError):
+                pass
+        self.ui = None
+        self.form_fields = {}
+        # Retain plain options until in-flight workers release this object.

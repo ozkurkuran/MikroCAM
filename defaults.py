@@ -24,6 +24,21 @@ _MISSING = object()
 
 class AppDefaults:
 
+    TOOL_DB_PREFIXES = ('tools_drill_', 'tools_mill_', 'tools_iso_',
+                        'tools_ncc_', 'tools_paint_', 'tools_cutout_')
+    DB_EXCLUDED_KEYS = {
+        'tools_drill_tool_order', 'tools_drill_preprocessor_list', 'tools_mill_tooldia',
+        'tools_mill_preprocessor_list', 'tools_iso_tooldia', 'tools_iso_order', 'tools_ncc_tools',
+        'tools_ncc_order', 'tools_paint_tooldia', 'tools_paint_order', 'tools_cutout_tooldia',
+        'tools_cutout_big_cursor'
+    }
+
+    @classmethod
+    def get_all_db_tool_keys(cls):
+        """Factory parameters belonging to individual machining database tools."""
+        return {key: value for key, value in cls.factory_defaults.items()
+                if key.startswith(cls.TOOL_DB_PREFIXES) and key not in cls.DB_EXCLUDED_KEYS}
+
     factory_defaults = {
         # Global
         "first_run": True,

@@ -108,3 +108,138 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - MikroCAM data/codec commit: `1a407552` (`test: curate ten licensed PCB references with strict provenance codecs`).
   The capture harness (`a3f60b22`) and comparison logic (`7eaef7d0`, `a055271c`, `613948aa`)
   are independently implemented, not copied from those projects.
+
+## 2026-09-27 — Persist drilling database replacements
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit `cec6a094ddc520e129d29ec8855a637ca5296a24`
+  (drilling ToolDB overwrite fix). Existing FlatCAM Evo copyright headers are retained.
+- Destination: `appPlugins/ToolDrilling.py`, `replace_tools()` only.
+- Adaptation: copy accepted replacement settings into the source Excellon object before
+  the real default-order UI rebuild reloads its tools. Database records remain independent.
+- Regression: exact and tolerance matches survive two rebuilds and reach the actual Qt form.
+- MikroCAM commit: `e4224b68` (`fix: persist drilling database replacements`).
+
+## 2026-09-27 — Preserve distinct Excellon milling tools
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `6e13950a6b1568539c1b7b1eba459086cdc5ab05` (Excellon drill duplication).
+- Destination: `appPlugins/ToolMilling.py`, `build_ui_exc()` only; inherited notices retained.
+- Adaptation: sort full-precision tool records once for requested ascending/descending order;
+  preserve source order otherwise. Reset displayed totals at each rebuild.
+- Regression: equal displayed diameters retain two distinct tools and two drill hits through
+  repeated real Qt table rebuilds in all three order modes.
+- MikroCAM commit: `4aac5778` (`fix: preserve distinct Excellon milling tools`).
+
+## 2026-09-27 — Preserve milling dwell through level changes
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `97ea33b1d84a2e39b9c35880a28e001d227ac2d0` (dwell parameter left behind).
+- Destination: `appPlugins/ToolMilling.py`, `on_level_changed()`; inherited notices retained.
+- Adaptation: remove Beginner/Advanced assignments that replace the selected tool's dwell
+  toggle with application/object defaults. The stored duration and toggle remain paired.
+- Regression: real `CNCjob.generate_from_geometry_2()` and default preprocessor retain
+  `G4 P4.2` across both directions of repeated level changes.
+- MikroCAM commit: `e8ac6db5` (`fix: preserve milling dwell through level changes`).
+
+## 2026-09-27 — Restore cutout and gap controls independently
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `97ea33b1d84a2e39b9c35880a28e001d227ac2d0` (cutout UI restoration).
+- Destination: `appPlugins/ToolCutOut.py`, `update_ui()`; inherited notices retained.
+- Adaptation: use the cutout mode radio value for automatic/manual controls and explicitly
+  restore gap-specific controls from the gap combo value, including while signals are blocked.
+- Regression: actual Qt controls retain automatic/manual and Thin/Mouse Bites states separately.
+- MikroCAM commit: `3c15f77c` (`fix: restore cutout and gap controls independently`).
+
+## 2026-09-27 — Preserve explicit cutout database machining settings
+
+- Audit reference: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `f239fcbb8f34b300516f6a97ad50e6798924b07d` (Phase 5 canonical database backfill).
+  This commit retains the milling-to-cutout overwrites upstream; the correction below is
+  independently implemented in MikroCAM, not ported from that source.
+- Destination: `appPlugins/ToolCutOut.py`, database matching and picker callback; notices retained.
+- Correction: remove six post-copy assignments that replace dedicated cutout Z, multidepth and
+  pass depth with milling values. Dedicated cutout settings remain authoritative in both routes.
+- Regression: exact, tolerance and picker insertion retain intentionally distinct machining
+  values in stored data and actual Qt controls; original records/files remain unchanged.
+- MikroCAM commit: `d2d2b71b` (`fix: preserve explicit cutout database settings`).
+
+## 2026-09-27 — Populate canonical machining database defaults
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `f239fcbb8f34b300516f6a97ad50e6798924b07d` (Phase 5 ToolDB defaults).
+- Destination: `defaults.py` and `appDatabase.py`; existing notices and MIT permission retained.
+- Adaptation: retain the six machining namespaces and twelve application-only exclusions;
+  use their canonical factory keys for new records and existing normalization backfill.
+  Current application values are copied for creation; explicit loaded values remain unchanged.
+  Keep existing numeric conversion, segmentation metadata and strict database validation.
+- Regression: new in-memory records include the milling/drilling laser settings and every
+  eligible machining setting before save/reload; backfill excludes unrelated UI namespaces.
+- MikroCAM commit: `eb91977c55278dcde7d0ce1328a151ab9a05cb86` (`fix: populate canonical machining database defaults`).
+
+## 2026-09-27 — Keep each queued drilling job's output independent
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `6e13950a6b1568539c1b7b1eba459086cdc5ab05`; existing notices retained.
+- Destination: `appPlugins/ToolDrilling.py`, multi-tool CNC job assembly.
+- Adaptation: replace shared plugin output accumulators with initializer-local values.
+  Resetting only when the button is clicked does not isolate jobs already queued together;
+  local ownership also prevents a later job from mutating an earlier parsed-path list.
+- Regression: actual job initializer and two-tool assembly run twice, both sequentially and
+  with both requests queued before workers start; a deterministic CAM boundary isolates
+  assembly behavior. Output and parsed records remain equal and independently owned.
+- MikroCAM commit: `0b4a46e996d69b950f2c3b193d60863481d71ddd` (`fix: isolate output of queued drilling jobs`).
+
+## 2026-09-27 — Safe plot workers and object deletion
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commits
+  `d6cb96d4d8a0318f3f0376ebf6f6991924c2708d` and
+  `8df6abc0ce4dad0ad338aca5dd5e90b480b68c87`; inherited notices retained.
+- Destination: `appObjects/AppObjectTemplate.py`, `GerberObject.py`, `ExcellonObject.py`.
+- Adaptation: mark deletion before releasing widgets, disconnect safely and defer Qt widget
+  destruction; repeated deletion is harmless. Keep plain options alive for in-flight workers.
+  Plot workers read a snapshot of stored options instead of touching Qt widgets, preserve
+  explicit visible=False, and stop when deletion occurs during setup. The GUI Follow handler
+  updates stored state before plotting. No upstream appMain restructuring is imported.
+- Regression: gated queued plots after deletion, real background-thread plotting with forbidden
+  widget access, deletion during setup, actual deferred Qt destruction, repeated deletion and
+  the real Follow checkbox path. Nine tests pass after reproducing the failures first.
+- MikroCAM commit: `4a28365f8581867c05e4eb70893c95343b2c68e8` (`fix: keep plot workers independent of widget lifetime`).
+
+## 2026-09-27 — Preserve selected milling machining flags
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `97ea33b1d84a2e39b9c35880a28e001d227ac2d0` (remaining level-change flag corrections).
+- Destination: `appPlugins/ToolMilling.py`, `on_level_changed()`; inherited notices retained.
+- Adaptation: remove Beginner/Advanced writes that reset the selected tool's extra-cut and
+  exclusion-area flags. Preserve the stored extra-cut length. Upstream diagnostic prints
+  are not imported; offset type/value and job-type writes are outside this correction.
+- Regression: real level changes retain explicit true flags through both transition orders.
+- MikroCAM commit: `1b6fdfe7149f481c0a62d0e44306d602d722bc35` (`fix: preserve selected milling machining flags`).
+
+## 2026-09-27 — Keep milling level changes read-only for machining settings
+
+- Independent MikroCAM finding during the audit of MIT upstream
+  `kpkrisnop/flatcam` commit `97ea33b1d84a2e39b9c35880a28e001d227ac2d0`.
+  That upstream commit retains the offset/job overwrites; this correction is not a port.
+- Destination: `appPlugins/ToolMilling.py`, `on_level_changed()`; existing notices retained.
+- Correction: remove writes replacing per-tool offset type/value and job type. Entering
+  Advanced restores the one selected tool's actual choices with scoped Qt signal blockers,
+  then refreshes job/custom-offset visibility explicitly. Basic keeps advanced controls hidden.
+  Multiple-tool machining data is preserved; existing signal-blocked states remain unchanged.
+- Regression: real Qt combo signals connected to actual `form_to_storage()` demonstrate
+  no writes during either level sequence, unchanged selected/other tools, visible custom
+  offset 0.42 and Isolation job, and functioning ordinary editing after restoration.
+- MikroCAM commit: `06eac8e62b5c7ad566e4d4cbd4dcbc8cc45c0dfa` (`fix: keep milling level changes read-only`).
+
+## 2026-09-27 — Discard render submissions that finish after deletion
+
+- Follow-up to the MIT `kpkrisnop/flatcam` lifetime audit above; this race correction is
+  independently implemented, not copied from an upstream change.
+- Destination: `appObjects/AppObjectTemplate.py` and `appObjects/ObjectCollection.py`.
+- Finding: clearing before setting deleted leaves a submission window; an add already inside
+  the shape collection can also complete after removal. Mark deletion before collection clear,
+  then discard late single/batch/mark submissions after their concrete add returns.
+- Regression: five tests first failed, then passed: blocked background submissions finish after
+  removal without leaving orphan shapes, and both collection removal routes set the guard first.
+- MikroCAM commit: `0adafe98ba330e0b453c00ddc5210435c4a05000` (`fix: discard shapes submitted during object removal`).
