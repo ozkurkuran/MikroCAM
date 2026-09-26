@@ -76,3 +76,6 @@ blocking wait. Stop preempts them on the next bounded read/worker iteration. Fai
 settings reads leave units unknown. A malformed status invalidates position/offset and machine
 state evidence; a new valid report can recover direct coordinates. Read-only status retries do
 not reopen the port. A settings read is retried only after a startup banner or explicit reconnect.
+Unit rows remain provisional until the active settings transaction receives `ok`. Late or
+unsolicited unit rows do not authorize positions. Deadlines are checked before and after each
+bounded read, before interpreting its records, so a late status cannot reuse an expired WCO.

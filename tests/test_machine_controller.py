@@ -197,6 +197,34 @@ def test_axis_travel_settings_do_not_overwrite_report_units():
     assert state.machine_position_mm == (1, 2, 3)
 
 
+@pytest.mark.parametrize('expire_before_read', [True, False])
+def test_expired_settings_cannot_be_revived_by_late_rows(expire_before_read):
+    controller, fake, clock = session()
+    clock.now = 3.0
+    if expire_before_read:
+        controller.tick()
+    state = receive(controller, fake, b'$13=0\nok\n<Idle|MPos:1,2,3>\n')
+    assert state.report_units is None and state.machine_position_mm is None
+
+
+def test_delayed_report_does_not_reuse_expired_offset_on_same_tick():
+    controller, fake, clock = session()
+    units(controller, fake)
+    receive(controller, fake, b'<Idle|MPos:1,2,3|WCO:1,1,1>\n')
+    clock.now = 2.0
+    state = receive(controller, fake, b'<Idle|MPos:4,5,6>\n')
+    assert state.machine_position_mm == (4, 5, 6)
+    assert state.work_position_mm is None and state.work_offset_mm is None
+
+
+def test_settings_units_remain_provisional_until_successful_ack():
+    controller, fake, _ = session()
+    state = receive(controller, fake, b'$13=0\n<Idle|MPos:1,2,3>\n')
+    assert state.report_units is None and state.machine_position_mm is None
+    state = receive(controller, fake, b'error:8\n')
+    assert state.report_units is None and state.machine_position_mm is None
+
+
 def test_bounded_diagnostic_and_chunk_processing():
     controller, fake, _ = session()
     units(controller, fake)

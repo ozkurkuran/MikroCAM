@@ -26,6 +26,7 @@ class MachineController:
         self._settings_sent_at: float | None = None
         self._last_query_at = float('-inf')
         self._settings_saw_units = False
+        self._pending_units: str | None = None
 
     def snapshot(self) -> MachineSnapshot:
         """Return an immutable observation; this does not perform I/O."""
@@ -58,7 +59,9 @@ class MachineController:
         if self._snapshot.connection is not ConnectionState.CONNECTED:
             return
         try:
+            self._expire_and_poll()
             chunk = self._transport.read(4096)
+            self._expire_and_poll()
             try:
                 lines = self._framer.feed(chunk)
             except ValueError as error:
@@ -78,6 +81,7 @@ class MachineController:
         self._settings_sent_at = None
         self._last_query_at = float('-inf')
         self._settings_saw_units = False
+        self._pending_units = None
 
     def _fail(self, error: Exception) -> None:
         diagnostic = f'Communication failed: {error}'
@@ -103,6 +107,7 @@ class MachineController:
     def _request_settings(self) -> None:
         self._settings_sent_at = self._clock()
         self._settings_saw_units = False
+        self._pending_units = None
         self._send(b'$$\n')
 
     def _request_status(self) -> None:
@@ -132,6 +137,9 @@ class MachineController:
             if not self._settings_saw_units:
                 self._invalidate(clear_units=True)
                 self._diagnose('Settings response did not provide report units ($13)')
+            else:
+                self._invalidate()
+                self._snapshot = replace(self._snapshot, report_units=self._pending_units)
         elif line.startswith('error:'):
             if self._settings_sent_at is not None:
                 self._settings_sent_at = None
@@ -154,9 +162,11 @@ class MachineController:
             return
         if units is None:
             return
-        if units != self._snapshot.report_units:
-            self._invalidate()
-            self._snapshot = replace(self._snapshot, report_units=units)
+        if self._settings_sent_at is None:
+            self._invalidate(clear_units=True)
+            self._diagnose('Unsolicited or late report units; reconnect to verify settings')
+            return
+        self._pending_units = units
         self._settings_saw_units = True
 
     def _consume_status(self, line: str) -> None:
