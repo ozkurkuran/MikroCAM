@@ -192,7 +192,7 @@ class FlatCAMObj(QtCore.QObject):
             return False
 
         self.clear()
-        return True
+        return not self.deleted
 
     def single_object_plot(self):
         def plot_task():
@@ -1019,9 +1019,21 @@ class FlatCAMObj(QtCore.QObject):
         self._drawing_tolerance = value if self.units == 'MM' or not self.units else value / 25.4
 
     def delete(self):
-        # Free resources
-        del self.ui
-        del self.obj_options
-
-        # Set flag
+        if self.deleted:
+            return
+        # Workers must observe deletion before any widget reference is released.
         self.deleted = True
+        try:
+            self.ui_disconnect()
+        except (AttributeError, RuntimeError, TypeError):
+            pass
+        widget = getattr(self, 'ui', None)
+        if widget is not None:
+            try:
+                widget.blockSignals(True)
+                widget.deleteLater()
+            except (AttributeError, RuntimeError):
+                pass
+        self.ui = None
+        self.form_fields = {}
+        # Retain plain options until in-flight workers release this object.

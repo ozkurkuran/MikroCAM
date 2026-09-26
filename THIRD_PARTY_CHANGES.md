@@ -189,3 +189,19 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   with both requests queued before workers start; a deterministic CAM boundary isolates
   assembly behavior. Output and parsed records remain equal and independently owned.
 - MikroCAM commit: `fix: isolate output of queued drilling jobs` (this commit).
+
+## 2026-09-27 — Safe plot workers and object deletion
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commits
+  `d6cb96d4d8a0318f3f0376ebf6f6991924c2708d` and
+  `8df6abc0ce4dad0ad338aca5dd5e90b480b68c87`; inherited notices retained.
+- Destination: `appObjects/AppObjectTemplate.py`, `GerberObject.py`, `ExcellonObject.py`.
+- Adaptation: mark deletion before releasing widgets, disconnect safely and defer Qt widget
+  destruction; repeated deletion is harmless. Keep plain options alive for in-flight workers.
+  Plot workers read a snapshot of stored options instead of touching Qt widgets, preserve
+  explicit visible=False, and stop when deletion occurs during setup. The GUI Follow handler
+  updates stored state before plotting. No upstream appMain restructuring is imported.
+- Regression: gated queued plots after deletion, real background-thread plotting with forbidden
+  widget access, deletion during setup, actual deferred Qt destruction, repeated deletion and
+  the real Follow checkbox path. Nine tests pass after reproducing the failures first.
+- MikroCAM commit: `fix: keep plot workers independent of widget lifetime` (this commit).
