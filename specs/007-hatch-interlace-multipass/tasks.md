@@ -14,8 +14,8 @@
 - [X] T009 [US3] Implement LaserPassPlan/pass_plans in mikrocam/core/laser_paths.py; update panel status.
 ## Delivery
 - [X] T010 Extend/run/inspect real desktop tests/smoke_app.py interlace/two-pass journey.
-- [ ] T011 Run full tests, architecture/growth/size checks and hosted CI; record validation.md.
-- [ ] T012 Update docs/ROADMAP.md and deliver feature PR after 006.
+- [X] T011 Run full tests, architecture/growth/size checks and hosted CI; record validation.md.
+- [X] T012 Update docs/ROADMAP.md and deliver feature PR after 006.
 
 T001 gates code. T002 precedes T003/T004; T005 precedes T006/T007; T008 precedes T009.
 One owner handles core/interlace/planner; another editor/panel. Both can proceed against the
