@@ -66,7 +66,10 @@ Frozen `GeometryComparison(matches, topology_equal, hausdorff_mm,
 symmetric_difference_mm2, bounds_delta_mm)`. Bounds delta is a tuple of four absolute coordinate deltas.
 Topology compares structural geometry type, component count and ring/hole counts;
 orientation/component order do not change geometric equality. Distance is GEOS's discrete
-vertex Hausdorff metric, not a claimed continuous maximum-distance proof.
+vertex Hausdorff metric, not a claimed continuous maximum-distance proof. hausdorff_mm
+is null when topology/area already establishes a difference. Report integration unions
+raw engine batches before set comparison; raw batch counts are diagnostic only. This
+normalizes one MultiPolygon versus multiple Polygon records without rewriting captures.
 Frozen `ReferencePath(kind:tuple[str,...], wkb_hex:str)` accepts valid finite 2D Point/LineString
 only. Frozen `PathComparison(matches, differing_indices, expected_count, actual_count)`
 records explicit tuple indices, including unmatched tail paths. Corresponding paths require
@@ -78,7 +81,8 @@ drill/slot endpoint differences use distance_mm. Reusable numeric/path compariso
 Tolerances are explicit finite nonboolean real numbers >=0; zero is valid. Malformed/nonplanar
 WKB and oversized input raise ValueError. Limits: 64 MiB decoded WKB per geometry,
 200,000 ordered paths and 2,000,000 aggregate vertices in core; 512 MiB decoded JSON per
-gzip artifact in developer codecs. Fail explicitly before expensive allocation; never truncate.
+gzip artifact in developer codecs. Geometry-batch union has a separate 4,000,000-vertex
+aggregate input bound; ordered CNC/drill collections remain at 2,000,000 vertices. Fail explicitly before expensive allocation; never truncate.
 
 ## Comparison report
 `kind='mikrocam.reference-report'`, `schema_version`, `baseline`, `candidate_source`,

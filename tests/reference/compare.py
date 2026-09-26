@@ -12,7 +12,7 @@ if __package__ in (None, ''):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from mikrocam.core.reference_compare import (
-    ReferencePath, ReferenceTool, _tolerance, compare_geometry, compare_paths, compare_tools,
+    ReferencePath, ReferenceTool, _tolerance, compare_geometry_sets, compare_paths, compare_tools,
 )
 from mikrocam.core.reference_gcode import compare_gcode
 from reference.reference_data import load_capture, load_config, load_manifest
@@ -40,11 +40,10 @@ def compare_stage(board_id: str, expected: dict, actual: dict, *, distance_mm: f
     try:
         first, second = expected['geometry_wkb'], actual['geometry_wkb']
         metrics['geometry_counts'] = [len(first), len(second)]
-        matches = matches and len(first) == len(second)
-        geometry = [compare_geometry(a, b, distance_mm=distance_mm, area_mm2=area_mm2)
-                    for a, b in zip(first, second)]
-        metrics['geometry'] = [asdict(value) for value in geometry]
-        matches = matches and all(value.matches for value in geometry)
+        if first or second:
+            geometry = compare_geometry_sets(first, second, distance_mm=distance_mm, area_mm2=area_mm2)
+            metrics['geometry'] = [asdict(geometry)]
+            matches = matches and geometry.matches
         if expected['stage'] == 'cnc':
             paths = compare_paths([ReferencePath(tuple(p['kind']), p['wkb_hex']) for p in expected['paths']],
                                   [ReferencePath(tuple(p['kind']), p['wkb_hex']) for p in actual['paths']],

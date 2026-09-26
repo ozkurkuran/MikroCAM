@@ -62,3 +62,11 @@ a harness limit, not a parser failure. The artifact/child limit is now 512 MiB; 
 bounded at 64 MiB/4,000,000 blocks and parsed incrementally. Geometry retains its 64 MiB
 WKB and 2,000,000-vertex limits. Once topology/area already fails, quadratic discrete
 Hausdorff is omitted explicitly; no tolerance is widened and no difference becomes a match.
+
+## Engine batch representation
+Altium Gerber is one MultiPolygon in legacy and 3,134 polygon records in Evo; isolation
+is one versus 660 records. Zipping these lists compares unrelated shapes and creates false
+differences. The comparison now unions each validated batch in core before measuring the
+physical set, retaining raw batch counts only as diagnostics. Separate ordered path/tool
+comparison preserves manufacturing multiplicity. Actual Evo copper has 2,005,189 vertices,
+so aggregate union input has a distinct 4,000,000-vertex cap; capture/path limits are unchanged.

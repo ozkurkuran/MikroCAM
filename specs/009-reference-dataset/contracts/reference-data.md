@@ -9,6 +9,16 @@ Identical valid geometry has a zero-metric fast path. Bounds deltas are report e
 not an extra implicit tolerance. If topology or area already fails, hausdorff_mm is null
 (not computed); the result remains a definite difference. Invalid/oversized/nonplanar inputs or tolerances raise ValueError.
 
+`compare_geometry_sets(expected: Sequence[str], actual: Sequence[str], *, distance_mm,
+area_mm2) -> GeometryComparison` unions each validated batch before applying the same
+physical-set metrics. Legacy may store one MultiPolygon where Evo stores many polygons;
+raw batch counts are diagnostic only. Union preserves material holes/components while
+removing internal partition edges. Raw captures remain unchanged. The aggregate union
+input is bounded at 4,000,000 vertices per side; the actual Altium Evo Gerber has 2,005,189.
+Individual captured geometries, CNC paths and drill records retain their original bounds.
+Tool inventory and CNC ordering are compared separately, so union does not discard their
+manufacturing multiplicity or direction.
+
 `compare_paths(expected: Sequence[ReferencePath], actual: Sequence[ReferencePath], *,
 distance_mm: float) -> PathComparison` compares path order/count, exact kind tuples and
 ordered XY coordinate counts/positions, including direction and repeated vertices.

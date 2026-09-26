@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 import math
 
-from shapely import from_wkb, to_wkb
+from shapely import from_wkb, get_num_coordinates, to_wkb, union_all
 from shapely.errors import GEOSException
 from shapely.geometry.base import BaseGeometry
 
@@ -13,6 +13,7 @@ from .placement import Point2D, _finite_real, _point, _validate_geometry
 MAX_WKB_BYTES = 64 * 1024 * 1024
 MAX_PATHS = 200_000
 MAX_VERTICES = 2_000_000
+MAX_BATCH_VERTICES = 4_000_000
 
 
 def _tolerance(value: float, label: str) -> float:
@@ -79,6 +80,11 @@ def compare_geometry(expected_wkb: str, actual_wkb: str, *, distance_mm: float,
     distance = _tolerance(distance_mm, 'distance_mm')
     area = _tolerance(area_mm2, 'area_mm2')
     expected, actual = _decode(expected_wkb), _decode(actual_wkb)
+    return _compare_sets(expected, actual, distance, area)
+
+
+def _compare_sets(expected: BaseGeometry, actual: BaseGeometry,
+                  distance: float, area: float) -> GeometryComparison:
     topology = _topology(expected) == _topology(actual)
     bounds = tuple(_metric(abs(first - second)) for first, second in zip(expected.bounds, actual.bounds))
     try:
@@ -93,6 +99,36 @@ def compare_geometry(expected_wkb: str, actual_wkb: str, *, distance_mm: float,
     return GeometryComparison(topology and hausdorff is not None
                               and hausdorff <= distance and difference <= area,
                               topology, hausdorff, difference, bounds)
+
+
+def _geometry_union(values: Sequence[str]) -> BaseGeometry:
+    if not isinstance(values, Sequence) or isinstance(values, (str, bytes)) or not values:
+        raise ValueError('Geometry batch requires a nonempty sequence of WKB values')
+    geometries, vertices = [], 0
+    for value in values:
+        geometry = _decode(value)
+        vertices += int(get_num_coordinates(geometry))
+        if vertices > MAX_BATCH_VERTICES:
+            raise ValueError('Geometry batch vertex count exceeds the resource limit')
+        geometries.append(geometry)
+    try:
+        result = union_all(geometries)
+        _validate_geometry(result)
+        return result
+    except GEOSException as error:
+        raise ValueError(f'Reference geometry union failed: {error}') from error
+
+
+def compare_geometry_sets(expected: Sequence[str], actual: Sequence[str], *,
+                          distance_mm: float, area_mm2: float) -> GeometryComparison:
+    """Compare physical sets independently of an engine's geometry batch partition.
+
+    Keep raw batches in captures. Union removes internal partition edges before
+    measuring material topology, distance and area; CNC/tool ordering is separate.
+    """
+    distance = _tolerance(distance_mm, 'distance_mm')
+    area = _tolerance(area_mm2, 'area_mm2')
+    return _compare_sets(_geometry_union(expected), _geometry_union(actual), distance, area)
 
 
 @dataclass(frozen=True)

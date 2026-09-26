@@ -36,6 +36,35 @@ def test_component_order_and_ring_orientation_do_not_change_set_comparison():
     assert compare(first, second).matches
 
 
+def test_engine_geometry_batches_are_compared_as_the_same_physical_set():
+    first, second = box(0, 0, 1, 1), box(2, 0, 3, 1)
+    combined = wkb(MultiPolygon([first, second]))
+    result = reference.compare_geometry_sets([combined], [wkb(second), wkb(first)],
+                                             distance_mm=0, area_mm2=0)
+    assert result.matches and result.symmetric_difference_mm2 == 0
+    shifted = reference.compare_geometry_sets([combined], [wkb(second), wkb(translate(first, xoff=.1))],
+                                              distance_mm=.001, area_mm2=.001)
+    assert not shifted.matches and shifted.symmetric_difference_mm2 == pytest.approx(.2)
+
+
+def test_engine_batch_partition_does_not_change_holes_or_material_boundaries():
+    solid = box(0, 0, 4, 4)
+    pieces = [wkb(box(0, 0, 2, 4)), wkb(box(2, 0, 4, 4))]
+    assert reference.compare_geometry_sets([wkb(solid)], pieces, distance_mm=0, area_mm2=0).matches
+    holed = solid.difference(box(1, 1, 3, 3))
+    result = reference.compare_geometry_sets([wkb(holed)], pieces, distance_mm=100, area_mm2=100)
+    assert not result.matches and not result.topology_equal
+
+
+def test_engine_geometry_batch_rejects_empty_and_aggregate_vertex_overflow(monkeypatch):
+    with pytest.raises(ValueError):
+        reference.compare_geometry_sets([], [wkb(Point(0, 0))], distance_mm=0, area_mm2=0)
+    monkeypatch.setattr(reference, 'MAX_BATCH_VERTICES', 1)
+    with pytest.raises(ValueError, match='limit'):
+        reference.compare_geometry_sets([wkb(Point(0, 0)), wkb(Point(1, 1))],
+                                        [wkb(Point(0, 0))], distance_mm=0, area_mm2=0)
+
+
 def test_absolute_distance_and_area_are_independent_thresholds():
     first = box(0, 0, 10, 5)
     second = translate(first, xoff=.01)

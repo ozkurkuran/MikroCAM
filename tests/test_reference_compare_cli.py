@@ -62,6 +62,19 @@ def test_offline_matching_report_does_not_modify_any_capture(tmp_path):
     assert main(args) == 2  # The explicit report path also cannot overwrite existing data.
 
 
+def test_engine_geometry_partition_is_diagnostic_not_a_false_difference(tmp_path):
+    from reference.compare import main
+    args, _, candidate, report = comparison_case(tmp_path)
+    pieces = [to_wkb(box(0, 0, 1, 2), hex=True, byte_order=1, flavor='iso'),
+              to_wkb(box(1, 0, 2, 2), hex=True, byte_order=1, flavor='iso')]
+    mutate(candidate / 'board-0.json.gz', lambda data: data['stages'][0].update(geometry_wkb=pieces))
+    assert main(args) == 0
+    results = json.loads(report.read_text())['results']
+    result = next(item for item in results if item['board_id'] == 'board-0' and item['stage'] == 'gerber')
+    assert result['metrics']['geometry_counts'] == [1, 2]
+    assert result['outcome'] == 'match'
+
+
 @pytest.mark.parametrize('change', [
     lambda d: d['stages'][0].update(geometry_wkb=[to_wkb(translate(box(0,0,2,2), xoff=.1),
                                                     hex=True, byte_order=1, flavor='iso')]),
