@@ -27,9 +27,19 @@ buna dahildir. Özet:
 ## Komutlar
 
 Evo giriş noktası `flatcam.py`, ana uygulama modülü `appMain.py`'dir.
-Windows 11 / Python 3.13 kurulumu, tek komutla başlatma ve doğrulanmış test komutları
-`001-evo-py313-baseline` uygulamasında belgelenecek; henüz doğrulanmış değildir.
-8.994 portunun test komutları yalnızca altın referans reposunda geçerlidir.
+Windows 11 / Python 3.13 kurulum adımları `README.md` içindedir. Bu repodaki komutlar:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m pytest -q -rs
+.\.venv\Scripts\python.exe tests/smoke_app.py
+.\run-flatcam.ps1
+```
+
+Smoke masaüstü/OpenGL gerektirir; ayarları ve uygulama verilerini geçici dizine yönlendirir.
+Qt'nin `QSettings(org, app)` overload'u `setDefaultFormat` ayarını yok sayar; testlerde
+`tests/qt_settings_sandbox.py` kullanılır. Sonuçlar feature'ın `validation.md` dosyasındadır.
 
 Mevcut Evo testleri `tests/` altındadır; updater testleri de korunur. Beta_1.0 ile gelen
 updater, MikroCAM için yeni bir otomatik güncelleme özelliği geliştirme kararı değildir.

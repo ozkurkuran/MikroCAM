@@ -16,3 +16,26 @@
 
 Later documentation changes import MikroCAM's own Spec Kit files and replace the root
 contributor guide. The upstream guide remains available at `upstream-evo-beta1-baseline:CLAUDE.md`.
+
+## 2026-09-26 — Python 3.13 reference behavior adaptations
+
+- Source repository: https://github.com/ozkurkuran/flatcam-8.994-py313
+- Source tag/commit: `baseline-8.994-py313`, `6ba378bca139aa306f8c94f09461a98f95d3c75b`.
+- License: MIT; source repository and existing module copyright notices retained.
+- Source files: tests/test_runtime_compatibility.py, tests/smoke_app.py,
+  appParsers/ParseSVG.py, descartes/patch.py.
+- Destination files: tests/test_runtime_compatibility.py, tests/smoke_app.py,
+  tests/reference/svg_paths.json, appParsers/ParseSVG.py, descartes/patch.py.
+- Reason: preserve the eight proven compatibility behaviors and end-to-end CAM journey
+  on Evo's different object/lifecycle APIs.
+- Adaptations: use Evo Geometry.flatten instead of importing the legacy multipart helper;
+  obj_options/kind and parsed CNC geometry assertions; asynchronous project reload and its
+  settings dialog; isolated QSettings/IPC; real render and normal cleanup checks. SVG
+  handling preserves open subpaths, holes and disconnected contours while keeping Evo's
+  curve sampling. Polygon paths support Shapely 2, GeoJSON and empty geometry.
+- MikroCAM commit: `d30cc6c8` (`fix: adapt legacy geometry and smoke regressions to Evo`).
+- Additional independently implemented startup/lazy-import/pinning fixes: `1786e70f`.
+  These are not ports from another fork. No kpkrisnop, neo, dwrobel or FlatCAM-Plus code
+  was imported in this feature.
+- Verification: see specs/001-evo-py313-baseline/validation.md for failing-before evidence,
+  all upstream tests, complete legacy behavior mapping and three successful smoke cycles.

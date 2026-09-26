@@ -65,7 +65,7 @@ Spec-kit feature numarasını (`001-…`) sırayla verir. `Kısa ad` sütunu, `/
 
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
-| 1 | `evo-py313-baseline` | Evo'yu Windows 11'de CPython 3.13 x64 ile çalıştırmak. Sürümleri sabitlenmiş `requirements.txt`, `pip check` temiz. 8.994 portundaki `tests/smoke_app.py` ve `tests/test_runtime_compatibility.py` Evo'ya uyarlanır; Evo'nun kendi testleri yeşil olur. | Hazırlık |
+| 1 | `evo-py313-baseline` — **tamamlandı** | Evo Beta_1.0, Windows 11 / CPython 3.13 x64. Sabitlenmiş bağımlılıklar, iki temiz kurulum, 511 geçen test + 310 subtest ve üç başarılı GUI/CAM duman döngüsü. İki upstream boş Qt test taslağı hâlâ atlanır. [Doğrulama](../specs/001-evo-py313-baseline/validation.md). | Hazırlık |
 | 2 | `foundation-guardrails` | `mikrocam/core` iskeleti; `pyproject.toml` (`requires-python = ">=3.13,<3.14"`); import-sınır testi; büyüme bütçesine girecek legacy dosyaların listesi ve büyüme testi; GitHub Actions (Windows, 3.13, headless) | 1 |
 | 3 | `branding-and-notices` | Ürün kimliği tek modülde; MikroCAM adı ve About ekranı (FlatCAM ve Evo telifleri korunur); `LICENSE` (MIT), `NOTICE.md`, `THIRD_PARTY_LICENSES/` (PyQt6 GPLv3 dahil), `THIRD_PARTY_CHANGES.md` | 2 |
 

@@ -16,3 +16,8 @@ Expected: clean dependency check, all tests pass, smoke prints success for each 
 project reload and rendering, then exits normally. Repeat smoke three times for startup/
 shutdown. A second clean environment must install the same pinned package versions.
 Actual commands, counts and evidence are recorded in validation.md after execution.
+
+Completed validation: [validation.md](validation.md). The pinned core-only environment
+passes 511 tests and 310 subtests; two pre-existing Qt placeholders remain skipped.
+Three desktop smoke cycles pass. Optional image packages are installed separately with
+`requirements-image.txt`; no browser download is needed for this validation.

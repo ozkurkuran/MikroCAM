@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-26
 
-**Status**: Draft — gereksinim incelemesi tamamlandı; planlamaya hazır
+**Status**: Implemented — doğrulama sonuçları [validation.md](validation.md) içinde
 
 **Input**: User description: "MikroCAM'in tabanı olan FlatCAM Evo, Windows 11'de CPython 3.13 (64-bit) ile
 kurulup çalışmalı. Geliştirici sanal ortamı kurup uygulamayı tek komutla açabilmeli; bağımlılıklar

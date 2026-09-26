@@ -27,10 +27,10 @@ Independent check: clean install, pip check, three normal startup/shutdown cycle
 Goal: Gerber/Excellon to saved/reopened CNC project and real rendering.
 Independent check: tests/smoke_app.py uses isolated data/settings and exits successfully.
 
-- [ ] T011 [US2] Adapt the legacy journey into tests/smoke_app.py, asserting object kinds/names, nonempty geometry/G-code and round-trip equality (FR-006, FR-007, FR-011).
+- [x] T011 [US2] Adapt the legacy journey into tests/smoke_app.py, asserting object kinds/names, nonempty geometry/G-code and round-trip equality (FR-006, FR-007, FR-011).
 - [x] T012 [US2] Add fixed fixtures/expected geometry under tests/reference/ and behavioral compatibility regressions before any parser/geometry fixes (FR-006, FR-008).
-- [ ] T013 [US2] Fix reproduced runtime/parser/render/shutdown compatibility failures in their owning legacy files without new features (FR-005–FR-008).
-- [ ] T014 [US2] Run and record three isolated desktop smoke cycles, screenshots and worker cleanup in validation.md (SC-002, SC-003).
+- [x] T013 [US2] Fix reproduced runtime/parser/render/shutdown compatibility failures in their owning legacy files without new features (FR-005–FR-008).
+- [x] T014 [US2] Run and record three isolated desktop smoke cycles, screenshots and worker cleanup in validation.md (SC-002, SC-003).
 
 ## Phase 5 — US3: regression confidence
 
@@ -38,14 +38,14 @@ Goal: all existing and adapted tests pass without suppression.
 Independent check: complete pytest inventory and explicit comparison to upstream.
 
 - [x] T015 [US3] Complete all eight port behavior adaptations in tests/test_runtime_compatibility.py and document mapping in validation.md (FR-008).
-- [ ] T016 [US3] Run the full upstream + new test suite; repair reproduced failures with preserved assertions and record counts/warnings in validation.md (FR-009–FR-011, SC-004).
+- [x] T016 [US3] Run the full upstream + new test suite; repair reproduced failures with preserved assertions and record counts/warnings in validation.md (FR-009–FR-011, SC-004).
 - [x] T017 [US3] Verify second clean install and matching installed versions; record both pip checks in validation.md (FR-003, FR-004, SC-001).
 
 ## Phase 6 — Completion
 
-- [ ] T018 Update README.md, CLAUDE.md, quickstart.md, docs/ROADMAP.md and validation.md with verified commands/results and limits (FR-010, FR-012).
-- [ ] T019 Record imported files/commits/licenses in THIRD_PARTY_CHANGES.md and measured legacy growth/any justified exceptions in plan.md (FR-012, SC-005).
-- [ ] T020 Verify checklist/spec/plan/tasks, clean diff and publish completed feature commits on 001-evo-py313-baseline (FR-012).
+- [x] T018 Update README.md, CLAUDE.md, quickstart.md, docs/ROADMAP.md and validation.md with verified commands/results and limits (FR-010, FR-012).
+- [x] T019 Record imported files/commits/licenses in THIRD_PARTY_CHANGES.md and measured legacy growth/any justified exceptions in plan.md (FR-012, SC-005).
+- [x] T020 Verify checklist/spec/plan/tasks, clean diff and publish completed feature commits on 001-evo-py313-baseline (FR-012).
 
 ## Dependencies and parallel work
 
