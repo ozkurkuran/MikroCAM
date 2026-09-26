@@ -77,7 +77,7 @@ gerçek PCB elde edilir.
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
 | 4 | `placement-transform` — **tamamlandı** | Tek core transform: origin, öteleme, dönme ve ayna; nokta/geometri uygulaması ve ters dönüşüm. Windows CI: 694 test + 310 subtest başarılı. [Doğrulama](../specs/004-placement-transform/validation.md). | 2 |
-| 5 | `laserjob-model` | `LaserJob` ve pass listesi içeren recipe (JSON dosyası), serileştirme. CNCJob'dan ayrıdır. Gerber'den `core` geometrisine bridge. | 4 |
+| 5 | `laserjob-model` — **tamamlandı** | Ayrı, değişmez LaserJob ve sıralı pass recipe'leri; katı şema-1 JSON; Gerber'in mevcut birimlerinden mm core verisine köprü. Windows CI: 823 test + 310 subtest başarılı. [Doğrulama](../specs/005-laserjob-model/validation.md). | 4 |
 | 6 | `laser-contour-hatch` | Contour modları (dış, iç, iz, pad, kart kenarı); açılı hatch ve cross-hatch; clipping. Evo'ya bağlanan Laser CAM paneli ve kanvas önizlemesi. | 5 |
 | 7 | `hatch-interlace-multipass` | Interlace N; pass başına güç, frekans, pulse genişliği ve hız | 6 |
 | 8 | `laser-export-svg-dxf` | LightBurn ve EZCAD'e aktarılabilir SVG/DXF; her pass ayrı katman/renk ya da ayrı dosya olarak | 7 |
