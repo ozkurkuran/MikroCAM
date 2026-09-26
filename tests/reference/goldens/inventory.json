@@ -1,0 +1,106 @@
+{
+  "kind": "mikrocam.reference-inventory",
+  "schema_version": 1,
+  "artifacts": [
+    {
+      "path": "legacy8994/altium-limesdr-qpci-e-v1-2.json.gz",
+      "sha256": "40ae16b3b109bf8f25162e5edc6d7916c09326c01937a8461a10ce8b57c07f11",
+      "bytes": 22022292
+    },
+    {
+      "path": "legacy8994/diptrace-fd1-keyboard.json.gz",
+      "sha256": "5191cdb70e38939d3c569a2590eaab8a69dc8b2adf7d0b17dd9207b3f937a4b7",
+      "bytes": 1018791
+    },
+    {
+      "path": "legacy8994/diptrace-fd1-mainboard.json.gz",
+      "sha256": "8371385394561ee793a57956e89a4b39ed7926f131b4f4c215327074fb69f894",
+      "bytes": 2859903
+    },
+    {
+      "path": "legacy8994/diptrace-fd1-panel.json.gz",
+      "sha256": "d4890223e2f56e1aee4f0a934c51188a26124c91bcfb71215b6a919d7ba41049",
+      "bytes": 1935268
+    },
+    {
+      "path": "legacy8994/eagle-newer-gyw.json.gz",
+      "sha256": "adaf9f9306df493414b30992c490be04a7b6467bc6ae31dbcae81641186669e2",
+      "bytes": 323880
+    },
+    {
+      "path": "legacy8994/easyeda-stm32-minimal.json.gz",
+      "sha256": "2f64abfd6e45e752a4980e0274d9e33ba4a306a41bac1005a533c892a7da6291",
+      "bytes": 3400417
+    },
+    {
+      "path": "legacy8994/fritzing-analog-gyro.json.gz",
+      "sha256": "81f89394fd452493e4a1a0c3cf097d480c400c933f7aca4d98051f0a89e1ee97",
+      "bytes": 3157922
+    },
+    {
+      "path": "legacy8994/kicad-ivcurve-mux.json.gz",
+      "sha256": "397e6fee480298366a8efe2722b3a3dddd3cd885ca27111659cc76847a3ea6c3",
+      "bytes": 713795
+    },
+    {
+      "path": "legacy8994/kicad-pico2romemu.json.gz",
+      "sha256": "f40fecbfffffb065facd7ad5267e45b18175a54e69c0e18a5d849ccbdc98ed9d",
+      "bytes": 1059679
+    },
+    {
+      "path": "legacy8994/proteus-sliding-gate.json.gz",
+      "sha256": "cad70ab75c3ae14e43cda12f736f143a4344f9616ef2d59b122b921fec98d7c6",
+      "bytes": 3505536
+    },
+    {
+      "path": "evo/altium-limesdr-qpci-e-v1-2.json.gz",
+      "sha256": "ba58ad000fca2ffccad78b673d5d76266b28a1f30728e34466ce71a0d01cb804",
+      "bytes": 40790151
+    },
+    {
+      "path": "evo/diptrace-fd1-keyboard.json.gz",
+      "sha256": "0ad46e4fe5c52909bfaf5ab63b75f789c799226dfbafb0b9445813c1d2bbf43d",
+      "bytes": 2487480
+    },
+    {
+      "path": "evo/diptrace-fd1-mainboard.json.gz",
+      "sha256": "9d1d8555daf8c59fe7a8bed54eba206d2b48be120a6fc2688106b1dbe57457f3",
+      "bytes": 6023005
+    },
+    {
+      "path": "evo/diptrace-fd1-panel.json.gz",
+      "sha256": "08a2fe06c87537be32c76d2479ddfb2152c48d573c66745f7b222464046bcb75",
+      "bytes": 4422907
+    },
+    {
+      "path": "evo/eagle-newer-gyw.json.gz",
+      "sha256": "446a0479da9b4331f4ed59215772071a5fc48b2adbda68058b5548f02fd45c6c",
+      "bytes": 779959
+    },
+    {
+      "path": "evo/easyeda-stm32-minimal.json.gz",
+      "sha256": "6dd135891a538a0d923db98be5b2a76f21f5706c86e488ac0f87003ef8c8f66f",
+      "bytes": 6402723
+    },
+    {
+      "path": "evo/fritzing-analog-gyro.json.gz",
+      "sha256": "e24e6272995799af4c7b0863d43b9254b9ea1db9250d17def1eeafeef278a5b0",
+      "bytes": 8493281
+    },
+    {
+      "path": "evo/kicad-ivcurve-mux.json.gz",
+      "sha256": "91d5cf69c7cb1259698c1ec8c8f7704c1accbb8afb1e7ca63c512f8a029f5fe9",
+      "bytes": 1454803
+    },
+    {
+      "path": "evo/kicad-pico2romemu.json.gz",
+      "sha256": "b6607c77132bd8c0f3aa788a6e044d58da40c7ec1d9b6d3b27f16aef566cdb0b",
+      "bytes": 2895184
+    },
+    {
+      "path": "evo/proteus-sliding-gate.json.gz",
+      "sha256": "5203cd02a6c0fa69cd28dc4d23599f1c8960ab4be72ca3b698c7b2313337cbb0",
+      "bytes": 6452844
+    }
+  ]
+}

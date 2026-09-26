@@ -88,3 +88,49 @@ in three failing CLI tests; both are fixed without changing capture helper bytes
 Latest focused comparator/CLI run: **110 passed in 4.79s**. Boundary codec/dataset/CLI run:
 **78 passed in 7.28s**; child capture boundary suite: **25 passed**. Full tests, final frozen
 artifacts and hosted CI still require the delivery checks below.
+
+## Accepted frozen captures (2026-09-27)
+Both engines were captured twice into distinct new directories. All 20 complete compressed
+artifacts have identical SHA256 on the second run. The accepted copies total **120,199,820
+bytes**: legacy 39,997,483 and Evo 80,202,337. `goldens/inventory.json` records exact file hashes
+and lengths; the integrity tests also validate input links, source identity and stage schemas.
+Each engine has 10 boards / 49 requested stages: **47 ok, 2 error**. The two errors are the
+empty KiCad NPTH files (Pico2ROMEmu and MUX-ADG706): actual parser produced no tools. Neither
+repeated error counts as a matching CAM result. Proteus drill maps remain retained artwork,
+not invented Excellon output.
+
+Sources are unchanged `6ba378bca139aa306f8c94f09461a98f95d3c75b` (247 application Python files)
+and `d0a86cf4f1ac41a206b20f316d4a29f28a93bbff` (337). Every source file hash is in each capture.
+Runtime is standard CPython 3.13.13 x64, with the identical pinned development/image environment
+and full dependency inventory recorded in the artifacts.
+
+- Configuration SHA256: `e5525f14f581921aac335bac3e4b18963f0df7d02215fa5619d3606ff59dfc27`.
+- Harness SHA256: `cc78d08a7173f4dd497026c896e9743ca5875c6e59dc8cd8b6d3d671861df847`.
+- Sorted legacy filename/hash inventory digest: `79dca4f1feb2da234307a80ac8d5844c8c2be7333a833b9e35fca5cd39d52965`.
+- Sorted Evo filename/hash inventory digest: `f89b04a098027142d6e40c5ff779e9d39867488e20b7e7125e975b734e027f05`.
+
+Git attributes now preserve all six hashed helper files byte-for-byte, including the sandbox's
+existing CRLF bytes; indexed blobs were checked against the working bytes and the frozen
+harness hash. This prevents Windows newline conversion from changing capture provenance on
+checkout. No helper working byte changed during the accepted captures.
+
+Actual commands (run from `E:/VSCode/Flatcam/MikroCAM-reference-data`, using
+`E:/VSCode/Flatcam/MikroCAM/.venv/repro-b/Scripts/python.exe` for both parent and child):
+
+```powershell
+python tests/reference/capture.py --engine legacy8994 --source ../FlatCAM-reference-8994 --python E:/VSCode/Flatcam/MikroCAM/.venv/repro-b/Scripts/python.exe --manifest tests/reference/boards/manifest.json --config tests/reference/capture-config.json --output .venv/capture-v2-legacy8994-1 --timeout-seconds 300
+python tests/reference/capture.py --engine evo --source ../MikroCAM-reference-evo --python E:/VSCode/Flatcam/MikroCAM/.venv/repro-b/Scripts/python.exe --manifest tests/reference/boards/manifest.json --config tests/reference/capture-config.json --output .venv/capture-v2-evo-1 --timeout-seconds 300
+```
+
+Each command was repeated with output suffix `-2`; both runs exited 0 for complete validated
+artifacts. The earlier 128 MiB resource-limited Evo capture was not admitted. The accepted
+Altium Evo capture has all five stages ok, 185,830,678 decoded JSON bytes, 40,790,151 gzip
+bytes and 989,620 G-code lines.
+
+Real integration exposed a geometry representation mismatch: legacy batches a MultiPolygon,
+Evo stores individual polygons. Four failing tests demonstrated false differences from zipping
+batches. The report now compares their physical unions, preserving raw batch counts only as
+diagnostics and leaving CNC/tool sequence comparisons separate. **114 focused tests pass**;
+independent review found no defect. The actual geometry-set probe measured Altium isolation
+symmetric difference 0.3945467210 mm² and round-drill difference 0.4307060293 mm² between the
+baselines at explicit 1e-6 mm / 1e-6 mm² tolerance; neither is silently widened to a match.

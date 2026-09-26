@@ -21,8 +21,8 @@ capture agrees for successful deterministic results, IN scaling happens once and
 - [x] T010 [US2] Implement concrete unchanged-engine calls and once-only parser.units normalization in tests/reference/capture_worker.py; retain ordered kind/Point/LineString paths and header+body G-code.
 - [x] T011 [US2] Implement strict compressed JSON1 capture validation/provenance in tests/reference/reference_data.py; error/unsupported stages carry diagnostic without fabricated outputs.
 - [x] T012 [US2] Implement explicit-engine subprocess capture CLI in tests/reference/capture.py; sandbox settings before imports, clean only owned processes, refuse wrong SHA/dirty source/existing output directories.
-- [ ] T013 [US2] Capture actual outcomes twice for each pinned engine into separate fresh directories; review provenance and reproducibility before adding tests/reference/goldens/legacy8994/ and goldens/evo/.
-- [ ] T014 [US2] Record exact commands/runtime/source/config hashes, IN normalization/repeat evidence and authentic failure inventory in specs/009-reference-dataset/validation.md; preserve differences between baselines.
+- [x] T013 [US2] Capture actual outcomes twice for each pinned engine into separate fresh directories; review provenance and reproducibility before adding tests/reference/goldens/legacy8994/ and goldens/evo/.
+- [x] T014 [US2] Record exact commands/runtime/source/config hashes, IN normalization/repeat evidence and authentic failure inventory in specs/009-reference-dataset/validation.md; preserve differences between baselines.
 
 ## US3: Explicit tolerant comparison (P2)
 **Independent test**: Matching valid records pass; introduced topology/vertex/direction/order
