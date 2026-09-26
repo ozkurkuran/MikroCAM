@@ -1,3 +1,6 @@
 # License inventory hashes refer to original upstream bytes, on every platform.
 THIRD_PARTY_LICENSES/** -text
 tests/reference/boards/** -text
+# Capture provenance hashes exact helper bytes, including on Windows checkouts.
+tests/reference/*.py -text
+tests/qt_settings_sandbox.py -text

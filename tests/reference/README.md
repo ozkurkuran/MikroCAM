@@ -46,6 +46,8 @@ Use a clean standard CPython 3.13 x64 environment with `requirements-dev.txt` an
 Offline codec/comparison tests need only the existing core/development environment.
 Both engines and the candidate must use the same interpreter/dependency versions and
 capture helper bytes for a controlled comparison. No desktop or manufacturing hardware is used.
+Git attributes preserve those helper bytes across checkouts, including the Qt settings sandbox;
+changing the harness is a reviewed recapture change rather than an implicit golden update.
 
 From the repository root, run the explicit commands in
 [`specs/009-reference-dataset/quickstart.md`](../../specs/009-reference-dataset/quickstart.md).
