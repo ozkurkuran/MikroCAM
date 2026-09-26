@@ -146,6 +146,53 @@ def cam_journey(app, qapp, sandbox, errors):
     print('PROJECT_ROUNDTRIP_OK', actual, flush=True)
 
 
+def laser_journey(app, qapp, sandbox, errors):
+    from mikrocam.core.laser_job import LaserPass, LaserRecipe
+    from mikrocam.core.laser_json import recipe_from_json, recipe_to_json
+    from mikrocam.bridge.gerber import gerber_region
+    from mikrocam.ui.laser_cam import open_laser_cam
+    source = app.collection.get_by_name('smoke_gerber')
+    before = gerber_region(source)
+    app.collection.set_all_inactive()
+    app.collection.set_active('smoke_gerber')
+    action = next(action for action in app.ui.menu_plugins.actions() if action.text() == 'Laser CAM')
+    action.trigger()
+    panel = open_laser_cam(app)
+    assert open_laser_cam(app) is panel
+    panel.source_combo.setCurrentIndex(panel.source_combo.findData('smoke_gerber'))
+    recipe_file = sandbox / 'laser-recipe.json'
+    recipe_file.write_text(recipe_to_json(LaserRecipe('Synthetic smoke only',
+                           (LaserPass('Reference', 20, 100, 20, 80),))), encoding='utf-8')
+    panel.set_recipe(recipe_from_json(recipe_file.read_text(encoding='utf-8')))
+    panel.hatch_enabled.setChecked(True)
+    panel.hatch_spacing.setValue(1)
+    panel.hatch_angle.setValue(30)
+    panel.cross_hatch.setChecked(True)
+    panel.translation_x.setValue(5)
+    panel.generate()
+    pump_until(qapp, lambda: not panel.busy, errors, 'laser preview')
+    assert panel.last_plan is not None, panel.status_label.text()
+    first = app._mikrocam_laser_cam_preview
+    assert_object(app, first.obj_options['name'], 'geometry')
+    pump_until(qapp, lambda: app.workers._pending_count == 0, errors, 'laser preview plotting')
+    assert len(first.solid_geometry) == len(panel.last_plan.paths)
+    assert gerber_region(source) == before
+    assert app.collection.get_active() is source
+    panel.generate()
+    pump_until(qapp, lambda: not panel.busy, errors, 'laser preview replacement')
+    second = app._mikrocam_laser_cam_preview
+    assert second is not first and first not in app.collection.get_list()
+    assert len(app.collection.get_list()) == 5
+    assert panel.last_plan is not None and gerber_region(source) == before
+    pump_until(qapp, lambda: app.workers._pending_count == 0, errors, 'laser replacement plotting')
+    panel.close()
+    assert open_laser_cam(app) is panel
+    qapp.processEvents()
+    screenshot = ROOT / '.venv/laser-cam-smoke.png'
+    assert app.ui.grab().save(str(screenshot))
+    print('LASER_PREVIEW_OK', len(panel.last_plan.paths), second.obj_options['name'], screenshot, flush=True)
+
+
 def render_and_quit(app, qapp, errors):
     from PyQt6 import QtCore
     import numpy as np
@@ -210,6 +257,7 @@ def run_smoke(sandbox, state):
         pump_until(qapp, lambda: all(worker.receivers(worker.worker_task_signal) > 0
                    for worker in app.workers.workers), errors, 'worker readiness')
         cam_journey(app, qapp, sandbox, errors)
+        laser_journey(app, qapp, sandbox, errors)
         render_and_quit(app, qapp, errors)
     except BaseException:
         traceback.print_exc()
