@@ -7,6 +7,8 @@
 # Modified by Marius Stanciu (2019)                         #
 # ###########################################################
 
+from mikrocam.ui import identity as product_identity
+
 from PyQt6 import QtCore, QtGui, QtWidgets  # noqa
 from PyQt6.QtCore import QSettings, pyqtSlot  # noqa
 from PyQt6.QtCore import Qt, pyqtSignal, QMetaObject  # noqa
@@ -222,7 +224,7 @@ class App(QtCore.QObject):
     version_url = "http://flatcam.org/version"
 
     # App URL
-    app_url = "http://flatcam.org"
+    app_url = product_identity.identity.REPOSITORY_URL
 
     # Manual URL
     manual_url = "http://flatcam.org/manual/index.html"
@@ -230,7 +232,7 @@ class App(QtCore.QObject):
     gerber_spec_url = ("https://www.ucamco.com/files/downloads/file/81/"
                        "The_Gerber_File_Format_specification.pdf?7ac957791daba2cdf4c2c913f67a43da")
     excellon_spec_url = "https://www.ucamco.com/files/downloads/file/305/the_xnc_file_format_specification.pdf"
-    bug_report_url = "https://bitbucket.org/jpcgt/flatcam/issues?status=new&status=open"
+    bug_report_url = product_identity.identity.ISSUES_URL
     donate_url = ("https://www.paypal.com/cgi-bin/webscr?cmd="
                   "_donations&business=WLTJJ3Q77D98L&currency_code=USD&source=url")
     # this variable will hold the project status
@@ -1504,9 +1506,7 @@ class App(QtCore.QObject):
             self.log.warning("*******************  RUNNING HEADLESS  *******************")
 
         self.refresh_rollback_action()
-        if not self.beta and self.options.get("global_version_check", self.defaults.get("global_version_check")):
-            self.log.info(f"Checking for updates in background (this is version {self.version}).")
-            self._queue_version_check()
+        product_identity.updates_unavailable(self, _, notify=False)
 
         # ######################################## START-UP ARGUMENTS ###############################################
         # test if the program was started with a script as parameter
@@ -2697,25 +2697,14 @@ class App(QtCore.QObject):
         self.ui_actions.on_backup_site()
 
     def on_check_for_updates(self):
-        """Start a user-requested update check without changing preferences."""
-        self._queue_version_check(forced=True)
+        return product_identity.updates_unavailable(self, _)
 
     def _run_queued_version_check(self, forced=False):
         self._check_queued = False
         self.version_check(forced=forced)
 
     def _queue_version_check(self, forced=False):
-        if self._check_queued or self._check_in_progress:
-            return
-        self._check_queued = True
-        try:
-            self.worker_task.emit({
-                'fcn': self._run_queued_version_check,
-                'params': [forced],
-            })
-        except Exception as exc:
-            self._check_queued = False
-            self.log.error("Could not queue update check: %s" % str(exc))
+        return product_identity.updates_unavailable(self, _)
 
     def _update_operation_active(self):
         if (
@@ -2770,77 +2759,7 @@ class App(QtCore.QObject):
             pass
 
     def prepare_update_files(self):
-        """Collect local release inputs on the GUI thread and queue preparation."""
-        if self._update_operation_active():
-            return
-
-        windows_root = QtWidgets.QFileDialog.getExistingDirectory(
-            self.ui,
-            _("Select completed Windows build"),
-        )
-        if not windows_root:
-            return
-
-        output_dir = QtWidgets.QFileDialog.getExistingDirectory(
-            self.ui,
-            _("Select update output directory"),
-        )
-        if not output_dir:
-            return
-
-        release_notes, accepted = QtWidgets.QInputDialog.getMultiLineText(
-            self.ui,
-            _("Release notes"),
-            _("Enter release notes:"),
-        )
-        if not accepted:
-            return
-
-        source_root = Path(getattr(self, "app_home", Path(__file__).resolve().parent))
-        version = str(getattr(self, "version", ""))
-        version_date = str(getattr(self, "version_date", ""))
-        build_string = _release_build_identity(self, version_date)
-        confirmation = QtWidgets.QMessageBox.question(
-            self.ui,
-            _("Prepare update files"),
-            _("Version: %s\nBuild: %s\nDate: %s\nSource root: %s\n\n"
-              "Create local Digi upload files now?")
-            % (version, build_string, version_date, source_root),
-            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.Cancel,
-            QtWidgets.QMessageBox.StandardButton.Cancel,
-        )
-        if confirmation != QtWidgets.QMessageBox.StandardButton.Yes:
-            return
-
-        try:
-            validate_release_roots(Path(windows_root), source_root)
-        except Exception as exc:
-            self.log.error("Release input validation failed:\n%s" % traceback.format_exc())
-            self.inform.emit('[ERROR_NOTCL] %s' % _("Release inputs are incomplete: %s") % str(exc))
-            return
-
-        self._release_preparation_in_progress = True
-        progress = QtWidgets.QProgressDialog(
-            _("Preparing update files..."), "", 0, 100, self.ui
-        )
-        progress.setWindowTitle(_("Preparing update files"))
-        progress.setWindowModality(Qt.WindowModality.ApplicationModal)
-        progress.setAutoClose(False)
-        progress.setAutoReset(False)
-        progress.setCancelButton(None)
-        self._update_progress_dialog = progress
-        progress.show()
-
-        try:
-            self.worker_task.emit({
-                'fcn': self._prepare_releases_worker,
-                'params': [Path(windows_root), source_root, Path(output_dir), str(release_notes)],
-            })
-        except Exception as exc:
-            self._release_preparation_in_progress = False
-            self._close_update_progress()
-            self.log.error("Could not queue release preparation:\n%s" % traceback.format_exc())
-            self.inform.emit('[ERROR_NOTCL] %s' % _("Release preparation could not be started."))
+        return product_identity.updates_unavailable(self, _)
 
     def _prepare_releases_worker(self, windows_root, source_root, output_dir, release_notes):
         """Prepare both local release pairs off the GUI thread."""
@@ -2895,53 +2814,10 @@ class App(QtCore.QObject):
         self._manual_update_requested = False
 
     def on_update_available(self, payload):
-        if self._update_operation_active():
-            self.log.info("Ignoring duplicate update offer while an update operation is active.")
-            return
-
-        dialog = UpdateDialog(parent=self.ui, payload=payload)
-        self._update_dialog = dialog
-
-        def finished(_result):
-            self._update_dialog = None
-            if dialog.choice == "later":
-                return
-            if dialog.choice == "exit":
-                if self._updater_shutdown_preflight():
-                    self.quit_application()
-                return
-
-            self._start_update_download(payload)
-
-        dialog.finished.connect(finished)
-        dialog.open()
+        return product_identity.updates_unavailable(self, _)
 
     def _start_update_download(self, payload):
-        if self._update_operation_active():
-            return
-        self._update_in_progress = True
-        cancel_event = threading.Event()
-        progress = QtWidgets.QProgressDialog(
-            _("Downloading update..."), _("Cancel"), 0, 100, self.ui
-        )
-        progress.setWindowTitle(_("Downloading update"))
-        progress.setWindowModality(Qt.WindowModality.ApplicationModal)
-        progress.setAutoClose(False)
-        progress.setAutoReset(False)
-        progress.canceled.connect(cancel_event.set)
-        self._update_progress_dialog = progress
-        progress.show()
-
-        try:
-            self.worker_task.emit({
-                'fcn': self._download_update_worker,
-                'params': [payload, cancel_event],
-            })
-        except Exception as exc:
-            self.log.error("Could not queue update download: %s" % str(exc))
-            self._update_in_progress = False
-            self._close_update_progress()
-            self.inform.emit('[ERROR_NOTCL] %s' % _("Update download could not be started."))
+        return product_identity.updates_unavailable(self, _)
 
     def _download_update_worker(self, payload, cancel_event):
         checker = getattr(self, "update_checker", None)
@@ -2988,32 +2864,7 @@ class App(QtCore.QObject):
             self.update_staged.emit({"canceled": False, "payload": payload, "error": str(exc)})
 
     def on_update_staged(self, data):
-        self._close_update_progress()
-        self._update_in_progress = False
-        staging_dir = data.get("staging_dir")
-        if data.get("canceled"):
-            self.inform.emit('[WARNING_NOTCL] %s' % _("Update download canceled."))
-            return
-
-        archive_path = data.get("archive_path")
-        payload = data.get("payload", {})
-        if not archive_path or not payload.get("manifest"):
-            if staging_dir:
-                shutil.rmtree(staging_dir, ignore_errors=True)
-            self.inform.emit('[ERROR_NOTCL] %s' % _("Update download failed; the installation was not changed."))
-            return
-        if not self._updater_shutdown_preflight():
-            if staging_dir:
-                shutil.rmtree(staging_dir, ignore_errors=True)
-            return
-
-        success = launch_update(self, payload["manifest"], archive_path)
-        if not success:
-            if staging_dir:
-                shutil.rmtree(staging_dir, ignore_errors=True)
-            self.inform.emit('[WARNING_NOTCL] %s' % _("The updater could not be started."))
-            return
-        self.quit_application(mode="updater")
+        return product_identity.finish_unavailable_update(self, _)
 
     def _load_rollback_restore_point(self):
         install_dir = (
@@ -3026,61 +2877,10 @@ class App(QtCore.QObject):
         return restore_dir, metadata
 
     def refresh_rollback_action(self):
-        action = getattr(getattr(self, "ui", None), "menuhelp_revert_update", None)
-        if action is None:
-            return
-        if self._update_operation_active():
-            action.setEnabled(False)
-            return
-        try:
-            _restore, metadata = self._load_rollback_restore_point()
-        except (OSError, TypeError, ValueError):
-            action.setEnabled(False)
-            return
-        action.setEnabled(True)
-        action.setToolTip(
-            _("Revert to %s (%s)") %
-            (metadata["previous_version"], metadata["previous_build_string"])
-        )
+        product_identity.disable_update_controls(self.ui, _)
 
     def on_revert_update(self):
-        if self._update_operation_active():
-            return
-        try:
-            _restore, metadata = self._load_rollback_restore_point()
-        except (OSError, TypeError, ValueError):
-            self.inform.emit('[WARNING_NOTCL] %s' % _("No usable previous version is available."))
-            return
-
-        answer = QtWidgets.QMessageBox.question(
-            self.ui,
-            _("Revert application update"),
-            _("Revert from %s (%s) to %s (%s)?") % (
-                metadata["version"], metadata["build_string"],
-                metadata["previous_version"], metadata["previous_build_string"],
-            ),
-            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.Cancel,
-            QtWidgets.QMessageBox.StandardButton.Cancel,
-        )
-        if answer != QtWidgets.QMessageBox.StandardButton.Yes or not self._updater_shutdown_preflight():
-            return
-
-        self._rollback_in_progress = True
-
-        def rollback_worker():
-            try:
-                success = launch_rollback(self)
-                error = ""
-            except Exception as exc:
-                success = False
-                error = str(exc)
-            self.rollback_ready.emit({"success": success, "error": error})
-
-        try:
-            self.worker_task.emit({'fcn': rollback_worker, 'params': []})
-        except Exception as exc:
-            self._rollback_in_progress = False
-            self.log.error("Could not queue rollback: %s" % str(exc))
+        return product_identity.updates_unavailable(self, _)
 
     def on_rollback_ready(self, result):
         if not self._rollback_in_progress:
@@ -3806,28 +3606,7 @@ class App(QtCore.QObject):
         self.lifecycle.setup_obj_classes()
 
     def version_check(self, forced=False):
-        if not hasattr(self, "_check_in_progress"):
-            if forced:
-                self.lifecycle.version_check(forced=True)
-            else:
-                self.lifecycle.version_check()
-            return None
-        if self._check_in_progress:
-            return None
-        self._check_in_progress = True
-        self._manual_update_requested = bool(forced)
-        try:
-            if forced:
-                self.lifecycle.version_check(forced=True)
-            else:
-                self.lifecycle.version_check()
-            return None
-        except Exception as exc:
-            self._check_in_progress = False
-            self._manual_update_requested = False
-            self.log.error("Update check failed safely: %s" % str(exc))
-            self.inform.emit('[WARNING_NOTCL] %s' % _("Failed checking for the latest version."))
-            return None
+        return product_identity.updates_unavailable(self, _)
 
     def on_plotcanvas_setup(self):
         """

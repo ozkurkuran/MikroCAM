@@ -126,7 +126,7 @@ def test_automatic_update_preference_defaults_on():
     assert AppDefaults.factory_defaults["global_version_check"] is True
 
 
-def test_startup_update_toggle_gates_automatic_queueing(monkeypatch):
+def test_product_startup_never_queues_upstream_checks_for_either_preference(monkeypatch):
     from appMain import App
 
     monkeypatch.setattr(App, "args", [])
@@ -136,17 +136,19 @@ def test_startup_update_toggle_gates_automatic_queueing(monkeypatch):
 
     enabled = _startup_app(True)
     App._setup_startup(enabled)
-    enabled._queue_version_check.assert_called_once_with()
+    enabled._queue_version_check.assert_not_called()
+    assert enabled.options['global_version_check'] is True
 
 
-def test_manual_update_check_remains_available_when_automatic_checks_are_disabled():
+def test_product_manual_update_check_reports_unavailable_without_queueing():
     from appMain import App
 
-    app = SimpleNamespace(_queue_version_check=MagicMock())
+    app = SimpleNamespace(_queue_version_check=MagicMock(), inform=FakeSignal())
 
     App.on_check_for_updates(app)
 
-    app._queue_version_check.assert_called_once_with(forced=True)
+    app._queue_version_check.assert_not_called()
+    assert 'not available' in app.inform.emissions[-1][0]
 
 
 def test_factory_defaults_seed_the_update_share_url():
@@ -449,7 +451,7 @@ def _fake_app(tmp_path):
     return app
 
 
-def test_update_launches_then_shutdowns_only_after_launcher_ack(monkeypatch, tmp_path):
+def test_product_refuses_staged_upstream_install_without_launch_or_shutdown(monkeypatch, tmp_path):
     from appMain import App
 
     app = _fake_app(tmp_path)
@@ -461,8 +463,9 @@ def test_update_launches_then_shutdowns_only_after_launcher_ack(monkeypatch, tmp
     archive.write_bytes(b"archive")
     App.on_update_staged(app, {"archive_path": str(archive), "payload": payload})
 
-    launch.assert_called_once()
-    app.quit_application.assert_called_once_with(mode="updater")
+    launch.assert_not_called()
+    app.quit_application.assert_not_called()
+    assert 'not available' in app.inform.emissions[-1][0]
 
 
 def test_failed_launch_and_cancelled_shutdown_never_quit(monkeypatch, tmp_path):
@@ -575,7 +578,7 @@ def test_duplicate_update_and_rollback_operations_are_guarded(tmp_path):
     assert App._update_operation_active(app)
 
 
-def test_rollback_action_requires_valid_restore_point_and_waits_for_ack(monkeypatch, tmp_path):
+def test_product_refuses_rollback_even_with_valid_restore_point(monkeypatch, tmp_path):
     from appMain import App, QtWidgets
 
     class Action:
@@ -600,7 +603,9 @@ def test_rollback_action_requires_valid_restore_point_and_waits_for_ack(monkeypa
     )
     monkeypatch.setattr(sys, "frozen", True, raising=False)
     App.refresh_rollback_action(app)
-    assert app.ui.menuhelp_revert_update.enabled is True
+    assert app.ui.menuhelp_revert_update.enabled is False
+    assert 'not available' in app.ui.menuhelp_revert_update.tooltip
+    app._load_rollback_restore_point.assert_not_called()
 
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
@@ -610,13 +615,11 @@ def test_rollback_action_requires_valid_restore_point_and_waits_for_ack(monkeypa
     launch = MagicMock(return_value=True)
     monkeypatch.setattr("appMain.launch_rollback", launch)
     App.on_revert_update(app)
-    worker = app.worker_task.emissions[0][0]
-    worker["fcn"](*worker["params"])
-    result = app.rollback_ready.emissions[0][0]
-    App.on_rollback_ready(app, result)
-
-    launch.assert_called_once()
-    app.quit_application.assert_called_once_with(mode="updater")
+    assert app.worker_task.emissions == []
+    assert app.rollback_ready.emissions == []
+    launch.assert_not_called()
+    app.quit_application.assert_not_called()
+    assert 'not available' in app.inform.emissions[-1][0]
 
 
 def test_download_worker_emits_error_when_transport_setup_fails(tmp_path):
@@ -658,4 +661,4 @@ def test_download_worker_emits_error_when_transport_setup_fails(tmp_path):
     app._close_update_progress.assert_called_once()
     assert app._update_in_progress is False
     app.quit_application.assert_not_called()
-    assert any("failed" in emission[0].lower() for emission in app.inform.emissions)
+    assert any("not available" in emission[0].lower() for emission in app.inform.emissions)
