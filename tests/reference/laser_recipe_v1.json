@@ -1,0 +1,9 @@
+{
+  "kind": "mikrocam.laser-recipe",
+  "schema_version": 1,
+  "name": "Synthetic two-pass recipe",
+  "passes": [
+    {"name": "first", "power_percent": 20, "speed_mm_s": 250, "frequency_khz": 30, "pulse_width_ns": 100},
+    {"name": "second", "power_percent": 40, "speed_mm_s": 500, "frequency_khz": 60, "pulse_width_ns": 200}
+  ]
+}
