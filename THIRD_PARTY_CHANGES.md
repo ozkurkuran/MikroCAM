@@ -21,7 +21,9 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 
 - Source repository: https://github.com/ozkurkuran/flatcam-8.994-py313
 - Source tag/commit: `baseline-8.994-py313`, `6ba378bca139aa306f8c94f09461a98f95d3c75b`.
-- License: MIT; source repository and existing module copyright notices retained.
+- License: MIT for the FlatCAM reference repository; existing module copyright notices retained.
+  The vendored Descartes adapter has a separate BSD origin and is not relicensed by that
+  repository's root MIT terms; its source/downstream license evidence is recorded in NOTICE.md.
 - Source files: tests/test_runtime_compatibility.py, tests/smoke_app.py,
   appParsers/ParseSVG.py, descartes/patch.py.
 - Destination files: tests/test_runtime_compatibility.py, tests/smoke_app.py,
@@ -39,3 +41,35 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   was imported in this feature.
 - Verification: see specs/001-evo-py313-baseline/validation.md for failing-before evidence,
   all upstream tests, complete legacy behavior mapping and three successful smoke cycles.
+
+## 2026-09-26 — Exact-version license and attribution collection
+
+- Reason: provide source-traceable notices for every pinned runtime/development/optional
+  image dependency, preserving separate copyleft and vendored-component terms.
+- Sources/versions: all 58 requirements pins from the verified Windows CPython 3.13
+  environment; exact PyPI wheel URLs and published artifact hashes are recorded in
+  `THIRD_PARTY_LICENSES/inventory.json`. Installed license bytes match their RECORD hashes.
+- Files: `THIRD_PARTY_LICENSES/**`, `LICENSE`, `NOTICE.md` and the offline inventory tests.
+  License texts and supplied bundled notices are copied without modification; JSON/README
+  records identify their source members and SHA-256 digests.
+- Missing wheel notices: PyOpenGL 3.1.10 and pyserial 3.5 main license texts come from their
+  exact published source archives. Their archive URLs, hashes and member names are recorded.
+- Source-vendored qdarktheme 1.1.1: preserve its MIT source license and original theme
+  attribution; retain complete immutable upstream license snapshots for Google's Material
+  design icons (Apache-2.0) and Colin Duquesnoy's QDarkStyleSheet code (MIT). Original
+  resource commits are unrecorded and this collection does not claim otherwise.
+- Source-vendored Descartes 1.1.0: exact archive metadata names Sean Gillies and declares BSD,
+  but published archives/wheels lack full text. Full BSD-3-Clause notices are copied from
+  explicitly identified downstream conda-forge/Debian records, not invented or attributed
+  to the source archive. The preexisting Shapely 2 adapter changes remain documented above.
+- Bundled imagetracer.js 1.2.5: copy the complete unchanged header from svgtrace 2023.0.1;
+  preserve Andras Jankovics/FredHappyface attribution and its explicit Unlicense exception.
+- This collection adds notice text, attribution evidence and metadata, not executable
+  dependency modules, a new dependency, browser binary, artwork or native DLL. Existing MIT
+  holders remain; MikroCAM contributors'
+  2026 copyright is added for their work. Dependency/vendored terms remain separate.
+- Distribution limitations: NOTICE and inventory retain inherited artwork credits and
+  explicitly record incomplete per-file provenance, unrecorded resource revisions and the
+  Rasterio native-DLL audit gap. This work does not assert a cleared installer/binary release.
+- MikroCAM commit: feature `003-branding-and-notices`; the resulting collection commit is
+  identifiable in Git history with `git log -- THIRD_PARTY_LICENSES/inventory.json`.
