@@ -1,0 +1,17 @@
+# Specification quality
+- [X] User-focused requirements without implementation detail.
+- [X] Roadmap value clear.
+- [X] Scenarios understandable.
+- [X] Mandatory sections complete.
+- [X] No unresolved clarification markers.
+- [X] Requirements testable.
+- [X] Success criteria measurable.
+- [X] Outcomes independent of implementation.
+- [X] Acceptance scenarios defined.
+- [X] Edge cases included.
+- [X] Scope bounded.
+- [X] Dependencies stated.
+- [X] Requirements have acceptance coverage.
+- [X] Primary flows covered.
+- [X] Outcomes match user goal.
+- [X] No speculative infrastructure.

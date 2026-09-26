@@ -5,6 +5,7 @@ from mikrocam.core.laser_geometry import contour_paths, hatch_paths, selected_ar
 from mikrocam.core.laser_job import LaserJob
 from mikrocam.core.laser_paths import (CancelCheck, CopperFeatures, LaserPlan, PlanOptions,
                                       check_cancelled, check_path_count)
+from .interlace import interlace_paths
 
 
 def plan_laser(job: LaserJob, options: PlanOptions, features: CopperFeatures | None = None,
@@ -21,6 +22,7 @@ def plan_laser(job: LaserJob, options: PlanOptions, features: CopperFeatures | N
         area = selected_area(features, options.region_mode)
         paths.extend(hatch_paths(area, options.spacing_mm, options.angle_deg, options.cross_hatch, cancelled))
     check_path_count(len(paths))
+    paths = interlace_paths(tuple(paths), options.interlace_n, cancelled)
     placed = []
     for path in paths:
         check_cancelled(cancelled)

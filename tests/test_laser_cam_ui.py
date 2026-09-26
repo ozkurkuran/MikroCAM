@@ -307,3 +307,90 @@ def test_open_reuses_dock_after_close(qtbot, monkeypatch):
     assert first is second is host.panel
     assert not second.isHidden()
     second.shutdown()
+
+
+def test_editor_draft_and_interlace_are_used_without_stale_recipe_fallback(panel, qtbot):
+    from mikrocam.core.laser_job import LaserPass, LaserRecipe
+    value, host = panel
+    value.set_recipe(recipe())
+    editor = value.recipe_editor
+    editor.table.item(0, 2).setText('123.45678901234567')
+    editor.add_pass()
+    for column, text in enumerate(('second', '40', '500', '60', '200')):
+        editor.table.item(1, column).setText(text)
+    value.interlace_n.setValue(3)
+    value.hatch_enabled.setChecked(True)
+    value.generate()
+    qtbot.waitUntil(lambda: not value.busy)
+    expected = LaserRecipe('explicit', (LaserPass('first', 20, 123.45678901234567, 30, 100),
+                                        LaserPass('second', 40, 500, 60, 200)))
+    assert value.last_plan.job.recipe == expected
+    assert value.last_plan.options.interlace_n == 3
+    assert len(value.last_plan.pass_plans) == 2
+    assert '2 passes' in value.status_label.text()
+    assert len(host.publications) == 1
+    editor.table.item(0, 1).setText('')
+    assert value.last_plan is None and value.recipe is None
+    value.generate()
+    assert not value.busy and len(host.publications) == 1
+    assert 'error' in value.status_label.text().lower()
+
+
+@pytest.mark.parametrize('change', ['recipe', 'interlace'])
+def test_programmatic_editor_or_interlace_edits_cancel_immutable_running_request(panel, qtbot, monkeypatch, change):
+    import mikrocam.ui.laser_worker as worker
+    entered, release = threading.Event(), threading.Event()
+    requests = []
+    def delayed(job, options, features, cancelled):
+        requests.append(job)
+        entered.set()
+        assert release.wait(2)
+        return completed_plan(job, options, features, cancelled)
+    monkeypatch.setattr(worker, 'plan_laser', delayed)
+    value, host = panel
+    value.set_recipe(recipe())
+    value.generate()
+    qtbot.waitUntil(entered.is_set)
+    assert not value.recipe_editor.isEnabled()
+    if change == 'recipe':
+        value.recipe_editor.table.item(0, 1).setText('50')
+    else:
+        value.interlace_n.setValue(4)
+    release.set()
+    qtbot.waitUntil(lambda: not value.busy)
+    assert requests[0].recipe == recipe()
+    assert value.last_plan is None and not host.publications
+
+
+def test_panel_save_cancel_and_failure_preserve_draft_and_existing_file(panel, monkeypatch, tmp_path):
+    import mikrocam.ui.laser_cam as ui
+    from mikrocam.core.laser_json import recipe_from_json
+    value, _host = panel
+    value.set_recipe(recipe())
+    value.recipe_editor.table.item(0, 2).setText('321.1234567890123')
+    current = value.recipe_editor.get_recipe()
+    monkeypatch.setattr(QtWidgets.QFileDialog, 'getSaveFileName', lambda *a, **k: ('', ''))
+    value.save_recipe_button.click()
+    assert value.recipe_editor.get_recipe() == current
+    target = tmp_path / 'recipe.json'
+    monkeypatch.setattr(QtWidgets.QFileDialog, 'getSaveFileName', lambda *a, **k: (str(target), ''))
+    value.save_recipe_button.click()
+    assert recipe_from_json(target.read_text(encoding='utf-8')) == current
+    previous = target.read_bytes()
+    def fail(*args):
+        raise OSError('disk full')
+    monkeypatch.setattr(ui, 'save_recipe_file', fail)
+    value.save_recipe_button.click()
+    assert target.read_bytes() == previous
+    assert value.recipe_editor.get_recipe() == current
+    assert 'disk full' in value.status_label.text()
+
+
+def test_cancel_load_dialog_preserves_current_editor_draft(panel, monkeypatch):
+    value, _host = panel
+    value.set_recipe(recipe())
+    value.recipe_editor.name_edit.setText('unsaved draft')
+    before = value.recipe_editor.get_recipe()
+    monkeypatch.setattr(QtWidgets.QFileDialog, 'getOpenFileName', lambda *a, **k: ('', ''))
+    value.recipe_button.click()
+    assert value.recipe_editor.get_recipe() == before
