@@ -10,6 +10,7 @@ from mikrocam.core.laser_job import LaserJob, LaserRecipe
 from mikrocam.core.laser_json import recipe_from_json
 from mikrocam.core.laser_paths import CopperFeatures, LaserPlan, PlanOptions
 from mikrocam.core.placement import Placement
+from .laser_recipe import LaserRecipeEditor, save_recipe_file
 from .laser_worker import LaserWorker
 
 
@@ -21,7 +22,6 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         super().__init__(_('Laser CAM'), host.parent_widget())
         self.setObjectName('mikrocam_laser_cam')
         self.host = host
-        self.recipe: LaserRecipe | None = None
         self.last_plan: LaserPlan | None = None
         self._worker: LaserWorker | None = None
         self._inputs: list[QtWidgets.QWidget] = []
@@ -46,6 +46,14 @@ class LaserCamPanel(QtWidgets.QDockWidget):
     @property
     def busy(self) -> bool:
         return self._worker is not None
+
+    @property
+    def recipe(self) -> LaserRecipe | None:
+        """Expose the current valid draft, never a previously loaded recipe fallback."""
+        try:
+            return self.recipe_editor.get_recipe()
+        except ValueError:
+            return None
 
     def _combo(self, form: QtWidgets.QFormLayout, label: str,
                choices: tuple[tuple[str, str], ...]) -> QtWidgets.QComboBox:
@@ -85,8 +93,14 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         self.recipe_label = QtWidgets.QLabel(_('No recipe loaded'))
         self.recipe_label.setWordWrap(True)
         form.addRow(self.recipe_button)
+        self.save_recipe_button = QtWidgets.QPushButton(_('Save recipe JSON'))
+        self.save_recipe_button.clicked.connect(self._save_recipe)
+        form.addRow(self.save_recipe_button)
         form.addRow(self.recipe_label)
         layout.addWidget(group)
+        self.recipe_editor = LaserRecipeEditor()
+        self.recipe_editor.changed.connect(self._recipe_changed)
+        layout.addWidget(self.recipe_editor)
 
     def _build_placement(self, layout: QtWidgets.QVBoxLayout) -> None:
         group = QtWidgets.QGroupBox(_('Placement (mm)'))
@@ -111,6 +125,11 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         self.hatch_spacing = self._number(form, 'Hatch spacing (mm)', 0.1, 0.000001, 1e6)
         self.hatch_angle = self._number(form, 'Hatch angle (degrees)', maximum=360000, minimum=-360000)
         self.cross_hatch = self._check(form, 'Cross hatch')
+        self.interlace_n = QtWidgets.QSpinBox()
+        self.interlace_n.setRange(1, 1_000_000)
+        self.interlace_n.setValue(1)
+        form.addRow(_('Interlace N'), self.interlace_n)
+        self._inputs.append(self.interlace_n)
         layout.addWidget(group)
 
     def _build_actions(self, layout: QtWidgets.QVBoxLayout) -> None:
@@ -143,6 +162,10 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         else:
             self.status_label.setText(_('Inputs changed; generate a new preview.'))
 
+    def _recipe_changed(self) -> None:
+        self.recipe_label.setText(self.recipe_editor.name_edit.text() or _('No recipe loaded'))
+        self._input_changed()
+
     def refresh_sources(self) -> None:
         """Read current GUI-host names, preserving explicit selections where possible."""
         self._input_changed()
@@ -164,9 +187,7 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         """Use only an explicit validated recipe; never substitute host defaults."""
         if not isinstance(recipe, LaserRecipe):
             raise ValueError(_('A valid laser recipe is required.'))
-        self._input_changed()
-        self.recipe = recipe
-        self.recipe_label.setText(recipe.name)
+        self.recipe_editor.set_recipe(recipe)
 
     def _load_recipe(self) -> None:
         filename, _filter = QtWidgets.QFileDialog.getOpenFileName(
@@ -177,13 +198,25 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         try:
             self.set_recipe(recipe_from_json(Path(filename).read_text(encoding='utf-8')))
         except (OSError, ValueError) as error:
-            self.recipe = None
+            self.recipe_editor.name_edit.clear()
+            self.recipe_editor.table.setRowCount(0)
             self.recipe_label.setText(_('No recipe loaded'))
             self._error(str(error))
 
+    def _save_recipe(self) -> None:
+        filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
+            self, _('Save laser recipe'), '', _('JSON files (*.json)'))
+        if not filename:
+            return
+        try:
+            save_recipe_file(filename, self.recipe_editor.get_recipe())
+        except (OSError, ValueError) as error:
+            self._error(str(error))
+            return
+        self.status_label.setText(_('Recipe saved: {name}').format(name=Path(filename).name))
+
     def _request(self) -> tuple[LaserJob, PlanOptions, CopperFeatures]:
-        if self.recipe is None:
-            raise ValueError(_('Load an explicit laser recipe first.'))
+        recipe = self.recipe_editor.get_recipe()
         source = self.source_combo.currentData()
         if not source:
             raise ValueError(_('Select a Gerber copper source.'))
@@ -193,9 +226,9 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         options = PlanOptions(contour_mode=self.contour_combo.currentData(),
                               region_mode=self.region_combo.currentData(), hatch=self.hatch_enabled.isChecked(),
                               spacing_mm=self.hatch_spacing.value(), angle_deg=self.hatch_angle.value(),
-                              cross_hatch=self.cross_hatch.isChecked())
+                              cross_hatch=self.cross_hatch.isChecked(), interlace_n=self.interlace_n.value())
         features = self.host.snapshot(source, self.outline_combo.currentData())
-        return LaserJob(source, features.copper, self.recipe, placement), options, features
+        return LaserJob(source, features.copper, recipe, placement), options, features
 
     def generate(self) -> None:
         """Snapshot on the GUI thread and admit at most one detached planning request."""
@@ -235,7 +268,8 @@ class LaserCamPanel(QtWidgets.QDockWidget):
             self._error(str(error))
             return
         self.last_plan = plan
-        self.status_label.setText(_('Preview ready: {name}').format(name=name))
+        self.status_label.setText(_('Preview ready: {name} ({count} passes)').format(
+            name=name, count=len(plan.pass_plans)))
 
     def _error(self, message: str) -> None:
         self.status_label.setText(_('Error: {message}').format(message=_(message)))
