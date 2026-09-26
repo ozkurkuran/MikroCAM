@@ -231,3 +231,15 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   no writes during either level sequence, unchanged selected/other tools, visible custom
   offset 0.42 and Isolation job, and functioning ordinary editing after restoration.
 - MikroCAM commit: `fix: keep milling level changes read-only` (this commit).
+
+## 2026-09-27 — Discard render submissions that finish after deletion
+
+- Follow-up to the MIT `kpkrisnop/flatcam` lifetime audit above; this race correction is
+  independently implemented, not copied from an upstream change.
+- Destination: `appObjects/AppObjectTemplate.py` and `appObjects/ObjectCollection.py`.
+- Finding: clearing before setting deleted leaves a submission window; an add already inside
+  the shape collection can also complete after removal. Mark deletion before collection clear,
+  then discard late single/batch/mark submissions after their concrete add returns.
+- Regression: five tests first failed, then passed: blocked background submissions finish after
+  removal without leaving orphan shapes, and both collection removal routes set the guard first.
+- MikroCAM commit: `fix: discard shapes submitted during object removal` (this commit).

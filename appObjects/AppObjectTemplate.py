@@ -209,6 +209,9 @@ class FlatCAMObj(QtCore.QObject):
             raise ObjectDeleted()
         else:
             key = self.shapes.add(tolerance=tol, **kwargs)
+        if self.deleted:
+            self.shapes.clear(update=True)
+            raise ObjectDeleted()
         return key
 
     def add_shapes_batch(self, shapes_data, **kwargs):
@@ -224,7 +227,11 @@ class FlatCAMObj(QtCore.QObject):
         if self.deleted:
             raise ObjectDeleted()
 
-        return self.shapes.add_batch(shapes_data, tolerance=tol, **kwargs)
+        keys = self.shapes.add_batch(shapes_data, tolerance=tol, **kwargs)
+        if self.deleted:
+            self.shapes.clear(update=True)
+            raise ObjectDeleted()
+        return keys
 
     def add_mark_shape(self, **kwargs):
         tol = kwargs['tolerance'] if 'tolerance' in kwargs else self.drawing_tolerance
@@ -233,6 +240,9 @@ class FlatCAMObj(QtCore.QObject):
             raise ObjectDeleted()
         else:
             key = self.mark_shapes.add(tolerance=tol, layer=0, **kwargs)
+        if self.deleted:
+            self.mark_shapes.clear(update=True)
+            raise ObjectDeleted()
         return key
 
     @property
