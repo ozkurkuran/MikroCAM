@@ -1,0 +1,209 @@
+# MikroCAM Yol Haritası
+
+Bu dosya, "MikroCAM Geliştirme ve Repo Birleştirme Yol Haritası" (26.09.2026) dokümanını verilen
+kararlarla günceller ve spec-kit feature'larına böler. Orijinal araştırma dokümanı
+`docs/research/mikrocam-yol-haritasi.md` konumuna eklenecektir; gerekçe ve ayrıntı için oraya
+başvurulur. Kurallar `.specify/memory/constitution.md` dosyasındadır; çelişki olursa anayasa
+geçerlidir.
+
+## Verilen kararlar (26.09.2026)
+
+| # | Konu | Karar |
+| --- | --- | --- |
+| K0 | Taban kod | **FlatCAM Evo.** MikroCAM, `mekatrol/flatcam`'in fork'u olur. Python 3.13'e taşınmış FlatCAM 8.994 ayrı bir repoda altın referans olarak kalır. |
+| K1 | Lisans ve dağıtım | **Açık kaynak, GitHub'da herkese açık, MIT.** Satış planı yok. PyQt6'nın GPLv3 lisansı açık kaynak dağıtımla uyumludur. |
+| K2 | Doğrudan galvo kontrolü | **Sona ertelendi.** Lazer işleri LightBurn veya EZCAD'e export edilerek çalıştırılır. |
+| K3 | Makine kontrolü | **GRBL + Serial** yeterli. Mach3 ileride düşünülebilir (aşağıdaki nota bakın). |
+| K4 | Öncelik | Önce ilk gerçek lazer PCB'ye giden kısa yol; ardından mekanik CAM stabilizasyonu ve GRBL kontrolü. |
+| K5 | Sona ertelenenler | Arayüzün baştan tasarımı (Faz 3), feature flag sistemi, termal zamanlayıcı, galvo kontrolü. |
+
+## Orijinal yol haritasından farklar
+
+- **Python sürümü:** Python 3.11 geçen her yer **3.13** olarak okunur (CI dahil). "NumPy 1.26"
+  yerine NumPy 2.x kullanılır.
+- **Klasör yapısı:** Yeni kod, yol haritasındaki legacy içi klasörlere (`appPlugins/ToolLaserCAM/`
+  gibi) değil, anayasa I'deki `mikrocam/` katmanlarına yazılır. Evo tarafına yalnızca ince bağlantı
+  kodu eklenir. Böylece upstream Evo güncellemeleri çakışmasız alınır.
+- **Sıra:** Lazer 0.5'ten 0.2'ye çekildi, import (Neo S2) 0.5'e kaydı, Faz 3 UI ertelendi.
+- **Neo S2 port'ları:** Neo S2 8.994 soyundan geldiği için Evo'ya port daha zordur. Her özellik için
+  önce Evo'da bir karşılığı olup olmadığına bakılır; karşılığı varsa port edilmez.
+- **kpkrisnop düzeltmeleri:** Evo'ya doğrudan uygulanabilir. Bunlar hata düzeltmesi olduğu için spec
+  gerektirmez (anayasa: Geliştirme Akışı). Cherry-pick, regresyon testi ve `THIRD_PARTY_CHANGES.md`
+  kaydı yeterlidir.
+- **LaserJobObject:** Baştan yeni bir FlatCAM nesne tipi eklenmez. Önizleme mevcut Geometry nesnesiyle
+  yapılabiliyorsa o kullanılır (anayasa III).
+- **Yeni proje formatı (`.mcam`):** Faz 3'le birlikte ertelendi. Evo'nun proje formatı yetmediği
+  anda (ör. LaserJob'u projede saklamak gerektiğinde) kendi spec'iyle eklenir.
+
+## Hazırlık (spec-kit öncesi, tek seferlik)
+
+**26.09.2026 durum kaydı:** Repolar, tag'ler ve remote'lar oluşturuldu. Kullanıcı seçimiyle
+fork, Bitbucket `Beta_1.0` dalının `e046a2a3` commit'ine güncellendi; ilk fork ve güncel
+upstream ayrı tag'lerle korundu. Spec-kit dosyaları bu repoya aktarıldı. Orijinal araştırma
+belgesinin kaynak dosyası henüz sağlanmadı. Kanıtlar ve kalan iş: [PREPARATION.md](PREPARATION.md).
+
+1. Bu dizindeki 8.994-py3.13 portunu commit edip `baseline-8.994-py313` tag'ini at ve ayrı bir
+   public repo olarak yayınla. Altın referans çıktıları bu repodan üretilecek.
+2. GitHub'da `mekatrol/flatcam`'i **MikroCAM** adıyla fork et. Bu fork'un Bitbucket'taki upstream
+   `marius_stanciu/flatcam_beta`'nın gerisinde kalmadığını kontrol et.
+3. Hiçbir şeyi değiştirmeden `upstream-evo-baseline` tag'ini at.
+4. Şu remote'ları ekle: `evo` (mekatrol), `kpkrisnop`, `neo` (Neo S2), `dwrobel` ve `legacy8994`
+   (1. adımdaki repo). **FlatCAM-Plus remote olarak eklenmez**, çünkü kodunun repoya inmesi temiz oda
+   kuralını (anayasa VII) deler. README'si ve ekran görüntüleri tarayıcıdan incelenir.
+5. Spec-kit dosyalarını (`.specify/`, `.claude/skills/`, `CLAUDE.md`, `docs/`) ve `.gitignore`'daki
+   `.claude/settings.local.json` satırını yeni repoya taşı. Orijinal araştırma dokümanını
+   `docs/research/` altına ekle.
+
+## Kilometre taşları ve dilimler
+
+Spec-kit feature numarasını (`001-…`) sırayla verir. `Kısa ad` sütunu, `/speckit-specify` için
+önerilen addır. Her kilometre taşının sonundaki "Çıktı", gerçekten kullanılabilir bir sonuç olmalıdır.
+
+### 0.1 — Evo tabanı
+
+**Çıktı:** Python 3.13'te çalışan, MikroCAM adını taşıyan ve koruma rayları kurulu Evo.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 1 | `evo-py313-baseline` | Evo'yu Windows 11'de CPython 3.13 x64 ile çalıştırmak. Sürümleri sabitlenmiş `requirements.txt`, `pip check` temiz. 8.994 portundaki `tests/smoke_app.py` ve `tests/test_runtime_compatibility.py` Evo'ya uyarlanır; Evo'nun kendi testleri yeşil olur. | Hazırlık |
+| 2 | `foundation-guardrails` | `mikrocam/core` iskeleti; `pyproject.toml` (`requires-python = ">=3.13,<3.14"`); import-sınır testi; büyüme bütçesine girecek legacy dosyaların listesi ve büyüme testi; GitHub Actions (Windows, 3.13, headless) | 1 |
+| 3 | `branding-and-notices` | Ürün kimliği tek modülde; MikroCAM adı ve About ekranı (FlatCAM ve Evo telifleri korunur); `LICENSE` (MIT), `NOTICE.md`, `THIRD_PARTY_LICENSES/` (PyQt6 GPLv3 dahil), `THIRD_PARTY_CHANGES.md` | 2 |
+
+### 0.2 — İlk lazer PCB
+
+**Çıktı:** Gerber'den fiber lazer yolları üretilir ve LightBurn veya EZCAD'de çalıştırılarak ilk
+gerçek PCB elde edilir.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 4 | `placement-transform` | `core`'da tek bir koordinat transform'u: öteleme, dönme, ayna (alt katman için), origin. Lazer, önizleme ve ileride GRBL aynı transform'u kullanır. | 2 |
+| 5 | `laserjob-model` | `LaserJob` ve pass listesi içeren recipe (JSON dosyası), serileştirme. CNCJob'dan ayrıdır. Gerber'den `core` geometrisine bridge. | 4 |
+| 6 | `laser-contour-hatch` | Contour modları (dış, iç, iz, pad, kart kenarı); açılı hatch ve cross-hatch; clipping. Evo'ya bağlanan Laser CAM paneli ve kanvas önizlemesi. | 5 |
+| 7 | `hatch-interlace-multipass` | Interlace N; pass başına güç, frekans, pulse genişliği ve hız | 6 |
+| 8 | `laser-export-svg-dxf` | LightBurn ve EZCAD'e aktarılabilir SVG/DXF; her pass ayrı katman/renk ya da ayrı dosya olarak | 7 |
+
+### 0.3 — Güvenilir mekanik CAM
+
+**Çıktı:** Evo'nun Drilling, Isolation ve Milling araçları Tool DB değerleriyle doğru G-code üretir.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 9 | `reference-dataset` | 10–20 referans PCB (KiCad, EasyEDA, Altium, Eagle, Proteus); 8.994 ve Evo çıktıları altın referans olarak saklanır; toleranslı karşılaştırma aracı | 1 |
+| — | kpkrisnop düzeltmeleri *(spec yok)* | Tool DB değerlerinin Drilling, Milling, Isolation, NCC, Paint ve CutOut'a global default'a düşmeden aktarılması; drill kopyalanması ve dwell parametresinin aktarımı; silinmiş nesne veya widget'a worker'dan erişim. Her biri ayrı cherry-pick ve regresyon testiyle yapılır. | 9 |
+
+### 0.4 — GRBL makine kontrolü
+
+**Çıktı:** CNC'ye MikroCAM'den bağlanılır, sıfırlanır, iş önceden doğrulanır ve güvenle çalıştırılır.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 10 | `machine-connect-grbl` | MachineController, durum makinesi, GRBL, Serial ve FakeGRBL; bağlanma, durum ve DRO (**yalnızca okuma**) | 2 |
+| 11 | `jog-and-work-zero` | Jog; XY/Z/XYZ sıfırlama; G54 (G55–G59 ihtiyaç doğunca); iş sırasında hareket kilidi | 10 |
+| 12 | `gcode-preflight` | Sınırlar, birim ve mod, eksik feed, güvensiz rapid, Z aralığı, süre tahmini | 4 |
+| 13 | `job-streaming` | ACK'li gönderim, pause/resume/stop, ilerleme; FakeGRBL ile hata senaryoları | 11, 12 |
+| 14 | `dry-run` | Safe-Z / yalnızca XY; spindle kapalı | 13 |
+| 15 | `machine-console` | Terminal ve ham tx/rx logu | 10 |
+
+### 0.5 — İçe aktarma (Neo S2 port'ları)
+
+**Çıktı:** Proteus, Illustrator ve Inkscape kaynaklı SVG/DXF dosyaları doğru ölçekte, drill'leriyle
+birlikte içe aktarılır.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 16 | `svg-scale-transforms` | viewBox ölçeği, birimler, matrix/translate/rotate/scale/skew, miras alınan `stroke-width`, stroke'tan katı geometriye dönüşüm | 9 |
+| 17 | `import-report` | Import kalite raporu: ölçek, birim, geçerlilik, açık path, hassasiyet (veri `core`'da, panel `ui`'da) | 16 |
+| 18 | `svg-drill-detection` | Proteus SVG'den drill çıkarıp Excellon oluşturma | 16 |
+| 19 | `svg-illustrator` | XMP `MaxPageSize`, katman ve gizli nesne filtresi, compound path, clipping | 16 |
+| 20 | `cad-source-detector` | DXF/SVG kaynak tespiti. İlk sürüm: KiCad, Illustrator, Inkscape, Proteus, Unknown. Diğer kaynaklar örnek dosya bulunduğunda eklenir. | 17 |
+| 21 | `geometry-to-excellon` | Çember seçimi, çap ölçümü, çapa göre gruplanmış Excellon | 9 |
+| 22 | `merge-excellon` | Çift merkez ve çakışma kontrolü, tool map'in yeniden kurulması, kaynak nesnelerin korunması | 21 |
+| 23 | `pdf-vector-import` | Önce Evo'nun mevcut PDF aracı değerlendirilir. Sayfa seçimi, kırpma, flip, subpath, karmaşıklık koruması. PyMuPDF AGPL lisanslıdır: yalnızca opsiyonel extra olarak ve izin verici alternatifler (ör. pypdfium2) değerlendirildikten sonra kullanılır. | 17 |
+| 24 | `manufacturing-import-wizard` | Birden fazla dosya bırakma ve katman sınıflandırma (F.Cu, B.Cu, PTH, Edge.Cuts) | 17 |
+
+### 0.6 — Probe ve iş kuyruğu
+
+**Çıktı:** Eğri PCB'lerde auto-level ile izolasyon; birden fazla işin sırayla çalıştırılması.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 25 | `probe-grid-heightmap` | ProbeMap, Fake ile grid probing, kaydetme/yükleme, görselleştirme | 13 |
+| 26 | `autolevel-z-compensation` | Bilineer interpolasyon, G2/G3 segmentasyonu, placement transform ile entegrasyon | 25 |
+| 27 | `job-queue` | Sıralama, iş başına durum, makine durumu kontrolü | 13 |
+
+### 0.7 — Lazer olgunlaştırma
+
+**Çıktı:** Malzeme ve makineye göre kayıtlı recipe'ler; büyük dolu alanlarda ısıyı dağıtan tarama.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 28 | `laser-recipe-db` | Malzeme, makine, lens ve recipe veritabanı ile arayüzü; 0.2'deki JSON recipe'lerin yerini alır | 5 |
+| 29 | `laser-island-tile` | Ada (island) ve dama tahtası (checkerboard) tarama | 6 |
+
+### 0.8 — KiCad 10
+
+**Çıktı:** KiCad'den tek tıklamayla MikroCAM'e üretim paketi.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 30 | `kicad-cli-export` | `kicad-cli` veya `.kicad_jobset` ile DRC, Gerber ve Drill üretip şema sürümlü transfer paketi oluşturma; paketi MikroCAM'e aktarma | 24 |
+| 31 | `kicad-ipc-plugin` | MikroCAM Bridge: IPC API ve kicad-python ile ayrı süreçte çalışan eklenti; toolbar action'ı 30'u çağırır | 30 |
+
+### 1.0 — Ürünleştirme
+
+**Çıktı:** GitHub Releases'tan indirilip kurulabilen MikroCAM.
+
+| Sıra | Kısa ad | Kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 32 | `packaging-windows` | Installer ve portable ZIP; GitHub Releases | 3 |
+| 33 | `camera-fiducial-alignment` | 2 noktayla öteleme ve dönme, 3+ noktayla affine düzeltme; placement transform'u genişletir | 4 |
+
+## Sona ertelenenler (K5)
+
+Aşağıdakiler 1.0'dan sonra ve yalnızca gerçek bir ihtiyaç doğduğunda, her biri kendi spec'iyle ele
+alınır.
+
+| Kısa ad | Ne zaman |
+| --- | --- |
+| `galvo-backend` | Galvo kartı ve SDK/protokol netleşince; ARM akışı, interlock ve framing ile birlikte (anayasa VI) |
+| `focus-z-check` | Galvo backend ile birlikte |
+| `thermal-scheduler` | Interlace ve island ile test kuponlarından ölçüm verisi toplandıktan sonra |
+| `feature-flags` | İlk yarım özellik ortaya çıktığında, tek dosyalık basit bir hâliyle |
+| `workspace-ui-redesign` (Faz 3) | Mevcut Evo arayüzü bir iş akışını gerçekten engellediğinde |
+| `project-format-mcam` | Evo proje formatı yetersiz kaldığında |
+
+**Mach3 notu:** Mach3, GRBL gibi seri porttan satır satır sürülmez. Makineyi PC'de çalışan Mach3
+yazılımının kendisi sürer ve G-code dosyasını kendisi yükler. Bu yüzden "Mach3 desteği", Mach3 ile
+uyumlu G-code üretmek demektir; bu da preprocessor ile yapılır. 8.994'te `Toolchange_Probe_MACH3`
+preprocessor'ı var; Evo'da da bulunduğu doğrulanmalıdır. Doğrudan kontrol spec'i gerekmez.
+Gerekirse yalnızca preprocessor iyileştirilir.
+
+**İhtiyaç doğmadıkça yapılmayanlar** (anayasa III):
+
+- TCP, HTTP ve WebSocket transport'ları; grblHAL, FluidNC, Marlin, Smoothieware ve LinuxCNC
+  controller'ları
+- AI Assistant, 3D önizleme, gamepad ile jog, SD kart / FluidNC dosya sistemi, makrolar
+- Raster PDF vektörleştirme, adaptive grid, bikübik interpolasyon
+- Otomatik güncelleyici, crash raporu, macOS paketi, Docker
+
+## Spec-kit akışı
+
+```text
+/speckit-specify   → specs/NNN-ad/spec.md   (ne ve neden; nasıl değil)
+/speckit-clarify   → belirsizlikleri soru-cevapla kapatır (opsiyonel, plan'dan önce)
+/speckit-plan      → plan.md, research.md, data-model.md + Constitution Check
+/speckit-tasks     → tasks.md
+/speckit-analyze   → spec/plan/tasks tutarlılık raporu (opsiyonel)
+/speckit-implement → görevleri uygular
+```
+
+Hazırlıktan sonra, yeni repoda ilk feature için örnek:
+
+```text
+/speckit-specify MikroCAM'in tabanı olan FlatCAM Evo, Windows 11'de CPython 3.13 (64-bit) ile
+kurulup çalışmalı. Geliştirici sanal ortamı kurup uygulamayı tek komutla açabilmeli; bağımlılıklar
+sabit sürümlerle kurulmalı ve `pip check` temiz olmalı. 8.994 portunda kullanılan duman testi
+(Gerber/Excellon yükleme, isolation ve G-code üretme, projeyi kaydetme ve yeniden açma) Evo'da da
+geçmeli; Evo'nun mevcut testleri yeşil olmalı. Kapsam: yalnızca çalışan bir taban; yeni özellik ve
+yeniden adlandırma yok.
+```

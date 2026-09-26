@@ -13,9 +13,16 @@ nul
 .AppleDouble
 .LSOverride
 .vscode
-/.claude/
+/.claude/*
 /.planning/
 /.worktrees/
 
 # Git worktrees
 .worktrees/
+
+# Shared Spec Kit skills; local assistant settings stay private
+!/.claude/skills/
+!/.claude/skills/**
+.claude/settings.local.json
+.pytest_cache/
+*.log
