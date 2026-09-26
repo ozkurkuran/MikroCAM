@@ -33,6 +33,8 @@ def comparison_case(tmp_path):
         for stage in data['stages']:
             stage['input_path'] = f"{board['id']}/copper.gbr"
         save(expected / f"{board['id']}.json.gz", data)
+        data['engine'] = 'current'
+        data['source']['revision'] = 'a' * 40
         save(candidate / f"{board['id']}.json.gz", data)
     report = tmp_path / 'report.json'
     args = ['--baseline', 'evo', '--goldens', str(expected), '--candidate', str(candidate),
@@ -122,3 +124,24 @@ def test_report_cannot_be_published_inside_golden_directory(tmp_path):
     args, expected, _, _ = comparison_case(tmp_path)
     args[-1] = str(expected / 'new-report.json')
     assert main(args) == 2 and not Path(args[-1]).exists()
+
+
+def test_golden_replay_cannot_impersonate_current_capture(tmp_path):
+    from reference.compare import main
+    args, expected, candidate, report = comparison_case(tmp_path)
+    for path in expected.iterdir():
+        (candidate / path.name).write_bytes(path.read_bytes())
+    assert main(args) == 2
+    assert json.loads(report.read_text())['outcome'] == 'indeterminate'
+
+
+@pytest.mark.parametrize('side', ['baseline', 'candidate'])
+def test_missing_stage_report_names_the_input_and_stage(tmp_path, side):
+    from reference.compare import main
+    args, expected, candidate, report = comparison_case(tmp_path)
+    directory = expected if side == 'baseline' else candidate
+    mutate(directory / 'board-0.json.gz', lambda data: data['stages'].pop())
+    assert main(args) == 2
+    results = json.loads(report.read_text())['results']
+    assert any(item['board_id'] == 'board-0' and item['input_path'] == 'board-0/copper.gbr'
+               and item['stage'] == 'cnc' and side in item['diagnostic'] for item in results)

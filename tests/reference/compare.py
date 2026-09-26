@@ -71,6 +71,29 @@ def _compatible(expected: dict, actual: dict) -> None:
             raise ValueError(f'Runtime evidence differs: {key}; use the same capture environment/harness')
 
 
+def _load_board(path: Path, engine: str, board: dict, manifest: dict,
+                config: dict, results: list) -> dict | None:
+    identifier = board['id']
+    try:
+        return load_capture(path, manifest=manifest, config=config,
+                            expected_engine=engine, expected_board=identifier)
+    except (ValueError, OSError, KeyError) as error:
+        results.append(_outcome(identifier, {}, 'indeterminate', str(error)))
+    # Only structurally valid evidence can supply additional missing-stage context.
+    try:
+        data = load_capture(path, config=config, expected_engine=engine, expected_board=identifier)
+        required = {(file['path'], stage) for file in board['files']
+                    for stage in config['stages'][file['role']]}
+        captured = {(stage['input_path'], stage['stage']) for stage in data['stages']}
+        side = 'candidate' if engine == 'current' else 'baseline'
+        for input_path, stage in sorted(required - captured):
+            results.append(_outcome(identifier, dict(input_path=input_path, stage=stage),
+                                    'indeterminate', f'Missing requested {side} stage'))
+    except (ValueError, OSError, KeyError):
+        pass  # The primary validation failure remains in the report.
+    return None
+
+
 def compare_directories(*, baseline: str, goldens: Path, candidate: Path, manifest_path: Path,
                         config_path: Path, distance_mm: float, area_mm2: float) -> dict:
     """Validate every admitted board's artifacts and preserve complete contextual results."""
@@ -80,10 +103,10 @@ def compare_directories(*, baseline: str, goldens: Path, candidate: Path, manife
     for board in manifest['boards']:
         identifier = board['id']
         try:
-            expected = load_capture(goldens / f'{identifier}.json.gz', manifest=manifest, config=config,
-                                    expected_engine=baseline, expected_board=identifier)
-            actual = load_capture(candidate / f'{identifier}.json.gz', manifest=manifest, config=config,
-                                  expected_board=identifier)
+            expected = _load_board(goldens / f'{identifier}.json.gz', baseline, board, manifest, config, results)
+            actual = _load_board(candidate / f'{identifier}.json.gz', 'current', board, manifest, config, results)
+            if expected is None or actual is None:
+                continue
             _compatible(expected, actual)
             identity = (actual['engine'], actual['source'], actual['runtime'])
             if candidate_identity is not None and identity != candidate_identity:

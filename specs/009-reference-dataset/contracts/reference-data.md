@@ -50,6 +50,8 @@ evidence and not a source of false result changes. Repeat capture compares norma
 `python tests/reference/compare.py --baseline legacy8994|evo --goldens DIRECTORY
 --candidate DIRECTORY --manifest PATH --config PATH --distance-mm NUMBER
 --area-mm2 NUMBER --report PATH`.
+Candidate artifacts must declare engine=current; replaying selected baseline artifacts is
+indeterminate. Reproducibility of baseline captures is checked independently by byte hashes.
 Both tolerances are required, finite nonboolean/nonnegative; no relative/default widening.
 Validate strict schemas, hashes, source identity and common requested configuration before
 comparing outputs. Expected engine-specific optimization is evidence, not a false common-config mismatch.
@@ -81,3 +83,9 @@ contextual error stages, never invented geometry. Capture output files are publi
 without overwriting earlier artifacts. The optional `--board ID` limits capture to one admitted
 board; omitting it captures the complete corpus. Source identity/hashes are checked again before
 publishing each board, and children verify input bytes before invoking actual parsers.
+
+## Frozen artifact inventory
+`goldens/inventory.json` is schema 1, kind `mikrocam.reference-inventory`, with an
+`artifacts` array of exact `{path, sha256, bytes}` records. Relative paths are
+`legacy8994/<board-id>.json.gz` or `evo/<board-id>.json.gz`; every admitted board occurs
+once per engine. SHA256 and byte count bind the exact deterministic compressed artifact.
