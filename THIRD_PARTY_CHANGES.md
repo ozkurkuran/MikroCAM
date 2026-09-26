@@ -118,3 +118,14 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   the real default-order UI rebuild reloads its tools. Database records remain independent.
 - Regression: exact and tolerance matches survive two rebuilds and reach the actual Qt form.
 - MikroCAM commit: `fix: persist drilling database replacements` (this commit).
+
+## 2026-09-27 — Preserve distinct Excellon milling tools
+
+- Source: Krisnop Saimuey, `kpkrisnop/flatcam`, MIT commit
+  `6e13950a6b1568539c1b7b1eba459086cdc5ab05` (Excellon drill duplication).
+- Destination: `appPlugins/ToolMilling.py`, `build_ui_exc()` only; inherited notices retained.
+- Adaptation: sort full-precision tool records once for requested ascending/descending order;
+  preserve source order otherwise. Reset displayed totals at each rebuild.
+- Regression: equal displayed diameters retain two distinct tools and two drill hits through
+  repeated real Qt table rebuilds in all three order modes.
+- MikroCAM commit: `fix: preserve distinct Excellon milling tools` (this commit).
