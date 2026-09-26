@@ -24,8 +24,8 @@ Independent check: supported runtime metadata and a successful hosted PR run.
 
 ## Polish and delivery
 - [X] T012 Document baseline selection and local checks in docs/DEVELOPMENT.md.
-- [ ] T013 Run complete suite and pip check, review hosted CI, record actual evidence in specs/002-foundation-guardrails/validation.md.
-- [ ] T014 Update docs/ROADMAP.md with verified completion and deliver the feature PR.
+- [X] T013 Run complete suite and pip check, review hosted CI, record actual evidence in specs/002-foundation-guardrails/validation.md.
+- [X] T014 Update docs/ROADMAP.md with verified completion and deliver the feature PR.
 
 ## Dependencies and parallel execution
 
