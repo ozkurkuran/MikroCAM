@@ -2,7 +2,7 @@
 
 **Feature Branch**: `003-branding-and-notices`
 **Created**: 2026-09-26
-**Status**: Specified
+**Status**: Implemented
 **Input**: Roadmap slice 3: one product identity, MikroCAM title/About, preserved FlatCAM/Evo
 credits, MIT license and complete dependency notices including PyQt6 GPLv3.
 

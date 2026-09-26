@@ -27,8 +27,8 @@ Independent test: no updater/network calls through product entry points, same le
 - [X] T013 Update README.md with MikroCAM identity, notices and update behavior.
 - [X] T014 Run full tests, import/growth guards and pip check; record results in specs/003-branding-and-notices/validation.md.
 - [X] T015 Run desktop smoke and visually inspect screenshots; record evidence in specs/003-branding-and-notices/validation.md.
-- [ ] T016 Review actual hosted CI for the feature PR and source/notice changes; update specs/003-branding-and-notices/validation.md.
-- [ ] T017 Mark verified completion in docs/ROADMAP.md and deliver the feature PR.
+- [X] T016 Review actual hosted CI for the feature PR and source/notice changes; update specs/003-branding-and-notices/validation.md.
+- [X] T017 Mark verified completion in docs/ROADMAP.md and deliver the feature PR.
 
 ## Dependencies and parallel work
 T001–T002 gate implementation. Tests precede corresponding code. US2 can run independently

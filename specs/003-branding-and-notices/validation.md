@@ -34,7 +34,14 @@ is introduced; the UI acceptance contract is in the spec.
 - Ratchet: **-225/50** against f9bd51f7; total changed legacy source **-248**. New runtime
   modules have at most 72 lines and functions at most 10 lines. No new runtime dependency.
 
-Hosted validation is the remaining delivery gate.
+## Hosted validation and delivery
+
+[Windows run 36271525884](https://github.com/ozkurkuran/MikroCAM/actions/runs/36271525884)
+passed on e7efbb1b: **639 passed, 2 skipped, 310 subtests passed** in 46.86s. The exact
+CPython 3.13.13 x64/pinned environment installed cleanly; pip check, import boundaries,
+growth budget and every notice hash passed after a fresh hosted checkout. Same three SWIG
+warnings and same two upstream empty placeholders. No new test skips.
+All 17 tasks are complete; [feature PR](https://github.com/ozkurkuran/MikroCAM/pull/3).
 
 Review clarified FR-005/SC-002: this source-checkout slice inventories all 58 pins and copies
 their full package licenses and supplied bundled notices. An absent optional native-library
