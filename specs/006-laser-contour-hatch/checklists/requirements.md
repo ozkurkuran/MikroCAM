@@ -1,0 +1,17 @@
+# Specification quality: Laser contour and hatch
+- [X] No implementation details in user requirements.
+- [X] Focused on user value and roadmap slice.
+- [X] Understandable user scenarios.
+- [X] All mandatory sections complete.
+- [X] No unresolved clarification markers.
+- [X] Requirements testable and unambiguous.
+- [X] Success criteria measurable.
+- [X] Success criteria independent of implementation.
+- [X] Acceptance scenarios defined.
+- [X] Edge cases identified.
+- [X] Scope bounded to contour/hatch/preview.
+- [X] Dependencies and assumptions identified.
+- [X] Functional requirements have acceptance coverage.
+- [X] Scenarios cover primary flows.
+- [X] Measurable outcomes match user goals.
+- [X] No speculative infrastructure included.
