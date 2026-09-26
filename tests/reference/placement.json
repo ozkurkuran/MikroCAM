@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "units": "mm",
+  "cases": [
+    {"name": "identity", "placement": {}, "point": [12, 23], "expected": [12, 23]},
+    {"name": "translate", "placement": {"translation": [-5, 8]}, "point": [12, 23], "expected": [7, 31]},
+    {"name": "source-origin", "placement": {"origin": [10, 20]}, "point": [12, 23], "expected": [2, 3]},
+    {"name": "rotate-ccw", "placement": {"rotation_deg": 90}, "point": [2, 3], "expected": [-3, 2]},
+    {"name": "bottom-mirror", "placement": {"mirror_x": true}, "point": [2, 3], "expected": [-2, 3]},
+    {"name": "all-operations", "placement": {"origin": [10, 20], "translation": [100, 200], "rotation_deg": 90, "mirror_x": true}, "point": [12, 23], "expected": [97, 198]},
+    {"name": "clockwise", "placement": {"rotation_deg": -90}, "point": [-2, 3], "expected": [3, 2]},
+    {"name": "full-turn", "placement": {"rotation_deg": 360}, "point": [2, -3], "expected": [2, -3]},
+    {"name": "datum", "placement": {"origin": [10, 20], "translation": [100, 200], "rotation_deg": 41, "mirror_x": true}, "point": [10, 20], "expected": [100, 200]}
+  ]
+}
