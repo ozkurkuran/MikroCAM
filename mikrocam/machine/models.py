@@ -60,6 +60,39 @@ class GrblStatus:
             raise ValueError('Status requires exactly one directly reported position')
 
 
+class ManualPhase(Enum):
+    READY = 'ready'
+    PREPARING = 'preparing'
+    MOVING = 'moving'
+    VERIFYING = 'verifying'
+    CANCELLING = 'cancelling'
+    COMPLETE = 'complete'
+    FAILED = 'failed'
+    ABORTED = 'aborted'
+
+
+@dataclass(frozen=True)
+class ManualObservation:
+    """Owned operation eligibility and uncertainty, distinct from reported machine state."""
+    phase: ManualPhase = ManualPhase.READY
+    action: str | None = None
+    diagnostic: str = ''
+    can_jog: bool = False
+    can_zero: bool = False
+    can_select_g54: bool = False
+    can_cancel: bool = False
+    stop_unverified: bool = False
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.phase, ManualPhase) or self.action not in (None, 'jog', 'zero', 'select_g54'):
+            raise ValueError('Manual observation requires a known phase and action')
+        if not isinstance(self.diagnostic, str) or len(self.diagnostic) > 256:
+            raise ValueError('Manual diagnostic must be a string of at most 256 characters')
+        if any(type(value) is not bool for value in (self.can_jog, self.can_zero, self.can_select_g54,
+                                                    self.can_cancel, self.stop_unverified)):
+            raise ValueError('Manual eligibility and uncertainty flags must be booleans')
+
+
 @dataclass(frozen=True)
 class MachineSnapshot:
     """A session observation; unavailable positions are None rather than zeroes."""
@@ -73,8 +106,11 @@ class MachineSnapshot:
     stale: bool = True
     last_report_at: float | None = None
     diagnostic: str = ''
+    manual: ManualObservation = ManualObservation()
 
     def __post_init__(self) -> None:
+        if not isinstance(self.manual, ManualObservation):
+            raise ValueError('Snapshot requires an immutable manual observation')
         if not isinstance(self.connection, ConnectionState) or not isinstance(self.state, MachineState):
             raise ValueError('Snapshot requires explicit connection and machine states')
         if not isinstance(self.raw_state, str) or not isinstance(self.diagnostic, str):

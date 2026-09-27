@@ -137,8 +137,13 @@ def test_read_timeout_is_empty_bytes_and_read_errors_are_visible(backend):
     transport.close()
 
 
-@pytest.mark.parametrize('data', [b'?', b'$$\n'])
-def test_only_two_read_requests_can_be_written(backend, data):
+@pytest.mark.parametrize('data', [b'?', b'$$\n', b'$G\n', b'$#\n', b'$N\n', b'M5 M9\n',
+                                  b'G54\n', b'\x85', b'\x18', b'\x84',
+                                  b'G10 L20 P1 X0 Y0\n', b'G10 L20 P1 Z0\n',
+                                  b'G10 L20 P1 X0 Y0 Z0\n',
+                                  b'$J=G21 G91 X0.1 F100\n',
+                                  b'$J=G21 G91 Y-1 F300\n', b'$J=G21 G91 Z10 F600\n'])
+def test_canonical_manual_and_read_requests_can_be_written(backend, data):
     from mikrocam.bridge.serial_transport import SerialIO
     handle, _ = backend
     transport = SerialIO('COM7')
@@ -148,8 +153,17 @@ def test_only_two_read_requests_can_be_written(backend, data):
     transport.close()
 
 
-@pytest.mark.parametrize('data', [b'', b'\r\n', b'$X\n', b'$13=0\n', b'G0 X1\n', b'! ', b'\x18',
-                                  b'?\n', b'$$', b'$$\r\n', '?', bytearray(b'?')])
+@pytest.mark.parametrize('data', [b'', b'\r\n', b'$X\n', b'$13=0\n', b'G0 X1\n', b'! ', b'~',
+                                  b'?\n', b'$$', b'$$\r\n', '?', bytearray(b'?'),
+                                  b'M3 S100\n', b'M4\n', b'M7\n', b'$H\n', b'$N0=\n',
+                                  b'G55\n', b'G54\nG0 X1\n', b'$G\r\n', b'\x85\n',
+                                  b'G10 L20 P1 X1 Y0\n', b'G10 L20 P2 X0 Y0\n',
+                                  b'G10 L20 P1 X0\n', b'G10 L20 P1 Y0 X0\n',
+                                  b'$J=G21 G91 X0 F100\n', b'$J=G21 G91 X0.2 F100\n',
+                                  b'$J=G21 G91 X11 F100\n', b'$J=G21 G91 X1 F601\n',
+                                  b'$J=G20 G91 X1 F100\n', b'$J=G21 G90 X1 F100\n',
+                                  b'$J=G21 G91 X1 Y1 F100\n',
+                                  b'$J=G21 G91 Xnan F100\n', b'x' * 81])
 def test_write_allowlist_rejects_commands_without_io(backend, data):
     from mikrocam.bridge.serial_transport import SerialIO
     handle, factory = backend
@@ -181,6 +195,27 @@ def test_backend_write_failure_is_not_hidden(backend):
     with pytest.raises(OSError, match='write timeout'):
         transport.write(b'$$\n')
     transport.close()
+
+
+@pytest.mark.parametrize('data', [b'$J=G21 G91 X1 F100\n', b'G10 L20 P1 Z0\n', b'\x85'])
+def test_manual_partial_write_is_not_retried_or_hidden(backend, data):
+    from mikrocam.bridge.serial_transport import SerialIO
+    handle, _ = backend
+    transport = SerialIO('COM7')
+    transport.open()
+    handle.write_count = len(data) - 1
+    with pytest.raises(OSError, match='write'):
+        transport.write(data)
+    assert [event for event in handle.events if event[0] == 'write'] == [('write', data)]
+    transport.close()
+
+
+def test_allowed_manual_command_on_closed_transport_never_implicitly_opens(backend):
+    from mikrocam.bridge.serial_transport import SerialIO
+    transport = SerialIO('COM7')
+    with pytest.raises(OSError, match='open'):
+        transport.write(b'$J=G21 G91 X1 F100\n')
+    backend[1].assert_not_called()
 
 
 def test_close_failure_remains_visible_and_owned_handle_can_be_retried(backend):

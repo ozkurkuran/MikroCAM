@@ -1,6 +1,8 @@
-"""Bounded physical serial transport for the read-only GRBL connection slice."""
+"""Bounded physical serial transport for supported GRBL read/manual commands."""
 from dataclasses import dataclass
 import unicodedata
+
+from mikrocam.machine.manual_protocol import validate_command
 
 
 @dataclass(frozen=True)
@@ -56,8 +58,7 @@ class SerialIO:
         return data
 
     def write(self, data: bytes) -> int:
-        if not isinstance(data, bytes) or data not in (b'?', b'$$\n'):
-            raise ValueError('Only read-only GRBL status/settings requests are allowed')
+        validate_command(data)
         written = self._connection().write(data)
         if type(written) is not int or written != len(data):
             raise OSError('Serial write did not complete the requested byte count')

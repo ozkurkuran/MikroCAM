@@ -208,7 +208,11 @@ def machine_journey(app, qapp, errors):
     from mikrocam.machine.fake import FakeGRBL
     from mikrocam.machine.models import MachineState
     from mikrocam.ui.machine_panel import open_machine_panel
-    fake = FakeGRBL(status=b'<Idle|MPos:3,4,5|WCO:1,2,3>\n')
+    fake = FakeGRBL()
+    fake.machine_position = (3., 4., 5.)
+    fake.work_system = 'G55'
+    fake.offsets['G54'] = fake.offsets['G55'] = (1., 2., 3.)
+    fake.units, fake.distance, fake.spindle, fake.coolant = 'G20', 'G90', 'M3', ('M8',)
     with patch('mikrocam.ui.machine_panel.list_ports', return_value=(PortInfo('FAKE', 'Smoke simulator'),)):
         action = next(action for action in app.ui.menu_plugins.actions() if action.text() == 'Machine')
         action.trigger()
@@ -231,10 +235,46 @@ def machine_journey(app, qapp, errors):
         pump_until(qapp, lambda: panel.last_snapshot.machine_position_mm == (3., 4., 5.),
                    errors, 'simulated machine reconnection')
     assert set(fake.writes) == {b'?', b'$$\n'}
+    print('MACHINE_READ_ONLY_OK', flush=True)
+    machine_manual_journey(panel, qapp, fake, errors)
     screenshot = ROOT / '.venv/machine-smoke.png'
     assert app.ui.grab().save(str(screenshot))
-    print('MACHINE_READ_ONLY_OK', screenshot, flush=True)
+    print('MACHINE_MANUAL_OK', screenshot, flush=True)
     return fake
+
+
+def machine_manual_journey(panel, qapp, fake, errors):
+    from mikrocam.machine.manual_protocol import validate_command
+    from mikrocam.machine.models import ManualPhase
+    controls = panel.manual_controls
+    pump_until(qapp, lambda: controls.select_g54_button.isEnabled(), errors, 'G54 admission')
+    controls.select_g54_button.click()
+    pump_until(qapp, lambda: panel.last_snapshot.manual.phase is ManualPhase.COMPLETE
+               and panel.last_snapshot.manual.action == 'select_g54', errors, 'G54 selection')
+    assert fake.work_system == 'G54' and b'G54\n' in fake.writes
+    controls.jog_buttons[('X', 1)].click()
+    assert not controls.jog_buttons[('X', 1)].isEnabled()
+    pump_until(qapp, lambda: panel.last_snapshot.manual.phase is ManualPhase.COMPLETE
+               and panel.last_snapshot.manual.action == 'jog', errors, 'bounded X jog')
+    assert abs(panel.last_snapshot.machine_position_mm[0] - 3.1) < 1e-9
+    assert fake.units == 'G20' and fake.distance == 'G90'
+    assert fake.spindle == 'M5' and fake.coolant == ('M9',)
+    controls.zero_buttons['XY'].click()
+    pump_until(qapp, lambda: panel.last_snapshot.manual.phase is ManualPhase.COMPLETE
+               and panel.last_snapshot.manual.action == 'zero', errors, 'persistent XY zero')
+    assert panel.last_snapshot.work_position_mm == (0., 0., 2.)
+    assert fake.offsets['G55'] == (1., 2., 3.) and fake.offsets['G54'][2] == 3.
+    controls.jog_buttons[('Y', 1)].click()
+    pump_until(qapp, lambda: panel.last_snapshot.manual.phase is ManualPhase.MOVING,
+               errors, 'owned Y jog')
+    controls.cancel_button.click()
+    pump_until(qapp, lambda: b'\x85' in fake.writes and panel.last_snapshot.manual.can_jog,
+               errors, 'verified jog cancellation')
+    assert not panel.last_snapshot.manual.stop_unverified
+    assert b'G10 L20 P1 X0 Y0\n' in fake.writes and b'M5 M9\n' in fake.writes
+    for command in fake.writes:
+        validate_command(command)
+    print('MACHINE_JOG_G54_CANCEL_OK', fake.machine_position, flush=True)
 
 
 def render_and_quit(app, qapp, errors, machine_transport):
