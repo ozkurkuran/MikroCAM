@@ -6,6 +6,9 @@ last-source options/units/zeros and does not regenerate source_file or check ove
 therefore cannot safely use this path. Inspect tools[tooldia, drills, slots] and obj.units directly;
 solid_geometry, source_file and units_found are caches/history. Existing project serialization stores
 tools/units and Excellon source text. No source reparsing or inferred unit fallback is appropriate.
+The parser creates operation keys as it encounters them, then normalizes both keys at completion
+(ParseExcellon.py990–993). Sparse programmatic/intermediate tool records are also accepted: an absent
+key means empty; present malformed values and wholly empty tools remain errors. Tests cover both forms.
 
 ## Decision: preserve straight slots and exact diameter groups
 A tool can contain round drill Points and slot endpoint pairs. Dropping slots would silently change

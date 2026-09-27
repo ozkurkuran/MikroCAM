@@ -19,11 +19,14 @@ Final `validate_excellon_tools` uses the same distance rule and rejects any conf
 `bridge.excellon_merge.snapshot_excellon(owner:object)->MergeSource`.
 Require kindexcellon, explicit trimmed printable name, currentMM/IN, tools exactdict1..1000.
 Keys exactintabs<=1e18 or nonemptyUTF8str<=240bytes, stablelabels int:value/str:value sorted lexical.
-Each tool exactdict with positivefinite tooldia and drills/slots list/tuple. Require both keys (normal
-host model supplies them), totaloperations1..1000 per source; emptytools rejected. Drill entries
+Each tool exactdict with positivefinite tooldia and drills/slots list/tuple when present. An absent
+drills or slots key is an empty sequence (normal imported tools may omit either); a present malformed
+value is rejected. Totaloperations1..1000 per source; emptytools rejected. Drill entries
 exact nonempty valid planar ShapelyPoint; slot entrieslist/tuplelen2 such points with distinct endpoints.
 Check bounded counts before converting/hashing. Hash name,units,typedlabels,original diametervalue,
-original pointWKB, operationtype/order/structure in an unambiguous length-framed stream. Exclude
+original pointWKB, operationtype/order/counts in an unambiguous length-framed stream. Equivalent
+list/tuple containers and absent/empty operation keys have identical logical fingerprints, including
+the normal JSON tuple-to-list roundtrip. Exclude
 source_file/solid_geometry/tool.data from geometry authority; never mutate/read external files.
 Normalize every physical number once to mm. Missing units, invalidtooldata, nonfinite,3D,degenerate
 slots, bounds andunsupportedtoolkeys fail entire snapshot. No cachefallback.
@@ -38,7 +41,8 @@ withsourceguardthat verifiesboth beforedestinationwrite andafterlocalexportbefor
 ## Shared factory
 Add `bridge.excellon.create_excellon_operations(app,tools:tuple[ExcellonTool,...],name,*,source_guard=None)`.
 Validatefinaltools,existingname/unitsrules; oneMMtohostconversion,completegeometry/localexport,
-normaldestinationdefaults,exactinitializedobjectreturn andexistingtwoguards. Generalized initializer
+normaldestinationdefaults,exactinitializedobjectreturn andexistingtwoguards. Reject an emitted
+zero-diameter tool header caused by export quantization before publication. Generalized initializer
 sets both drills(Point) andslots(tuplePoint,Point). Keep `create_excellon_tools` publicAPI validating
 existingDrillTool thenadaptingintonewtoolrecords; noSVG/Geometrybehaviorchange or secondfactorybody.
 
