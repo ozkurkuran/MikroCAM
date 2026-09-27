@@ -102,8 +102,12 @@ class PdfImportDialog(QtWidgets.QDialog):
         ):
             edit = QtWidgets.QLineEdit(self)
             edit.setPlaceholderText(_(label))
+            edit.setAccessibleName(_(label))
             setattr(self, name + "_edit", edit)
-            row.addWidget(edit)
+            column = QtWidgets.QVBoxLayout()
+            column.addWidget(QtWidgets.QLabel(_(label), self))
+            column.addWidget(edit)
+            row.addLayout(column)
             edit.textChanged.connect(self._invalidate)
         form.addRow(row)
         self.flip_check = QtWidgets.QCheckBox(
