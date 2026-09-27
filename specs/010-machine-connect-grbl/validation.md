@@ -1,6 +1,6 @@
 # Validation: Read-only GRBL connection
 
-Status: implementation and local validation complete; final-head hosted CI and merge pending.
+Status: complete and merged through PR #11 after final-head Windows CI passed.
 No physical hardware was connected or validated.
 
 ## Pre-implementation analysis
@@ -21,7 +21,7 @@ motion. Constitution VI active-motion fail-safe obligations apply when active co
 | SC-002 | T017: analytic mm/inch positions within 1e-9 mm |
 | SC-003 | T012, T022: deterministic stale deadline and real worker close timing |
 | SC-004 | T022-T023: ten sessions and desktop CAM smoke |
-| SC-005 | T025 local full suite passes; T027 hosted Windows CI remains pending |
+| SC-005 | T025 local full suite and T027 final-head Windows CI passed |
 
 T026 reviewed all 12 functional requirements, five success criteria and all eight gates.
 The following implementation checks passed; coverage review does not claim pending CI passed:
@@ -104,8 +104,8 @@ have not been hardware-tested. This panel only reads state/settings; disconnect 
 communication and cannot stop externally initiated motion. Motion/emission validation belongs
 to later slices.
 
-[PR #11](https://github.com/ozkurkuran/MikroCAM/pull/11) is draft. Final-head Windows
-[CI run 36281041456](https://github.com/ozkurkuran/MikroCAM/actions/runs/36281041456)
-is pending. T027 stays open until publication/final-head CI evidence is complete; T028 stays
-open until the validated head is merged and delivery links are updated. No CI or merge success
-is claimed here.
+[PR #11](https://github.com/ozkurkuran/MikroCAM/pull/11) merged the validated final head
+`3393e629036be1348b15fd976a02ab5f42d83c80` after successful Windows
+[CI run 36281288605](https://github.com/ozkurkuran/MikroCAM/actions/runs/36281288605).
+The earlier implementation head also passed run36281041456; final-head run36281292989
+independently passed as well. Delivery is complete. This post-merge record changes docs only.

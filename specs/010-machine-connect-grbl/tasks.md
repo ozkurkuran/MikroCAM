@@ -38,8 +38,8 @@
 - [x] T024 Document usage, serial-open reset caveat and read-only disconnect meaning in docs/MACHINE_CONTROL.md and quickstart.md.
 - [x] T025 Run full pytest, import/growth/size checks and actual desktop smoke; record exact commands/results in validation.md.
 - [x] T026 Review all FR/SC coverage, eight constitution gates and no-new-dependency/license implications in validation.md.
-- [ ] T027 Update docs/ROADMAP.md with completed evidence, publish PR and verify Windows CI against the final head.
-- [ ] T028 Merge only the validated final head and update delivery links in validation.md.
+- [x] T027 Update docs/ROADMAP.md with completed evidence, publish PR and verify Windows CI against the final head.
+- [x] T028 Merge only the validated final head and update delivery links in validation.md.
 
 ## Dependencies and parallel work
 T001-T003 precede runtime changes. Tests precede their implementation. Parser/models/Fake and
