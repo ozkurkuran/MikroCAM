@@ -61,6 +61,7 @@ class GeometryObject(FlatCAMObj, Geometry):
         Geometry.__init__(self, geo_steps_per_circle=self.circle_steps, app=app)
 
         self.kind = "geometry"
+        self.source_file = ''
 
         self.obj_options.update({
             "plot": True,
@@ -166,7 +167,7 @@ class GeometryObject(FlatCAMObj, Geometry):
         # Attributes to be included in serialization
         # Always append to it because it carries contents
         # from predecessors.
-        self.ser_attrs += ['obj_options', 'kind', 'multigeo', 'fill_color', 'outline_color', 'alpha_level']
+        self.ser_attrs += ['obj_options', 'kind', 'multigeo', 'fill_color', 'outline_color', 'alpha_level', 'source_file']
 
     def build_ui(self):
         try:
