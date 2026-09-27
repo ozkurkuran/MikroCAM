@@ -17,6 +17,10 @@ def _plain(text: str) -> str:
     return ''.join(char if char.isprintable() else char.encode('unicode_escape').decode('ascii') for char in text)
 
 
+def _measure(value: float) -> str:
+    return f'{value:.6f}'.rstrip('0').rstrip('.') if abs(value) >= 1e-6 else f'{value:.6g}'
+
+
 class SvgDrillDialog(QtWidgets.QDialog):
     def __init__(self, app: Any, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent if parent is not None else getattr(app, 'ui', None))
@@ -141,7 +145,7 @@ class SvgDrillDialog(QtWidgets.QDialog):
             checkbox.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsUserCheckable)
             checkbox.setCheckState(QtCore.Qt.CheckState.Unchecked)
             self.table.setItem(row, 0, checkbox)
-            values = (repr(candidate.center_mm[0]), repr(candidate.center_mm[1]), repr(candidate.diameter_mm),
+            values = (_measure(candidate.center_mm[0]), _measure(candidate.center_mm[1]), _measure(candidate.diameter_mm),
                       _plain(candidate.opening_id) + ' / ' + _plain(candidate.pad_id))
             for column, value in enumerate(values, 1):
                 self.table.setItem(row, column, QtWidgets.QTableWidgetItem(value))
@@ -171,7 +175,7 @@ class SvgDrillDialog(QtWidgets.QDialog):
         lines = [_('Selected holes: {holes}; proposed tools: {tools}.').format(holes=len(indices), tools=len(tools))]
         for index, tool in enumerate(tools[:20], 1):
             lines.append(_('T{tool}: {diameter} mm; {count} holes').format(
-                tool=index, diameter=repr(tool.diameter_mm), count=len(tool.centers_mm)))
+                tool=index, diameter=_measure(tool.diameter_mm), count=len(tool.centers_mm)))
         if len(tools) > 20:
             lines.append(_('{count} additional tool groups omitted from this summary.').format(count=len(tools)-20))
         self.grouping_label.setText('\n'.join(lines))
