@@ -66,4 +66,9 @@ Fixed SVG1.1 external DTD inspection is offline; existing geometry import still 
 Thus real KiCad SVG verifies source inspection, not new physical import compatibility.
 
 ## Delivery
-Implementation commit, PR, final-head Windows CI and merge pending.
+Runtime commit: `2fac34880ce96d9a5187d1d020552f58b99dfa5c`.
+Final reviewed head: `38822cb4e8d360cd4a25654fdd37889d3c8d1c6f`.
+[PR 21](https://github.com/ozkurkuran/MikroCAM/pull/21) merged as
+`5406a0e3148ca059456f6b107f2affc3d9402f0c` after final-head
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36295494584)
+passed in 6m37s. Delivery documentation changes no runtime.

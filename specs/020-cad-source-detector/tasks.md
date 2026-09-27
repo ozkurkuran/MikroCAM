@@ -47,9 +47,9 @@ Three stories, 38 tasks. Tests precede core/domain implementation.
 - [x] T033 Run final runtime full suite and record validation.md.
 - [x] T034 Run actual desktop all journeys and inspect screenshot for validation.md.
 - [x] T035 Update docs/ROADMAP.md and publish focused PR after019 delivery.
-- [ ] T036 Verify final-head Windows CI and record validation.md.
-- [ ] T037 Merge validated head and record delivery links in validation.md.
-- [ ] T038 Finish tasks.md/docs/ROADMAP.md without overstating vendor/hardware coverage.
+- [x] T036 Verify final-head Windows CI and record validation.md.
+- [x] T037 Merge validated head and record delivery links in validation.md.
+- [x] T038 Finish tasks.md/docs/ROADMAP.md without overstating vendor/hardware coverage.
 
 Dependencies: shared immutable records -> SVG and DXF parsers in parallel -> owner/UI integration ->
 full validation. Sol owns records/codec; another Sol owns independent DXF parser and fixture assembly.
