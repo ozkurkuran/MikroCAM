@@ -42,6 +42,10 @@ Existing MachineController connect/disconnect/tick/snapshot remains. Add typed
 `request_manual(request) -> None`, `cancel_jog() -> None`, `abort() -> None` on its sole
 owner thread. No raw send method is exposed to UI. A concrete ManualControl collaborator
 owns the operation phases; it must not open/read/close transport independently.
+`set_interrupt_check(check)` installs the worker's thread-safe priority-event reader. The
+domain checks it again immediately before motion/persistent writes, including after a bounded
+read returns. It performs no I/O or GUI access; an already in-flight write remains subject to
+the next bounded cancel/abort iteration.
 
 The worker exposes `submit(request) -> bool` for one immutable intent slot, `cancel_jog()`,
 `abort()` and existing `stop()`. Thread-safe stop/abort/cancel events take priority over the slot.
