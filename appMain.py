@@ -1839,6 +1839,12 @@ class App(QtCore.QObject):
 
         self.ui.menufileimport.addAction(_('PDF vector page...')).triggered.connect(show_pdf_vectors)
 
+        def show_manufacturing_import():
+            from mikrocam.ui.manufacturing_import import open_manufacturing_import
+            open_manufacturing_import(self)
+
+        self.ui.menufileimport.addAction(_('Production file set...')).triggered.connect(show_manufacturing_import)
+
         def show_geometry_drills():
             from mikrocam.ui.geometry_drills import open_geometry_drills
             open_geometry_drills(self)

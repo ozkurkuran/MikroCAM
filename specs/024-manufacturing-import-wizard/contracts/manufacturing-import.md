@@ -27,13 +27,19 @@ occurs here. Evidence/issue order deterministic, hash/name make same-content fil
 
 ## Gerber command boundary
 
-importers.gerber_statements.gerber_statements(data:bytes)->tuple[str,...] decodes Latin1 exactly,
+importers.gerber_statements.gerber_statements(data:bytes,*,retain_attributes:bool=False)->tuple[str,...] decodes Latin1 exactly,
 splits complete ordinary `*` commands and `%...%` blocks, preserves complete AM macro bodies,
 splits combined non-AM extended statements into individually wrapped blocks, and removes only
 TF/TA/TO/TD attribute statements. Ordinary G04 comments are retained/ignored as comments, including
 metadata comment variants, without discarding adjacent drawing commands. Whitespace outside
 commands is ignored, unfinished/malformed delimiters fail. Bound100000commands,1MiB/statement.
 Never copy the legacy parser; feed these statements to existing Gerber.parse_lines.
+The classifier uses retain_attributesTrue, sharing complete statement boundaries without duplicating
+a lexer. A UTF8 BOM is removed only from the parsing copy. Non-AM extended statements are scanned
+incrementally, not split into an unbounded temporary list before checking the command cap.
+importers.manufacturing_lines.excellon_lines(data)->tuple[str,...] shares bounded universal-newline
+reading between classifier and parser. StringIO.readline(1MiB+1) checks each line before append,
+100000lines maximum; malformedcontrolbytes reject. Originalbytes remain unchanged.
 
 ## Files and review
 
@@ -57,7 +63,8 @@ Each initializer guards current source hash before and after assignments, parses
 bytes and requires successful nonempty finite valid planar material. Gerber parse_lines return
 None/drill accepted; fail/defective/unknown result becomes initializer'fail'. Excellon parse_lines
 mustreturnNone then create_geometry mustnotfail and mustcontain operation material. Rejectempty/
-invalid returned material. Gerber artwork retains Gerber kind even if layer role is PTH/NPTH.
+invalid returned material. Output validation bounds100000geometrynodes/depth64 and1000000coordinates
+per material tree withfinitecoordinatesabs<=1e9 inparserunits. Gerber artwork retains Gerber kind even if layer role is PTH/NPTH.
 Persist exactsourcebytes via Latin1 source_file and strict manufacturing_source report before
 secondguard. Preserve normal factory tool/options defaults; do not recreate tools outside parser.
 Normal AppObject.new_object performs one source-unit→host-unit conversion. Current hostunits must

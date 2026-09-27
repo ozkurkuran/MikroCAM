@@ -97,6 +97,7 @@ class ExcellonObject(FlatCAMObj, Excellon):
 
         # store the source file here
         self.source_file = ""
+        self.manufacturing_source = None
 
         self.multigeo = False
         self.units_found = self.app.app_units
@@ -111,7 +112,8 @@ class ExcellonObject(FlatCAMObj, Excellon):
         # Attributes to be included in serialization
         # Always append to it because it carries contents
         # from predecessors.
-        self.ser_attrs = ['obj_options', 'kind', 'fill_color', 'outline_color', 'alpha_level'] + self.ser_attrs
+        self.ser_attrs = ['obj_options', 'kind', 'fill_color', 'outline_color', 'alpha_level',
+                          'manufacturing_source'] + self.ser_attrs
 
     def set_ui(self, ui):
         """
@@ -264,6 +266,9 @@ class ExcellonObject(FlatCAMObj, Excellon):
         :rtype:
         """
         FlatCAMObj.build_ui(self)
+
+        from mikrocam.ui.manufacturing_report import attach_manufacturing_report
+        attach_manufacturing_report(self)
 
         self.units = self.app.app_units.upper()
 

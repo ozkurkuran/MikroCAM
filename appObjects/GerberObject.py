@@ -83,6 +83,7 @@ class GerberObject(FlatCAMObj, Gerber):
         self.source_file = ""
         self.import_report = None
         self.cad_source = None
+        self.manufacturing_source = None
 
         # list of rows with apertures plotted
         self.marked_rows = []
@@ -114,7 +115,7 @@ class GerberObject(FlatCAMObj, Gerber):
         # Always append to it because it carries contents
         # from predecessors.
         self.ser_attrs = ['obj_options', 'kind', 'fill_color', 'outline_color', 'alpha_level',
-                          'import_report', 'cad_source'] + self.ser_attrs
+                          'import_report', 'cad_source', 'manufacturing_source'] + self.ser_attrs
 
     def set_ui(self, ui):
         """
@@ -130,6 +131,8 @@ class GerberObject(FlatCAMObj, Gerber):
         attach_import_report(self)
         from mikrocam.ui.cad_source import attach_cad_source
         attach_cad_source(self)
+        from mikrocam.ui.manufacturing_report import attach_manufacturing_report
+        attach_manufacturing_report(self)
         self.app.log.debug("GerberObject.set_ui()")
 
         self.units = self.app.app_units.upper()

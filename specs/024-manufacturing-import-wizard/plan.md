@@ -20,6 +20,7 @@ schema1 stores bounded historical classification evidence. Existing SVG/PDF/CAD 
 
 Bounds:64 paths,16MiB/file,64MiB/set,100000 Gerber statements/Excellon lines,1MiB individual
 statement,32 evidence items/20 issues,256-byte names,4096-byte paths,64KiB persisted report.
+Output validation permits100000geometrynodes/depth64 and1000000coordinates per material tree.
 File paths must resolve to regular files. Metadata uses bounded complete markers; source parsing
 uses the same immutable bytes that were inspected. These are input limits, not new complexity
 guarantees for the legacy geometric parsers. Their reported fail/defective results stop publication.
@@ -42,6 +43,7 @@ mikrocam/core/manufacturing_models.py: bounded immutable evidence, inspection, f
 review and report records. manufacturing_codec.py: strict optional schema-one report codec.
 mikrocam/importers/manufacturing_classify.py: conservative source/filename proposals and conflicts.
 mikrocam/importers/gerber_statements.py: bounded statements preserving macros and compact commands.
+mikrocam/importers/manufacturing_lines.py: bounded shared Excellon lines without eager splitting.
 mikrocam/bridge/manufacturing_import.py: inspect files, exact revalidation, sequential guarded
 normal factories and receipt iterator. Additional concrete helper module only if function limits require.
 mikrocam/ui/manufacturing_import.py: dialog/drop/review/worker state; manufacturing_report.py:
