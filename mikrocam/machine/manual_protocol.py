@@ -9,7 +9,7 @@ from .models import XYZ, _validate_xyz
 
 
 ZERO_TOLERANCE_MM = .005
-_FIXED_COMMANDS = (b'?', b'$$\n', b'$G\n', b'$#\n', b'$N\n', b'M5 M9\n',
+_FIXED_COMMANDS = (b'?', b'$$\n', b'$G\n', b'$#\n', b'$N\n', b'$I\n', b'M5 M9\n',
                    b'G54\n', b'\x85', b'\x18', b'\x84')
 _ZERO_COMMANDS = (b'G10 L20 P1 X0 Y0\n', b'G10 L20 P1 Z0\n', b'G10 L20 P1 X0 Y0 Z0\n')
 _JOG = re.compile(rb'\$J=G21 G91 [XYZ]-?(?:0\.1|1|10) F(?:100|300|600)\n\Z')

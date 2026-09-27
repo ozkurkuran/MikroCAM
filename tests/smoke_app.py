@@ -396,6 +396,8 @@ def run_smoke(sandbox, state):
         laser_journey(app, qapp, sandbox, errors)
         laser_export_journey(app, qapp, sandbox, errors)
         machine_transport = machine_journey(app, qapp, errors)
+        from smoke_console import console_journey
+        console_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_preflight import preflight_journey
         preflight_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         from smoke_job import job_journey

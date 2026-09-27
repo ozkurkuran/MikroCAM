@@ -132,6 +132,8 @@ class FakeGRBL:
             self.inject(self._status_report())
         elif data == b'$$\n':
             self.inject(''.join(f'${key}={value}\r\n' for key, value in self.job_settings.items()).encode() + b'ok\r\n')
+        elif data == b'$I\n':
+            self.inject(b'[VER:1.1h:FakeGRBL]\r\n[OPT:V,15,128]\r\nok\r\n')
         elif data == b'$N\n':
             self.inject(''.join(f'$N{i}={block}\r\n' for i, block in enumerate(
                 self.startup_blocks)).encode('ascii') + b'ok\r\n')

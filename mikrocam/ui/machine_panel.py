@@ -14,11 +14,13 @@ from mikrocam.machine.manual_models import JogRequest, SelectG54Request, ZeroReq
 from mikrocam.core.gcode_models import PreflightReport, SourceSnapshot
 from mikrocam.core.cnc_job import PreparedJob
 from mikrocam.machine.job_models import StartJobRequest
+from mikrocam.machine.console_models import ConsoleRequest
 from mikrocam.machine.models import ConnectionState, MachineSnapshot, MachineState
 from .machine_controls import MachineManualControls
 from .machine_worker import MachineWorker
 from .job_controls import JobControls
 from .job_prepare_worker import JobPrepareWorker
+from .console_controls import ConsoleControls
 
 
 _ = getattr(builtins, '_', gettext.gettext)
@@ -70,6 +72,9 @@ class MachinePanel(QtWidgets.QDockWidget):
         manual_scroll.setWidget(self.manual_controls)
         layout.addWidget(manual_scroll, 1)
         self._setup_job_controls(content, layout)
+        self.console_controls = ConsoleControls(content)
+        self.console_controls.query_requested.connect(self.submit_console)
+        layout.addWidget(self.console_controls)
         self.setWidget(content)
         self.refresh_button.clicked.connect(self.refresh_ports)
         self.connect_button.clicked.connect(self.connect_machine)
@@ -254,16 +259,29 @@ class MachinePanel(QtWidgets.QDockWidget):
         """Ask the I/O owner to cancel/abort owned activity before bounded closure."""
         self.job_controls.reset_confirmation()
         if self._worker is None:
-            self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job)
+            self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job,
+                                                 console=self.last_snapshot.console, wire=self.last_snapshot.wire)
             self._render_snapshot()
             self._update_actions()
             return
         self._stopping = True
         self._worker.stop()
-        self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job)
+        self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job,
+                                             console=self.last_snapshot.console, wire=self.last_snapshot.wire)
         self._render_snapshot()
         self.status_label.setText(_('Closing communication…'))
         self._update_actions()
+
+    @QtCore.pyqtSlot(object)
+    def submit_console(self, request: ConsoleRequest) -> None:
+        """Use the existing typed intent slot; never perform GUI-thread I/O."""
+        try:
+            accepted = self._worker is not None and not self._stopping and self._worker.submit(request)
+        except ValueError as error:
+            self.console_controls.reject_pending(str(error))
+            return
+        if not accepted:
+            self.console_controls.reject_pending(_('Connection or operation is unavailable.'))
 
     @QtCore.pyqtSlot(object)
     def submit_manual(self, request: JogRequest | ZeroRequest | SelectG54Request) -> None:
@@ -350,6 +368,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         self.status_label.setText(status)
         self.manual_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
         self.job_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
+        self.console_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
 
     def shutdown(self) -> bool:
         """Join owned I/O before disposal; retain the live QThread if a driver violates its bound."""

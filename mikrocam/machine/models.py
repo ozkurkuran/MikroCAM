@@ -4,6 +4,8 @@ from enum import Enum
 from math import isfinite
 
 from .job_models import JobObservation
+from .console_models import ConsoleObservation
+from .wire_log import WireSnapshot
 
 
 XYZ = tuple[float, float, float]
@@ -110,8 +112,12 @@ class MachineSnapshot:
     diagnostic: str = ''
     manual: ManualObservation = ManualObservation()
     job: JobObservation = JobObservation()
+    console: ConsoleObservation = ConsoleObservation()
+    wire: WireSnapshot = WireSnapshot()
 
     def __post_init__(self) -> None:
+        if not isinstance(self.console, ConsoleObservation) or not isinstance(self.wire, WireSnapshot):
+            raise ValueError('Snapshot requires immutable console and wire observations')
         if not isinstance(self.job, JobObservation):
             raise ValueError('Snapshot requires an immutable job observation')
         if not isinstance(self.manual, ManualObservation):
