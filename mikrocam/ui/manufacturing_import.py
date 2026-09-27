@@ -282,17 +282,20 @@ class ManufacturingImportDialog(QtWidgets.QDialog):
                 ("unknown",) + ROLES, known.role_hint if known else "unknown", editable
             ),
         )
-        detail = (
-            (
-                known.units_hint
-                + "\n"
-                + "\n".join([v.detail for v in known.evidence] + list(known.issues))
+        if known:
+            summary = f"{known.units_hint} · {known.format_hint} / {known.role_hint}"
+            if known.issues:
+                summary += " · " + _("{count} issue(s)").format(count=len(known.issues))
+            detail = "\n".join(
+                _plain(value)
+                for value in (known.units_hint,) + tuple(
+                    evidence.detail for evidence in known.evidence
+                ) + known.issues
             )
-            if known
-            else file.error
-        )
-        item = QtWidgets.QTableWidgetItem(_plain(detail))
-        item.setToolTip(_plain(detail))
+        else:
+            summary = detail = _plain(file.error)
+        item = QtWidgets.QTableWidgetItem(summary)
+        item.setToolTip(detail)
         item.setFlags(QtCore.Qt.ItemFlag.ItemIsEnabled)
         self.table.setItem(row, 4, item)
         name = QtWidgets.QTableWidgetItem(Path(known.source_name).stem if known else "")
