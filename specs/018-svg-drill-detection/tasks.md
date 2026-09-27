@@ -43,10 +43,10 @@ Input: spec/plan/research/data-model/contracts. Three stories, 36 tasks, tests f
 - [x] T030 Run full pytest/reference/growth checks at exact runtime head and record validation.md.
 - [x] T031 Run actual desktop all journeys via tests/smoke_app.py and inspect screenshot.
 - [x] T032 Record complete results and real Proteus/physical limitations in validation.md.
-- [ ] T033 Update docs/ROADMAP.md and publish focused PR after017 delivery.
-- [ ] T034 Verify final-head Windows CI and record its link/head in validation.md.
-- [ ] T035 Merge validated head after017 and record PR/merge in validation.md.
-- [ ] T036 Mark delivered tasks and roadmap without inventing physical/vendor validation.
+- [x] T033 Update docs/ROADMAP.md and publish focused PR after017 delivery.
+- [x] T034 Verify final-head Windows CI and record its link/head in validation.md.
+- [x] T035 Merge validated head after017 and record PR/merge in validation.md.
+- [x] T036 Mark delivered tasks and roadmap without inventing physical/vendor validation.
 
 Dependencies: frozen contract -> source paint facts -> US1 detector; grouping and thin UI can run
 in separate files alongside detector after frozen records. Bridge/integration follows contracts;
