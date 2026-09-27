@@ -10,6 +10,24 @@ from mikrocam.ui.manufacturing_import import ManufacturingImportDialog
 import mikrocam.ui.manufacturing_import as module
 
 
+def test_evidence_summary_and_multiline_tooltip_escape_details(dialog, monkeypatch):
+    from mikrocam.core.manufacturing_models import ManufacturingEvidence
+
+    value, _ = dialog
+    known = inspection(
+        evidence=(ManufacturingEvidence("filename", detail="Filename\nF.Cu\x00"),),
+        issues=("Role conflict\tIN",),
+    )
+    monkeypatch.setattr(
+        module, "inspect_manufacturing_files",
+        lambda paths: (ManufacturingFile(paths[0], b"data", known),),
+    )
+    value.inspect_files()
+    item = value.table.item(0, 4)
+    assert item.text() == "MM · gerber / F.Cu · 1 issue(s)"
+    assert item.toolTip() == "MM\nFilename\\nF.Cu\\x00\nRole conflict\\tIN"
+
+
 @pytest.fixture
 def dialog(qtbot, monkeypatch, tmp_path):
     parent = QtWidgets.QMainWindow()
