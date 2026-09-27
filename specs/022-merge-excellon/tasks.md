@@ -46,9 +46,9 @@ Input: spec, plan, research, data model and contracts. Three stories, 39 tasks. 
 - [x] T033 Run complete suite at final runtime head and record validation.md.
 - [x] T034 Run actual desktop all journeys and inspect screenshot for validation.md.
 - [x] T035 Update docs/ROADMAP.md and publish focused PR after021 delivery.
-- [ ] T036 Verify final-head Windows CI and record validation.md.
-- [ ] T037 Merge validated head and record PR/CI/merge links in validation.md.
-- [ ] T038 Mark delivery in tasks.md/docs/ROADMAP.md with validation limits retained.
+- [x] T036 Verify final-head Windows CI and record validation.md.
+- [x] T037 Merge validated head and record PR/CI/merge links in validation.md.
+- [x] T038 Mark delivery in tasks.md/docs/ROADMAP.md with validation limits retained.
 - [x] T039 Confirm sources and all prior delivered behavior remain covered in validation.md.
 
 Dependencies: strict tool/source records -> authoritative snapshot/inventory -> duplicate/conflict

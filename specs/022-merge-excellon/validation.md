@@ -75,4 +75,8 @@ Authored operations verify software behavior and preservation, not physical manu
 
 ## Delivery
 
-Runtime commit, PR, final-head Windows CI and merge pending.
+[PR23](https://github.com/ozkurkuran/MikroCAM/pull/23) merged validated head
+`c2daa121e97d9a6a9561d58644887e989f7dc142` as
+`60be4ba1cf16f595d0d53b77726373d4fdf36be9`.
+[Final-head Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36297824490)
+passed in7m09s. All39 tasks complete; physical manufacturing validation remains outside this slice.
