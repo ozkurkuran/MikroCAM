@@ -55,12 +55,16 @@ then bounded polygonized signed winding for complex rings. Complex input<=2048 n
 100000 element output points. Original source orientation retained; implicit fill closure preserved.
 No arbitrary snapping or validity repair. Stroke restrictions remain independently explicit.
 
+`clip_application_matrix(clip: SvgClip, document: SvgDocument, rendered: tuple[SvgRendered,...])
+-> Affine2D` computes reference/bbox-to-mm matrix from unclipped source path bounds. Bridge uses
+this matrix together with each local shape matrix to derive physical curve tolerance before decoding.
 `apply_svg_clips(document: SvgDocument, rendered: tuple[SvgRendered,...],
 clip_materials: dict[str,tuple[BaseGeometry,...]]) -> tuple[SvgRendered,...]` in core/svg_clip.py.
-Bridge constructs each unique application's local clip material with existing path parser/renderer,
+Bridge constructs each unique application's physical clip material with existing path parser/renderer,
 forcing fill with its clip-rule and no stroke. Core obtains unclipped target/group bounds from paths
-in inverse application coordinates, composes bbox then reference matrix, unions definition shapes
-and intersects original material with every application. Source paths are unchanged; empty output
+in inverse application coordinates and composes bbox then reference matrix in the matrix helper.
+The apply function unions physical definition shapes and intersects original material with every
+application. Source paths are unchanged; empty output
 is retained as empty geometry tuple, unsupported degenerate bbox is ValueError. Cap total clip and
 result coordinate work using existing budgets; all visible clip fragments must remain valid/finite.
 Bridge flips each application matrix once, never its local shape matrices twice. Cached applications
