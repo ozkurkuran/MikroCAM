@@ -2,7 +2,7 @@
 
 **Feature Branch**: `013-job-streaming`
 **Created**: 2026-09-27
-**Status**: Draft for plan review
+**Status**: Implemented and locally validated; final delivery gate pending
 **Input**: Roadmap13: ACK streaming, pause/resume/stop and progress, with FakeGRBL failures;
 user instructed completion in roadmap order. Dependencies011 and012.
 
