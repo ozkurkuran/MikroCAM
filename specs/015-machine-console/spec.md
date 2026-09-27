@@ -1,9 +1,9 @@
 # Feature Specification: Read-only machine console and bounded wire diagnostics
 
-**Feature Branch**:015-machine-console
+**Feature Branch**: 015-machine-console
 **Created**:2026-09-27
-**Status**:Draft for plan review
-**Input**:Roadmap015: terminal and raw TX/RX log. User requests roadmap order.
+**Status**: Implementation in progress
+**Input**: Roadmap 015: terminal and raw TX/RX log. User requests roadmap order.
 
 ## User scenarios and testing
 ### User Story1: Inspect the real communication stream (P1)
@@ -28,7 +28,9 @@ session so a late acknowledgement cannot release a later command.
 Acceptance:
 1. Supported queries are ?, $$, $G, $#, $N and $I. No arbitrary serial/G-code execution entry.
 2. Ordinary queries share the existing worker/controller and never overlap another ordinary ACK.
-   Status ? routes through the existing polling schedule and waits for causal fresh evidence.
+   Status `?` routes through the existing polling schedule and waits for causal fresh evidence. If
+   a status poll times out, its late reply cannot be distinguished from a later poll; disable
+   diagnostic console queries until explicit reconnect restores attribution.
 3. A complete query is acknowledged separately from trusting its printed data as machine state.
    A $$ query must preserve uniquely verified report units; disagreement invalidates coordinates.
 4. Failure retains its diagnostic and log, blocks further ordinary operations until reconnect and
@@ -47,10 +49,14 @@ Acceptance:
   no tainted session. UI eligibility is rechecked by the communication owner before sending.
 - FR007 Keep one ordinary ACK owner and process a whole received batch before releasing admission;
   duplicate/unsolicited/error/late ACK must not complete a different operation.
-- FR008 Use a finite3s query deadline; route ? through existing causal status polling with no
-  duplicate outstanding poll. No unbounded response accumulation or second serial reader.
-- FR009 Treat query timeout, reset, framing/read/write failure, unit disagreement or ambiguous ACK
-  as a session fault, retaining evidence and requiring reconnect before further ordinary actions.
+- FR008 Use a finite 3-second query deadline; route `?` through existing causal status polling with
+  no duplicate outstanding poll. Because status replies have no request IDs, a status-poll timeout
+  disables diagnostic console queries until explicit reconnect. No unbounded response accumulation
+  or second serial reader.
+- FR009 Treat query timeout, status-poll timeout, reset, framing/read/write failure, unit
+  disagreement, or ambiguous ACK as a session fault. Retain evidence and require reconnect before
+  further ordinary actions. A status-poll timeout specifically disables diagnostic console queries
+  until reconnect because GRBL status replies have no request IDs.
 - FR010 Stop/abort/close preempts pending query admission; existing owned worker join/retention
   behavior remains. Diagnostic queries never start motion, reset, home, unlock or output.
 - FR011 Reuse existing layers, pins and Machine dock; validate Fake/Qt/desktop and full regression
@@ -65,7 +71,7 @@ No stored profile, persistent log schema, raw command parser or generic terminal
 ## Success criteria
 - SC001 Every bounded simulated RX chunk and TX attempt has an accurate ordered record; partial/
   failed writes are never labeled complete, and no retry is issued.
-- SC002 Retention remains <=512 records and<=256KiB payload, each displayed record<=4096 payload
+- SC002 Retention remains <=512 records and <=256 KiB payload, each displayed record <=4096 payload
   bytes; omitted bytes/records are visible rather than silently represented as a complete log.
 - SC003 Forbidden/concurrent queries emit zero bytes; supported ordinary queries own exactly one
   acknowledgement, with stale/duplicate/error cases quarantined until explicit reconnect.
@@ -79,5 +85,7 @@ This is a diagnostic terminal with a finite read-only command set. Arbitrary G-c
 homing/unlock/reset/output commands would bypass existing reviewed/typed operation gates and are
 outside this slice. Even read-only queries cannot share an untagged ACK stream with a running job.
 A query timeout has an ambiguous late reply; reconnect is required instead of guessing/retrying.
+Status reports also have no request IDs. After any status-poll timeout, keep console query controls
+disabled until explicit reconnect restores causal attribution.
 Opening a physical port may still reset equipment through its serial electronics. Raw RX is
 transport evidence, not automatically trusted machine state. Logs stay local and bounded.
