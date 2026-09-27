@@ -260,3 +260,29 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   and actual desktop review. Original fixture `tests/reference/svg-drills.svg` is MikroCAM MIT
   artwork, not a genuine Proteus export. Vendor-export validation remains open.
 - MikroCAM commit: recorded after implementation in `specs/018-svg-drill-detection/validation.md`.
+
+## 2026-09-27 — Preserve Illustrator-style SVG page, compound fill and clipping evidence
+
+- Source behavior: Yacupoma Aguirre Luis Enrique, `ProgLuis/FlatCAM9NeoS2`, MIT; inspected
+  immutable head `914630319725b0d6034801f4808ae345d53b407b`, relevant commits
+  `9b73859dea7705b1c7ccaac614d2d05de1e05ca4`,
+  `c1e01850fac318126338cc27ba995100dd86ef46`,
+  `181c1f2a28d9a03675c4ee42bec234494bfe63e1`.
+- Source file/functions: `appParsers/ParseSVG.py`, `svg_read_xmp_max_page_size`,
+  `svg_physical_scale`, `svg_source_advisor`, `svg_node_is_visible`,
+  `svgcompound_fillrule2shapely`; no source module copied or repositories merged.
+- License: existing upstream MIT notice retained in `THIRD_PARTY_LICENSES/FlatCAM9NeoS2-MIT.txt`.
+- Independent adaptation: use exact Adobe XMP namespaces only beneath root SVG metadata;
+  retain explicit axis dimensions and raw tokens, offline simple CSS cascade/visible layer facts,
+  bounded compound winding and local physical clipping. Follow SVG clip-frame semantics instead
+  of guessing scale averages or repairing invalid material. Metadata/foreign styles are inert;
+  clip silhouettes ignore paint while visible material validates its winning appearance.
+- Destination: `mikrocam/importers/svg_metadata.py`, `svg_css.py`, `svg_document.py`, `svg_style.py`;
+  `mikrocam/core/svg_models.py`, `svg_fill.py`, `svg_paint.py`, `svg_clip.py`, `import_report.py`,
+  `import_report_codec.py`, `svg_drill_circles.py`; `mikrocam/bridge/svg_import.py`.
+- Format: report schema 2 preserves percentage source tokens; strict schema 1 records migrate
+  without changing persisted field names or the surrounding project format.
+- Evidence scope: authored analytic fixtures and existing reference comparisons. The inspected
+  source's named Illustrator examples were not shipped; no genuine licensed vendor-export sample
+  or physical manufacturing validation is claimed. Validation results and the implementation commit
+  are recorded in `specs/019-svg-illustrator/validation.md` when delivery checks complete.

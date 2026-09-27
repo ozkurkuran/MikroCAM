@@ -36,7 +36,7 @@ def test_store_only_changes_owning_report_and_read_does_not_reimport(monkeypatch
     assert report.source_name == 'first.svg'
     assert report.quality.open_paths == 1 and report.quality.closed_paths == 0
     assert report.quality.bounds_mm == pytest.approx((1., 1., 4., 5.), abs=1e-6)
-    assert value.import_report['schema_version'] == 1
+    assert value.import_report['schema_version'] == 2
     assert {k: v for k, v in vars(value).items() if k != 'import_report'} == {
         k: v for k, v in before.items() if k != 'import_report'}
 

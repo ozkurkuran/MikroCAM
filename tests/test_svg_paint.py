@@ -96,15 +96,13 @@ def test_nested_island_and_disjoint_ring_fill():
     assert len(result.geoms) == 3
 
 
-def test_self_intersecting_fill_rejected_without_repair():
+def test_self_intersecting_fill_uses_winding_without_repair():
     bow = SvgPath(((0., 0.), (3., 3.), (0., 3.), (3., 0.), (0., 0.)), True)
-    with pytest.raises(ValueError, match='simple|intersect|valid'):
-        geometry((bow,))
+    assert geometry((bow,)).area == 4.5
 
 
-def test_crossing_simple_rings_rejected_until_compound_scope():
-    with pytest.raises(ValueError, match='ring|intersect'):
-        geometry((square(), square(5., 5.)))
+def test_crossing_simple_rings_supported_by_compound_scope():
+    assert geometry((square(), square(5., 5.))).area == 175
 
 
 @pytest.mark.parametrize('points', [((0., 0.), (3., 3.), (0., 3.), (3., 0.)),

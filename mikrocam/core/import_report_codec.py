@@ -1,11 +1,11 @@
-"""Strict bounded schema-one JSON-safe import report dictionaries."""
+"""Strict bounded import report dictionaries with schema-one migration."""
 from dataclasses import fields
 import json
 
 from .import_report import ImportCoordinates, ImportQuality, ImportReport
 from .svg_models import SvgNotice
 
-REPORT_SCHEMA_VERSION = 1
+REPORT_SCHEMA_VERSION = 2
 MAX_REPORT_BYTES = 1048576
 _TOP_KEYS = {'schema_version', 'source_name', 'source_sha256', 'coordinates', 'quality', 'notices'}
 _TUPLES = {'source_units': 2, 'view_box': 4, 'viewport_mm': 2, 'matrix_mm': 6,
@@ -61,14 +61,16 @@ def report_to_dict(report: ImportReport) -> dict:
 
 
 def report_from_dict(value: object) -> ImportReport:
-    """Decode schema one with no coercion, migration, file access or geometry import."""
+    """Decode schema one/two without coercion, file access or geometry import."""
     data = _record(value, _TOP_KEYS, 'Import report')
-    if type(data['schema_version']) is not int or data['schema_version'] != REPORT_SCHEMA_VERSION:
+    if type(data['schema_version']) is not int or data['schema_version'] not in (1, REPORT_SCHEMA_VERSION):
         raise ValueError('Unsupported import report schema version')
     notices = data['notices']
     if type(notices) is not list or len(notices) > 200:
         raise ValueError('Notices require a bounded JSON array')
     coordinates = ImportCoordinates(**_decode(data['coordinates'], ImportCoordinates))
+    if data['schema_version'] == 1 and '%' in coordinates.source_units:
+        raise ValueError('Schema-one import reports cannot contain percentage dimensions')
     quality = ImportQuality(**_decode(data['quality'], ImportQuality))
     records = tuple(SvgNotice(**_decode(notice, SvgNotice)) for notice in notices)
     report = ImportReport(data['source_name'], data['source_sha256'], coordinates, quality, records)

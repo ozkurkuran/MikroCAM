@@ -79,6 +79,10 @@ class _Notices:
 def _circles(result: SvgImportResult, notices: _Notices) -> tuple[list, list]:
     holes, pads = [], []
     for element, rendered in zip(result.document.elements, result.rendered):
+        if element.clips:
+            notices.add('clipped-drill-evidence', 'Clipped artwork is excluded from full-circle drill inference.',
+                        element.element_id)
+            continue
         circle = circle_evidence(element, rendered)
         if circle is None:
             if element.fill_is_white is True and element.paint.fill:

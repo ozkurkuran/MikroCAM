@@ -5,6 +5,7 @@ from shapely import affinity, get_coordinates, get_num_coordinates, union_all
 from shapely.geometry import LineString, Point, Polygon
 
 from .svg_curves import flatten_arc
+from .svg_fill import fill_svg_paths
 from .svg_models import (CURVE_TOLERANCE_MM, MAX_ELEMENT_POINTS, MAX_SVG_RINGS,
                          SvgNotice, SvgPaint, SvgPath, SvgRendered, validate_attributes)
 from .svg_transform import (affine_scale_bound, apply_svg_point, parse_svg_length,
@@ -96,40 +97,6 @@ def primitive_paths(kind: str, attributes: tuple[tuple[str, str], ...],
         points = list(zip(numbers[::2], numbers[1::2]))
         return (_closed(points) if kind == 'polygon' else SvgPath(tuple(points)),)
     raise ValueError('Unsupported SVG primitive kind')
-
-
-def _fill(paths: tuple[SvgPath, ...], rule: str) -> list[Polygon]:
-    rings = []
-    for path in paths:
-        if len(set(path.points)) < 3:
-            continue
-        if len(rings) >= MAX_SVG_RINGS:
-            raise ValueError('SVG fill ring budget exceeded')
-        points = path.points if path.points[0] == path.points[-1] else path.points + (path.points[0],)
-        polygon = Polygon(points)
-        if polygon.is_empty or not polygon.is_valid or not polygon.exterior.is_simple:
-            raise ValueError('SVG fill requires valid simple non-intersecting rings')
-        signed = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(points, points[1:]))
-        rings.append((polygon, 1 if signed > 0 else -1))
-    rings.sort(key=lambda item: item[0].area, reverse=True)
-    parents, winding, depths = [], [], []
-    for index, (polygon, sign) in enumerate(rings):
-        containers = []
-        for previous, (outer, _) in enumerate(rings[:index]):
-            if polygon.boundary.intersects(outer.boundary):
-                raise ValueError('Intersecting or touching SVG fill rings are unsupported')
-            if outer.contains(polygon):
-                containers.append(previous)
-        parent = containers[-1] if containers else None
-        parents.append(parent)
-        winding.append(sign + (winding[parent] if parent is not None else 0))
-        depths.append(1 + (depths[parent] if parent is not None else 0))
-    filled = []
-    for index, (polygon, _) in enumerate(rings):
-        if (depths[index] % 2 == 1) if rule == 'evenodd' else (winding[index] != 0):
-            children = [rings[child][0] for child, parent in enumerate(parents) if parent == index]
-            filled.append(polygon.difference(union_all(children)) if children else polygon)
-    return filled
 
 
 def _miter_patches(path: SvgPath, radius: float, limit: float) -> list[Polygon]:
@@ -253,7 +220,7 @@ def render_svg_paths(paths: tuple[SvgPath, ...], paint: SvgPaint, matrix: Affine
         raise ValueError('SVG path point/ring budget exceeded')
     transformed = tuple(SvgPath(tuple(apply_svg_point(matrix, point) for point in path.points), path.closed)
                         for path in paths)
-    materials = _fill(paths, paint.fill_rule) if paint.fill else []
+    materials = fill_svg_paths(paths, paint.fill_rule) if paint.fill else []
     if paint.stroke:
         tolerance = CURVE_TOLERANCE_MM / (2 * affine_scale_bound(matrix))
         materials.extend(_stroke(paths, paint, tolerance))

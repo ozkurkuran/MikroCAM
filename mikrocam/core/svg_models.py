@@ -126,6 +126,25 @@ class SvgViewport:
         _notices(self.notices)
 
 @dataclass(frozen=True)
+class SvgClip:
+    application_id: str
+    source_id: str
+    units: str
+    matrix: Affine2D
+    elements: tuple['SvgElement', ...]
+
+    def __post_init__(self) -> None:
+        _text(self.application_id, 256, 'Clip application ID', False)
+        _text(self.source_id, 256, 'Clip source ID', False)
+        if type(self.units) is not str or self.units not in ('userSpaceOnUse', 'objectBoundingBox'):
+            raise ValueError('Unsupported SVG clip coordinate units')
+        validate_affine(self.matrix)
+        if (type(self.elements) is not tuple or len(self.elements) > 64
+                or any(type(element) is not SvgElement or element.clips for element in self.elements)):
+            raise ValueError('Clip requires at most 64 immutable shapes without nested clipping')
+
+
+@dataclass(frozen=True)
 class SvgElement:
     element_id: str
     kind: str
@@ -133,6 +152,8 @@ class SvgElement:
     matrix: Affine2D
     paint: SvgPaint
     fill_is_white: bool | None = None
+    clips: tuple[SvgClip, ...] = ()
+    layer_path: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         _text(self.element_id, 256, 'Element ID')
@@ -144,6 +165,12 @@ class SvgElement:
             raise ValueError('SVG element requires immutable paint')
         if self.fill_is_white is not None and type(self.fill_is_white) is not bool:
             raise ValueError('SVG white-fill fact must be boolean or unavailable')
+        if type(self.clips) is not tuple or len(self.clips) > 8 or any(type(c) is not SvgClip for c in self.clips):
+            raise ValueError('SVG clip application chain must be an immutable tuple within eight entries')
+        if type(self.layer_path) is not tuple or len(self.layer_path) > 64:
+            raise ValueError('SVG layer path must be immutable within 64 labels')
+        for label in self.layer_path:
+            _text(label, 256, 'SVG layer label', False)
 
 @dataclass(frozen=True)
 class SvgDocument:
@@ -153,6 +180,7 @@ class SvgDocument:
     elements: tuple[SvgElement, ...]
     notices: tuple[SvgNotice, ...] = ()
     root_attributes: tuple[tuple[str, str], ...] = ()
+    viewport_attributes: tuple[tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         _text(self.source_name, 256, 'Source name', False)
@@ -164,6 +192,7 @@ class SvgDocument:
             raise ValueError('SVG document contains invalid elements')
         _notices(self.notices)
         validate_attributes(self.root_attributes)
+        validate_attributes(self.viewport_attributes)
 
 @dataclass(frozen=True)
 class SvgRendered:

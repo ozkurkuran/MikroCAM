@@ -62,7 +62,7 @@ def test_opacity_inheritance_does_not_destroy_original_fill_presence():
                                  '<defs><g id="loop"><use href="#loop"/></g></defs><use href="#loop"/>',
                                  '<text x="1" y="2">Unoutlined font</text>',
                                  '<svg width="1" height="1"/>', '<image href="x.png"/>',
-                                 '<script>alert(1)</script>', '<style>rect{stroke-width:5}</style>'])
+                                 '<script>alert(1)</script>', '<style>g rect{stroke-width:5}</style>'])
 def test_unsupported_or_ambiguous_source_rejected(body):
     with pytest.raises(ValueError):
         document(body)

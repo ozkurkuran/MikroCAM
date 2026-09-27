@@ -18,7 +18,7 @@ def report():
 def test_schema_roundtrip_and_fresh_detached_containers():
     original = report()
     data = report_to_dict(original)
-    assert data['schema_version'] == 1
+    assert data['schema_version'] == 2
     assert data['coordinates']['view_box'] == [0, 0, 1, 2]
     assert data['coordinates']['source_width'] is None
     assert report_from_dict(data) == original
@@ -41,7 +41,7 @@ def test_exact_keys_at_every_level(section, operation):
         report_from_dict(data)
 
 
-@pytest.mark.parametrize('version', [True, 0, 2, 1., '1', None])
+@pytest.mark.parametrize('version', [True, 0, 3, 1., '1', None])
 def test_schema_version_has_no_coercion_or_future_guessing(version):
     data = report_to_dict(report())
     data['schema_version'] = version
