@@ -81,6 +81,7 @@ class GerberObject(FlatCAMObj, Gerber):
 
         # store the source file here
         self.source_file = ""
+        self.import_report = None
 
         # list of rows with apertures plotted
         self.marked_rows = []
@@ -111,7 +112,8 @@ class GerberObject(FlatCAMObj, Gerber):
         # Attributes to be included in serialization
         # Always append to it because it carries contents
         # from predecessors.
-        self.ser_attrs = ['obj_options', 'kind', 'fill_color', 'outline_color', 'alpha_level'] + self.ser_attrs
+        self.ser_attrs = ['obj_options', 'kind', 'fill_color', 'outline_color', 'alpha_level',
+                          'import_report'] + self.ser_attrs
 
     def set_ui(self, ui):
         """
@@ -123,6 +125,8 @@ class GerberObject(FlatCAMObj, Gerber):
         :return: None
         """
         FlatCAMObj.set_ui(self, ui)
+        from mikrocam.ui.import_report import attach_import_report
+        attach_import_report(self)
         self.app.log.debug("GerberObject.set_ui()")
 
         self.units = self.app.app_units.upper()

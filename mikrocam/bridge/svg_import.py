@@ -40,7 +40,7 @@ def import_svg_bytes(source: bytes, source_name: str, *, flip: bool = True,
         if count > MAX_SVG_POINTS:
             raise ValueError('SVG document point budget exceeded')
         rendered.append(output)
-    result = SvgImportResult(document, tuple(rendered))
+    result = SvgImportResult(document, tuple(rendered), flipped=flip)
     if not result.geometry_mm:
         raise ValueError('SVG contains no solid material' if object_type == 'gerber'
                          else 'SVG contains no importable geometry')
