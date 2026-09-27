@@ -44,9 +44,9 @@
 - [x] T033 Run complete suite at final runtime head; record validation.md.
 - [x] T034 Run actual desktop journeys and inspect screenshot; record validation.md.
 - [x] T035 Update docs/ROADMAP.md and publish focused PR after022 delivery.
-- [ ] T036 Verify final-head Windows CI; record validation.md.
-- [ ] T037 Merge validated head and record PR/CI/merge links in validation.md.
-- [ ] T038 Mark delivery in tasks.md/docs/ROADMAP.md, retaining validation limits.
+- [x] T036 Verify final-head Windows CI; record validation.md.
+- [x] T037 Merge validated head and record PR/CI/merge links in validation.md.
+- [x] T038 Mark delivery in tasks.md/docs/ROADMAP.md, retaining validation limits.
 - [x] T039 Confirm original sources and prior behavior remain covered in validation.md.
 
 Dependencies: strict records -> bounded page reader and physical frame -> interpreter/painting ->
