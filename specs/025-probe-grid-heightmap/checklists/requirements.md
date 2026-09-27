@@ -1,0 +1,17 @@
+# Specification checklist
+- [x] User value and independent stories clear.
+- [x] Three stories within feature bound.
+- [x] Requirements testable and uniquely numbered.
+- [x] Success criteria measurable.
+- [x] Scope and exclusions explicit.
+- [x] No unresolved clarification markers.
+- [x] Existing owner and coordinate authority preserved.
+- [x] Input/output bounds explicit.
+- [x] Unit and frame behavior defined.
+- [x] Source/provenance and incomplete state truthful.
+- [x] Hardware hazards and stop path described.
+- [x] Failure and edge cases covered.
+- [x] Offline persistence behavior defined.
+- [x] No unnecessary dependency.
+- [x] Fake and desktop acceptance defined.
+- [x] Physical validation limitation explicit.
