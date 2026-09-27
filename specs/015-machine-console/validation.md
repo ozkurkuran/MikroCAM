@@ -1,6 +1,6 @@
 # Validation: read-only console and wire diagnostics
 
-Status: implementation, full local suite and actual desktop passed; final-head Windows CI and merge pending.
+Status: delivered and merged; full local suite, actual desktop and final-head Windows CI passed.
 Two stories, 28 tasks. No new dependency or legacy host hook.
 
 ## Requirements and constitution
@@ -58,4 +58,5 @@ followed by successful owned shutdown markers.
 No physical controller was exercised. TX complete means the transport accepted bytes, not controller
 acceptance or physical execution. This bounded local view is not a complete retained transcript and
 has no export/persistence. Untagged delayed replies cannot prove causal ownership after timeout.
-PR, final-head CI and merge links will be added as delivery completes.
+[PR16](https://github.com/ozkurkuran/MikroCAM/pull/16) merged as `36b8e37144071537e4cd6238286d0425db72ec33`.
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36288605321) passed on final head `8a8b3897c2bf54b68477347ad69bea8fc72a1e33` in 6m58s. Physical-machine validation remains unperformed.

@@ -2,7 +2,7 @@
 
 **Feature Branch**: 015-machine-console
 **Created**:2026-09-27
-**Status**: Implementation in progress
+**Status**: Delivered
 **Input**: Roadmap 015: terminal and raw TX/RX log. User requests roadmap order.
 
 ## User scenarios and testing
