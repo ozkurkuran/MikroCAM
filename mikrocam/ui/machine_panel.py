@@ -1,4 +1,4 @@
-"""Read-only machine dock with explicit actions and GUI-owned snapshot presentation."""
+"""Machine dock with bounded typed intents and GUI-owned snapshot presentation."""
 import builtins
 from collections.abc import Callable
 import gettext
@@ -9,11 +9,14 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from mikrocam.bridge.machine import make_controller
 from mikrocam.bridge.serial_transport import PortInfo, list_ports
 from mikrocam.machine.controller import MachineController
+from mikrocam.machine.manual_models import JogRequest, SelectG54Request, ZeroRequest
 from mikrocam.machine.models import ConnectionState, MachineSnapshot, MachineState
+from .machine_controls import MachineManualControls
 from .machine_worker import MachineWorker
 
 
 _ = getattr(builtins, '_', gettext.gettext)
+JOIN_TIMEOUT_MS = 4000
 
 
 class MachinePanel(QtWidgets.QDockWidget):
@@ -29,6 +32,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         content = QtWidgets.QWidget(self)
         layout = QtWidgets.QVBoxLayout(content)
         caveat = QtWidgets.QLabel(_('Opening a serial port may reset the controller. '
+                                   'A reset can execute configured startup blocks. '
                                    'Disconnect closes communication; it does not stop external motion.'))
         caveat.setWordWrap(True)
         layout.addWidget(caveat)
@@ -51,6 +55,11 @@ class MachinePanel(QtWidgets.QDockWidget):
         self.status_label = QtWidgets.QLabel(content)
         self.status_label.setWordWrap(True)
         layout.addWidget(self.status_label)
+        self.manual_controls = MachineManualControls(content)
+        self.manual_controls.requested.connect(self.submit_manual)
+        self.manual_controls.cancel_requested.connect(self.cancel_manual_jog)
+        self.manual_controls.abort_requested.connect(self.abort_machine)
+        layout.addWidget(self.manual_controls)
         layout.addStretch()
         self.setWidget(content)
         self.refresh_button.clicked.connect(self.refresh_ports)
@@ -107,7 +116,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         self._worker.start()
 
     def disconnect_machine(self) -> None:
-        """Request worker closure; never issue a physical stop or another device command."""
+        """Ask the I/O owner to cancel/abort owned activity before bounded closure."""
         if self._worker is None:
             self.last_snapshot = MachineSnapshot()
             self._render_snapshot()
@@ -119,6 +128,30 @@ class MachinePanel(QtWidgets.QDockWidget):
         self._render_snapshot()
         self.status_label.setText(_('Closing communication…'))
         self._update_actions()
+
+    @QtCore.pyqtSlot(object)
+    def submit_manual(self, request: JogRequest | ZeroRequest | SelectG54Request) -> None:
+        """Submit one typed intent; worker/domain gates remain authoritative."""
+        worker = self._worker
+        try:
+            accepted = worker is not None and not self._stopping and worker.submit(request)
+        except ValueError as error:
+            self.status_label.setText(_('Manual request rejected: ') + str(error)[:256])
+            return
+        if accepted:
+            self.manual_controls.set_pending()
+        else:
+            self.status_label.setText(_('Manual request rejected; connection or operation is unavailable'))
+
+    def cancel_manual_jog(self) -> None:
+        if self._worker is not None and not self._stopping:
+            self._worker.cancel_jog()
+            self.manual_controls.set_pending()
+
+    def abort_machine(self) -> None:
+        if self._worker is not None and not self._stopping:
+            self._worker.abort()
+            self.manual_controls.set_pending()
 
     @QtCore.pyqtSlot(object)
     def _receive_snapshot(self, snapshot: MachineSnapshot) -> None:
@@ -137,7 +170,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         worker = self._worker
         if worker is None:
             return
-        if not worker.wait(2000):
+        if not worker.wait(JOIN_TIMEOUT_MS):
             self.status_label.setText(_('Communication is still closing; keep this window open.'))
             return
         self.last_snapshot = worker.final_snapshot
@@ -179,6 +212,7 @@ class MachinePanel(QtWidgets.QDockWidget):
             elif snapshot.stale:
                 status = _('Stale or unverified position')
         self.status_label.setText(status)
+        self.manual_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
 
     def shutdown(self) -> bool:
         """Join owned I/O before disposal; retain the live QThread if a driver violates its bound."""
@@ -186,7 +220,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         if worker is None:
             return True
         self.disconnect_machine()
-        if not worker.wait(2000):
+        if not worker.wait(JOIN_TIMEOUT_MS):
             self.status_label.setText(_('Communication is still closing; keep this window open.'))
             return False
         self._release_worker()
