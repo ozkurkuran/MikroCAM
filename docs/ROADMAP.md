@@ -104,7 +104,7 @@ içe aktarma ve fiziksel PCB kuponu henüz doğrulanmadığı için kilometre ta
 | --- | --- | --- | --- |
 | 10 | `machine-connect-grbl` — **yazılım tamamlandı** | Açık port seçimiyle salt okunur GRBL bağlantısı; doğrulanmış mm makine/iş koordinatları, eski/geçersiz veriyi temizleme ve sahipli worker kapanışı. Yerel 1563 test + 310 subtest ve gerçek masaüstünde FakeGRBL döngüsü başarılı; fiziksel cihaz doğrulaması açık. [Doğrulama](../specs/010-machine-connect-grbl/validation.md). | 2 |
 | 11 | `jog-and-work-zero` — **yazılım tamamlandı** | Sınırlı jog, açık G54 seçimi ve doğrulanmış XY/Z/XYZ sıfırlama; tek işlem ve öncelikli iptal/kapatma. 1967 test + 310 subtest, 10 Qt döngüsü ve gerçek masaüstünde FakeGRBL akışı başarılı; fiziksel cihaz doğrulaması açık. [Doğrulama](../specs/011-jog-and-work-zero/validation.md). | 10 |
-| 12 | `gcode-preflight` | Sınırlar, birim ve mod, eksik feed, güvensiz rapid, Z aralığı, süre tahmini | 4 |
+| 12 | `gcode-preflight` — **yerel doğrulama tamamlandı; CI/birleştirme bekleniyor** | Açık kurulumla salt okunur G-code analizi; tam doğrusal/yay sınırları, birim/mod, feed, rapid/Z ve nominal süre. 2286 test + 310 subtest; seçili CNC işi/dosya ve tehlikeli rapid için gerçek masaüstü akışı başarılı. [Doğrulama](../specs/012-gcode-preflight/validation.md). | 4 |
 | 13 | `job-streaming` | ACK'li gönderim, pause/resume/stop, ilerleme; FakeGRBL ile hata senaryoları | 11, 12 |
 | 14 | `dry-run` | Safe-Z / yalnızca XY; spindle kapalı | 13 |
 | 15 | `machine-console` | Terminal ve ham tx/rx logu | 10 |
