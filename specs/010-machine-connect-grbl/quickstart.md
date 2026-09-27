@@ -1,18 +1,73 @@
-# Read-only GRBL validation quickstart
+# Salt okunur GRBL: geliştirici quickstart
 
-Run from the feature checkout with the existing pinned CPython3.13 development environment.
-No additional dependency or actual serial device is needed for automated validation.
+Feature checkout kökünde mevcut sabitlenmiş CPython 3.13 geliştirme ortamını kullanın.
+Yeni bağımlılık veya fiziksel seri cihaz gerekmez. `tests/conftest.py` Qt ayarlarını ve
+APPDATA'yı geçici alana yönlendirir; seri-adaptör testleri gerçek port açmaz.
 
-1. Run the new parser/controller/fake/serial-adapter tests without Qt or hardware.
-2. Run panel and worker tests under the existing settings sandbox, including ten repeated
-   connect/disconnect/close cycles. Verify only status/settings reads are recorded.
-3. Run full pytest and architecture/growth checks.
-4. Run `python tests/smoke_app.py` on a real desktop; add fake Machine panel coverage without
-   opening an actual serial port. Retain logs and a screenshot in the ignored validation folder.
-5. Check actual imported implementation stays within the four-layer architecture and old CAM
-   flows still work. Record commands/results/limitations in validation.md before PR delivery.
+## Otomatik testler
 
-For eventual manual real-controller validation, opening the Machine panel does not connect.
-Select a known GRBL1.1 port explicitly; port opening may reset some adapters/controllers.
-Verify reported units, machine/work coordinates and offsets against the controller display.
-Read-only Disconnect closes communications and is not a physical emergency-stop control.
+PowerShell örneği; ortam yolunu kendi mevcut geliştirme ortamınıza göre değiştirin:
+
+```powershell
+$python = 'E:/VSCode/Flatcam/MikroCAM/.venv/repro-a/Scripts/python.exe'
+$env:QT_API = 'pyqt6'
+$env:QT_QPA_PLATFORM = 'offscreen'
+& $python -m pytest tests/test_machine_grbl.py tests/test_machine_controller.py tests/test_machine_fake.py tests/test_machine_serial.py -q
+& $python -m pytest tests/test_machine_ui.py tests/test_machine_shutdown.py -q
+$machineTests = (Get-ChildItem tests/test_machine_*.py).FullName
+& $python -m pytest @machineTests tests/architecture -q
+& $python -m pytest -q
+```
+
+İlk grup parser/controller/FakeGRBL ve mocked pyserial davranışlarını denetler. Qt grubu
+worker sahipliği, GUI thread sınırı, hatalar, gecikmiş snapshot'lar, tekrar açma ve on
+bağlanma/kesme döngüsünü kapsar. Açma/okuma/yazma/kapatma hataları görünür olmalı;
+kaydedilen TX yalnızca `{b'?', b'$$\n'}` kümesinden gelmelidir. Mimari/growth denetimleri
+ve eski CAM testleri de geçmelidir. Sonuçları ve sınırlamaları `validation.md` içine kaydedin;
+bu quickstart henüz çalıştırılmamış sonuçları başarı olarak ilan etmez.
+
+## Donanımsız panel enjeksiyonu
+
+UI testleri ve masaüstü smoke gerçek seri factory yerine fake factory **ve** metadata
+sağlayıcısı kullanır. `controller_factory(port)` iletişim worker'ında çağrılır; port açma
+GUI thread'ında yapılmaz. Paneli oluşturmak bağlantı başlatmaz:
+
+```python
+from mikrocam.bridge.serial_transport import PortInfo
+from mikrocam.machine.controller import MachineController
+from mikrocam.machine.fake import FakeGRBL
+from mikrocam.ui.machine_panel import MachinePanel
+
+panel = MachinePanel(
+    window,
+    controller_factory=lambda _port: MachineController(
+        FakeGRBL(status=b'<Idle|MPos:3,4,5|WCO:1,2,3>\n')
+    ),
+    ports_provider=lambda: (PortInfo('COM17', 'FakeGRBL — fiziksel cihaz değil'),),
+)
+```
+
+Örnek çalışan QApplication ve QMainWindow olan `window` varsayar; `COM17` burada yalnızca
+fake metadata'dır. Testte `panel.connect_machine()` sonrasında GUI event loop'u ile snapshot
+bekleyin: makine `(3,4,5)`, iş `(2,2,2)` mm olmalı. Disconnect/close ardından worker gerçekten
+bitmeli; eski session snapshot'ı göstergeleri doldurmamalıdır. Kapanışta `panel.shutdown()`
+sonucunu denetleyin; canlı QThread'ı yok etmeyin. Deterministik zaman aşımı/reset senaryoları
+için fake ve enjekte edilen saatli controller testlerini kullanın.
+
+## Gerçek masaüstü smoke
+
+```powershell
+Remove-Item Env:QT_QPA_PLATFORM -ErrorAction SilentlyContinue
+& $python tests/smoke_app.py
+```
+
+Bu çalışma Windows masaüstü oturumu ister. Machine kapsamı yukarıdaki fake enjeksiyonuyla
+çalıştırılmalı; hiçbir gerçek port açılmamalıdır. Gerber/Excellon, isolation/CNC, proje
+save/reopen ve mevcut lazer akışları da korunmalıdır. Log/screenshot'ları ignored `.venv`
+alanında saklayın; normal listener/worker/pool temizliğini ve Machine worker kapanışını
+ayrıca doğrulayın. Menü yolunu gözlemlemek tek başına Machine bağlantı testi değildir.
+
+İleride yapılacak gerçek GRBL 1.1 kontrolünde port açılması donanımsal reset oluşturabilir.
+Read-only Disconnect iletişimi kapatır; hareketi veya harici denetimi durdurmaz, E-stop
+yerine geçmez. Bu otomatik testler gerçek donanım başarısı iddiası taşımaz.
+Operatör açıklaması: [MACHINE_CONTROL.md](../../docs/MACHINE_CONTROL.md).
