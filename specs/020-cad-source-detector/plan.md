@@ -31,8 +31,8 @@ All eight gates YES before research and after design:
 
 ## Project Structure
 core/cad_source.py and cad_source_codec.py; importers/cad_source.py, cad_svg_source.py,
-cad_dxf_source.py; bridge/cad_source.py; ui/cad_source.py; existing ui/import_report.py attaches
-second optional historical section. appIO SVG/DXF source boundary hooks and Geometry/Gerber
+cad_dxf_source.py; bridge/cad_source.py; ui/cad_source.py; both legacy object UIs call a short hook beside the existing physical report
+to attach the second optional historical section. appIO SVG/DXF source boundary hooks and Geometry/Gerber
 optional field only. Tests/test_cad_source*.py, reference/cad-source/, smoke_cad_source.py.
 
 ## Complexity Tracking

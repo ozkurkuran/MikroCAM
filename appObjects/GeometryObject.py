@@ -63,6 +63,7 @@ class GeometryObject(FlatCAMObj, Geometry):
         self.kind = "geometry"
         self.source_file = ''
         self.import_report = None
+        self.cad_source = None
 
         self.obj_options.update({
             "plot": True,
@@ -169,7 +170,7 @@ class GeometryObject(FlatCAMObj, Geometry):
         # Always append to it because it carries contents
         # from predecessors.
         self.ser_attrs += ['obj_options', 'kind', 'multigeo', 'fill_color', 'outline_color', 'alpha_level',
-                          'source_file', 'import_report']
+                          'source_file', 'import_report', 'cad_source']
 
     def build_ui(self):
         try:
@@ -314,6 +315,8 @@ class GeometryObject(FlatCAMObj, Geometry):
         FlatCAMObj.set_ui(self, ui)
         from mikrocam.ui.import_report import attach_import_report
         attach_import_report(self)
+        from mikrocam.ui.cad_source import attach_cad_source
+        attach_cad_source(self)
 
         self.app.log.debug("GeometryObject.set_ui()")
 

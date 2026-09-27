@@ -1968,6 +1968,8 @@ class appIO(QtCore.QObject):
             with open(filename, encoding='utf-8', newline='') as f:
                 file_content = f.read()
             geo_obj.source_file = file_content
+            from mikrocam.ui.cad_source import record_cad_source
+            record_cad_source(geo_obj, file_content, filename, 'SVG')
 
             # appGUI feedback
             app_obj.inform.emit('[success] %s: %s' % (_("Opened"), filename))
@@ -2025,9 +2027,11 @@ class appIO(QtCore.QObject):
             else:
                 return "fail"
 
-            with open(filename, 'r', encoding='utf-8') as f:
+            with open(filename, 'r', encoding='utf-8', newline='') as f:
                 file_content = f.read()
             geo_obj.source_file = file_content
+            from mikrocam.ui.cad_source import record_cad_source
+            record_cad_source(geo_obj, file_content, filename, 'DXF')
 
             # appGUI feedback
             app_obj.inform.emit('[success] %s: %s' % (_("Opened"), filename))
