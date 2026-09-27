@@ -2,11 +2,15 @@
 from collections.abc import Callable
 from dataclasses import replace
 import logging
-from time import monotonic
+from time import monotonic, sleep
 
 from mikrocam.machine.grbl import LineFramer, parse_report_units, parse_status
 from mikrocam.machine.models import ConnectionState, MachineSnapshot, MachineState, XYZ
 from mikrocam.machine.transport import Transport
+from mikrocam.machine.manual_control import ManualControl
+from mikrocam.machine.manual_models import JogRequest, ZeroRequest, SelectG54Request
+from mikrocam.machine.manual_protocol import validate_command
+from mikrocam.machine.models import ManualPhase
 
 POLL_INTERVAL = 0.25
 STATUS_TIMEOUT = 2.0
@@ -27,10 +31,27 @@ class MachineController:
         self._last_query_at = float('-inf')
         self._settings_saw_units = False
         self._pending_units: str | None = None
+        self._query_sequence = self._pending_query_sequence = self._last_report_query = 0
+        self._manual = ManualControl(self)
 
     def snapshot(self) -> MachineSnapshot:
         """Return an immutable observation; this does not perform I/O."""
         return self._snapshot
+
+    def request_manual(self, request: JogRequest | ZeroRequest | SelectG54Request) -> None:
+        """Admit one typed request on the communication owner, never raw G-code."""
+        self._manual.start(request)
+
+    def cancel_jog(self) -> None:
+        try:
+            self._manual.cancel()
+        except Exception as error:
+            self._fail(error)
+
+    def abort(self) -> None:
+        """Best-effort controller abort; a failed link cannot prove physical stopping."""
+        if self._snapshot.connection is ConnectionState.CONNECTED:
+            self._manual.abort()
 
     def connect(self) -> None:
         if self._snapshot.connection in (ConnectionState.CONNECTING, ConnectionState.CONNECTED):
@@ -45,7 +66,10 @@ class MachineController:
             self._fail(error)
 
     def disconnect(self) -> None:
-        """Release communication immediately; this is not a machine motion stop."""
+        """Stop owned motion before closing; idle read-only closure emits no stop command."""
+        self._close_manual_operation()
+        manual = self._snapshot.manual
+        preserve = manual.phase in (ManualPhase.FAILED, ManualPhase.ABORTED)
         try:
             self._transport.close()
         except Exception as error:
@@ -53,6 +77,22 @@ class MachineController:
             self._diagnose(f'Disconnect failed: {error}')
         else:
             self._reset_session(ConnectionState.DISCONNECTED)
+        if preserve:
+            self._snapshot = replace(self._snapshot, manual=manual)
+
+    def _close_manual_operation(self) -> None:
+        if not self._manual.active:
+            return
+        if self._manual.jog_sent:
+            self.cancel_jog()
+            deadline = monotonic() + 2.25
+            while self._manual.active and monotonic() < deadline:
+                self.tick()
+                sleep(.01)
+            if self._manual.active:
+                self._manual.abort('Close could not verify jog cancellation; stop unverified', failed=True)
+        else:
+            self._manual.fail('Disconnected before manual operation could be verified', attempt_stop=False)
 
     def tick(self) -> None:
         """Perform one bounded read, process reports and schedule read-only requests."""
@@ -65,6 +105,7 @@ class MachineController:
             try:
                 lines = self._framer.feed(chunk)
             except ValueError as error:
+                self._manual.lost_evidence('Corrupt controller framing', framing=True)
                 self._invalidate(clear_units=True)
                 self._settings_sent_at = None
                 self._diagnose(f'Invalid controller framing; reconnect to verify units: {error}')
@@ -72,6 +113,7 @@ class MachineController:
             for line in lines:
                 self._consume(line)
             self._expire_and_poll()
+            self._manual.tick()
         except Exception as error:
             self._fail(error)
 
@@ -83,14 +125,19 @@ class MachineController:
         self._last_query_at = float('-inf')
         self._settings_saw_units = False
         self._pending_units = None
+        self._query_sequence = self._pending_query_sequence = self._last_report_query = 0
+        self._manual = ManualControl(self)
 
     def _fail(self, error: Exception) -> None:
         diagnostic = f'Communication failed: {error}'
+        self._manual.lost_evidence(diagnostic)
+        manual = self._snapshot.manual
         try:
             self._transport.close()
         except Exception as close_error:
             diagnostic += f'; close failed: {close_error}'
         self._reset_session(ConnectionState.ERROR)
+        self._snapshot = replace(self._snapshot, manual=manual)
         self._diagnose(diagnostic)
 
     def _diagnose(self, message: str) -> None:
@@ -99,8 +146,7 @@ class MachineController:
         _LOG.debug('GRBL: %s', message)
 
     def _send(self, data: bytes) -> None:
-        if data not in (b'?', b'$$\n'):
-            raise ValueError('Read-only request required')
+        validate_command(data)
         _LOG.debug('GRBL TX %r', data)
         if self._transport.write(data) != len(data):
             raise OSError('Incomplete serial write')
@@ -112,6 +158,8 @@ class MachineController:
         self._send(b'$$\n')
 
     def _request_status(self) -> None:
+        self._query_sequence += 1
+        self._pending_query_sequence = self._query_sequence
         self._status_sent_at = self._last_query_at = self._clock()
         self._send(b'?')
 
@@ -125,12 +173,15 @@ class MachineController:
     def _consume(self, line: str) -> None:
         _LOG.debug('GRBL RX %r', line[:256])
         if line.startswith('Grbl '):
+            self._manual.lost_evidence('Controller reset interrupted manual operation', reset=True)
             self._invalidate(clear_units=True)
             self._status_sent_at = None
             self._request_settings()
             self._diagnose('Controller restarted; awaiting units and fresh status')
         elif line.startswith('<'):
             self._consume_status(line)
+        elif self._manual.consume(line):
+            pass
         elif line.startswith('$13'):
             self._consume_units(line)
         elif line == 'ok' and self._settings_sent_at is not None:
@@ -147,6 +198,7 @@ class MachineController:
                 self._invalidate(clear_units=True)
             self._diagnose(f'Controller {line}')
         elif line.startswith('ALARM:'):
+            self._manual.lost_evidence(f'Controller {line}')
             self._invalidate()
             self._snapshot = replace(self._snapshot, state=MachineState.ALARM, raw_state=line)
             self._diagnose(line)
@@ -164,6 +216,7 @@ class MachineController:
         if units is None:
             return
         if self._settings_sent_at is None:
+            self._manual.lost_evidence('Unsolicited report-unit evidence')
             self._invalidate(clear_units=True)
             self._diagnose('Unsolicited or late report units; reconnect to verify settings')
             return
@@ -174,10 +227,13 @@ class MachineController:
         try:
             status = parse_status(line)
         except ValueError as error:
+            self._manual.lost_evidence(f'Invalid status: {error}')
             self._invalidate()
             self._diagnose(f'Invalid status: {error}')
             return
         self._status_sent_at = None
+        self._last_report_query = self._pending_query_sequence
+        self._pending_query_sequence = 0
         machine = work = offset = None
         if self._snapshot.report_units is not None:
             factor = 25.4 if self._snapshot.report_units == 'inch' else 1.0
@@ -194,6 +250,7 @@ class MachineController:
             machine_position_mm=machine, work_position_mm=work, work_offset_mm=offset,
             stale=False, last_report_at=self._clock(),
             diagnostic='' if self._snapshot.report_units is not None else self._snapshot.diagnostic)
+        self._manual.on_status()
 
     @staticmethod
     def _scale(vector: XYZ | None, factor: float) -> XYZ | None:
@@ -205,6 +262,7 @@ class MachineController:
         now = self._clock()
         last = self._snapshot.last_report_at
         if last is not None and now - last >= STATUS_TIMEOUT:
+            self._manual.lost_evidence('Status became stale during manual operation')
             self._invalidate()
             self._diagnose('Status is stale; awaiting a fresh report')
         if self._settings_sent_at is not None and now - self._settings_sent_at >= SETTINGS_TIMEOUT:
