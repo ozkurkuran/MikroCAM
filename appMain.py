@@ -1827,6 +1827,12 @@ class App(QtCore.QObject):
 
         self.ui.menu_plugins.addAction(_('G-code preflight')).triggered.connect(show_preflight_panel)
 
+        def show_svg_drills():
+            from mikrocam.ui.svg_drills import open_svg_drills
+            open_svg_drills(self)
+
+        self.ui.menufileimport.addAction(_('SVG drill candidates...')).triggered.connect(show_svg_drills)
+
         self.calculator_tool = ToolCalculator(self)
         self.calculator_tool.install(icon=QtGui.QIcon(self.resource_location + '/calculator32.png'), separator=True)
 

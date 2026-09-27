@@ -243,3 +243,20 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Regression: five tests first failed, then passed: blocked background submissions finish after
   removal without leaving orphan shapes, and both collection removal routes set the guard first.
 - MikroCAM commit: `0adafe98ba330e0b453c00ddc5210435c4a05000` (`fix: discard shapes submitted during object removal`).
+
+## 2026-09-27 — Review Proteus-style SVG circular drill evidence
+
+- Source: Yacupoma Aguirre Luis Enrique, ProgLuis/FlatCAM9NeoS2, MIT; immutable inspected
+  head `914630319725b0d6034801f4808ae345d53b407b`, extraction commit
+  `fd9e365ac3c41e713fc329a608e4cafbb8667caa`, style follow-up
+  `181c1f2a28d9a03675c4ee42bec234494bfe63e1`.
+- Source files/functions: `appParsers/ParseSVG.py` (`svgextract_circular_paths`,
+  `extract_proteus_svg_drills`) and `app_Main.py` (`import_svg_drills`).
+- License: upstream MIT notice retained in `THIRD_PARTY_LICENSES/FlatCAM9NeoS2-MIT.txt`.
+- Adaptation: independently implement the white-opening/concentric-pad convention with exact
+  physical transforms, actual circle evidence, bounded work, conflict exclusion, stable tool
+  grouping and explicit review/selection. No module copy or automatic drill-object creation.
+- Regression: analytic circle/arc/affine/unit/color/ambiguity/selection tests, Excellon roundtrip
+  and actual desktop review. Original fixture `tests/reference/svg-drills.svg` is MikroCAM MIT
+  artwork, not a genuine Proteus export. Vendor-export validation remains open.
+- MikroCAM commit: recorded after implementation in `specs/018-svg-drill-detection/validation.md`.

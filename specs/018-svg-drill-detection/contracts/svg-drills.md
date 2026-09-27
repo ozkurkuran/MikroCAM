@@ -26,10 +26,13 @@ positive finite diameter<=1e9, nonempty bounded finite centre tuple <=1000.
 `group_drill_selection(review: DrillReview, indices: tuple[int,...]) -> tuple[DrillTool,...]`:
 nonempty <=1000 unique exact integer indices in range, deterministic input-order independent groups,
 ascending diameter, group spread <=0.01 mm, arithmetic mean tool diameter, centres sorted XY.
+Decimal boundary roundoff allows 1e-12 mm; proposed grouped diameters must not make holes overlap.
 
 ## Bridge
 `load_drill_review(path: Path | str, *, flip: bool=True) -> DrillReview`: existing load_svg_file
 then detect; exceptions propagate without changing host. No raw file kept after review.
+`verify_drill_source(path: Path | str, review: DrillReview) -> None`: bounded reread and SHA256
+match before creation; changed/missing/oversized files invalidate the review without reinterpreting it.
 `create_drill_object(app: object, review: DrillReview, indices: tuple[int,...], name: str) -> object`:
 validate selection/name (1..256 printable characters, trimmed nonempty) before factory. Factory
 `new_object('excellon',name,initialize,...)` owns defaults/units. Initializer builds fresh tools
@@ -46,4 +49,6 @@ Table checkboxes initially unchecked; columns Select, X mm, Y mm, Diameter mm, E
 Source/hash, flip and tolerances visible, plain text notices. Changing path/flip invalidates review,
 clears rows and disables create; selected rows only; successful creation accepts dialog; failure
 stays with useful error and never invents success. GUI layer uses only bridge APIs/core records.
+Creation first verifies current source bytes; failed verification clears review/selection and asks
+for analysis again. This covers edits to a file without changing the path text.
 One File/Import menu action, existing translation via gettext/builtins convention; no worker.
