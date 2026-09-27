@@ -1,6 +1,6 @@
 # Validation: CAD source evidence
 
-Status: implementation and focused validation complete; full suite, actual desktop and CI pending.
+Status: implementation, exact-runtime-head full suite and actual desktop passed; final-head Windows CI pending.
 Three stories, 38 tasks. No dependency or controller path added.
 
 ## Requirements and gates
@@ -40,8 +40,16 @@ Focused source/import-report/host/persistence plus import-boundary suite:469pass
 dependency warnings in3.90s. Core/schema alone85passed; host12passed.
 
 ## Full suite and actual desktop
-Pending final runtime head. Commands: `python -m pytest -q --junitxml=.venv/cad-source-pytest.xml`
+Final runtime head: `2fac34880ce96d9a5187d1d020552f58b99dfa5c`. Commands: `python -m pytest -q --junitxml=.venv/cad-source-pytest.xml`
 and `python tests/smoke_app.py`. Ignored logs/screenshots under `.venv/`.
+At that exact runtime head:3880passed,2skipped,11existing dependency warnings,310subtests in234.81s.
+Full suite includes frozen reference, architecture and legacy-growth checks against a596e2cf.
+Actual desktop exited0 with CAD_SOURCE_AUTHORED_SVG_DXF_GEOMETRY_GERBER_ROUNDTRIP_OK for four
+objects. Temporary input files were removed before project reopen; exact source/hash/assessment,
+physical geometry and machining defaults survived. All prior SVG/drill/Illustrator/CAM/laser/manual/
+console/preflight/streaming/dry-run journeys passed through SHUTDOWN_OK. Existing Qt teardown
+warnings remain. Root inspected `.venv/cad-source-smoke.png` (3840x2089): current DXF Gerber,
+expanded historical producer evidence and separate imported geometry at expected positions.
 
 ## Provenance and limits
 KiCad10.0.6 actual exports from existing MIT Pico2ROMEmu board: native input SHA256
@@ -58,4 +66,9 @@ Fixed SVG1.1 external DTD inspection is offline; existing geometry import still 
 Thus real KiCad SVG verifies source inspection, not new physical import compatibility.
 
 ## Delivery
-Implementation commit, PR, final-head Windows CI and merge pending.
+Runtime commit: `2fac34880ce96d9a5187d1d020552f58b99dfa5c`.
+Final reviewed head: `38822cb4e8d360cd4a25654fdd37889d3c8d1c6f`.
+[PR 21](https://github.com/ozkurkuran/MikroCAM/pull/21) merged as
+`5406a0e3148ca059456f6b107f2affc3d9402f0c` after final-head
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36295494584)
+passed in 6m37s. Delivery documentation changes no runtime.
