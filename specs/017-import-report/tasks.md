@@ -36,9 +36,9 @@
 - [x] T025 Audit FR001–010/SC001–005 and eight gates; record evidence in validation.md.
 - [x] T026 Add regressions before audit fixes in dedicated tests/test_import_report*.py files.
 - [x] T027 Document historic report/units/precision/unavailable states in docs/IMPORT_REPORT.md.
-- [ ] T028 Run full pytest including reference/import/growth at exact runtime head; record validation.md.
-- [ ] T029 Run actual desktop report/lifecycle and all prior journeys using tests/smoke_app.py.
-- [ ] T030 Inspect desktop evidence and record results/limitations in validation.md.
+- [x] T028 Run full pytest including reference/import/growth at exact runtime head; record validation.md.
+- [x] T029 Run actual desktop report/lifecycle and all prior journeys using tests/smoke_app.py.
+- [x] T030 Inspect desktop evidence and record results/limitations in validation.md.
 - [ ] T031 Update docs/ROADMAP.md and publish focused PR after016 delivery.
 - [ ] T032 Verify final-head Windows CI and fix real failures, recording validation.md.
 - [ ] T033 Merge only the validated head after016, record PR/CI links in validation.md.
