@@ -1,10 +1,10 @@
 # Specification quality
-- [x] Three userstories with independentacceptance scenarios.
-- [x] ExplicitmachineZ/initialclearance andfixedXYscope.
-- [x] Exactsource/report/derivedidentity andlineage.
-- [x] Outputstartremoved, unknownsemantics blocked.
-- [x] Freshderivedanalysis andexisting liveadmission.
-- [x] Cancellation/staleresults/shutdown covered.
-- [x] Measurable11FR/5SC andtestablehardware-freebehavior.
-- [x] Roadmapdependency andeightconstitutiongates.
-- [x] No unresolvedclarificationmarkers ornewframework.
+- [x] Three user stories with independent acceptance scenarios.
+- [x] Explicit machine Z, initial clearance, and fixed XY scope.
+- [x] Exact source/report/derived identity and lineage.
+- [x] Output start is removed; unknown semantics are blocked.
+- [x] Fresh derived analysis and existing live admission.
+- [x] Cancellation, stale results, and shutdown are covered.
+- [x] Measurable 11 FRs/5 SCs and testable hardware-free behavior.
+- [x] Roadmap dependency and eight constitution gates.
+- [x] No unresolved clarification markers or new framework.
