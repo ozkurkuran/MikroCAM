@@ -1,6 +1,6 @@
 # Validation: SVG drill candidate review
 
-Status: implementation, exact-head full suite and actual desktop complete; GitHub delivery pending.
+Status: delivered; implementation, exact-head full suite, actual desktop and final-head Windows CI passed.
 Three stories, 36 tasks, no dependency or machine communication added.
 
 ## Requirements and design gates
@@ -62,4 +62,6 @@ was found; real Proteus export compatibility and physical drilling remain unveri
 is a reviewed heuristic; it does not infer slots, general clipping or manufacturing intent.
 See [operator guide](../../docs/SVG_DRILLS.md) and [contract](contracts/svg-drills.md).
 Neo behavior adaptation implementation commit: `60c16b76603c191707982ebd0aec5d074fedbdbe`;
-source/license details in THIRD_PARTY_CHANGES.md. PR/CI/merge links pending delivery.
+source/license details in THIRD_PARTY_CHANGES.md.
+[PR19](https://github.com/ozkurkuran/MikroCAM/pull/19) merged as `8d79706b506d29e14f1d5d2eebd3f21fa16cb258`.
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36292864325) passed in 6m52s at final head `082f15bd3566a41aeda75799db0baa7377b239d0`.
