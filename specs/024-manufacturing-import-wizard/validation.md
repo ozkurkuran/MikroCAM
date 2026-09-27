@@ -58,4 +58,8 @@ deleting all four source files. Final-head CI reruns the complete suite includin
 
 ## Delivery
 
-Final-head Windows CI and merge pending.
+[PR25](https://github.com/ozkurkuran/MikroCAM/pull/25) merged final head
+`8c793c2044fdaafb5b53723c1f88a090c617debb` as
+`26637e0bd9b3a746a7ad36acdd4421c92d4b6d58`.
+[Final-head Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36300977639)
+passed in7m31s. All39tasks complete. Existing physical/vendor validation limitations remain.
