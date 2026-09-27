@@ -47,9 +47,9 @@ Input: spec/plan/research/data-model/contracts. Three stories,39tasks; tests fir
 - [x] T034 Run full/reference/architecture/growth suite at final runtime head and record validation.md.
 - [x] T035 Run actual desktop all journeys via tests/smoke_app.py and inspect screenshot.
 - [x] T036 Update roadmap and publish focused PR after018 delivery.
-- [ ] T037 Verify final-head Windows CI and record validation.md.
-- [ ] T038 Merge only validated head; record PR/CI/merge links in validation.md.
-- [ ] T039 Mark delivery in tasks.md/docs/ROADMAP.md, preserving genuine-sample/physical limits.
+- [x] T037 Verify final-head Windows CI and record validation.md.
+- [x] T038 Merge only validated head; record PR/CI/merge links in validation.md.
+- [x] T039 Mark delivery in tasks.md/docs/ROADMAP.md, preserving genuine-sample/physical limits.
 
 Dependencies: records/contracts -> metadata/styles and compound core in parallel separatefiles;
 source traversal + clip geometry -> bridge integration -> report/desktop. Sol owns bounded metadata

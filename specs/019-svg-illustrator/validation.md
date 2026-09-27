@@ -1,6 +1,6 @@
 # Validation: Illustrator SVG appearance
 
-Status: implementation, exact-runtime-head full suite and actual desktop passed; final-head Windows CI pending.
+Status: delivered; exact-runtime-head full suite, actual desktop and final-head Windows CI passed.
 Three stories, 39 tasks, no new dependency or machine communication.
 
 ## Requirements and eight gates
@@ -62,4 +62,5 @@ See docs/SVG_IMPORT.md, docs/IMPORT_REPORT.md and THIRD_PARTY_CHANGES.md for sup
 schema migration and immutable Neo MIT adaptation sources.
 
 ## Delivery
-PR, final-head Windows CI and merge pending.
+[PR20](https://github.com/ozkurkuran/MikroCAM/pull/20) merged as `c6a8441256a45414f7d48e4c1748b34bfaf3733c`.
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36294387159) passed in6m51s at final head `70485359f6d34a2dc0934c4026d54cb16ca0bc61`.
