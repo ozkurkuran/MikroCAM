@@ -3,18 +3,18 @@ from hashlib import sha256
 from pathlib import Path
 
 
-def _check(app, name):
+def _check(app, name, tolerance_mm=1e-6):
     obj = app.collection.get_by_name(name)
     assert obj is not None and obj.kind == 'excellon'
     factor = 1. if obj.units.upper() == 'MM' else 25.4
     tools = sorted(obj.tools.values(), key=lambda t: t['tooldia'])
     assert len(tools) == 2 and sum(len(t['drills']) for t in tools) == 2
     for tool, diameter, center in zip(tools, (.8, 1.2), ((15., 37.), (35., 37.))):
-        assert abs(tool['tooldia'] * factor - diameter) < .001
+        assert abs(tool['tooldia'] * factor - diameter) < tolerance_mm
         assert len(tool['drills']) == 1 and tool['solid_geometry']
         point = tool['drills'][0]
-        assert abs(point.x * factor - center[0]) < .001
-        assert abs(point.y * factor - center[1]) < .001
+        assert abs(point.x * factor - center[0]) < tolerance_mm
+        assert abs(point.y * factor - center[1]) < tolerance_mm
     assert obj.source_file and 'M48' in obj.source_file and 'M30' in obj.source_file
     return obj
 
@@ -83,12 +83,17 @@ def svg_drill_journey(app, qapp, sandbox, errors, pump_until, root):
     app.f_handlers.open_excellon(str(exported), outname='smoke_reimported_drills')
     pump_until(qapp, lambda: app.collection.get_by_name('smoke_reimported_drills') is not None
                and app.workers._pending_count == 0, errors, 'SVG drill export reopen')
-    _check(app, 'smoke_reimported_drills')
+    # Default inch export has four decimals: one output quantum is 0.00254 mm.
+    # Include the existing 0.03937 conversion approximation for this <=37 mm fixture.
+    unit_mm = 25.4 if app.options['excellon_exp_units'] == 'INCH' else 1.
+    tool_decimals = 4 if unit_mm == 25.4 else 2
+    tolerance = max(10 ** -app.options['excellon_exp_decimals'], 10 ** -tool_decimals) * unit_mm + .0001
+    _check(app, 'smoke_reimported_drills', tolerance)
     project = sandbox / 'svg-drills.FlatPrj'
     app.f_handlers.save_project(str(project), silent=True)
     _reopen(app, qapp, project, previous, errors, pump_until)
     _check(app, 'smoke_svg_drills')
-    _check(app, 'smoke_reimported_drills')
+    _check(app, 'smoke_reimported_drills', tolerance)
     assert fixture.read_bytes() == original
     print('SVG_DRILL_REVIEW_EXCELLON_ROUNDTRIP_OK', sha256(original).hexdigest(), screenshot, flush=True)
     app.collection.delete_all()
