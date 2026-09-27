@@ -400,6 +400,8 @@ def run_smoke(sandbox, state):
         preflight_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         from smoke_job import job_journey
         machine_transport = job_journey(app, qapp, errors, pump_until, ROOT)
+        from smoke_dry_run import dry_run_journey
+        machine_transport = dry_run_journey(app, qapp, errors, pump_until, ROOT)
         render_and_quit(app, qapp, errors, machine_transport)
     except BaseException:
         traceback.print_exc()

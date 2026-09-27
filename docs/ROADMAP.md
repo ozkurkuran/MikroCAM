@@ -106,7 +106,7 @@ içe aktarma ve fiziksel PCB kuponu henüz doğrulanmadığı için kilometre ta
 | 11 | `jog-and-work-zero` — **yazılım tamamlandı** | Sınırlı jog, açık G54 seçimi ve doğrulanmış XY/Z/XYZ sıfırlama; tek işlem ve öncelikli iptal/kapatma. 1967 test + 310 subtest, 10 Qt döngüsü ve gerçek masaüstünde FakeGRBL akışı başarılı; fiziksel cihaz doğrulaması açık. [Doğrulama](../specs/011-jog-and-work-zero/validation.md). | 10 |
 | 12 | `gcode-preflight` — **tamamlandı** | Açık kurulumla salt okunur G-code analizi; tam doğrusal/yay sınırları, birim/mod, feed, rapid/Z ve nominal süre. 2286 test + 310 subtest; seçili CNC işi/dosya ve tehlikeli rapid için gerçek masaüstü akışı ve son commit Windows CI başarılı. [Doğrulama](../specs/012-gcode-preflight/validation.md). | 4 |
 | 13 | `job-streaming` — **yazılım tamamlandı** | Ön kontrolle bağlı değişmez mekanik CNC işi, canlı G54/konum/ayar doğrulaması, tek ACK sahibi, pause/resume/stop ve gerçek tamamlanma kanıtı. 2509 test + 310 subtest; gerçek masaüstünde FakeGRBL aktarım/çalıştırma/durdurma/kapanış ve son commit Windows CI başarılı. Fiziksel cihaz doğrulaması açık. [Doğrulama](../specs/013-job-streaming/validation.md). | 11, 12 |
-| 14 | `dry-run` | Safe-Z / yalnızca XY; spindle kapalı | 13 |
+| 14 | `dry-run` — **yerel doğrulama tamamlandı; CI/birleştirme bekleniyor** | Kaynak korunarak açık makine Z düzleminde ayrı XY işi; ilk yukarı Z hareketi, spindle/soğutma açma komutlarının çıkarılması, yeni ön kontrol ve kaynak satır eşlemesi. 2564 test + 310 subtest; gerçek masaüstünde FakeGRBL aktarım, yay projeksiyonu ve aktif iş kapanışı başarılı. [Doğrulama](../specs/014-dry-run/validation.md). | 13 |
 | 15 | `machine-console` | Terminal ve ham tx/rx logu | 10 |
 
 ### 0.5 — İçe aktarma (Neo S2 port'ları)
