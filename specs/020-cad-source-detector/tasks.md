@@ -44,9 +44,9 @@ Three stories, 38 tasks. Tests precede core/domain implementation.
 - [x] T030 Document supported markers, uncertainty and fixture coverage in docs/CAD_SOURCE.md.
 - [x] T031 Record immutable source/license/adaptation in THIRD_PARTY_CHANGES.md.
 - [x] T032 Run focused source/reference/architecture tests and record validation.md.
-- [ ] T033 Run final runtime full suite and record validation.md.
-- [ ] T034 Run actual desktop all journeys and inspect screenshot for validation.md.
-- [ ] T035 Update docs/ROADMAP.md and publish focused PR after019 delivery.
+- [x] T033 Run final runtime full suite and record validation.md.
+- [x] T034 Run actual desktop all journeys and inspect screenshot for validation.md.
+- [x] T035 Update docs/ROADMAP.md and publish focused PR after019 delivery.
 - [ ] T036 Verify final-head Windows CI and record validation.md.
 - [ ] T037 Merge validated head and record delivery links in validation.md.
 - [ ] T038 Finish tasks.md/docs/ROADMAP.md without overstating vendor/hardware coverage.
