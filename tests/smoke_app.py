@@ -304,6 +304,8 @@ def render_and_quit(app, qapp, errors, machine_transport):
     assert not any(process.is_alive() for process in app.pool._pool)
     assert not multiprocessing.active_children(), 'Application child process survived shutdown'
     assert not app._mikrocam_machine_panel.busy and not machine_transport.is_open
+    assert not app._mikrocam_preflight_panel.busy
+    print('PREFLIGHT_SHUTDOWN_OK', flush=True)
     print('MACHINE_SHUTDOWN_OK', flush=True)
     print('SHUTDOWN_OK', flush=True)
 
@@ -389,6 +391,8 @@ def run_smoke(sandbox, state):
         laser_journey(app, qapp, sandbox, errors)
         laser_export_journey(app, qapp, sandbox, errors)
         machine_transport = machine_journey(app, qapp, errors)
+        from smoke_preflight import preflight_journey
+        preflight_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         render_and_quit(app, qapp, errors, machine_transport)
     except BaseException:
         traceback.print_exc()
