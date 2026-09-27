@@ -77,6 +77,8 @@ class ManualControl:
         self.host._send(data)
 
     def _write_gate(self) -> None:
+        if self.host._interrupted():
+            raise ValueError('Priority stop interrupted manual preparation before writing')
         value = self.host.snapshot()
         if (value.connection is not ConnectionState.CONNECTED or value.state is not MachineState.IDLE
                 or value.stale or value.report_units is None or value.machine_position_mm is None
@@ -219,7 +221,7 @@ class ManualControl:
         value = self.host.snapshot()
         purpose = self.waiting_status
         if purpose == 'cancelled':
-            if value.state in (MachineState.IDLE, MachineState.DOOR) and not self.cancel_ack_pending:
+            if value.state is MachineState.IDLE and not self.cancel_ack_pending:
                 self._finish('Jog cancellation verified by controller status')
             return
         if purpose == 'jog_done' and value.state is MachineState.JOG:
@@ -328,6 +330,9 @@ class ManualControl:
         self.publish()
 
     def fail(self, message: str, *, attempt_stop: bool = True) -> None:
+        if not self.active and self.stop_unverified:
+            self.publish()
+            return
         if self.active and self.jog_sent and attempt_stop:
             self.abort(message + '; stop unverified', failed=True)
         else:

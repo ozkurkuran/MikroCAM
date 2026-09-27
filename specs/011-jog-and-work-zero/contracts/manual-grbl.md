@@ -62,7 +62,8 @@ endpoint plus causal Idle; zero requires full offset read-back plus causal fresh
 New motions/persistent writes never follow a tainted/ambiguous session without explicit reconnect.
 
 ## Stop and error policy
-Cancel owned jog with0x85, discard queued requests, wait<=2s for a causal Idle/Door report.
+Cancel owned jog with0x85, discard queued requests, wait<=2s for a causal Idle report.
+Door may include configured parking and cannot establish verified cancellation.
 If it fails, request abort, retain stop-unverified evidence, clear positions and lock actions.
 Abort0x18 is allowed only with completed, current-session empty `$N0`/`$N1` evidence; otherwise
 send safety-door0x84 and explicitly report possible configured parking and unverified stop.

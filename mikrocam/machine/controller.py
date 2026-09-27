@@ -1,4 +1,4 @@
-"""Single-owner read-only GRBL lifecycle and session-scoped coordinate evidence."""
+"""Single-owner GRBL lifecycle, bounded manual actions and coordinate evidence."""
 from collections.abc import Callable
 from dataclasses import replace
 import logging
@@ -33,6 +33,7 @@ class MachineController:
         self._pending_units: str | None = None
         self._query_sequence = self._pending_query_sequence = self._last_report_query = 0
         self._manual = ManualControl(self)
+        self._interrupted: Callable[[], bool] = lambda: False
 
     def snapshot(self) -> MachineSnapshot:
         """Return an immutable observation; this does not perform I/O."""
@@ -40,11 +41,27 @@ class MachineController:
 
     def request_manual(self, request: JogRequest | ZeroRequest | SelectG54Request) -> None:
         """Admit one typed request on the communication owner, never raw G-code."""
-        self._manual.start(request)
+        try:
+            self._manual.start(request)
+        except ValueError as error:
+            if not self._manual.active:
+                self._manual.phase = ManualPhase.FAILED
+                self._manual.message = str(error)[:256]
+                self._manual.publish()
+            raise
+
+    def set_interrupt_check(self, check: Callable[[], bool]) -> None:
+        """Install a thread-safe signal reader; it must never perform I/O or GUI work."""
+        self._interrupted = check
 
     def cancel_jog(self) -> None:
         try:
-            self._manual.cancel()
+            if self._manual.active:
+                self._manual.cancel()
+            elif not self._manual.tainted:
+                self._manual.phase = ManualPhase.ABORTED
+                self._manual.message = 'Pending manual request cancelled before admission'
+                self._manual.publish()
         except Exception as error:
             self._fail(error)
 

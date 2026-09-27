@@ -91,7 +91,7 @@ omitted work coordinates unchanged within0.005mm. No auto-retry of the persisten
 
 ## Cancellation, Abort and Worker Closure
 Cancel jog uses only realtime0x85, preempts queued intents and waits for a causal nonmoving
-Idle/Door report; Door stays locked. A missing/invalid cancel result after2s invokes best-effort
+Idle report; Door may include parking and cannot verify stopping. A missing/invalid cancel result after2s invokes best-effort
 abort0x18 only with verified empty startup-block evidence and retains stop-unverified evidence.
 Abort from any connected state invalidates pending operations/positions/units. It sends0x18
 only with that proof; otherwise it sends safety-door0x84 with an explicit stop-unverified and

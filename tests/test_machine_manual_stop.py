@@ -34,6 +34,27 @@ def test_abort_uses_reset_only_after_verified_empty_startup_blocks():
     assert not state.manual.can_jog
 
 
+def test_door_report_cannot_verify_stop_because_parking_may_continue():
+    controller, fake, clock = moving()
+    controller.cancel_jog()
+    fake.state = 'Door'
+    for _ in range(4):
+        clock.now += .25
+        controller.tick()
+        assert controller.snapshot().manual.phase is not ManualPhase.COMPLETE
+    clock.now += 1
+    controller.tick()
+    assert controller.snapshot().manual.stop_unverified
+
+
+def test_priority_signal_after_read_prevents_final_jog_transmit():
+    controller, fake, clock = connected()
+    controller.set_interrupt_check(lambda: b'$G\n' in fake.writes)
+    controller.request_manual(JogRequest('X', .1, 100))
+    drive(controller, clock, lambda snap: snap.manual.phase is ManualPhase.FAILED)
+    assert not any(data.startswith(b'$J=') for data in fake.writes)
+
+
 def test_abort_without_startup_evidence_uses_door_and_warns_about_parking():
     controller, fake, _ = connected()
     controller.abort()
@@ -110,3 +131,17 @@ def test_failed_abort_delivery_is_visible_after_close():
     state = controller.snapshot()
     assert state.manual.stop_unverified and 'unplugged' in state.manual.diagnostic
     assert not fake.is_open
+
+
+def test_late_ack_and_cancel_cannot_erase_failed_stop_evidence():
+    controller, fake, _ = moving()
+    fake.auto_respond = False
+    fake._incoming.clear()
+    fake.write_error = OSError('stop cable unplugged')
+    controller.abort()
+    fake.write_error = None
+    fake.inject(b'ok\n')
+    controller.tick()
+    controller.cancel_jog()
+    assert controller.snapshot().manual.stop_unverified
+    assert 'unplugged' in controller.snapshot().manual.diagnostic
