@@ -22,6 +22,7 @@ class GcodeError(ValueError):
 class Block:
     line: int
     words: tuple[tuple[str, float], ...]
+    canonical: str = ''
 
 
 def _executable(line: str, number: int) -> str:
@@ -77,6 +78,8 @@ def iter_blocks(text: str, cancelled: Callable[[], bool] | None = None) -> Itera
             raise PreflightCancelled('Preflight cancelled')
         if number > MAX_LINES:
             raise GcodeError(number, 'resource-limit', 'G-code line count exceeds limit')
-        words = _words(_executable(raw.rstrip('\r\n'), number), number)
+        executable = _executable(raw.rstrip('\r\n'), number)
+        words = _words(executable, number)
         if words:
-            yield Block(number, words)
+            canonical = ''.join(m.group(1).upper()+m.group(2) for m in _WORD.finditer(executable))
+            yield Block(number, words, canonical)
