@@ -41,10 +41,10 @@
 - [x] T023 Run full pytest, import, growth, and size checks; record the head and counts.
 - [x] T024 Run a Fake dry run on the actual desktop and inspect the UI; preserve prior flows.
 - [x] T025 Update the roadmap and validation record, then publish a focused PR.
-- [ ] T026 Verify final-head Windows CI and fix actual failures.
-- [ ] T027 Merge the validated head.
-- [ ] T028 Record delivery links and evidence-only completion.
-- [ ] T029 Carry physical-validation limits forward.
+- [x] T026 Verify final-head Windows CI and fix actual failures.
+- [x] T027 Merge the validated head.
+- [x] T028 Record delivery links and evidence-only completion.
+- [x] T029 Carry physical-validation limits forward.
 
 Tests precede implementation; shared contracts precede delegation; each file has one owner. All
 stories are required.
