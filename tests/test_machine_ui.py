@@ -307,7 +307,7 @@ def test_shutdown_timeout_keeps_live_worker_and_ignores_close(panel, qtbot, monk
     assert value._worker is worker and value.busy
     assert not value.close()
     monkeypatch.setattr(worker, 'wait', original_wait)
-    qtbot.waitUntil(lambda: not worker.isRunning())
+    qtbot.waitUntil(lambda: isdeleted(worker) or not worker.isRunning())
     assert value.shutdown()
 
 
