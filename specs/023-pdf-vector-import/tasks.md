@@ -37,17 +37,17 @@
 ## Audit and delivery
 - [x] T027 Audit requirements and eight gates in validation.md.
 - [x] T028 Add meaningful regression tests before audit fixes in tests/test_pdf_vector*.py.
-- [ ] T029 Verify existing PDF, SVG and source/report regressions.
+- [x] T029 Verify existing PDF, SVG and source/report regressions.
 - [x] T030 Document supported grammar, physical frame and limits in docs/PDF_VECTOR_IMPORT.md.
 - [x] T031 Verify license/provenance and reproducible environments in validation.md.
 - [x] T032 Run focused, architecture, dependency and growth checks; record validation.md.
-- [ ] T033 Run complete suite at final runtime head; record validation.md.
-- [ ] T034 Run actual desktop journeys and inspect screenshot; record validation.md.
-- [ ] T035 Update docs/ROADMAP.md and publish focused PR after022 delivery.
+- [x] T033 Run complete suite at final runtime head; record validation.md.
+- [x] T034 Run actual desktop journeys and inspect screenshot; record validation.md.
+- [x] T035 Update docs/ROADMAP.md and publish focused PR after022 delivery.
 - [ ] T036 Verify final-head Windows CI; record validation.md.
 - [ ] T037 Merge validated head and record PR/CI/merge links in validation.md.
 - [ ] T038 Mark delivery in tasks.md/docs/ROADMAP.md, retaining validation limits.
-- [ ] T039 Confirm original sources and prior behavior remain covered in validation.md.
+- [x] T039 Confirm original sources and prior behavior remain covered in validation.md.
 
 Dependencies: strict records -> bounded page reader and physical frame -> interpreter/painting ->
 review -> guarded creation/persistence -> actual host/desktop/full validation. Tests precede their

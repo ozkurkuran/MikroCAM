@@ -49,11 +49,30 @@ annotation fixes:104 passed in1.76s. Both reproducible environments have pypdf6.
 7e5d6e730e7dae87d560a2cee218b852f6498c8be61966f3cd02ead971e48d14. Original BSD-3-Clause license
 hash a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524 is inventoried unchanged.
 No AGPL runtime, borrowed algorithm, external process, raster conversion or vendor fixture added.
-Largest new production module325lines; longest function56lines. Final growth/complete checks below.
+Largest new production module325lines; longest function56lines. Legacy top-ten growth is+6/50
+against82e4722e. Final focused reader/operator/geometry/bridge/UI/license checks:181 passed in3.05s.
+Original notice bytes intentionally retain their recorded line endings; `git -c
+core.whitespace=cr-at-eol diff --check` passes without rewriting licensed source bytes.
 
 ## Full suite and desktop
 
-Pending final runtime commit, complete suite and actual desktop screenshot inspection.
+Runtime commit `b0a11e052bc5db96ef8865476e3bf779c5bd9b77`: complete suite passed4503tests,
+2skipped upstream templates,11existing dependency warnings and310subtests in263.22s. Frozen
+reference, existing PDF/SVG and all previous behavior remain covered.
+
+At this exact runtime head the actual desktop completed all journeys and SHUTDOWN_OK, including
+PDF_VECTOR_SELECTED_PAGE_CROP_FLIP_DXF_PROJECT_OK. Root inspected780x680 PDF review screenshot.
+Visual review found crop placeholders disappeared after entering values. UI-only commit
+`611dc0c2ef9487a4bb6c4f40131c76508be8eae2` adds persistent minX/minY/maxX/maxY labels and
+accessible names;18UI/report tests pass. A second complete desktop run at this head exited0;
+the updated screenshot was inspected and labels remain visible. Geometry/reader/factory logic is
+identical to the complete-suite head; final-head Windows CI reruns the full suite.
+
+Desktop proof uses two authored compressed pages, chooses the second, crops physical coordinates
+and flips once. Normal Geometry is exported to DXF and reparsed, then project save/reopen after
+deleting the original PDF retains exact source bytes, report, geometry and normal defaults.
+Existing native Qt teardown warnings remain. Screenshot `.venv/pdf-vector-smoke.png` is a local
+validation artifact, not shipped source data.
 
 ## Delivery
 
