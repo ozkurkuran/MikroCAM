@@ -43,13 +43,13 @@ Input: spec, plan, research, data model and contracts. Three stories, 39 tasks; 
 - [x] T030 Document source authority, intent and tolerances in docs/GEOMETRY_DRILLS.md.
 - [x] T031 Record independent implementation/source reuse in validation.md and docs/GEOMETRY_DRILLS.md.
 - [x] T032 Run focused/reference/import-boundary/growth checks and record validation.md.
-- [ ] T033 Run complete suite at final runtime head and record validation.md.
-- [ ] T034 Run actual desktop all journeys at that head and inspect screenshots for validation.md.
-- [ ] T035 Update docs/ROADMAP.md and publish focused PR after020 delivery.
+- [x] T033 Run complete suite at final runtime head and record validation.md.
+- [x] T034 Run actual desktop all journeys at that head and inspect screenshots for validation.md.
+- [x] T035 Update docs/ROADMAP.md and publish focused PR after020 delivery.
 - [ ] T036 Verify final-head Windows CI and record validation.md.
 - [ ] T037 Merge validated head and record PR/CI/merge links in validation.md.
 - [ ] T038 Mark delivery in tasks.md/docs/ROADMAP.md, preserving physical-validation limits.
-- [ ] T039 Confirm source objects and prior delivered behavior remain covered in validation.md.
+- [x] T039 Confirm source objects and prior delivered behavior remain covered in validation.md.
 
 Dependencies: shared mathematical/grouping records -> pure detection and host extraction -> selection
 UI and shared factory -> guarded publication -> complete validation. Sol may implement shared grouping/
