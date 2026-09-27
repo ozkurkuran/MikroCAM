@@ -1,5 +1,5 @@
 # Validation: mechanical CNC job streaming
-Status: full local suite and desktop passed; final-head Windows CI/merge pending.
+Status: full local suite, desktop and final-head Windows CI passed; merged.
 Three stories/39 tasks; all10 quality checks. No new dependencies or legacy feature hooks.
 
 ## Requirements and constitution
@@ -67,4 +67,6 @@ identify connected hardware. Output-off is controller-reported; feed hold can le
 A broken cable cannot deliver stop. Numeric checks do not emulate firmware interpolation/steps.
 Source ACK watchdog is conservative and may abort unusually slow operation; never replay.
 [PR14](https://github.com/ozkurkuran/MikroCAM/pull/14) publishes this feature.
-Final-head Windows CI and merge links pending.
+[Final-head Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36286575852)
+passed in6m15s at `564bfcc8f1866a624f44de99d65c6dadce257137`.
+PR14 merged as `c76504a2e0e89881148e59ed3674cee93f60a3e1`; all39 tasks complete.

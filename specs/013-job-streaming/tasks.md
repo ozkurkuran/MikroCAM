@@ -45,9 +45,9 @@
 - [x] T034 Full pytest/import/growth/size checks and exact head/counts.
 - [x] T035 Actual desktop Fake job/pause/stop/completion smoke and UI inspection.
 - [x] T036 Roadmap/validation and focused PR.
-- [ ] T037 Final-head Windows CI; fix actual failures.
-- [ ] T038 Merge validated head and record links.
-- [ ] T039 Evidence-only completion and explicit hardware limits.
+- [x] T037 Final-head Windows CI; fix actual failures.
+- [x] T038 Merge validated head and record links.
+- [x] T039 Evidence-only completion and explicit hardware limits.
 
 T001-T002 precede code; tests precede owned implementation. All three stories required.
 Delegates edit disjoint files; root integrates.
