@@ -33,10 +33,10 @@
 - [x] T022 Run full pytest/import/growth/size checks and record the tested head/counts.
 - [x] T023 Run the actual desktop console with existing flows and inspect the UI.
 - [x] T024 Update the roadmap/validation record and publish a focused PR.
-- [ ] T025 Verify final-head Windows CI and fix actual failures.
-- [ ] T026 Merge the validated head.
-- [ ] T027 Record delivery links and evidence-only task completion.
-- [ ] T028 Carry physical-machine limitations forward.
+- [x] T025 Verify final-head Windows CI and fix actual failures.
+- [x] T026 Merge the validated head.
+- [x] T027 Record delivery links and evidence-only task completion.
+- [x] T028 Carry physical-machine limitations forward.
 
 Tests precede implementation; all stories required. Delegated files have one owner and root
 coordinates staging/commits to avoid a shared-index race.
