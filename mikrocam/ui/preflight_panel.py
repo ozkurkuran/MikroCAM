@@ -3,6 +3,7 @@ import builtins
 from collections.abc import Callable
 import gettext
 from pathlib import Path
+from time import monotonic
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
@@ -10,6 +11,7 @@ from mikrocam.bridge.gcode_source import load_gcode_file, snapshot_cncjob
 from mikrocam.core.gcode_models import MAX_FINDINGS, PreflightReport, SourceSnapshot
 from .preflight_setup import PreflightSetupWidget
 from .preflight_worker import PreflightWorker
+from .dry_run_panel import DryRunPanel
 
 
 _ = getattr(builtins, '_', gettext.gettext)
@@ -26,6 +28,7 @@ class PreflightPanel(QtWidgets.QDockWidget):
         self.source_provider = source_provider
         self.job_receiver = job_receiver
         self._transfer_alive = True
+        self._dry_run_panel: DryRunPanel | None = None
         self.source: SourceSnapshot | None = None
         self.report: PreflightReport | None = None
         self._worker: PreflightWorker | None = None
@@ -65,12 +68,15 @@ class PreflightPanel(QtWidgets.QDockWidget):
         self.analyze_button = QtWidgets.QPushButton(_('Analyze'))
         self.cancel_button = QtWidgets.QPushButton(_('Cancel'))
         self.transfer_button = QtWidgets.QPushButton(_('Load reviewed job into Machine'))
+        self.dry_run_button = QtWidgets.QPushButton(_('Dry run'))
+        self.dry_run_button.clicked.connect(self.open_dry_run)
         self.transfer_button.clicked.connect(self.transfer_to_machine)
         self.analyze_button.clicked.connect(self.analyze)
         self.cancel_button.clicked.connect(self.cancel)
         actions.addWidget(self.analyze_button)
         actions.addWidget(self.cancel_button)
         actions.addWidget(self.transfer_button)
+        actions.addWidget(self.dry_run_button)
         layout.addLayout(actions)
         self.result_label = QtWidgets.QLabel(_('Supply explicit setup values before analysis.'))
         self.result_label.setWordWrap(True)
@@ -95,6 +101,28 @@ class PreflightPanel(QtWidgets.QDockWidget):
         self.selected_button.setEnabled(self.source_provider is not None)
         self.transfer_button.setEnabled(self.report is not None and self.report.allowed
                                         and not self.busy and self.job_receiver is not None)
+        self.dry_run_button.setEnabled(self._transfer_alive and self.report is not None
+                                       and self.report.allowed and not self.busy)
+
+    def open_dry_run(self) -> DryRunPanel | None:
+        binding = self._execution_binding()
+        if binding is None:
+            return None
+        if self._dry_run_panel is None:
+            parent = self.parentWidget()
+            self._dry_run_panel = DryRunPanel(parent or self, source=binding[0], report=binding[1],
+                                              binding_provider=self._execution_binding,
+                                              job_receiver=self.job_receiver)
+            if isinstance(parent, QtWidgets.QMainWindow):
+                parent.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self._dry_run_panel)
+            else:
+                self._dry_run_panel.setFloating(True)
+        else:
+            self._dry_run_panel.set_source(*binding, self._execution_binding)
+            self._dry_run_panel.job_receiver = self.job_receiver
+        self._dry_run_panel.show()
+        self._dry_run_panel.raise_()
+        return self._dry_run_panel
 
     def _execution_binding(self) -> tuple[SourceSnapshot, PreflightReport] | None:
         self._refresh_selected()
@@ -266,11 +294,11 @@ class PreflightPanel(QtWidgets.QDockWidget):
     def _finished(self) -> None:
         self._release_worker(self.sender())
 
-    def _release_worker(self, expected: QtCore.QObject) -> bool:
+    def _release_worker(self, expected: QtCore.QObject, timeout: int = JOIN_TIMEOUT_MS) -> bool:
         worker = self._worker
         if worker is None or expected is not worker:
             return worker is None
-        if not worker.wait(JOIN_TIMEOUT_MS):
+        if not worker.wait(timeout):
             self.result_label.setText(_('Analysis is still stopping; keep this window open.'))
             return False
         if worker.is_cancelled() and self._cancel_notice_generation == self._generation:
@@ -281,13 +309,17 @@ class PreflightPanel(QtWidgets.QDockWidget):
         return True
 
     def shutdown(self) -> bool:
+        deadline = monotonic() + JOIN_TIMEOUT_MS / 1000
         self._transfer_alive = False
         self.reviewed_changed.emit()
         self._refresh_timer.stop()
-        if self._worker is None:
-            return True
-        self.cancel()
-        return self._release_worker(self._worker)
+        if self._worker is not None:
+            self.cancel()
+        dry_closed = (self._dry_run_panel is None or self._dry_run_panel.shutdown(
+            max(0, int((deadline - monotonic()) * 1000))))
+        own_closed = (self._worker is None or self._release_worker(
+            self._worker, max(0, int((deadline - monotonic()) * 1000))))
+        return dry_closed and own_closed
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         if not self.shutdown():

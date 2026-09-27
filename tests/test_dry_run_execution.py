@@ -117,3 +117,25 @@ def test_active_dry_job_close_keeps_derived_identity_and_stop_uncertainty():
     assert value.source_sha256 == result.prepared_job.source.sha256
     assert value.source_sha256 != source.sha256
     assert value.phase is JobPhase.ABORTED and value.stop_unverified
+
+
+def test_dry_job_hold_resume_and_stop_share_the_existing_owner_without_outputs():
+    source, report = reviewed('G21G90G17G94\nM3S500\nG1F60\n' + 'X1Z-.1\nX2Z-.2\n'*80 + 'M2\n')
+    result = prepare_dry_run(source, report, 10.)
+    controller, fake, clock = connected(FakeGRBL(machine_position=(0.,0.,5.)))
+    start(controller, result.prepared_job)
+    until(controller, clock, lambda: len(fake.job_writes) > 6)
+    controller.pause_job()
+    until(controller, clock, lambda: controller.snapshot().job.phase is JobPhase.PAUSED)
+    count = len(fake.job_writes)
+    for _ in range(10):
+        step(controller, clock)
+    assert len(fake.job_writes) == count and fake.machine_position[2] == 10.
+    controller.resume_job()
+    until(controller, clock, lambda: len(fake.job_writes) > count)
+    assert b'!' in fake.writes and b'~' in fake.writes
+    assert fake.spindle == 'M5' and fake.coolant == ('M9',)
+    controller.stop_job()
+    assert controller.snapshot().job.phase is JobPhase.ABORTED
+    assert controller.snapshot().job.stop_unverified
+    controller.disconnect()
