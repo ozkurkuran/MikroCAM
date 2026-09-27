@@ -315,7 +315,7 @@ class JobControl:
             self.stop(message + '; physical stop unverified', failed=True)
         else:
             self._end(JobPhase.FAILED, message, False)
-        self.host._invalidate()
+        self.host._invalidate(clear_units=True)
         self.publish()
 
     def _end(self, phase: JobPhase, message: str, uncertain: bool) -> None:

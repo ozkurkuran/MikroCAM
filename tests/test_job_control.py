@@ -280,3 +280,16 @@ def test_hold_resume_write_failure_preserves_job_progress_and_stop_uncertainty(a
     assert result.job.phase is JobPhase.FAILED and result.job.stop_unverified
     assert result.job.source_name == 'fixture.nc'
     assert 'cable removed' in result.job.diagnostic
+
+
+def test_failed_units_evidence_cannot_repopulate_dro_using_the_old_unit_scale():
+    controller, fake, clock = connected()
+    fake.job_settings[13] = 1
+    start(controller)
+    until(controller, clock, lambda: controller.snapshot().job.phase is JobPhase.FAILED)
+    fake.report_units = 'inch'
+    fake.machine_position = (25.4,0.,0.)
+    for _ in range(5):
+        step(controller, clock)
+    assert controller.snapshot().report_units is None
+    assert controller.snapshot().machine_position_mm is None
