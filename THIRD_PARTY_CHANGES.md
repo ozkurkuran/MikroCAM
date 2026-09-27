@@ -286,3 +286,25 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   source's named Illustrator examples were not shipped; no genuine licensed vendor-export sample
   or physical manufacturing validation is claimed. Validation results and the implementation commit
   are recorded in `specs/019-svg-illustrator/validation.md` when delivery checks complete.
+
+## 2026-09-27 — Report explicit CAD producer evidence
+
+- Behavior sources: MIT `ProgLuis/FlatCAM9NeoS2`, inspected head
+  `914630319725b0d6034801f4808ae345d53b407b`; `appParsers/DXFSourceDetector.py` at
+  `7b3ea49f96174a38dd079fba7574982b6ec6f1c4` and `appParsers/ParseSVG.py` source-advisor behavior
+  at `9b73859dea7705b1c7ccaac614d2d05de1e05ca4`. Existing full MIT notice is retained in
+  `THIRD_PARTY_LICENSES/FlatCAM9NeoS2-MIT.txt`.
+- Independent adaptation: bounded producer metadata only, with explicit missing/conflicting/
+  unavailable states. No filename, font, layer or geometric-profile scoring; no module copy or merge.
+  Source evidence is a historical claim, never proof of authorship or manufacturing readiness.
+- Destination: `mikrocam/core/cad_source.py`, `cad_source_codec.py`; `mikrocam/importers/cad_source.py`,
+  `cad_producer.py`, `cad_svg_source.py`, `cad_dxf_source.py`; `mikrocam/bridge/cad_source.py` and
+  `mikrocam/ui/cad_source.py`, with short existing import/persistence hooks.
+- Fixture provenance: KiCad10.0.6 CLI exports from the existing MIT Pico2ROMEmu board,
+  copyright2025 kyo-ta04(@DragonBallEZ), upstream `de3a29370d760e93451975094372e08484cd6777`.
+  Exact source/output hashes, commands and full MIT license accompany
+  `tests/reference/cad-source/kicad-pico2romemu/`. Output-format documentation was researched;
+  no KiCad GPL implementation code was ported. The existing upstream Inkscape SVG asset is reused
+  without copying or claiming PCB coverage. Illustrator/Proteus markers use authored syntax fixtures.
+- MikroCAM implementation commit and complete validation are recorded in
+  `specs/020-cad-source-detector/validation.md` after delivery checks.

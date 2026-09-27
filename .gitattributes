@@ -8,3 +8,4 @@ tests/qt_settings_sandbox.py -text
 tests/reference/svg-physical-transform.svg -text
 tests/reference/svg-drills.svg -text
 tests/reference/svg-illustrator.svg -text
+tests/reference/cad-source/** -text

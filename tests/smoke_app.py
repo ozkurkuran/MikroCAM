@@ -396,6 +396,8 @@ def run_smoke(sandbox, state):
         svg_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         from smoke_svg_illustrator import svg_illustrator_journey
         svg_illustrator_journey(app, qapp, sandbox, errors, pump_until, ROOT)
+        from smoke_cad_source import cad_source_journey
+        cad_source_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         cam_journey(app, qapp, sandbox, errors)
         app.ui.showMaximized()
         qapp.processEvents()
