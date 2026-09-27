@@ -404,6 +404,8 @@ def run_smoke(sandbox, state):
         excellon_merge_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         from smoke_pdf_vectors import pdf_vector_journey
         pdf_vector_journey(app, qapp, sandbox, errors, pump_until, ROOT)
+        from smoke_manufacturing_import import manufacturing_import_journey
+        manufacturing_import_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         cam_journey(app, qapp, sandbox, errors)
         app.ui.showMaximized()
         qapp.processEvents()
