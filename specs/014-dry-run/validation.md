@@ -1,6 +1,6 @@
 # Validation: safe-plane XY dry run
 
-Status: full local suite and actual desktop passed; final-head Windows CI and merge pending.
+Status: delivered and merged; full local suite, actual desktop and final-head Windows CI passed.
 Three stories and29 tasks. Dependency013 is merged; no new dependencies or legacy hooks.
 
 ## Requirements and constitution
@@ -64,4 +64,6 @@ reported already closing (WinError232), followed by successful owned shutdown ma
 Clearance and dry plane are operator-declared, not measured. This is real mechanical motion;
 no physical collision, spindle power or stopping guarantee is inferred. Laser execution is not
 provided. Firmware interpolation/steps remain outside the numeric representation guard.
-PR/final-head Windows CI/merge links will be recorded as delivery completes.
+[PR15](https://github.com/ozkurkuran/MikroCAM/pull/15) merged as `8458e6b92f06a51546025e474cd6439516faf8e9`.
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36287355151) passed on final head
+`785891f9cbbed6b7312eae2eb78f4cbade3ec923` in 6m29s. Physical-machine validation remains unperformed.
