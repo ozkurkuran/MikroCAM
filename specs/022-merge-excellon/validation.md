@@ -29,7 +29,7 @@ no hardware I/O, no external code or dependencies, three stories and 39 tasks. N
 addition or frozen reference change. Largest new module168lines and largest function53lines. Legacy growth is+6 of the allowed+50
 against12704264. Initial merge/shared plus architecture suite:274passed in75.10s. Final focused
 merge/shared/SVG/Geometry compatibility suite:392passed in25.89s, including actual METRIC/INCH
-zero-diameter export rejection and six mixed-unit export cases.
+zero-diameter export rejection, four mixed-unit merge roundtrips and four shared slot export cases.
 
 ## Tests first and audit
 
@@ -48,7 +48,23 @@ Final test evidence is recorded here as completed.
 
 ## Full suite and actual desktop
 
-Pending final runtime head and actual desktop screenshot inspection.
+Production runtime commit: `d0a96f6accbda21157bdb10e87a4a1b4de7ba8fd`.
+At that head, `python -m pytest -q --junitxml=.venv/excellon-merge-pytest.xml` passed:
+4269 tests, 2 skipped, 11 existing dependency warnings and 310 subtests in259.58s.
+Frozen reference, architecture and growth checks use base12704264.
+
+The first desktop attempt exposed a helper-only field-name error: the actual host option is
+`tools_drill_feedrate_z`. Test-only commit `fcff46bc213d6de26bd774ce12fcb24f0b2f2338`
+uses that field and authors matching source object/tool settings, since normal host UI rebuilds
+tool settings from object options. Production code remains identical to the full-suite head.
+At this head `python tests/smoke_app.py` exited0 through all prior journeys and SHUTDOWN_OK,
+with EXCELLON_MERGE_SELECTED_DRILL_SLOT_ROUNDTRIP_OK reporting two removed exact duplicates.
+Normal imported slot tuples pass project JSON roundtrip without modifying the input fixture;
+source snapshots normalize only equivalent tuple/list slot container representation for comparison.
+All physical operations, original source text, object/tool settings and destination defaults survive.
+Root inspected `.venv/excellon-merge-smoke.png` (800x720): two sources, five input tool mappings,
+two output tools, retained slot, two duplicate references and zero conflicts. Existing Qt teardown
+warnings remain. Final-head CI reruns the complete suite.
 
 ## Provenance and limits
 

@@ -43,13 +43,13 @@ Input: spec, plan, research, data model and contracts. Three stories, 39 tasks. 
 - [x] T030 Document exact fusion, slot footprint policy, source authority and output precision in docs/EXCELLON_MERGE.md.
 - [x] T031 Record independent implementation/source reuse in validation.md and docs/EXCELLON_MERGE.md.
 - [x] T032 Run focused/reference/import-boundary/growth checks and record validation.md.
-- [ ] T033 Run complete suite at final runtime head and record validation.md.
-- [ ] T034 Run actual desktop all journeys and inspect screenshot for validation.md.
-- [ ] T035 Update docs/ROADMAP.md and publish focused PR after021 delivery.
+- [x] T033 Run complete suite at final runtime head and record validation.md.
+- [x] T034 Run actual desktop all journeys and inspect screenshot for validation.md.
+- [x] T035 Update docs/ROADMAP.md and publish focused PR after021 delivery.
 - [ ] T036 Verify final-head Windows CI and record validation.md.
 - [ ] T037 Merge validated head and record PR/CI/merge links in validation.md.
 - [ ] T038 Mark delivery in tasks.md/docs/ROADMAP.md with validation limits retained.
-- [ ] T039 Confirm sources and all prior delivered behavior remain covered in validation.md.
+- [x] T039 Confirm sources and all prior delivered behavior remain covered in validation.md.
 
 Dependencies: strict tool/source records -> authoritative snapshot/inventory -> duplicate/conflict
 review -> guarded factory/UI creation -> actual host/desktop/full validation. US1 is the smallest
