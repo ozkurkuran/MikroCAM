@@ -148,4 +148,5 @@ def parse_svg_document(source: bytes, source_name: str) -> SvgDocument:
     notices = (SvgNotice('positive-material', 'Solid colors indicate positive CAM material; color overpainting '
                          'and viewport clipping are not inferred.'),)
     return SvgDocument(source_name, hashlib.sha256(source).hexdigest(),
-                        replace(viewport, matrix=matrix), tuple(traversal.elements), notices)
+                        replace(viewport, matrix=matrix), tuple(traversal.elements), notices,
+                        tuple(root.attrib.items()))

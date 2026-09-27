@@ -2,7 +2,7 @@
 
 **Feature Branch**: `017-import-report`
 **Created**: 2026-09-27
-**Status**: Specification review
+**Status**: Implemented; validation pending
 **Input**: Roadmap 017: import quality report for scale, units, validity, open paths and precision.
 
 ## User Scenarios & Testing

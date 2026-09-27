@@ -2085,7 +2085,7 @@ class Gerber(Geometry):
 
         from mikrocam.ui.svg_import import import_svg_geometry
         units = self.app.app_units if units is None else units
-        geos = import_svg_geometry(filename, 'gerber', units, flip, self.app)
+        geos = import_svg_geometry(filename, 'gerber', units, flip, self.app, report_owner=self)
         if geos is None:
             return 'fail'
 

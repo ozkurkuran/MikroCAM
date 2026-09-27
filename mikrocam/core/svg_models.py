@@ -149,6 +149,7 @@ class SvgDocument:
     viewport: SvgViewport
     elements: tuple[SvgElement, ...]
     notices: tuple[SvgNotice, ...] = ()
+    root_attributes: tuple[tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         _text(self.source_name, 256, 'Source name', False)
@@ -159,6 +160,7 @@ class SvgDocument:
         if any((type(element) is not SvgElement for element in self.elements)):
             raise ValueError('SVG document contains invalid elements')
         _notices(self.notices)
+        validate_attributes(self.root_attributes)
 
 @dataclass(frozen=True)
 class SvgRendered:
@@ -187,8 +189,11 @@ def _coordinate_count(rendered: SvgRendered) -> int:
 class SvgImportResult:
     document: SvgDocument
     rendered: tuple[SvgRendered, ...]
+    flipped: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.flipped) is not bool:
+            raise ValueError('SVG import flip fact must be boolean')
         if type(self.document) is not SvgDocument or type(self.rendered) is not tuple or len(self.rendered) != len(self.document.elements) or any((type(value) is not SvgRendered for value in self.rendered)):
             raise ValueError('SVG import requires exactly one immutable result per element')
         if sum((_coordinate_count(value) for value in self.rendered)) > MAX_SVG_POINTS:

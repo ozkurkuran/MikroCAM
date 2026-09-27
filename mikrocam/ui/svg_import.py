@@ -12,7 +12,7 @@ _ = getattr(builtins, '_', gettext.gettext)
 
 
 def import_svg_geometry(filename: str | Path, object_type: str | None, units: str,
-                        flip: bool, app: Any) -> list[BaseGeometry] | None:
+                        flip: bool, app: Any, *, report_owner: object | None = None) -> list[BaseGeometry] | None:
     """Return complete host-unit geometry, or report failure before host mutation."""
     from mikrocam.bridge.svg_import import host_geometry, load_svg_file
 
@@ -21,6 +21,9 @@ def import_svg_geometry(filename: str | Path, object_type: str | None, units: st
         result = load_svg_file(filename, object_type='geometry' if object_type is None else object_type,
                                flip=flip)
         geometries = host_geometry(result, units)
+        if report_owner is not None:
+            from mikrocam.bridge.import_report import store_import_report
+            store_import_report(report_owner, result)
     except (OSError, ValueError, TypeError, UnicodeError) as error:
         message = _('SVG import failed: {source}: {reason}').format(source=name, reason=str(error)[:512])
         app.log.error(message)

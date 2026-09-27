@@ -62,6 +62,7 @@ class GeometryObject(FlatCAMObj, Geometry):
 
         self.kind = "geometry"
         self.source_file = ''
+        self.import_report = None
 
         self.obj_options.update({
             "plot": True,
@@ -167,7 +168,8 @@ class GeometryObject(FlatCAMObj, Geometry):
         # Attributes to be included in serialization
         # Always append to it because it carries contents
         # from predecessors.
-        self.ser_attrs += ['obj_options', 'kind', 'multigeo', 'fill_color', 'outline_color', 'alpha_level', 'source_file']
+        self.ser_attrs += ['obj_options', 'kind', 'multigeo', 'fill_color', 'outline_color', 'alpha_level',
+                          'source_file', 'import_report']
 
     def build_ui(self):
         try:
@@ -310,6 +312,8 @@ class GeometryObject(FlatCAMObj, Geometry):
     def set_ui(self, ui):
         # this one adds the 'name' key and the self.ui.name_entry widget in the self.form_fields dict
         FlatCAMObj.set_ui(self, ui)
+        from mikrocam.ui.import_report import attach_import_report
+        attach_import_report(self)
 
         self.app.log.debug("GeometryObject.set_ui()")
 

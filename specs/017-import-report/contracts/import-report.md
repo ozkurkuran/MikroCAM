@@ -11,8 +11,11 @@ Frozen ImportCoordinates(source_width:str|None,source_height:str|None,
 source_units:tuple[str,str],view_box:tuple[float,float,float,float]|None,aspect_ratio:str,
 viewport_mm:tuple[float,float],matrix_mm:Affine2D,flipped:bool).
 Source tokens are trimmed <=128 chars; absent values None. Unit labels are exactly
-absent/unitless/px/mm/cm/in/pt/pc (one per width/height). ViewBox finite bounded magnitudes<=1e9,
-positive width/height; viewport positive<=1e9. Existing validate_affine. Aspect resolved canonical
+absent/unitless/px/mm/cm/in/pt/pc (one per width/height).
+Each present dimension parses as a positive supported length and matches its unit label;
+an absent token requires the absent label. Unknown dimension facts remain explicitly modelable.
+ViewBox magnitudes are finite <=1e9 with positive width/height; viewport positive<=1e9.
+Existing validate_affine. Aspect resolved canonical
 none or one of nine xMin/Mid/MaxYMin/Mid/Max meet strings. Strict tuple/bool/nonbool finite numbers.
 
 Frozen ImportQuality(bounds_mm:tuple[float,float,float,float]|None,geometry_count:int,
