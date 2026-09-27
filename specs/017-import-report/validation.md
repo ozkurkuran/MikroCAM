@@ -1,6 +1,6 @@
 # Validation: retained import quality reports
 
-Status: implementation, full suite and desktop validation complete; GitHub delivery pending.
+Status: delivered; implementation, full suite, desktop and final-head Windows CI passed.
 Three stories, 34 tasks; no dependency, renderer, worker or machine communication added.
 
 ## Requirements and constitution
@@ -61,4 +61,5 @@ Local evidence: .venv/import-report-smoke.log and .venv/import-report-smoke.png.
 Reports are historical import summaries, not current edited-geometry audits or manufacturing
 approval. Initial complete reports are SVG; missing old/non-SVG reports remain unavailable.
 Other source detection/import workflows stay in later slices. No physical machine was exercised.
-PR, final-head CI and merge links will be recorded after delivery.
+[PR18](https://github.com/ozkurkuran/MikroCAM/pull/18) merged as `24f89b608ef356659369cde407d2d48ca03e8a29`.
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36291546754) passed in 5m25s at final head `3fe1391333e92a7ea3b3e6dfb048f8d2bdb86a80`.
