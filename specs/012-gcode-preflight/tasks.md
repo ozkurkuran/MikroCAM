@@ -46,9 +46,9 @@ Independent test: file/selected-job workflows show the same immutable result; ca
 - [x] T032 Run full pytest and import/growth/size checks; record counts/head and performance results.
 - [x] T033 Run actual desktop smoke and inspect the panel; preserve existing CAM/laser/manual flows.
 - [x] T034 Update roadmap and validation.md; publish focused PR.
-- [ ] T035 Verify final-head Windows CI and fix any failures before merge.
-- [ ] T036 Merge validated head and record delivery links/status.
-- [ ] T037 Mark only evidenced tasks complete; carry hardware limitations forward without claiming physical validation.
+- [x] T035 Verify final-head Windows CI and fix any failures before merge.
+- [x] T036 Merge validated head and record delivery links/status.
+- [x] T037 Mark only evidenced tasks complete; carry hardware limitations forward without claiming physical validation.
 
 ## Dependencies/delegation
 T001-T002 precede code; tests precede owned implementation. Sol may own frozen models or narrow

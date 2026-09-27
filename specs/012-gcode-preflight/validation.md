@@ -1,6 +1,6 @@
 # Validation: G-code preflight
 
-Status: local full-suite/desktop validation passed; final-head CI and merge pending.
+Status: local full-suite/desktop validation and final-head Windows CI passed; merged.
 Three stories/37 tasks, quality checklist10/10. No extension hooks or new dependencies.
 
 ## Requirements and constitution review
@@ -68,4 +68,8 @@ Operator setup must be checked against actual hardware before later streaming. D
 [primary protocol research](research.md). No physical manufacturing result is claimed.
 
 [PR#13](https://github.com/ozkurkuran/MikroCAM/pull/13) publishes the feature.
-Full local suite at `2985ee510724212b50b889aa207bb0497c872d3e`: `python -m pytest -q --junitxml=.venv/preflight-pytest.xml` completed with **2286 passed,2 skipped,11 warnings,310 subtests in192.42s**. The complete suite includes architecture/import/growth checks and all319 new preflight cases. Logs/XML are retained locally under `.venv/preflight-pytest.*`. Existing SWIG/Shapely warnings remain. Final-head Windows CI/merge: pending.
+Full local suite at `2985ee510724212b50b889aa207bb0497c872d3e`: `python -m pytest -q --junitxml=.venv/preflight-pytest.xml` completed with **2286 passed,2 skipped,11 warnings,310 subtests in192.42s**. The complete suite includes architecture/import/growth checks and all319 new preflight cases. Logs/XML are retained locally under `.venv/preflight-pytest.*`. Existing SWIG/Shapely warnings remain.
+
+[Final-head Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36284408339)
+passed in6m4s at `5752ef67bd13869e09a69c519cc0b42232953dd3`.
+PR13 merged as `1f4537a768e5aeab1402cf9746fb207462dee374`; all37 tasks complete.
