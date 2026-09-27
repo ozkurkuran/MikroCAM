@@ -1,0 +1,11 @@
+# Specification quality
+- [x] Three user stories with independent acceptance scenarios.
+- [x] Fourteen functional requirements and five measurable success criteria.
+- [x] Source/setup and live origin assumptions explicit.
+- [x] Mechanical-only scope and no implicit laser arming.
+- [x] ACK acceptance distinguished from physical completion.
+- [x] Hold deceleration/stopped and separate resume.
+- [x] Stop uncertainty and ownership lifecycle.
+- [x] Resource/failure tests without hardware.
+- [x] No unresolved clarification markers.
+- [x] Roadmap/constitution gates checked; no speculative queue/framework.

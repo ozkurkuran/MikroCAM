@@ -3,6 +3,7 @@ import builtins
 from collections.abc import Callable
 import gettext
 from typing import Any
+from time import monotonic
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
@@ -10,9 +11,14 @@ from mikrocam.bridge.machine import make_controller
 from mikrocam.bridge.serial_transport import PortInfo, list_ports
 from mikrocam.machine.controller import MachineController
 from mikrocam.machine.manual_models import JogRequest, SelectG54Request, ZeroRequest
+from mikrocam.core.gcode_models import PreflightReport, SourceSnapshot
+from mikrocam.core.cnc_job import PreparedJob
+from mikrocam.machine.job_models import StartJobRequest
 from mikrocam.machine.models import ConnectionState, MachineSnapshot, MachineState
 from .machine_controls import MachineManualControls
 from .machine_worker import MachineWorker
+from .job_controls import JobControls
+from .job_prepare_worker import JobPrepareWorker
 
 
 _ = getattr(builtins, '_', gettext.gettext)
@@ -59,8 +65,11 @@ class MachinePanel(QtWidgets.QDockWidget):
         self.manual_controls.requested.connect(self.submit_manual)
         self.manual_controls.cancel_requested.connect(self.cancel_manual_jog)
         self.manual_controls.abort_requested.connect(self.abort_machine)
-        layout.addWidget(self.manual_controls)
-        layout.addStretch()
+        manual_scroll = QtWidgets.QScrollArea()
+        manual_scroll.setWidgetResizable(True)
+        manual_scroll.setWidget(self.manual_controls)
+        layout.addWidget(manual_scroll, 1)
+        self._setup_job_controls(content, layout)
         self.setWidget(content)
         self.refresh_button.clicked.connect(self.refresh_ports)
         self.connect_button.clicked.connect(self.connect_machine)
@@ -73,6 +82,131 @@ class MachinePanel(QtWidgets.QDockWidget):
     @property
     def busy(self) -> bool:
         return self._worker is not None
+
+    def _setup_job_controls(self, content: QtWidgets.QWidget, layout: QtWidgets.QVBoxLayout) -> None:
+        self._prepare_worker: JobPrepareWorker | None = None
+        self._prepare_generation = self._prepare_worker_generation = 0
+        self._reviewed_source = self._reviewed_report = None
+        self._preflight_binding = None
+        self._binding_origin = None
+        self.job_controls = JobControls(content)
+        self.job_controls.start_requested.connect(self.submit_job)
+        self.job_controls.pause_requested.connect(self.pause_job)
+        self.job_controls.resume_requested.connect(self.resume_job)
+        self.job_controls.stop_requested.connect(self.stop_job)
+        layout.addWidget(self.job_controls)
+        self._binding_timer = QtCore.QTimer(self)
+        self._binding_timer.setInterval(250)
+        self._binding_timer.timeout.connect(self._refresh_binding)
+        self._binding_timer.start()
+
+    def _invalidate_preparation(self) -> None:
+        job = self.job_controls.prepared_job
+        if self._worker is not None and job is not None:
+            self._worker.invalidate_pending_job(job)
+        self._prepare_generation += 1
+        self.job_controls.set_job(None)
+        if self._prepare_worker is not None:
+            self._prepare_worker.cancel()
+
+    def _refresh_binding(self) -> bool:
+        if self._preflight_binding is None:
+            return True
+        try:
+            current = self._preflight_binding()
+            valid = current == (self._reviewed_source, self._reviewed_report)
+        except Exception:
+            valid = False
+        if not valid:
+            self._invalidate_preparation()
+            self._preflight_binding = None
+            self.status_label.setText(_('Reviewed preflight changed or closed. Transfer a current result.'))
+        return valid
+
+    def load_preflight(self, source: SourceSnapshot, report: PreflightReport,
+                       binding_provider: Callable[[], tuple[SourceSnapshot, PreflightReport] | None] | None = None) -> None:
+        """Prepare detached immutable input; no serial-owner calculation or automatic Start."""
+        self._invalidate_preparation()
+        if (not isinstance(source, SourceSnapshot) or not isinstance(report, PreflightReport)
+                or not report.allowed or source.sha256 != report.source_sha256 or source.name != report.source_name):
+            self.status_label.setText(_('Transfer requires an exact successful preflight snapshot.'))
+            return
+        if self._prepare_worker is not None and self._prepare_worker.isRunning():
+            self.status_label.setText(_('Previous preparation is still stopping; retry transfer when it finishes.'))
+            return
+        if self._prepare_worker is not None:
+            self._release_preparation(self._prepare_worker)
+        self._reviewed_source, self._reviewed_report = source, report
+        self._preflight_binding = binding_provider
+        if self._binding_origin is not None:
+            try:
+                self._binding_origin.reviewed_changed.disconnect(self._refresh_binding)
+            except (TypeError, RuntimeError):
+                pass
+        self._binding_origin = getattr(binding_provider, '__self__', None)
+        if self._binding_origin is not None and hasattr(self._binding_origin, 'reviewed_changed'):
+            self._binding_origin.reviewed_changed.connect(self._refresh_binding)
+        if not self._refresh_binding():
+            return
+        worker = JobPrepareWorker(source, report, self)
+        self._prepare_worker, self._prepare_worker_generation = worker, self._prepare_generation
+        worker.completed.connect(self._prepared, QtCore.Qt.ConnectionType.QueuedConnection)
+        worker.failed.connect(self._preparation_failed, QtCore.Qt.ConnectionType.QueuedConnection)
+        worker.finished.connect(self._preparation_finished, QtCore.Qt.ConnectionType.QueuedConnection)
+        self.status_label.setText(_('Preparing reviewed mechanical CNC job…'))
+        worker.start()
+
+    def _prepared(self, job: PreparedJob) -> None:
+        if (self.sender() is not self._prepare_worker or self._prepare_worker is None
+                or not self._refresh_binding() or self._prepare_worker.is_cancelled()
+                or self._prepare_generation != self._prepare_worker_generation):
+            return
+        self.job_controls.set_job(job)
+        self.status_label.setText(_('Reviewed job prepared. Confirm equipment for this Start.'))
+
+    def _preparation_failed(self, message: str) -> None:
+        if (self.sender() is self._prepare_worker and self._prepare_worker is not None
+                and self._prepare_generation == self._prepare_worker_generation
+                and not self._prepare_worker.is_cancelled()):
+            self.status_label.setText(_('Job preparation failed: ') + _(message))
+
+    def _preparation_finished(self) -> None:
+        self._release_preparation(self.sender())
+
+    def _release_preparation(self, expected: QtCore.QObject, timeout: int = JOIN_TIMEOUT_MS) -> bool:
+        worker = self._prepare_worker
+        if worker is None or worker is not expected:
+            return worker is None
+        if not worker.wait(timeout):
+            self.status_label.setText(_('Job preparation is still stopping; keep this window open.'))
+            return False
+        self._prepare_worker = None
+        worker.deleteLater()
+        return True
+
+    def submit_job(self, request: StartJobRequest) -> None:
+        if (not self._refresh_binding() or self.job_controls.prepared_job is not request.job
+                or self._worker is None or self._stopping):
+            self.status_label.setText(_('Job Start rejected; reviewed input or connection changed.'))
+            return
+        if self._worker.submit(request):
+            self.job_controls.set_pending()
+        else:
+            self.status_label.setText(_('Job Start rejected by current session admission.'))
+
+    def pause_job(self) -> None:
+        if self._worker is not None and not self._stopping:
+            self._worker.pause_job()
+            self.job_controls.set_pending()
+
+    def resume_job(self) -> None:
+        if self._worker is not None and not self._stopping and self._worker.resume_job():
+            self.job_controls.set_pending()
+
+    def stop_job(self) -> None:
+        if self._worker is not None and not self._stopping:
+            self._worker.stop_job()
+            self.job_controls.reset_confirmation()
 
     def _position_row(self, form: QtWidgets.QFormLayout, title: str) -> tuple[QtWidgets.QLabel, ...]:
         row = QtWidgets.QWidget()
@@ -106,6 +240,7 @@ class MachinePanel(QtWidgets.QDockWidget):
             return
         port = self.port_combo.currentData()
         factory = self.controller_factory
+        self.job_controls.reset_confirmation()
         self._stopping = False
         self.last_snapshot = MachineSnapshot(connection=ConnectionState.CONNECTING)
         self._render_snapshot()
@@ -117,14 +252,15 @@ class MachinePanel(QtWidgets.QDockWidget):
 
     def disconnect_machine(self) -> None:
         """Ask the I/O owner to cancel/abort owned activity before bounded closure."""
+        self.job_controls.reset_confirmation()
         if self._worker is None:
-            self.last_snapshot = MachineSnapshot()
+            self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job)
             self._render_snapshot()
             self._update_actions()
             return
         self._stopping = True
         self._worker.stop()
-        self.last_snapshot = MachineSnapshot()
+        self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job)
         self._render_snapshot()
         self.status_label.setText(_('Closing communication…'))
         self._update_actions()
@@ -213,18 +349,25 @@ class MachinePanel(QtWidgets.QDockWidget):
                 status = _('Stale or unverified position')
         self.status_label.setText(status)
         self.manual_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
+        self.job_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
 
     def shutdown(self) -> bool:
         """Join owned I/O before disposal; retain the live QThread if a driver violates its bound."""
         worker = self._worker
+        deadline = monotonic() + JOIN_TIMEOUT_MS / 1000
+        if worker is not None:
+            self.disconnect_machine()
+        self._invalidate_preparation()
+        prepared_closed = (self._prepare_worker is None
+                           or self._release_preparation(self._prepare_worker,
+                                                       max(0, int((deadline - monotonic()) * 1000))))
         if worker is None:
-            return True
-        self.disconnect_machine()
-        if not worker.wait(JOIN_TIMEOUT_MS):
+            return prepared_closed
+        if not worker.wait(max(0, int((deadline - monotonic()) * 1000))):
             self.status_label.setText(_('Communication is still closing; keep this window open.'))
             return False
         self._release_worker()
-        return True
+        return prepared_closed
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         if self.shutdown():

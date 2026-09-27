@@ -9,7 +9,7 @@ def test_fake_records_exact_reads_and_returns_partial_chunks():
     fake.open()
     assert fake.write(b'$$\n') == 3
     assert fake.read(4) == b'$13='
-    assert fake.read(4096) == b'0\r\nok\r\n'
+    assert fake.read(4096) == b'0\r\n$30=1000\r\n$31=0\r\n$32=0\r\nok\r\n'
     fake.write(b'?')
     assert fake.read(4096).startswith(b'<Idle|MPos:')
     assert fake.writes == [b'$$\n', b'?']

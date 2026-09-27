@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import unicodedata
 
 from mikrocam.machine.manual_protocol import validate_command
+from mikrocam.machine.job_protocol import validate_job_command
 
 
 @dataclass(frozen=True)
@@ -68,3 +69,11 @@ class SerialIO:
         if self._serial is not None:
             self._serial.close()
             self._serial = None
+
+    def write_job(self, data: bytes) -> int:
+        """Only the controller's job path may use this bounded source boundary."""
+        validate_job_command(data)
+        written = self._connection().write(data)
+        if type(written) is not int or written != len(data):
+            raise OSError('Serial job write did not complete the requested byte count')
+        return written

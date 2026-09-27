@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from enum import Enum
 from math import isfinite
 
+from .job_models import JobObservation
+
 
 XYZ = tuple[float, float, float]
 
@@ -107,8 +109,11 @@ class MachineSnapshot:
     last_report_at: float | None = None
     diagnostic: str = ''
     manual: ManualObservation = ManualObservation()
+    job: JobObservation = JobObservation()
 
     def __post_init__(self) -> None:
+        if not isinstance(self.job, JobObservation):
+            raise ValueError('Snapshot requires an immutable job observation')
         if not isinstance(self.manual, ManualObservation):
             raise ValueError('Snapshot requires an immutable manual observation')
         if not isinstance(self.connection, ConnectionState) or not isinstance(self.state, MachineState):

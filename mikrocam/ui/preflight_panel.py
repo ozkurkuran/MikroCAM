@@ -17,11 +17,15 @@ JOIN_TIMEOUT_MS = 2000
 
 
 class PreflightPanel(QtWidgets.QDockWidget):
+    reviewed_changed = QtCore.pyqtSignal()
     def __init__(self, parent: QtWidgets.QWidget | None = None,
-                 source_provider: Callable[[], SourceSnapshot] | None = None) -> None:
+                 source_provider: Callable[[], SourceSnapshot] | None = None,
+                 job_receiver: Callable | None = None) -> None:
         super().__init__(_('G-code preflight'), parent)
         self.setObjectName('MikroCAMPreflightPanel')
         self.source_provider = source_provider
+        self.job_receiver = job_receiver
+        self._transfer_alive = True
         self.source: SourceSnapshot | None = None
         self.report: PreflightReport | None = None
         self._worker: PreflightWorker | None = None
@@ -60,10 +64,13 @@ class PreflightPanel(QtWidgets.QDockWidget):
         actions = QtWidgets.QHBoxLayout()
         self.analyze_button = QtWidgets.QPushButton(_('Analyze'))
         self.cancel_button = QtWidgets.QPushButton(_('Cancel'))
+        self.transfer_button = QtWidgets.QPushButton(_('Load reviewed job into Machine'))
+        self.transfer_button.clicked.connect(self.transfer_to_machine)
         self.analyze_button.clicked.connect(self.analyze)
         self.cancel_button.clicked.connect(self.cancel)
         actions.addWidget(self.analyze_button)
         actions.addWidget(self.cancel_button)
+        actions.addWidget(self.transfer_button)
         layout.addLayout(actions)
         self.result_label = QtWidgets.QLabel(_('Supply explicit setup values before analysis.'))
         self.result_label.setWordWrap(True)
@@ -86,6 +93,24 @@ class PreflightPanel(QtWidgets.QDockWidget):
         self.analyze_button.setEnabled(self.source is not None and not self.busy)
         self.cancel_button.setEnabled(self.busy)
         self.selected_button.setEnabled(self.source_provider is not None)
+        self.transfer_button.setEnabled(self.report is not None and self.report.allowed
+                                        and not self.busy and self.job_receiver is not None)
+
+    def _execution_binding(self) -> tuple[SourceSnapshot, PreflightReport] | None:
+        self._refresh_selected()
+        if (not self._transfer_alive or self.source is None or self.report is None
+                or not self.report.allowed or self.busy):
+            return None
+        return self.source, self.report
+
+    def transfer_to_machine(self) -> None:
+        binding = self._execution_binding()
+        if binding is None or self.job_receiver is None:
+            return
+        try:
+            self.job_receiver(*binding, self._execution_binding)
+        except Exception as error:
+            self.result_label.setText(_('Job transfer failed: {message}').format(message=str(error)[:256]))
 
     def _invalidate(self, message: str) -> None:
         self._generation += 1
@@ -96,6 +121,7 @@ class PreflightPanel(QtWidgets.QDockWidget):
             self._worker.cancel()
         self.result_label.setText(message)
         self._sync_controls()
+        self.reviewed_changed.emit()
 
     def _input_changed(self) -> None:
         self._invalidate(_('Setup changed. Previous result is invalid.'))
@@ -203,6 +229,8 @@ class PreflightPanel(QtWidgets.QDockWidget):
             return
         self.report = report
         self._render_report(report)
+        self._sync_controls()
+        self.reviewed_changed.emit()
 
     def _render_report(self, report: PreflightReport) -> None:
         status = _('Declared-setup geometry checks passed.') if report.allowed else _('Blocked by findings or incomplete interpretation.')
@@ -253,6 +281,8 @@ class PreflightPanel(QtWidgets.QDockWidget):
         return True
 
     def shutdown(self) -> bool:
+        self._transfer_alive = False
+        self.reviewed_changed.emit()
         self._refresh_timer.stop()
         if self._worker is None:
             return True
@@ -266,6 +296,7 @@ class PreflightPanel(QtWidgets.QDockWidget):
         super().closeEvent(event)
 
     def showEvent(self, event: QtGui.QShowEvent) -> None:
+        self._transfer_alive = True
         self._refresh_timer.start()
         self._refresh_selected()
         super().showEvent(event)
@@ -276,7 +307,10 @@ def open_preflight_panel(app: object) -> PreflightPanel:
     panel = getattr(app, '_mikrocam_preflight_panel', None)
     if panel is None:
         provider = lambda: snapshot_cncjob(app.collection.get_active())
-        panel = PreflightPanel(app.ui, source_provider=provider)
+        def receiver(source, report, binding):
+            from .machine_panel import open_machine_panel
+            open_machine_panel(app).load_preflight(source, report, binding)
+        panel = PreflightPanel(app.ui, source_provider=provider, job_receiver=receiver)
         app.ui.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, panel)
         app._mikrocam_preflight_panel = panel
     panel.show()
