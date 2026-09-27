@@ -46,8 +46,8 @@ stop delivery remains visible through panel/application closure.
 - [x] T029 Run full pytest, import/growth/size checks and actual desktop smoke; record commands, heads, counts and limitations in validation.md.
 - [x] T030 Review all12FR/5SC and eight constitution gates in validation.md; audit exact supported TX grammar and absence of new dependency/source port.
 - [x] T031 Update docs/ROADMAP.md with delivered evidence and publish a focused PR.
-- [ ] T032 Verify Windows CI at the final full head; correct failures before merging.
-- [ ] T033 Merge the validated head and record actual delivery links/checklist completion in validation.md.
+- [x] T032 Verify Windows CI at the final full head; correct failures before merging.
+- [x] T033 Merge the validated head and record actual delivery links/checklist completion in validation.md.
 
 ## Dependencies and delegation
 T001-T002 precede code; tests precede implementation. Shared protocol/model work and a separate
