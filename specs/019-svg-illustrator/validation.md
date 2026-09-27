@@ -1,6 +1,6 @@
 # Validation: Illustrator SVG appearance
 
-Status: implementation and focused checks complete; final-head full suite, desktop and CI pending.
+Status: delivered; exact-runtime-head full suite, actual desktop and final-head Windows CI passed.
 Three stories, 39 tasks, no new dependency or machine communication.
 
 ## Requirements and eight gates
@@ -34,12 +34,21 @@ Initial record/metadata/CSS/compound/clip tests failed before their implementati
 red regressions caught the official Adobe namespace spelling, foreign/metadata CSS provenance,
 XMP outside root metadata, clipping CSS paint semantics, edge-only intersection material dimension,
 clip topology preflight and the many-layer/flip notice overflow. Independent read-only clipping
-audit found no further confirmed blocker; additional scope/reference boundary cases were requested.
+audit found no further confirmed blocker; six additional analytic scope/reference boundary cases pass (root bbox/viewport transform, repeated use, cycle, exact depth limit and pair preflight).
 Focused SVG and report suite:898passed,3dependency warnings in8.32s before final extra scope cases.
 
 ## Full suite and actual desktop
-Pending final runtime commit. Commands: `python -m pytest -q --junitxml=.venv/illustrator-pytest.xml`
+Final runtime commit: `fc973e42ba1992d871954d759715a7f7dab6a1a7`. Commands: `python -m pytest -q --junitxml=.venv/illustrator-pytest.xml`
 and `python tests/smoke_app.py`. Logs/screenshots remain ignored under `.venv/`.
+At that exact runtime head:3625passed,2skipped,11warnings,310subtests in231.82s. Existing upstream
+placeholders/dependency warnings remain. Full suite includes frozen reference, architecture and
+legacy-growth checks (base04c237da). No runtime edits occurred during validation.
+Actual desktop exited0 with SVG_ILLUSTRATOR_AUTHORED_SOURCE_REPORT_ROUNDTRIP_OK, both Geometry
+and Gerber roundtrips, retained raw percentages/XMP page/source SHA and unchanged fixture bytes.
+All previous CAM, SVG/drill, laser, console, manual, preflight, streaming and dry-run journeys passed,
+including JOB_ACTIVE_SHUTDOWN_OK, PREFLIGHT_SHUTDOWN_OK, MACHINE_SHUTDOWN_OK and SHUTDOWN_OK.
+Root inspected `.venv/svg-illustrator-smoke.png` (3840x2089): two disjoint clipped material strips,
+expanded historical source report and preserved page dimensions. Existing Qt teardown warnings remain.
 
 ## Provenance and limits
 Original MIT-authored analytic fixture `tests/reference/svg-illustrator.svg`:1529bytes, SHA256
@@ -53,4 +62,5 @@ See docs/SVG_IMPORT.md, docs/IMPORT_REPORT.md and THIRD_PARTY_CHANGES.md for sup
 schema migration and immutable Neo MIT adaptation sources.
 
 ## Delivery
-PR, final-head Windows CI and merge pending.
+[PR20](https://github.com/ozkurkuran/MikroCAM/pull/20) merged as `c6a8441256a45414f7d48e4c1748b34bfaf3733c`.
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36294387159) passed in6m51s at final head `70485359f6d34a2dc0934c4026d54cb16ca0bc61`.
