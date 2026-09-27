@@ -88,7 +88,7 @@ class PreparedJob:
         if setup.rapid_rates_mm_min is None or seconds is None or not 0 < seconds <= 8640:
             raise ValueError('Explicit rapid rates and positive bounded nominal duration are required')
         interpreter = ModalInterpreter(setup.initial_position_mm)
-        blocks, speeds, speed, active = [], [], None, False
+        blocks, speeds, seen, speed, active = [], [], set(), None, False
         for block in iter_blocks(self.source.text, cancelled):
             blocks.append(JobBlock(block.line, (block.canonical+'\n').encode('ascii')))
             words, _, modes = _parts(block)
@@ -99,7 +99,8 @@ class PreparedJob:
             if active:
                 if speed is None or speed <= 0:
                     raise ValueError('Active spindle requires explicit positive S')
-                if speed not in speeds:
+                if speed not in seen:
+                    seen.add(speed)
                     speeds.append(speed)
             interpreter.consume(block)
         if cancelled is not None and cancelled():

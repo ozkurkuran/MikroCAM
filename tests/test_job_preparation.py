@@ -163,3 +163,9 @@ def test_preparation_rejects_subresolution_coordinate_despite_allowed_review():
     assert report.allowed
     with pytest.raises(ValueError,match='precision|digits'):
         PreparedJob(source,report)
+
+
+def test_speed_inventory_preserves_first_encounter_order_with_many_changes():
+    changes='\n'.join('S'+str(speed) for speed in range(1,2001))
+    source,report=inputs(HEADER+'M3 S2000\n'+changes+'\nS1\nG1 X1 F60')
+    assert PreparedJob(source,report).spindle_speeds==(2000.,)+tuple(float(n) for n in range(1,2000))
