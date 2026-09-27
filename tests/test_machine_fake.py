@@ -18,7 +18,7 @@ def test_fake_records_exact_reads_and_returns_partial_chunks():
     assert not fake.is_open
 
 
-@pytest.mark.parametrize('command', [b'G0X1\n', b'\x18', b'$X\n', b'$13=0\n', b'?', b''])
+@pytest.mark.parametrize('command', [b'G0X1\n', b'~', b'$X\n', b'$13=0\n', b'?', b''])
 def test_fake_requires_open_and_rejects_non_read_commands(command):
     fake = FakeGRBL()
     with pytest.raises(OSError):
