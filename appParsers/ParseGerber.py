@@ -4,7 +4,6 @@ from PyQt6 import QtWidgets
 from camlib import Geometry, arc, arc_angle, ApertureMacro, grace, flatten_shapely_geometry, translate_geometry
 
 from appParsers.ParseDXF import getdxfgeo
-from appParsers.ParseSVG import svgparselength, getsvggeo, svgparse_viewbox
 
 import numpy as np
 import traceback
@@ -2084,46 +2083,11 @@ class Gerber(Geometry):
 
         self.app.log.debug("appParsers.ParseGerber.Gerber.import_svg()")
 
-        # Parse into list of shapely objects
-        assert hasattr(ET, "parse")
-        svg_tree = ET.parse(filename)
-        svg_root = svg_tree.getroot()
-
-        # Change origin to bottom left
-        # h = float(svg_root.get('height'))
-        # w = float(svg_root.get('width'))
-        svg_parsed_dims = svgparselength(svg_root.get('height'))
-        h = svg_parsed_dims[0]
-        svg_units = svg_parsed_dims[1]
-
-        svg_unit_to_mm = {
-            'mm': 1.0,
-            'cm': 10.0,
-            'in': 25.4,
-            'px': 25.4 / 96.0,
-            'pt': 25.4 / 72.0,
-        }
-
-        if svg_units in ['em', 'ex', '%']:
-            self.app.log.error("ParseGerber.import_svg(). SVG units not supported: %s" % svg_units)
-            return 'fail'
-
+        from mikrocam.ui.svg_import import import_svg_geometry
         units = self.app.app_units if units is None else units
-        res = self._get_app_option("gerber_circle_steps", 64)
-        factor = svgparse_viewbox(svg_root)
-
-        if svg_units in svg_unit_to_mm:
-            unit_factor = svg_unit_to_mm[svg_units]
-            factor *= unit_factor
-            h *= unit_factor
-
-        geos = getsvggeo(svg_root, 'gerber', units=units, res=res, factor=factor, app=self.app)
-
-        self.app.log.debug("appParsers.ParseGerber.Gerber.import_svg(). Finished parsing the SVG geometry.")
-
-        if flip:
-            geos = [affinity.translate(affinity.scale(g, 1.0, -1.0, origin=(0, 0)), yoff=h) for g in geos]
-            self.app.log.debug("appParsers.ParseGerber.Gerber.import_svg(). SVG geometry was flipped.")
+        geos = import_svg_geometry(filename, 'gerber', units, flip, self.app)
+        if geos is None:
+            return 'fail'
 
         # Work with a local list first because it makes typing a lot easier
         solid_geometry: list[BaseGeometry] = []
@@ -2133,18 +2097,6 @@ class Gerber(Geometry):
             solid_geometry += self.solid_geometry
 
         if type(geos) == list:
-            # HACK for importing QRCODE exported by FlatCAM
-            try:
-                geos_length = len(geos)
-            except TypeError:
-                geos_length = 1
-
-            if geos_length == 1:
-                geo_qrcode = [Polygon(geos[0].exterior)]
-                for i_el in geos[0].interiors:
-                    geo_qrcode.append(Polygon(i_el).buffer(0, resolution=res))
-                geos = [poly for poly in geo_qrcode]
-
             solid_geometry += geos
         elif isinstance(geos, BaseGeometry):
             solid_geometry.append(geos)
