@@ -5,7 +5,7 @@ from pathlib import Path
 
 def _snapshot(owner):
     from shapely import to_wkb
-    return (owner.units, owner.multigeo, deepcopy(owner.obj_options), deepcopy(owner.tools),
+    return (owner.units, owner.multigeo, deepcopy(dict(owner.obj_options)), deepcopy(owner.tools),
             tuple(to_wkb(value) for value in owner.solid_geometry), owner.source_file)
 
 
@@ -18,8 +18,8 @@ def _prepare_source(app):
         obj.solid_geometry = [scale(Point(x, 37).buffer(d / 2, quad_segs=32),
             xfact=factor, yfact=factor, origin=(0, 0)) for x, d in ((15, .8), (25, 1), (35, 1.2))]
         obj.source_file = 'Original in-memory Geometry; no source reparse.'
-        for tool in obj.tools.values():
-            tool['solid_geometry'] = list(obj.solid_geometry)
+        obj.tools = {1: {'tooldia': .2 * factor, 'data': deepcopy(dict(obj.obj_options)),
+                         'solid_geometry': list(obj.solid_geometry)}}
     assert app.app_obj.new_object('geometry', 'smoke_geometry_source', initialize) != 'fail'
 
 
