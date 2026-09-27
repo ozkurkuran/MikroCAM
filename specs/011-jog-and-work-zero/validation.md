@@ -1,6 +1,6 @@
 # Validation: Bounded jog and G54 work zero
 
-Status: local validation passed; final-head CI and merge pending. No physical hardware claim.
+Status: software delivered; final-head CI passed and PR merged. No physical hardware claim.
 Three stories /33 tasks; all10 specification checklist items reviewed and complete.
 No extension hooks are installed. Existing dependencies and layer boundaries remain unchanged.
 
@@ -79,4 +79,4 @@ Full suite, implementation/test tree equivalent to `b34319f5d4a62237b45808053fbc
 SWIG/Shapely deprecations. Documentation-only delivery updates follow this tested tree.
 
 [PR #12](https://github.com/ozkurkuran/MikroCAM/pull/12) publishes the feature.
-Final-head Windows CI and merge: pending.
+Final head `41c400a781647963ce0c605ce237c1b2e6d3ce68` passed [Windows CI run36282950060](https://github.com/ozkurkuran/MikroCAM/actions/runs/36282950060). PR#12 merged as `720c29b690afdbbe95f05b8f19c0777ba3939c5b`. All33 tasks are complete; this post-merge record changes documentation only.
