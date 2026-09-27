@@ -39,10 +39,10 @@
 - [x] T028 Run full pytest including reference/import/growth at exact runtime head; record validation.md.
 - [x] T029 Run actual desktop report/lifecycle and all prior journeys using tests/smoke_app.py.
 - [x] T030 Inspect desktop evidence and record results/limitations in validation.md.
-- [ ] T031 Update docs/ROADMAP.md and publish focused PR after016 delivery.
-- [ ] T032 Verify final-head Windows CI and fix real failures, recording validation.md.
-- [ ] T033 Merge only the validated head after016, record PR/CI links in validation.md.
-- [ ] T034 Record completed delivery in tasks.md and docs/ROADMAP.md without claiming hardware tests.
+- [x] T031 Update docs/ROADMAP.md and publish focused PR after016 delivery.
+- [x] T032 Verify final-head Windows CI and fix real failures, recording validation.md.
+- [x] T033 Merge only the validated head after016, record PR/CI links in validation.md.
+- [x] T034 Record completed delivery in tasks.md and docs/ROADMAP.md without claiming hardware tests.
 
 Dependency order: source contracts/facts -> US1 -> US2 ownership; US3codec can run alongside widget
 once records are frozen; persistence/desktop follows integration. Sol record+codec owner and Sol
