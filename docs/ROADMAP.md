@@ -116,7 +116,7 @@ birlikte içe aktarılır.
 
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
-| 16 | `svg-scale-transforms` — **yerel doğrulama tamamlandı** | Fiziksel viewBox/birimler, tam dönüşüm sırası, miras alınan stroke ve katı malzeme; Geometry/Gerber kaynak koruma. 3084 test + 310 subtest ve gerçek masaüstü save/reopen başarılı; son commit CI/merge bekleniyor. [Doğrulama](../specs/016-svg-scale-transforms/validation.md). | 9 |
+| 16 | `svg-scale-transforms` — **tamamlandı** | Fiziksel viewBox/birimler, tam dönüşüm sırası, miras alınan stroke ve katı malzeme; Geometry/Gerber kaynak koruma. 3084 test + 310 subtest ve gerçek masaüstü save/reopen ve son commit Windows CI başarılı. [Doğrulama](../specs/016-svg-scale-transforms/validation.md). | 9 |
 | 17 | `import-report` | Import kalite raporu: ölçek, birim, geçerlilik, açık path, hassasiyet (veri `core`'da, panel `ui`'da) | 16 |
 | 18 | `svg-drill-detection` | Proteus SVG'den drill çıkarıp Excellon oluşturma | 16 |
 | 19 | `svg-illustrator` | XMP `MaxPageSize`, katman ve gizli nesne filtresi, compound path, clipping | 16 |

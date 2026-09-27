@@ -41,10 +41,10 @@
 - [x] T030 Run full pytest/import/growth/size checks with exact tested head/counts.
 - [x] T031 Run actual desktop Geometry/Gerber imports, source preservation and save/reopen.
 - [x] T032 Inspect desktop output and preserve all prior smoke journeys.
-- [ ] T033 Update roadmap/validation and publish focused PR.
-- [ ] T034 Verify final-head Windows CI and fix actual failures.
-- [ ] T035 Merge validated head after preceding slices.
-- [ ] T036 Record delivery links and evidence-only completion.
+- [x] T033 Update roadmap/validation and publish focused PR.
+- [x] T034 Verify final-head Windows CI and fix actual failures.
+- [x] T035 Merge validated head after preceding slices.
+- [x] T036 Record delivery links and evidence-only completion.
 - [x] T037 Carry approximation/unsupported/physical limitations forward.
 
 Tests precede implementation. Shared contracts precede exclusive file delegation. Root alone stages
