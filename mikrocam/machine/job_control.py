@@ -238,7 +238,8 @@ class JobControl:
         self.pause_query = self.host._query_sequence + 1
         self.observation = replace(self.observation, phase=JobPhase.PAUSING,
                                    diagnostic='Feed hold requested; spindle/coolant may remain on')
-        self.host._send_job(b'!')
+        if not self._realtime(b'!'):
+            return
         self.publish()
 
     def _pause_progress(self) -> None:
@@ -256,12 +257,21 @@ class JobControl:
         if not self.observation.can_resume or self.host._interrupted():
             raise ValueError('Resume requires the same paused job and fresh stopped Hold:0/Idle')
         if self.host.snapshot().raw_state == 'Hold:0':
-            self.host._send_job(b'~')
+            if not self._realtime(b'~'):
+                return
         self.deadline += self.host._clock() - self.pause_started
         self.resume_query = self.host._query_sequence + 1
         self.observation = replace(self.observation, phase=self.resume_phase,
                                    diagnostic='Explicit resume; awaiting fresh controller state')
         self.publish()
+
+    def _realtime(self, data: bytes) -> bool:
+        try:
+            self.host._send_job(data)
+            return True
+        except Exception as error:
+            self.host._fail(error)
+            return False
 
     def on_status(self) -> None:
         if not self.active:

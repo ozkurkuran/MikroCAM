@@ -263,3 +263,20 @@ def test_unsolicited_resume_or_offset_change_during_pause_aborts(status):
     step(controller, clock)
     assert controller.snapshot().job.phase is JobPhase.FAILED
     assert controller.snapshot().job.stop_unverified and b'~' not in fake.writes
+
+
+@pytest.mark.parametrize('action', ['pause', 'resume'])
+def test_hold_resume_write_failure_preserves_job_progress_and_stop_uncertainty(action):
+    controller, fake, clock = running_scripted()
+    if action == 'resume':
+        controller.pause_job()
+        step(controller, clock, .3)
+        fake.inject(b'<Hold:0|MPos:0,0,0|WCO:0,0,0>\r\n')
+        step(controller, clock)
+    fake.write_error = OSError('cable removed during realtime command')
+    (controller.pause_job if action == 'pause' else controller.resume_job)()
+    result = controller.snapshot()
+    assert result.connection is ConnectionState.ERROR
+    assert result.job.phase is JobPhase.FAILED and result.job.stop_unverified
+    assert result.job.source_name == 'fixture.nc'
+    assert 'cable removed' in result.job.diagnostic
