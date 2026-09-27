@@ -75,7 +75,8 @@ def _fitted(rendered: SvgRendered) -> Circle | None:
 
 def circle_evidence(element: SvgElement, rendered: SvgRendered) -> Circle | None:
     """Return a physical circle only from exact native axes or a fully resolved closed path."""
-    if not element.paint.fill or element.fill_is_white is None:
+    if (not element.paint.fill or element.fill_is_white is None
+            or not rendered.paths_mm or not rendered.geometry_mm):
         return None
     if element.kind in ('circle', 'ellipse'):
         return _primitive(element)

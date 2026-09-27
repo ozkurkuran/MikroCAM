@@ -168,3 +168,9 @@ def test_compound_path_white_artwork_is_not_single_hole():
             '<path fill="white" fill-rule="evenodd" d="M9.5 12 A.5 .5 0 1 0 10.5 12 '
             'A.5 .5 0 1 0 9.5 12 Z M9.8 12 A.2 .2 0 1 0 10.2 12 A.2 .2 0 1 0 9.8 12 Z"/>')
     assert not review(body).candidates
+
+
+def test_empty_rendered_ellipse_cannot_invent_a_hole_from_missing_radius():
+    body = ('<circle cx="10" cy="12" r="2"/>'
+            '<ellipse cx="10" cy="12" rx=".5" fill="white"/>')
+    assert not review(body).candidates
