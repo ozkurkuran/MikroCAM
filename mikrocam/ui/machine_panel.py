@@ -15,6 +15,7 @@ from mikrocam.core.gcode_models import PreflightReport, SourceSnapshot
 from mikrocam.core.cnc_job import PreparedJob
 from mikrocam.machine.job_models import StartJobRequest
 from mikrocam.machine.console_models import ConsoleRequest
+from mikrocam.machine.probe_models import StartProbeGridRequest
 from mikrocam.machine.models import ConnectionState, MachineSnapshot, MachineState
 from .machine_controls import MachineManualControls
 from .machine_worker import MachineWorker
@@ -36,6 +37,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         self.controller_factory, self.ports_provider = controller_factory, ports_provider
         self._worker: MachineWorker | None = None
         self._stopping = False
+        self._probe_dialog = None
         self.last_snapshot = MachineSnapshot()
         content = QtWidgets.QWidget(self)
         layout = QtWidgets.QVBoxLayout(content)
@@ -75,6 +77,9 @@ class MachinePanel(QtWidgets.QDockWidget):
         self.console_controls = ConsoleControls(content)
         self.console_controls.query_requested.connect(self.submit_console)
         layout.addWidget(self.console_controls)
+        self.probe_button = QtWidgets.QPushButton(_('Probe grid…'), content)
+        self.probe_button.clicked.connect(self.open_probe_grid)
+        layout.addWidget(self.probe_button)
         self.setWidget(content)
         self.refresh_button.clicked.connect(self.refresh_ports)
         self.connect_button.clicked.connect(self.connect_machine)
@@ -87,6 +92,21 @@ class MachinePanel(QtWidgets.QDockWidget):
     @property
     def busy(self) -> bool:
         return self._worker is not None
+
+    def open_probe_grid(self) -> None:
+        from .probe_controls import ProbeDialog
+        if self._probe_dialog is None:
+            self._probe_dialog = ProbeDialog(self, self)
+        self._probe_dialog.update_snapshot(self.last_snapshot)
+        self._probe_dialog.show()
+        self._probe_dialog.raise_()
+
+    def submit_probe(self, request: StartProbeGridRequest) -> bool:
+        return bool(self._worker is not None and not self._stopping and self._worker.submit(request))
+
+    def stop_probe(self) -> None:
+        if self._worker is not None:
+            self._worker.stop_probe()
 
     def _setup_job_controls(self, content: QtWidgets.QWidget, layout: QtWidgets.QVBoxLayout) -> None:
         self._prepare_worker: JobPrepareWorker | None = None
@@ -267,7 +287,8 @@ class MachinePanel(QtWidgets.QDockWidget):
         self._stopping = True
         self._worker.stop()
         self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job,
-                                             console=self.last_snapshot.console, wire=self.last_snapshot.wire)
+                                             console=self.last_snapshot.console, wire=self.last_snapshot.wire,
+                                             probe=self.last_snapshot.probe)
         self._render_snapshot()
         self.status_label.setText(_('Closing communication…'))
         self._update_actions()
@@ -369,6 +390,8 @@ class MachinePanel(QtWidgets.QDockWidget):
         self.manual_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
         self.job_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
         self.console_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
+        if self._probe_dialog is not None:
+            self._probe_dialog.update_snapshot(snapshot)
 
     def shutdown(self) -> bool:
         """Join owned I/O before disposal; retain the live QThread if a driver violates its bound."""

@@ -6,6 +6,7 @@ from math import isfinite
 from .job_models import JobObservation
 from .console_models import ConsoleObservation
 from .wire_log import WireSnapshot
+from .probe_models import ProbeObservation
 
 
 XYZ = tuple[float, float, float]
@@ -114,8 +115,11 @@ class MachineSnapshot:
     job: JobObservation = JobObservation()
     console: ConsoleObservation = ConsoleObservation()
     wire: WireSnapshot = WireSnapshot()
+    probe: ProbeObservation = ProbeObservation()
 
     def __post_init__(self) -> None:
+        if type(self.probe) is not ProbeObservation:
+            raise ValueError('Snapshot requires immutable probe observation')
         if not isinstance(self.console, ConsoleObservation) or not isinstance(self.wire, WireSnapshot):
             raise ValueError('Snapshot requires immutable console and wire observations')
         if not isinstance(self.job, JobObservation):

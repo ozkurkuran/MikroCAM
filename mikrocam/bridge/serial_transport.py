@@ -4,6 +4,7 @@ import unicodedata
 
 from mikrocam.machine.manual_protocol import validate_command
 from mikrocam.machine.job_protocol import validate_job_command
+from mikrocam.machine.probe_protocol import validate_probe_command
 
 
 @dataclass(frozen=True)
@@ -76,4 +77,12 @@ class SerialIO:
         written = self._connection().write(data)
         if type(written) is not int or written != len(data):
             raise OSError('Serial job write did not complete the requested byte count')
+        return written
+
+    def write_probe(self, data: bytes) -> int:
+        """Only the acquisition owner emits validated probe/travel commands."""
+        validate_probe_command(data)
+        written = self._connection().write(data)
+        if type(written) is not int or written != len(data):
+            raise OSError('Serial probe write did not complete the requested byte count')
         return written

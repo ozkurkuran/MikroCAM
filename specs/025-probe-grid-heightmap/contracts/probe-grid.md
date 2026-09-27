@@ -5,6 +5,7 @@ StartProbeGridRequest reserves one existing worker slot; controller rechecks all
 Manual/job/console and probe admission are mutually exclusive, including pending/tainted states.
 
 Preparation: empty startup inventory, mechanical settings/report units, M5/M9 acknowledgement,
+where mechanical settings explicitly require $32=0 and unchanged $13,
 modal G54/output-off, complete coordinate inventory with G92/TLO zero, fresh initial Idle binding.
 Each ordinary command receives exactly one ACK. Movement waits for a query issued after ACK
 and matching fresh Idle position before advancing. Vertical G38.2 additionally requires one
@@ -20,3 +21,8 @@ empty startup blocks, otherwise safety-door semantics with parking caveat. No re
 No unbounded strings or arbitrary G-code interface: separate validated write_probe transport
 boundary implemented by real SerialIO and Fake, called only by controller. Trace records use
 the existing bounded TX/RX log. ProbeMap save/load never touches transport or starts acquisition.
+
+Partial live maps use outcome incomplete, even after the last sample before final retract.
+Record/ACK arrival itself checks the transaction deadline; a late complete response cannot reset
+an expired timeout. Unexpected idle PRB quarantines admission, allowing only cached PRB belonging
+to an active manual/job/console parameter query. Explicit reconnect is required after quarantine.

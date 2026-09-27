@@ -8,8 +8,10 @@ machine_max_mm,initial_machine_mm,g54_offset_mm,timeout_seconds=30): validate fu
 endpoints, initial inside bounds, safe machine Z>=initial Z,0<safe-min<=100, feeds.01..10000,
 deadline3..300. G54 frame positions plus offset must stay within bounds. Upward-first route.
 ProbeMap(grid,heights_mm,g54_offset_mm,outcome,origin): heights exact grid count with float|None,
-row-major prefix of measurements; outcome complete/failed/aborted, origin measured/simulated.
-Complete requires all values; failure may contain all values if final retract failed.
+row-major prefix of measurements; outcome incomplete/complete/failed/aborted, origin measured/simulated.
+Incomplete is a preterminal acquisition snapshot, including all measured values while final retract
+is pending; it never implies complete. Complete requires all values and represents verified final
+retract. Failure may contain all values if final retract failed.
 StartProbeGridRequest(plan): exact ProbePlan. ProbePhase ready/preparing/probing/complete/failed/aborted.
 ProbeObservation(phase,completed,total,map,diagnostic,can_start,can_stop,stop_unverified):
 immutable progress and optional latest map, never hardware authority on its own.
