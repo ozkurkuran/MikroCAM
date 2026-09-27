@@ -69,6 +69,8 @@ def _metadata(words: dict, modes: dict, line: int) -> tuple[Finding, ...]:
             raise GcodeError(line,'invalid-metadata',f'{key} must be nonnegative'+(' integer' if key!='S' else ''))
     if words.get('N',0)>9999999:
         raise GcodeError(line,'invalid-metadata','N exceeds supported line number range')
+    if words.get('T',0)>255:
+        raise GcodeError(line,'invalid-metadata','T exceeds GRBL tool number range0..255')
     if modes.get('spindle') in (3,4) or modes.get('coolant') in (7,8):
         return (Finding(line,'output-command','Program requests spindle/laser or coolant output; analysis never transmits it','warning'),)
     return ()
@@ -127,6 +129,8 @@ class ModalInterpreter:
     def _event(self, state: _State, words: dict, groups: dict, line: int) -> Event:
         axes=set(words)&set('XYZ')
         centers=set(words)&set('IJR')
+        if 'tool' in groups and (axes or centers or 'motion' in groups):
+            raise GcodeError(line,'offset-declaration','G49 must not carry movement or axis words')
         if 'dwell' in groups:
             if 'P' not in words or words['P']<0 or axes or centers or 'motion' in groups:
                 raise GcodeError(line,'invalid-dwell','G4 requires nonnegative P and no movement words')
@@ -156,4 +160,7 @@ class ModalInterpreter:
             raise GcodeError(line,'arc-plane','G17 and an explicit X or Y endpoint are required for arcs')
         ij=(words.get('I',0.)*state.factor,words.get('J',0.)*state.factor) if set(words)&set('IJ') else None
         radius=words['R']*state.factor if 'R' in words else None
+        values=(() if ij is None else ij) + (() if radius is None else (radius,))
+        if any(abs(value)>MAX_MAGNITUDE for value in values):
+            raise GcodeError(line,'numeric-range','Normalized arc offset or radius exceeds supported range')
         return make_arc(state.position,end,state.motion==2,ij=ij,radius=radius,line=line)

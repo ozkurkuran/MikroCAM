@@ -23,8 +23,9 @@ feedG94; coordinateG54; cancelled cutter/tool compensationG40/G49. Units/distanc
 before motion, G94 before feed movement, G17 before arcs. No implicit machine modal defaults.
 G54/G40/G49 are declarations consistent with the fixed setup: initial G92/TLO/compensation are
 assumed zero. This offline report does not verify that a controller meets those assumptions.
+G49 must not share a block with axis/center/radius or motion words: it is not an axis move.
 G4P seconds (required nonnegative P) is dwell, no axis/motion words. M3/M4/M5, M7/M8/M9,
-M0/M1/M2/M30, S>=0 and T integer>=0 are recognized metadata only; output-start is reported as
+M0/M1/M2/M30, S>=0 and T integer0..255 are recognized metadata only; output-start is reported as
 program content, never transmitted. M0/M1 mean unknown operator-wait total. M2/M30 end the program;
 subsequent executable words are blocked. T does not perform a tool change; M6 is unsupported.
 N integer0..9999999 is optional line metadata. Duplicate non-G/M words and conflicts within G/M
@@ -42,8 +43,10 @@ full circles/helices; an omitted or Z-only endpoint is rejected as GRBL would re
 R form permits signed radius: positive minor, negative major.
 Do not combine R with I/J. No K/P arc turns. Equal XY endpoints with I/J mean a full circle,
 including optional helical Z. R full-circle/zero-radius/impossible chord and radius inconsistency
->0.005mm are rejected. Arc bounds include analytic interior extrema after actual Placement,
-not chord or polygon approximation. Helical Z extrema are endpoints. Arc length is
+>0.005mm are rejected. Nonidentical endpoints producing a sweep below1e-6rad are rejected because
+a controller may interpret near-zero angular travel as a full circle. Exact center-format circles
+remain supported. Bounds use analytic interior extrema after Placement, not chord/polygon
+approximation. Helical Z extrema are endpoints. Arc length is
 hypot(radius*abs(sweep), deltaZ), invariant under the rigid/mirrored Placement.
 
 ## Checks and timing

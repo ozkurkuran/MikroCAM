@@ -1,6 +1,7 @@
 """Strict bounded source-line lexer; comments cannot shield GRBL realtime bytes."""
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
+from decimal import Decimal
 from io import StringIO
 import math
 import re
@@ -62,6 +63,8 @@ def _words(text: str, line: int) -> tuple[tuple[str, float], ...]:
         value = float(numeric)
         if not math.isfinite(value) or abs(value) > MAX_MAGNITUDE:
             raise GcodeError(line, 'numeric-range', 'Numeric magnitude exceeds supported range')
+        if letter.upper() in 'GMNT' and Decimal(numeric) != Decimal(str(value)):
+            raise GcodeError(line, 'numeric-precision', 'Mode or integer metadata loses decimal precision')
         result.append((letter.upper(), value))
         offset = match.end()
     return tuple(result)

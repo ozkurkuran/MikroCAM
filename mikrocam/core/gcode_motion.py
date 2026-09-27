@@ -32,6 +32,8 @@ def _center_arc(start: XYZ, end: XYZ, center: tuple[float, float], clockwise: bo
         raise GcodeError(line, 'arc-geometry', 'Arc radii are zero or inconsistent by more than0.005mm')
     angle = math.atan2(first[1],first[0])
     sweep = _sweep(angle, math.atan2(last[1],last[0]), clockwise, start[:2] == end[:2])
+    if abs(sweep) < 1e-6:
+        raise GcodeError(line, 'arc-geometry', 'Near-zero arc angle is ambiguous with controller full-circle handling')
     # Conservative radius includes permitted endpoint rounding rather than clipping that endpoint.
     return Arc(center, max(r1,r2), angle, sweep)
 

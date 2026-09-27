@@ -75,7 +75,7 @@ def test_upward_vertical_retreat_from_below_safe_height_is_allowed():
 @pytest.mark.parametrize('body', ['G93', 'G18', 'G19', 'G90.1', 'G53 G0 X0', 'G55', 'G59',
     'G10 L20 P1 X0', 'G92 X0','G43.1 Z1','G28','G30','G38.2 Z-1','G81 X0','M6','M98 P1',
     'G1 X1 X2 F100', 'G20 G21', 'G90 G91', 'G0 G1 X1','M3 M5','G1 X1 K2 F100',
-    'G1 X1 P2 F100','G4','G4 P1 X1','G4 P-1','N1.5 G0 X1','T1.5','S-1',
+    'G1 X1 P2 F100','G4','G4 P1 X1','G4 P-1','N1.5 G0 X1','T1.5','T256','S-1',
     'G1 X1e2 F100','M2\nG0 X1','G2 I1 J0 F100','G2 Z1 I1 J0 F100',
     'G2 X1 I1 R1 F100', 'G2 X1 F100'])
 def test_unsupported_or_ambiguous_program_is_incomplete_and_never_allowed(body):
@@ -98,11 +98,28 @@ def test_invalid_block_does_not_partially_advance_geometry():
     assert report.linear_count==1 and report.duration_seconds is None
 
 
+@pytest.mark.parametrize('declaration', ['G49 X-1', 'G49 G0 X-1', 'G49 G1 X-1 F60'])
+def test_tool_offset_declaration_cannot_create_fictitious_position(declaration):
+    report=analyze(HEADER+f'G0\n{declaration}\nG91\nG1 X1.5 F60',
+                   machine_min_mm=(-1.,-100.,-10.),machine_max_mm=(1.,100.,100.))
+    assert not report.allowed and not report.complete
+
+
 def test_rotated_arc_interior_crosses_bound_even_when_endpoints_fit():
     report=analyze(HEADER+'G3 X0 Y1 I-1 J0 F60',initial_position_mm=(1.,0.,5.),
                    placement=Placement(rotation_deg=45),machine_max_mm=(100.,.9,100.))
     assert report.complete and not report.allowed and 'travel-bounds' in codes(report)
     assert report.bounds_mm[1][1]==pytest.approx(1.)
+
+
+@pytest.mark.parametrize('endpoint', ['X10.004 Y0', 'X10 Y0.000001'])
+@pytest.mark.parametrize('motion', ['G2', 'G3'])
+def test_near_zero_angle_cannot_hide_controller_full_circle(endpoint, motion):
+    report=analyze(HEADER+f'G1 Z6 F60\n{motion} {endpoint} I-10 J0',
+                   initial_position_mm=(10.,0.,5.),machine_min_mm=(-100.,-1.,-10.),
+                   machine_max_mm=(100.,1.,100.))
+    assert not report.allowed
+    assert 'arc-geometry' in codes(report) or 'travel-bounds' in codes(report)
 
 
 def test_full_circle_helix_and_major_radius_are_counted():
