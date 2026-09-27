@@ -34,7 +34,7 @@ line/color/clipstate (not currentpath);64depth, no underflow/unbalancedstack. Pa
 atconstruction. Independentm/re subpaths neverjoin. hclosesonlycurrentsubpath;paint/resetpathonce;
 fillimplicitlyclosesitscontours;strokeclosesonlyexplicitlyclosedpaths. Cubicc/v/y flattenphysical
 controlhull to<=0.005mm viaexistingflatten_cubic; limits inheriteddepth24/percontour100000.
-Linewidthpositive,cap0butt/1round/2square,join0miter/1round/2bevel,miterlimit>=1(default10).
+Linewidthpositive,cap0butt/1round/2square,join0miter/1round/2bevel,miterlimit1..1000(default10).
 Dashemptyarray/phase0only;hairlinewidth0 andnonemptydashrejected. Opaquegray/RGB/CMYKvalues0..1;
 whiteclears,othercolorsmark. Bpaintsfillthenstroke. BasicW/W* saves pendingcliprule and appliesits
 compoundfillclipafterthecurrentpaintingoperator/n, thenresetspath. Clip state followsq/Q.

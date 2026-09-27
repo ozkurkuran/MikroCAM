@@ -1833,6 +1833,12 @@ class App(QtCore.QObject):
 
         self.ui.menufileimport.addAction(_('SVG drill candidates...')).triggered.connect(show_svg_drills)
 
+        def show_pdf_vectors():
+            from mikrocam.ui.pdf_import import open_pdf_import
+            open_pdf_import(self)
+
+        self.ui.menufileimport.addAction(_('PDF vector page...')).triggered.connect(show_pdf_vectors)
+
         def show_geometry_drills():
             from mikrocam.ui.geometry_drills import open_geometry_drills
             open_geometry_drills(self)

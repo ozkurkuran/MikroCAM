@@ -41,6 +41,14 @@ stream decompression, array streams and page-tree entries/depth. This avoids mut
 The [security documentation](https://pypdf.readthedocs.io/en/latest/user/security.html) describes those
 resource controls. Pinning and malformed/expansion fixtures verify the selected behavior.
 
+The pinned reader's public ContentStream API materializes every operation before returning.
+Three instance-level private hooks supplement the public configuration: a bounded `_operations`
+collection checks before append; `_read_inline_image` rejects before image allocation; and a
+delegating `_parse_content_stream` records the last appended operator position and rejects any
+remaining non-comment operands. This preserves the library tokenizer without copying it or
+patching global classes. Tests cover cap boundaries, final comments and malformed operand tails.
+The version check is exact because these seams must be revalidated on dependency updates.
+
 ## Decision: explicit subset with physical paint semantics
 
 Implement full affine path construction, independent subpaths, cubic curves, q/Q graphics state,

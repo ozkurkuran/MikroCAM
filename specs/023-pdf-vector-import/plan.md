@@ -43,6 +43,7 @@ core/pdf_report_codec.py: strict optional schema-one JSON report,<=64KiB.
 core/pdf_frame.py: effective selected box, rotation, crop and flip into physical mm.
 core/pdf_geometry.py: bounded physical subpaths and fill/stroke/clip/paint composition, using
 existing core.svg_curves.flatten_cubic, svg_fill.fill_svg_paths and svg_paint.render_svg_paths.
+core/pdf_paths.py: bounded current-path construction, separate from saved graphics state.
 importers/pdf_program.py: finite operator/state grammar and graphics-state/path lifecycle.
 bridge/pdf_reader.py: bounded pypdf context, page facts and selected contents translation.
 bridge/pdf_import.py: load/review, source verification, atomic normal Geometry construction/report reads.
