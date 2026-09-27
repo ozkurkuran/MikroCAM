@@ -9,6 +9,9 @@ from mikrocam.core.svg_models import (SvgDocument, SvgElement, SvgNotice, MAX_SV
 from mikrocam.core.svg_transform import (compose_affine, parse_svg_transform, parse_svg_length,
                                         resolve_svg_viewport)
 from .svg_style import resolve_style, style_paint, style_fill_is_white
+from .svg_metadata import resolve_page_attributes
+from .svg_css import parse_stylesheets, cascade_attributes
+from .svg_clips import SvgClipBuilder
 
 
 _SVG = 'http://www.w3.org/2000/svg'
@@ -72,51 +75,67 @@ def _id_index(root: ET.Element) -> dict[str, ET.Element]:
 class _Traversal:
     def __init__(self, root: ET.Element) -> None:
         self.ids = _id_index(root)
+        self.rules = parse_stylesheets(root)
+        self.clip_builder = SvgClipBuilder(root, self.ids, self.rules)
+        self.layers: set[tuple[str, ...]] = set()
         self.elements: list[SvgElement] = []
         self.visits = 0
 
     def walk(self, node: ET.Element, matrix: tuple, parent_style: dict | None,
-             references: tuple[str, ...] = (), depth: int = 0) -> None:
+             references: tuple[str, ...] = (), depth: int = 0, clips: tuple = (),
+             layers: tuple[str, ...] = ()) -> None:
         self.visits += 1
         if self.visits > MAX_SVG_ELEMENTS * 4 or depth > MAX_SVG_DEPTH:
             raise ValueError('SVG expanded traversal count/depth limit exceeded')
         kind = _tag(node)
-        if kind in _METADATA or kind == 'defs':
+        if kind in _METADATA or kind in ('defs', 'clipPath'):
             return
         if node.tag.startswith('{') and not node.tag.startswith(f'{{{_SVG}}}'):
             raise ValueError(f'Unsupported foreign SVG content: {kind}')
-        attributes = dict(node.attrib)
+        attributes = cascade_attributes(kind, dict(node.attrib), self.rules)
         style = resolve_style(attributes, parent_style)
         if style['display'] == 'none' or style['opacity'] == '0':
             return
         matrix = compose_affine(matrix, parse_svg_transform(node.get('transform')))
+        if style['clip-path'] != 'none':
+            if len(clips) >= 8:
+                raise ValueError('SVG clip chain exceeds eight applications')
+            clips += (self.clip_builder.build(style['clip-path'][5:-1], matrix),)
         if kind == 'g':
+            label = node.get('{http://www.inkscape.org/namespaces/inkscape}label',
+                             node.get('data-name', node.get('id', '')))
+            if label:
+                layers += (label,)
             for child in node:
-                self.walk(child, matrix, style, references, depth + 1)
+                self.walk(child, matrix, style, references, depth + 1, clips, layers)
         elif kind == 'use':
-            self._use(node, matrix, style, references, depth)
+            self._use(node, matrix, style, references, depth, clips, layers)
         elif kind in _SHAPES:
             if style['visibility'] == 'visible':
-                self._shape(node, kind, matrix, style)
+                self._shape(node, kind, matrix, style, clips, layers)
             if len(node):
                 raise ValueError('Nested content inside an SVG shape is unsupported')
-        elif kind == 'style' and not ''.join(node.itertext()).strip():
+        elif kind == 'style':
             return
         elif kind in ('text', 'tspan'):
             raise ValueError('SVG text requires font layout; convert text to paths in the source editor')
         else:
             raise ValueError(f'Unsupported SVG element: {kind}')
 
-    def _shape(self, node: ET.Element, kind: str, matrix: tuple, style: dict) -> None:
+    def _shape(self, node: ET.Element, kind: str, matrix: tuple, style: dict,
+               clips: tuple, layers: tuple[str, ...]) -> None:
         if len(self.elements) >= MAX_SVG_ELEMENTS:
             raise ValueError('SVG expanded element limit exceeded')
         name = node.get('id', kind)
         identifier = f'{len(self.elements) + 1}:{name}'[:256]
         self.elements.append(SvgElement(identifier, kind, tuple(node.attrib.items()), matrix,
-                                        style_paint(style), style_fill_is_white(style)))
+                                        style_paint(style), style_fill_is_white(style), clips, layers))
+        if layers:
+            self.layers.add(layers)
 
     def _use(self, node: ET.Element, matrix: tuple, style: dict,
-             references: tuple[str, ...], depth: int) -> None:
+             references: tuple[str, ...], depth: int, clips: tuple,
+             layers: tuple[str, ...]) -> None:
         href = node.get('href', node.get(_XLINK, ''))
         if not href.startswith('#') or len(href) < 2:
             raise ValueError('SVG use requires a local #id reference')
@@ -128,15 +147,16 @@ class _Traversal:
         translation = (1., 0., 0., 1., parse_svg_length(node.get('x', '0')),
                        parse_svg_length(node.get('y', '0')))
         self.walk(self.ids[identifier], compose_affine(matrix, translation), style,
-                  references + (identifier,), depth + 1)
+                  references + (identifier,), depth + 1, clips, layers)
 
 
 def parse_svg_document(source: bytes, source_name: str) -> SvgDocument:
     """Resolve a finite source without reading files, loading fonts or following URLs."""
     root = _parse_xml(source)
-    viewport = resolve_svg_viewport(tuple(root.attrib.items()))
-    style = resolve_style(dict(root.attrib))
+    effective, page_notices = resolve_page_attributes(root)
+    viewport = resolve_svg_viewport(effective)
     traversal = _Traversal(root)
+    style = resolve_style(cascade_attributes('svg', dict(root.attrib), traversal.rules))
     # A root SVG transform is outside its viewBox, in viewport CSS-pixel coordinates.
     px_mm = 25.4 / 96
     to_mm = (px_mm, 0., 0., px_mm, 0., 0.)
@@ -144,10 +164,17 @@ def parse_svg_document(source: bytes, source_name: str) -> SvgDocument:
     outer = compose_affine(to_mm, compose_affine(parse_svg_transform(root.get('transform')), to_px))
     matrix = compose_affine(outer, viewport.matrix)
     if style['display'] != 'none' and style['opacity'] != '0':
+        clips = (() if style['clip-path'] == 'none' else
+                 (traversal.clip_builder.build(style['clip-path'][5:-1], matrix),))
         for child in root:
-            traversal.walk(child, matrix, style, depth=1)
+            traversal.walk(child, matrix, style, depth=1, clips=clips)
     notices = (SvgNotice('positive-material', 'Solid colors indicate positive CAM material; color overpainting '
-                         'and viewport clipping are not inferred.'),)
+                         'and viewport clipping are not inferred.'),) + page_notices
+    # Reserve one omission notice and one later physical-flip notice.
+    notices += tuple(SvgNotice('visible-layer', 'Visible source group/layer: ' + ' / '.join(path)[:470])
+                     for path in sorted(traversal.layers)[:198 - len(notices)])
+    if len(traversal.layers) + len(page_notices) + 1 > 198:
+        notices += (SvgNotice('layers-truncated', 'Further source group/layer labels omitted.'),)
     return SvgDocument(source_name, hashlib.sha256(source).hexdigest(),
                         replace(viewport, matrix=matrix), tuple(traversal.elements), notices,
-                        tuple(root.attrib.items()))
+                        tuple(root.attrib.items()), effective)

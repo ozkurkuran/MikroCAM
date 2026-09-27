@@ -8,8 +8,9 @@ from mikrocam.core.svg_transform import parse_svg_length, parse_svg_numbers
 _DEFAULTS = {'fill': 'black', 'stroke': 'none', 'stroke-width': '1',
              'stroke-linecap': 'butt', 'stroke-linejoin': 'miter', 'stroke-miterlimit': '4',
              'fill-rule': 'nonzero', 'fill-opacity': '1', 'stroke-opacity': '1',
-             'visibility': 'visible', 'display': 'inline', 'opacity': '1', 'color': 'black'}
-_UNSUPPORTED = {'clip-path', 'clip', 'mask', 'filter', 'marker', 'marker-start', 'marker-mid',
+             'visibility': 'visible', 'display': 'inline', 'opacity': '1', 'color': 'black',
+             'clip-path': 'none', 'clip-rule': 'nonzero'}
+_UNSUPPORTED = {'clip', 'mask', 'filter', 'marker', 'marker-start', 'marker-mid',
                 'marker-end', 'stroke-dasharray', 'vector-effect', 'mix-blend-mode'}
 _STYLE_GEOMETRY = {'transform', 'transform-origin', 'transform-box', 'width', 'height',
                    'x', 'y', 'r', 'rx', 'ry', 'cx', 'cy', 'd'}
@@ -73,15 +74,20 @@ def _solid_paint(value: str, *, color: bool = False) -> str:
     raise ValueError(f'Unsupported SVG paint: {value[:80]}; use a solid color or none')
 
 
-def resolve_style(attributes: dict[str, str], parent: dict[str, str] | None = None) -> dict[str, str]:
+def resolve_style(attributes: dict[str, str], parent: dict[str, str] | None = None, *,
+                  clip_mode: bool = False) -> dict[str, str]:
     """Resolve supported inherited presentation values without evaluating external CSS."""
     parent = _DEFAULTS if parent is None else parent
     result = dict(parent)
-    result.update(display='inline', opacity='1')  # These two properties are not inherited.
+    result.update(display='inline', opacity='1')
+    result['clip-path'] = 'none'  # Application scopes, rather than inheritance, clip descendants.
     supplied = {key: value for key, value in attributes.items()
                 if key in _DEFAULTS or key in _UNSUPPORTED or key in ('overflow', 'stroke-dashoffset', 'paint-order')}
     supplied.update(_inline(attributes.get('style', '')))
     for key, value in supplied.items():
+        if clip_mode and (key in ('fill', 'fill-rule', 'fill-opacity', 'opacity', 'color',
+                                 'vector-effect', 'paint-order') or key.startswith('stroke')):
+            continue  # Clipping uses geometric silhouettes, independent of painting.
         value = value.strip()
         if value.lower() == 'inherit':
             value = parent.get(key, _DEFAULTS.get(key, 'none'))
@@ -97,6 +103,13 @@ def resolve_style(attributes: dict[str, str], parent: dict[str, str] | None = No
             raise ValueError('SVG dashed strokes are unsupported')
         if key in _DEFAULTS:
             result[key] = value
+    if clip_mode:
+        for key, value in _DEFAULTS.items():
+            if key not in ('display', 'visibility', 'clip-path', 'clip-rule'):
+                result[key] = value
+    if result['clip-rule'] not in ('nonzero', 'evenodd'):
+        raise ValueError('Unsupported SVG clip-rule')
+    result['clip-path'] = _clip_reference(result['clip-path'])
     for key in ('opacity', 'fill-opacity', 'stroke-opacity'):
         result[key] = _opacity(result[key])
     if result['display'] not in ('none', 'inline', 'block'):
@@ -108,6 +121,15 @@ def resolve_style(attributes: dict[str, str], parent: dict[str, str] | None = No
     result['stroke'] = _solid_paint(result['stroke'])
     style_paint(result)  # Validate widths, cap/join, winding and miter limit before geometry.
     return result
+
+
+def _clip_reference(value: str) -> str:
+    if value == 'none':
+        return value
+    match = re.fullmatch(r'''url\(\s*(['"]?)#([^\s()'"#]+)\1\s*\)''', value)
+    if match is None or len(match[2]) > 256:
+        raise ValueError('SVG clipping requires one local url(#id) reference or none')
+    return f'url(#{match[2]})'
 
 
 def style_paint(style: dict[str, str]) -> SvgPaint:

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: MIT; Copyright (c) 2026 MikroCAM contributors. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 60 40"
+     xmlns:t="http://ns.adobe.com/xap/1.0/t/pg/"
+     xmlns:d="http://ns.adobe.com/xap/1.0/sType/Dimensions#"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+  <title>Original MikroCAM authored Illustrator-style analytic fixture</title>
+  <desc>This artwork was authored for tests, not exported by Adobe Illustrator.
+    XMP page: 60 by 40 mm. Two overlapping 20 by 20 mm rectangles use evenodd fill.
+    Clip: x=15..35, y=11..24 mm. Remaining two strips have total area 130 mm2.
+    Unflipped bounds: 15,11,35,24 mm; flipped bounds: 15,16,35,29 mm.</desc>
+  <metadata><t:MaxPageSize d:w="60" d:h="40" d:unit="mm"/></metadata>
+  <style>
+    .construction { display: none; }
+    .concealed { visibility: hidden; }
+    .artwork { visibility: visible; fill: black; fill-rule: evenodd; clip-path: url(#window); }
+  </style>
+  <defs>
+    <clipPath id="window" clipPathUnits="userSpaceOnUse">
+      <rect x="15" y="11" width="20" height="13"/>
+    </clipPath>
+  </defs>
+  <g id="hidden-layer" inkscape:label="Hidden construction" class="construction">
+    <rect width="60" height="40"/>
+  </g>
+  <g id="visible-layer" inkscape:label="Visible material" class="concealed">
+    <rect width="60" height="40"/>
+    <path id="compound-material" class="artwork" d="M10 10H30V30H10Z M20 10H40V30H20Z"/>
+  </g>
+</svg>

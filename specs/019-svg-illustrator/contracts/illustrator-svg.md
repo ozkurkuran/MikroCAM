@@ -5,8 +5,12 @@ Existing physical import/load/UI APIs remain source compatible. No extra depende
 ## Metadata and report
 `resolve_page_attributes(root: ET.Element) -> tuple[tuple[tuple[str,str],...], tuple[SvgNotice,...]]`
 in importers/svg_metadata.py returns effective root attrs and bounded provenance notices.
-Original root attrs are never changed. XMP structure uses exact xmpTPg MaxPageSize and stDim w/h/unit
-namespaces; <=1 MaxPageSize, exactly one each positive finite field <=1e9mm, unit in supported
+Original root attrs are never changed. XMP evidence must be below a direct root metadata child
+in the SVG namespace or without a namespace; RDF wrappers inside it remain supported. MaxPageSize
+elsewhere, including defs and foreign metadata, cannot supply physical scale. XMP structure uses
+exact xmpTPg `http://ns.adobe.com/xap/1.0/t/pg/` and stDim
+`http://ns.adobe.com/xap/1.0/sType/Dimensions#` namespaces; <=1 MaxPageSize, exactly one each
+positive finite field <=1e9 mm after unit conversion, unit in supported
 mm/cm/inch/in/point/pt/pica/pc/pixel/px plus case-insensitive long/plural names. Duplicate/invalid
 metadata needed for fallback is ValueError; complete root dimensions may retain them with a warning.
 Absent root dimensions may use valid XMP axes; percentage root dimensions require XMP and use its
@@ -23,14 +27,18 @@ report dictionary; notices describe XMP/layers. Old absent object report handlin
 ## CSS
 Frozen `SvgCssRule(selector: str, declarations: tuple[tuple[str,str,bool],...], specificity: int,
 order: int)` in importers/svg_css.py. `parse_stylesheets(root)->tuple[SvgCssRule,...]` compiles all
-embedded SVG style text offline, max65536chars and256 expanded simple selectors.
+embedded SVG/unnamespaced style text offline, max65536chars and256 expanded simple selectors.
+Metadata subtrees are pruned; foreign-namespace style elements are inert. Legitimate SVG styles
+inside defs remain document-wide rules in source order.
 `cascade_attributes(tag: str, attributes: dict[str,str], rules: tuple[SvgCssRule,...])->dict[str,str]`
 returns a new attr mapping with winning presentation values encoded in inline style; raw source
 attributes remain available for retained records. Support tag/*/.class/#id, comma lists and comments;
 reject malformed, @rules, nested/escaped/compound/combinator selectors. Resolve precedence by
 important flag, specificity, source order; inline normal outranks normal selectors, stylesheet
-important outranks normal inline, inline important highest. Validate declarations via existing
-style grammar; geometry/unsupported properties stay rejected. Existing direct resolve_style remains
+important outranks normal inline, inline important highest. Validate declaration grammar, property
+names and local clip-path references at compilation. Validate paint semantics only for winning
+values in the element's actual context; unused or overridden paint does not manufacture material
+or fail a clip silhouette. Geometry/unsupported properties stay rejected. Existing direct resolve_style remains
 usable. clip-path none/url(#localID) is noninherited; clip-rule inherited nonzero/evenodd.
 
 ## Source records and clip expansion
@@ -44,7 +52,9 @@ ancestor styles supply clip-rule, not target style. Support basic shapes and loc
 reject text/groups/nested clipping inside definitions explicitly. Circle/curve source budgets apply.
 Each clip application has a unique stable scope ID shared by affected flattened descendants.
 CSS display:none suppresses subtree; visibility can be overridden; empty/hidden clip shape sets clip
-all material out. Opacity/fill/stroke ignored for clip silhouettes; inherited clip-rule controls fill.
+all material out. Opacity/fill/stroke and stroke appearance values (including dash) are ignored
+for clip silhouettes; inherited clip-rule controls fill. Unsupported winning paint on visible
+material still rejects explicitly.
 Local bbox clip coordinates are finite unitless numbers (percent length syntax supported as /100 in
 this normalized frame); absolute-unit bbox lengths reject. Clip-chain/cycle/reference budgets apply.
 
@@ -67,6 +77,9 @@ The apply function unions physical definition shapes and intersects original mat
 application. Source paths are unchanged; empty output
 is retained as empty geometry tuple, unsupported degenerate bbox is ValueError. Cap total clip and
 result coordinate work using existing budgets; all visible clip fragments must remain valid/finite.
+Preflight clip union/intersection overlays before GEOS work: <=2048 nonzero boundary segments,
+<=32768 intersecting segment pairs. Bound clip application count times document element count
+to <=500000 before application-wide traversal; existing generated-coordinate budgets also apply.
 Bridge flips each application matrix once, never its local shape matrices twice. Cached applications
 are local to one import only. No host publish until complete import success.
 Circle evidence rejects elements with any clips with an explicit notice; later geometry conversion

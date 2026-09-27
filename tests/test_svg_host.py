@@ -72,7 +72,14 @@ def test_success_appends_material_without_changing_existing_tools():
 @pytest.mark.parametrize('source', ['<svg',
     '<svg xmlns="http://www.w3.org/2000/svg" width="10mm" height="10mm"><text>x</text></svg>',
     '<svg xmlns="http://www.w3.org/2000/svg" width="10mm" height="10mm"><rect width="3" height="2"/><rect width="-1" height="4"/></svg>',
-    '<!DOCTYPE svg><svg width="10mm" height="10mm"/>'])
+    '<!DOCTYPE svg><svg width="10mm" height="10mm"/>',
+    '<svg width="10mm" height="10mm"><rect width="3" height="2"/>'
+    '<rect width="2" height="2" clip-path="url(#absent)"/></svg>',
+    '<svg width="10mm" height="10mm"><defs><clipPath id="c"/></defs>'
+    '<rect width="2" height="2" clip-path="url(#c)"/></svg>',
+    '<svg width="10mm" height="10mm"><defs><clipPath id="c">'
+    + '<rect width="1" height="1"/>' * 65 + '</clipPath></defs>'
+    '<rect width="2" height="2" clip-path="url(#c)"/></svg>'])
 @pytest.mark.parametrize('kind', ['geometry', 'gerber'])
 def test_bad_source_returns_fail_without_partial_geometry_or_tool_mutation(tmp_path, source, kind):
     target = tmp_path / 'bad.svg'

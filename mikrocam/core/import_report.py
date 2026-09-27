@@ -11,7 +11,7 @@ from .svg_models import (CURVE_TOLERANCE_MM, MAX_SVG_POINTS, SvgImportResult,
                          SvgNotice, validate_affine)
 from .svg_transform import parse_svg_length, parse_svg_numbers, resolve_svg_viewport
 
-_UNITS = ('absent', 'unitless', 'px', 'mm', 'cm', 'in', 'pt', 'pc')
+_UNITS = ('absent', 'unitless', 'px', 'mm', 'cm', 'in', 'pt', 'pc', '%')
 _ASPECTS = ('none',) + tuple(x + y + ' meet' for x in ('xMin', 'xMid', 'xMax')
                            for y in ('YMin', 'YMid', 'YMax'))
 
@@ -65,8 +65,6 @@ class ImportCoordinates:
                 or any(type(unit) is not str or unit not in _UNITS for unit in self.source_units)):
             raise ValueError('Source units require two supported immutable labels')
         for token, unit in zip((self.source_width, self.source_height), self.source_units):
-            if token is not None and parse_svg_length(token) <= 0:
-                raise ValueError('Recorded source dimensions must be positive')
             if _dimension(token) != unit:
                 raise ValueError('Source dimension token and unit label must agree')
         if self.view_box is not None:
@@ -140,7 +138,15 @@ class ImportReport:
 def _dimension(token: str | None) -> str:
     if token is None:
         return 'absent'
-    parse_svg_length(token)
+    if token.endswith('%'):
+        if any(character.isspace() for character in token):
+            raise ValueError('Source percentage must be a single numeric token')
+        numbers = parse_svg_numbers(token[:-1])
+        if len(numbers) != 1 or not 0 < numbers[0] <= 1e9:
+            raise ValueError('Source percentage must be one positive finite bounded number')
+        return '%'
+    if parse_svg_length(token) <= 0:
+        raise ValueError('Recorded source dimensions must be positive')
     match = re.search('(px|mm|cm|in|pt|pc)$', token)
     return match[0] if match else 'unitless'
 
@@ -148,7 +154,7 @@ def _dimension(token: str | None) -> str:
 def _coordinates(result: SvgImportResult) -> ImportCoordinates:
     attributes = result.document.root_attributes
     # Validate that recorded facts actually support a viewport; never infer from material bounds.
-    resolve_svg_viewport(attributes)
+    resolve_svg_viewport(result.document.viewport_attributes or attributes)
     attrs = dict(attributes)
     width = attrs['width'].strip() if 'width' in attrs else None
     height = attrs['height'].strip() if 'height' in attrs else None

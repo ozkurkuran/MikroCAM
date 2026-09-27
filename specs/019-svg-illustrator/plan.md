@@ -11,12 +11,18 @@ Keep original paths/source text; render clipped material before reports/host pub
 Python3.13, existing NumPy/Shapely/PyQt6, no new dependency. Windows desktop plus pure pytest.
 Existing source16MiB, elements10000, depth64, generated coordinates500000/100000 per element.
 CSS<=65536chars/256 selectors; clip chain<=8, definitions<=64 shapes, aggregate generated budgets
-include clip geometry. Complex topology<=2048 segments, <=32768 intersecting segment pairs,
+include clip geometry. Clip overlay preflight<=2048 segments/32768 intersecting pairs;
+application count times element count<=500000 bounds application-wide work before traversal.
+Complex fill topology<=2048 segments, <=32768 intersecting segment pairs,
 <=2048 polygonized faces and <=2000000 face/segment winding operations. Simple disjoint/nested
 rings retain the existing fast path and limits. No unbounded repair/union fallback.
 Report schema2 adds percentage source-unit representation; read/migrate strict schema1 unchanged
 reports. Original dimensions remain source evidence, effective viewport attributes are separate.
 Project object format is otherwise unchanged. Public functions annotated, <=600/80 line limits.
+XMP evidence is confined to direct root SVG/unnamespaced metadata subtrees; original attrs remain
+unchanged. CSS collection ignores metadata and foreign styles while preserving legitimate defs
+styles. Declaration grammar/properties/local clip refs validate at compilation; only winning
+paint is validated in actual material context. Clip silhouettes ignore paint/stroke/opacity.
 
 ## Constitution Check
 All eight gates YES before research and after design:
