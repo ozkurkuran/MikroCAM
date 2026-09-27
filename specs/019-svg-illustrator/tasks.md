@@ -44,9 +44,9 @@ Input: spec/plan/research/data-model/contracts. Three stories,39tasks; tests fir
 - [x] T031 Record supported CSS/XMP/clip/winding semantics in docs/SVG_IMPORT.md.
 - [x] T032 Update schema migration guide in docs/IMPORT_REPORT.md.
 - [x] T033 Record immutable Neo source/license/adaptation in THIRD_PARTY_CHANGES.md.
-- [ ] T034 Run full/reference/architecture/growth suite at final runtime head and record validation.md.
-- [ ] T035 Run actual desktop all journeys via tests/smoke_app.py and inspect screenshot.
-- [ ] T036 Update roadmap and publish focused PR after018 delivery.
+- [x] T034 Run full/reference/architecture/growth suite at final runtime head and record validation.md.
+- [x] T035 Run actual desktop all journeys via tests/smoke_app.py and inspect screenshot.
+- [x] T036 Update roadmap and publish focused PR after018 delivery.
 - [ ] T037 Verify final-head Windows CI and record validation.md.
 - [ ] T038 Merge only validated head; record PR/CI/merge links in validation.md.
 - [ ] T039 Mark delivery in tasks.md/docs/ROADMAP.md, preserving genuine-sample/physical limits.
