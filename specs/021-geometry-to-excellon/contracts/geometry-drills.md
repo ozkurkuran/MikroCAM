@@ -38,7 +38,7 @@ multi mode uses every tools entry's solid_geometry, with stable type-qualified b
 keys and labels. Reject missing geometry, unsupported tool keys or malformed tool dictionaries; never
 fall back to a stale top-level cache. No mutation, defaults or source-file I/O.
 verify_geometry_review(app,owner,review)->None requires current collection.get_by_name(review.source_name)
-is owner, and a newly bounded review fingerprint/name/units matches. Source rename, replacement,
+is owner, and a newly bounded review (including candidate measurements) matches exactly. Source rename, replacement,
 removal, mode/tool/path/unit change rejects with an analyse-again message.
 create_geometry_drills(app,owner,review,indices,name)->object groups selection and delegates to
 bridge.excellon.create_excellon_tools(app,tools,name,*,source_guard=None). The optional no-argument
