@@ -9,7 +9,11 @@ No I/O; cooperative cancellation raises PreflightCancelled.
 JobBlock(source_line:int,wire:bytes) frozen. Uppercase letters, exact numeric spelling, whitespace/
 comments removed, LF terminated. gcode_lexer.Block.canonical holds that validated text.
 validate_job_block(bytes) accepts one canonical supported012 block<=79bytes INCLUDING LF;
-exclude M0/M1/comments/space/realtime/nonASCII/multiline/query/dollar syntax.
+exclude M0/M1/M7/comments/space/realtime/nonASCII/multiline/query/dollar syntax.
+Every numeric token has at most8 decimal digits including leading zeros, avoiding GRBL's digit
+truncation. Numeric spelling is retained. A float32 target-accumulation/analytic-extent guard rejects
+nonfinite/underflow values, endpoint drift>.001mm, envelope or rapid Safe-Z escape, and ambiguous
+quantized arcs. This is a representation guard, not a firmware/step/interpolation/physical emulator.
 Require Placement matrix(1,0,0,1,xoff,yoff), supplied rapid rates and known positive duration.
 Initial/final machine XYZ derive from existing placed_point/ModalInterpreter. G54=(xoff,yoff,zoff).
 M3/M4 needs explicit positive S before/on block; track each active spindle speed including later

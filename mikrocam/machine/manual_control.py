@@ -42,7 +42,8 @@ class ManualControl:
         value = self.host.snapshot()
         now = self.host._clock()
         fresh = value.last_report_at is not None and 0 <= now - value.last_report_at < 2
-        return (not self.tainted and not self.active and self.host._settings_sent_at is None
+        return (not self.tainted and not self.active and not self.host._job.active
+                and not self.host._job.tainted and self.host._settings_sent_at is None
                 and value.connection is ConnectionState.CONNECTED and value.state is MachineState.IDLE
                 and fresh and not value.stale and value.report_units is not None
                 and value.machine_position_mm is not None

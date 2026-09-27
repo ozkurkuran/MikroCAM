@@ -3,6 +3,8 @@
 import math
 
 from mikrocam.machine.manual_protocol import validate_command
+from mikrocam.machine.job_protocol import validate_job_command
+from mikrocam.machine.fake_job import FakeJob
 
 
 class FakeGRBL:
@@ -55,6 +57,9 @@ class FakeGRBL:
         self.close_error: OSError | None = None
         self.short_write = False
         self._incoming = bytearray()
+        self.job_writes: list[bytes] = []
+        self.job_settings = {13: 0 if report_units == 'mm' else 1, 30: 1000, 31: 0, 32: 0}
+        self._job = FakeJob(self)
 
     @staticmethod
     def _vector(values) -> tuple[float, float, float]:
@@ -109,6 +114,7 @@ class FakeGRBL:
     def _status_report(self) -> bytes:
         if self.status is not None:
             return self.status
+        self._job.poll()
         if self._jog_target is not None:
             if self._jog_reported:
                 self.machine_position = self._jog_target
@@ -125,7 +131,7 @@ class FakeGRBL:
         if data == b'?':
             self.inject(self._status_report())
         elif data == b'$$\n':
-            self.inject(b'$13=' + (b'0' if self.report_units == 'mm' else b'1') + b'\r\nok\r\n')
+            self.inject(''.join(f'${key}={value}\r\n' for key, value in self.job_settings.items()).encode() + b'ok\r\n')
         elif data == b'$N\n':
             self.inject(''.join(f'$N{i}={block}\r\n' for i, block in enumerate(
                 self.startup_blocks)).encode('ascii') + b'ok\r\n')
@@ -140,6 +146,8 @@ class FakeGRBL:
         elif data in (b'\x85', b'\x18', b'\x84'):
             self._stop(data)
         else:
+            if data == b'M5 M9\n' and self._job.defer_off():
+                return
             self._execute(data)
             self.inject(b'ok\r\n')
 
@@ -170,6 +178,7 @@ class FakeGRBL:
             if self.state == 'Jog':
                 self.state = 'Idle'
             return
+        self._job.clear()
         self.spindle, self.coolant = 'M5', ('M9',)
         if data == b'\x84':
             self.state = 'Door:0'
@@ -183,5 +192,22 @@ class FakeGRBL:
         self.is_open = False
         self._incoming.clear()
         self._jog_target = None
+        self._job.clear()
         if self.close_error:
             raise self.close_error
+
+    def write_job(self, data: bytes) -> int:
+        """Record acceptance independently of the simulated planner's later endpoint."""
+        if not self.is_open:
+            raise OSError('Closed')
+        validate_job_command(data)
+        if self.write_error:
+            raise self.write_error
+        self.writes.append(data)
+        if data not in (b'!', b'~'):
+            self.job_writes.append(data)
+        if self.short_write:
+            return len(data) - 1
+        if self.auto_respond:
+            self._job.accept(data)
+        return len(data)

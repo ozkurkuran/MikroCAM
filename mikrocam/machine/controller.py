@@ -11,6 +11,9 @@ from mikrocam.machine.manual_control import ManualControl
 from mikrocam.machine.manual_models import JogRequest, ZeroRequest, SelectG54Request
 from mikrocam.machine.manual_protocol import validate_command
 from mikrocam.machine.models import ManualPhase
+from mikrocam.machine.job_control import JobControl, _PriorityPending
+from mikrocam.machine.job_models import StartJobRequest, JobPhase
+from mikrocam.machine.job_protocol import validate_job_command
 
 POLL_INTERVAL = 0.25
 STATUS_TIMEOUT = 2.0
@@ -33,7 +36,9 @@ class MachineController:
         self._pending_units: str | None = None
         self._query_sequence = self._pending_query_sequence = self._last_report_query = 0
         self._manual = ManualControl(self)
+        self._job = JobControl(self)
         self._interrupted: Callable[[], bool] = lambda: False
+        self._pause_requested: Callable[[], bool] = lambda: False
 
     def snapshot(self) -> MachineSnapshot:
         """Return an immutable observation; this does not perform I/O."""
@@ -54,6 +59,31 @@ class MachineController:
         """Install a thread-safe signal reader; it must never perform I/O or GUI work."""
         self._interrupted = check
 
+    def set_pause_check(self, check: Callable[[], bool]) -> None:
+        """Read pending feed-hold intent without doing I/O outside the owner."""
+        self._pause_requested = check
+
+    def request_job(self, request: StartJobRequest) -> None:
+        """Admit a prepared immutable job; live setup proof follows on this owner."""
+        try:
+            self._job.start(request)
+        except ValueError as error:
+            if not self._job.active and not self._job.tainted:
+                self._job.observation = replace(self._job.observation, phase=JobPhase.FAILED,
+                                                diagnostic=str(error)[:256])
+                self._job.publish()
+            raise
+
+    def pause_job(self) -> None:
+        self._job.pause()
+
+    def resume_job(self) -> None:
+        self._job.resume()
+
+    def stop_job(self) -> None:
+        self._job.stop()
+        self._manual.publish()
+
     def cancel_jog(self) -> None:
         try:
             if self._manual.active:
@@ -68,7 +98,10 @@ class MachineController:
     def abort(self) -> None:
         """Best-effort controller abort; a failed link cannot prove physical stopping."""
         if self._snapshot.connection is ConnectionState.CONNECTED:
-            self._manual.abort()
+            if self._job.active:
+                self.stop_job()
+            elif not self._job.tainted:
+                self._manual.abort()
 
     def connect(self) -> None:
         if self._snapshot.connection in (ConnectionState.CONNECTING, ConnectionState.CONNECTED):
@@ -85,6 +118,8 @@ class MachineController:
     def disconnect(self) -> None:
         """Stop owned motion before closing; idle read-only closure emits no stop command."""
         self._close_manual_operation()
+        self._job.stop('Disconnected during job; physical stop unverified')
+        job = self._snapshot.job
         manual = self._snapshot.manual
         preserve = manual.phase in (ManualPhase.FAILED, ManualPhase.ABORTED)
         try:
@@ -96,6 +131,9 @@ class MachineController:
             self._reset_session(ConnectionState.DISCONNECTED)
         if preserve:
             self._snapshot = replace(self._snapshot, manual=manual)
+        if job.phase is not JobPhase.READY:
+            self._snapshot = replace(self._snapshot, job=replace(job, can_start=False,
+                                     can_pause=False, can_resume=False, can_stop=False))
 
     def _close_manual_operation(self) -> None:
         if not self._manual.active:
@@ -123,6 +161,7 @@ class MachineController:
                 lines = self._framer.feed(chunk)
             except ValueError as error:
                 self._manual.lost_evidence('Corrupt controller framing', framing=True)
+                self._job.fail('Corrupt controller framing')
                 self._invalidate(clear_units=True)
                 self._settings_sent_at = None
                 self._diagnose(f'Invalid controller framing; reconnect to verify units: {error}')
@@ -130,6 +169,7 @@ class MachineController:
             for line in lines:
                 self._consume(line)
             self._expire_and_poll()
+            self._job.tick()
             self._manual.tick()
         except Exception as error:
             self._fail(error)
@@ -144,17 +184,20 @@ class MachineController:
         self._pending_units = None
         self._query_sequence = self._pending_query_sequence = self._last_report_query = 0
         self._manual = ManualControl(self)
+        self._job = JobControl(self)
 
     def _fail(self, error: Exception) -> None:
         diagnostic = f'Communication failed: {error}'
         self._manual.lost_evidence(diagnostic)
+        self._job.fail(diagnostic)
         manual = self._snapshot.manual
+        job = self._snapshot.job
         try:
             self._transport.close()
         except Exception as close_error:
             diagnostic += f'; close failed: {close_error}'
         self._reset_session(ConnectionState.ERROR)
-        self._snapshot = replace(self._snapshot, manual=manual)
+        self._snapshot = replace(self._snapshot, manual=manual, job=job)
         self._diagnose(diagnostic)
 
     def _diagnose(self, message: str) -> None:
@@ -167,6 +210,14 @@ class MachineController:
         _LOG.debug('GRBL TX %r', data)
         if self._transport.write(data) != len(data):
             raise OSError('Incomplete serial write')
+
+    def _send_job(self, data: bytes) -> None:
+        validate_job_command(data)
+        _LOG.debug('GRBL JOB TX %r', data)
+        if data not in (b'!', b'~') and (self._interrupted() or self._pause_requested()):
+            raise _PriorityPending()
+        if self._transport.write_job(data) != len(data):
+            raise OSError('Incomplete job serial write')
 
     def _request_settings(self) -> None:
         self._settings_sent_at = self._clock()
@@ -191,12 +242,15 @@ class MachineController:
         _LOG.debug('GRBL RX %r', line[:256])
         if line.startswith('Grbl '):
             self._manual.lost_evidence('Controller reset interrupted manual operation', reset=True)
+            self._job.fail('Controller reset interrupted job', reset=True)
             self._invalidate(clear_units=True)
             self._status_sent_at = None
             self._request_settings()
             self._diagnose('Controller restarted; awaiting units and fresh status')
         elif line.startswith('<'):
             self._consume_status(line)
+        elif self._job.consume(line):
+            pass
         elif self._manual.consume(line):
             pass
         elif line.startswith('$13'):
@@ -216,6 +270,7 @@ class MachineController:
             self._diagnose(f'Controller {line}')
         elif line.startswith('ALARM:'):
             self._manual.lost_evidence(f'Controller {line}')
+            self._job.fail(f'Controller {line}')
             self._invalidate()
             self._snapshot = replace(self._snapshot, state=MachineState.ALARM, raw_state=line)
             self._diagnose(line)
@@ -245,6 +300,7 @@ class MachineController:
             status = parse_status(line)
         except ValueError as error:
             self._manual.lost_evidence(f'Invalid status: {error}')
+            self._job.fail(f'Invalid status: {error}')
             self._invalidate()
             self._diagnose(f'Invalid status: {error}')
             return
@@ -268,6 +324,7 @@ class MachineController:
             stale=False, last_report_at=self._clock(),
             diagnostic='' if self._snapshot.report_units is not None else self._snapshot.diagnostic)
         self._manual.on_status()
+        self._job.on_status()
 
     @staticmethod
     def _scale(vector: XYZ | None, factor: float) -> XYZ | None:
@@ -280,6 +337,7 @@ class MachineController:
         last = self._snapshot.last_report_at
         if last is not None and now - last >= STATUS_TIMEOUT:
             self._manual.lost_evidence('Status became stale during manual operation')
+            self._job.fail('Status became stale during job')
             self._invalidate()
             self._diagnose('Status is stale; awaiting a fresh report')
         if self._settings_sent_at is not None and now - self._settings_sent_at >= SETTINGS_TIMEOUT:

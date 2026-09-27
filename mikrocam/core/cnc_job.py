@@ -9,6 +9,7 @@ from .gcode_models import MAX_LINES, XYZ, PreflightCancelled, PreflightReport, S
 from .gcode_motion import placed_point
 from .gcode_parser import ModalInterpreter, _metadata, _parts
 from .gcode_preflight import analyze_gcode
+from .gcode_precision import ControllerPrecision
 
 
 def validate_job_block(data: bytes) -> None:
@@ -88,6 +89,7 @@ class PreparedJob:
         if setup.rapid_rates_mm_min is None or seconds is None or not 0 < seconds <= 8640:
             raise ValueError('Explicit rapid rates and positive bounded nominal duration are required')
         interpreter = ModalInterpreter(setup.initial_position_mm)
+        precision = ControllerPrecision(setup)
         blocks, speeds, seen, speed, active = [], [], set(), None, False
         for block in iter_blocks(self.source.text, cancelled):
             blocks.append(JobBlock(block.line, (block.canonical+'\n').encode('ascii')))
@@ -102,7 +104,7 @@ class PreparedJob:
                 if speed not in seen:
                     seen.add(speed)
                     speeds.append(speed)
-            interpreter.consume(block)
+            precision.consume(block, interpreter.consume(block))
         if cancelled is not None and cancelled():
             raise PreflightCancelled('Preparation cancelled')
         values = dict(blocks=tuple(blocks), spindle_speeds=tuple(speeds),

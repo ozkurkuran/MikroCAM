@@ -20,3 +20,7 @@ class Transport(Protocol):
     def close(self) -> None:
         """Idempotently release the owned channel."""
         ...
+
+    def write_job(self, data: bytes) -> int:
+        """Write one separately validated CNC block or owner-controlled hold/resume."""
+        ...

@@ -18,7 +18,7 @@ def opened(**kwargs):
 def test_default_reads_remain_byte_compatible():
     fake = opened()
     assert exchange(fake, b'?') == b'<Idle|MPos:0,0,0|WCO:0,0,0>\r\n'
-    assert exchange(fake, b'$$\n') == b'$13=0\r\nok\r\n'
+    assert exchange(fake, b'$$\n') == b'$13=0\r\n$30=1000\r\n$31=0\r\n$32=0\r\nok\r\n'
     assert exchange(fake, b'$N\n') == b'$N0=\r\n$N1=\r\nok\r\n'
     modal = exchange(fake, b'$G\n')
     assert modal == b'[GC:G0 G54 G17 G21 G90 G94 M5 M9 T0 F0 S0]\r\nok\r\n'
