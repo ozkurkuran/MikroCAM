@@ -1833,6 +1833,12 @@ class App(QtCore.QObject):
 
         self.ui.menufileimport.addAction(_('SVG drill candidates...')).triggered.connect(show_svg_drills)
 
+        def show_geometry_drills():
+            from mikrocam.ui.geometry_drills import open_geometry_drills
+            open_geometry_drills(self)
+
+        self.ui.menu_plugins.addAction(_('Geometry circles to Excellon...')).triggered.connect(show_geometry_drills)
+
         self.calculator_tool = ToolCalculator(self)
         self.calculator_tool.install(icon=QtGui.QIcon(self.resource_location + '/calculator32.png'), separator=True)
 
