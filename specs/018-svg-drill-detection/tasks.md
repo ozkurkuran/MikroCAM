@@ -40,9 +40,9 @@ Input: spec/plan/research/data-model/contracts. Three stories, 36 tasks, tests f
 - [x] T027 Retain Neo MIT notice and immutable behavior trace in THIRD_PARTY_CHANGES.md and THIRD_PARTY_LICENSES/.
 - [x] T028 Audit FR001–010/SC001–005 and gate/module/function bounds in validation.md.
 - [x] T029 Add regression tests before any audit fixes in tests/test_svg_drill*.py.
-- [ ] T030 Run full pytest/reference/growth checks at exact runtime head and record validation.md.
-- [ ] T031 Run actual desktop all journeys via tests/smoke_app.py and inspect screenshot.
-- [ ] T032 Record complete results and real Proteus/physical limitations in validation.md.
+- [x] T030 Run full pytest/reference/growth checks at exact runtime head and record validation.md.
+- [x] T031 Run actual desktop all journeys via tests/smoke_app.py and inspect screenshot.
+- [x] T032 Record complete results and real Proteus/physical limitations in validation.md.
 - [ ] T033 Update docs/ROADMAP.md and publish focused PR after017 delivery.
 - [ ] T034 Verify final-head Windows CI and record its link/head in validation.md.
 - [ ] T035 Merge validated head after017 and record PR/merge in validation.md.
