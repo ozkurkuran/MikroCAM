@@ -25,8 +25,9 @@ def _sources(app, sandbox, qapp, errors, pump_until):
         pump_until(qapp, lambda: app.collection.get_by_name(name) is not None
                    and app.workers._pending_count == 0, errors, 'Excellon merge source import')
         owner = app.collection.get_by_name(name)
+        owner.obj_options['tools_drill_feedrate_z'] = 41.25 + index
         for tool in owner.tools.values():
-            tool['data']['tools_drill_feedrate'] = 41.25 + index
+            tool['data']['tools_drill_feedrate_z'] = 41.25 + index
         owners.append(owner)
     return tuple(owners)
 
@@ -84,7 +85,7 @@ def excellon_merge_journey(app, qapp, sandbox, errors, pump_until, root):
     from mikrocam.ui.excellon_merge import ExcellonMergeDialog
     from mikrocam.bridge.excellon_merge import load_excellon_merge
     assert not app.collection.get_names()
-    default_keys = ('units', 'tools_drill_feedrate', 'tools_drill_cutz')
+    default_keys = ('units', 'tools_drill_feedrate_z', 'tools_drill_cutz')
     defaults = {key: deepcopy(app.options[key]) for key in default_keys}
     owners = _sources(app, sandbox, qapp, errors, pump_until)
     app.collection.view.selectionModel().clearSelection()
@@ -111,7 +112,7 @@ def excellon_merge_journey(app, qapp, sandbox, errors, pump_until, root):
     pump_until(qapp, lambda: app.collection.get_by_name('smoke_excellon_merge') is not None
                and app.workers._pending_count == 0, errors, 'Reviewed Excellon merge creation')
     previous = _check(app, 'smoke_excellon_merge')
-    assert all(tool['data']['tools_drill_feedrate'] == defaults['tools_drill_feedrate']
+    assert all(tool['data']['tools_drill_feedrate_z'] == defaults['tools_drill_feedrate_z']
                for tool in previous.tools.values())
     assert tuple(_snapshot(owner) for owner in owners) == original
     assert load_excellon_merge(owners) == review
