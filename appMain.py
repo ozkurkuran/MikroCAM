@@ -1815,6 +1815,12 @@ class App(QtCore.QObject):
 
         self.ui.menu_plugins.addAction(_('Laser CAM')).triggered.connect(show_laser_cam)
 
+        def show_machine_panel():
+            from mikrocam.ui.machine_panel import open_machine_panel
+            open_machine_panel(self)
+
+        self.ui.menu_plugins.addAction(_('Machine')).triggered.connect(show_machine_panel)
+
         self.calculator_tool = ToolCalculator(self)
         self.calculator_tool.install(icon=QtGui.QIcon(self.resource_location + '/calculator32.png'), separator=True)
 
