@@ -400,6 +400,8 @@ def run_smoke(sandbox, state):
         cad_source_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         from smoke_geometry_drills import geometry_drill_journey
         geometry_drill_journey(app, qapp, sandbox, errors, pump_until, ROOT)
+        from smoke_excellon_merge import excellon_merge_journey
+        excellon_merge_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         cam_journey(app, qapp, sandbox, errors)
         app.ui.showMaximized()
         qapp.processEvents()

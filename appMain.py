@@ -1839,6 +1839,12 @@ class App(QtCore.QObject):
 
         self.ui.menu_plugins.addAction(_('Geometry circles to Excellon...')).triggered.connect(show_geometry_drills)
 
+        def show_excellon_merge():
+            from mikrocam.ui.excellon_merge import open_excellon_merge
+            open_excellon_merge(self)
+
+        self.ui.menu_plugins.addAction(_('Review Excellon merge...')).triggered.connect(show_excellon_merge)
+
         self.calculator_tool = ToolCalculator(self)
         self.calculator_tool.install(icon=QtGui.QIcon(self.resource_location + '/calculator32.png'), separator=True)
 
