@@ -69,4 +69,8 @@ export and persistence, not manufacturing intent or physical machine operation.
 
 ## Delivery
 
-Runtime commit, PR, final-head Windows CI and merge pending.
+Final reviewed head: `a5bacf1788dd1065f68c6cbf27a8401840ca3024`.
+[PR22](https://github.com/ozkurkuran/MikroCAM/pull/22) merged as
+`2bf56a92d9610f425169d960d4e026b58bbe148f` after final-head
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36296724041)
+passed in6m37s. Delivery documentation changes no runtime.
