@@ -35,17 +35,17 @@
 - [x] T024 Test existing GUI/Tcl shared import seam, useful errors and no partial object mutation.
 - [x] T025 Add thin UI adapter and replace legacy extraction while retaining object/tool population.
 - [x] T026 Add authored reference fixtures with independent analytic bounds/area and source hashes.
-- [ ] T027 Verify fixture equivalence/tolerances and existing frozen reference suite.
+- [x] T027 Verify fixture equivalence/tolerances and existing frozen reference suite.
 - [x] T028 Audit all 11 FRs/5 SCs and eight gates; add regressions before substantive fixes.
 - [x] T029 Document supported units/appearance, inference/notices and explicit rejected semantics.
-- [ ] T030 Run full pytest/import/growth/size checks with exact tested head/counts.
-- [ ] T031 Run actual desktop Geometry/Gerber imports, source preservation and save/reopen.
-- [ ] T032 Inspect desktop output and preserve all prior smoke journeys.
+- [x] T030 Run full pytest/import/growth/size checks with exact tested head/counts.
+- [x] T031 Run actual desktop Geometry/Gerber imports, source preservation and save/reopen.
+- [x] T032 Inspect desktop output and preserve all prior smoke journeys.
 - [ ] T033 Update roadmap/validation and publish focused PR.
 - [ ] T034 Verify final-head Windows CI and fix actual failures.
 - [ ] T035 Merge validated head after preceding slices.
 - [ ] T036 Record delivery links and evidence-only completion.
-- [ ] T037 Carry approximation/unsupported/physical limitations forward.
+- [x] T037 Carry approximation/unsupported/physical limitations forward.
 
 Tests precede implementation. Shared contracts precede exclusive file delegation. Root alone stages
 and commits. All three stories are required; no frozen reference harness is edited.
