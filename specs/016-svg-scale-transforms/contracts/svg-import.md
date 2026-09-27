@@ -22,7 +22,7 @@ Frozen SvgNotice(code:str,message:str,element_id:str=''): bounded code<=64/messa
 Frozen SvgPaint(fill:bool=True,stroke:bool=False,width:float=1.,linecap:str='butt',
 linejoin:str='miter',miterlimit:float=4.,fill_rule:str='nonzero'):
 strict booleans, finite width in[0,1e9], cap butt/round/square, join miter/round/bevel,
-miterlimit finite in[1,1000], fill_rule nonzero/evenodd.
+miterlimit finite in[0,1000], fill_rule nonzero/evenodd.
 Frozen SvgPath(points:tuple[Point2D,...],closed:bool=False): >=2 bounded finite exact tuple points,
 <=MAX_ELEMENT_POINTS; closed paths require >=4 coordinates and exact first==last. No implicit repair.
 Frozen SvgViewport(width_mm:float,height_mm:float,matrix:Affine2D,notices:tuple[SvgNotice,...]=()):
@@ -36,14 +36,14 @@ Frozen SvgRendered(paths_mm:tuple[SvgPath,...],geometry_mm:tuple[BaseGeometry,..
 notices:tuple[SvgNotice,...]=()): valid finite planar Shapely geometry, bounded generated coordinates.
 Frozen SvgImportResult(document:SvgDocument,rendered:tuple[SvgRendered,...]): one result per element,
 <=500000 total generated path/geometry coordinates. geometry_mm property flattens geometry tuples;
-notices property combines bounded document/render notices. No source or host object is mutated.
+notices property combines bounded viewport/document/render notices. No source or host object is mutated.
 
 ## core.svg_transform
 parse_svg_length(text:str)->float: exact complete number plus optional px/mm/cm/in/pt/pc suffix;
 unitless and px are local user units; absolute suffixes use CSS 96px/in equivalents. Reject %, em/ex,
 unknown suffixes, nonfinite/trailing text. Values may be negative for coordinates.
 parse_svg_numbers(text:str)->tuple[float,...]: complete SVG comma/whitespace number list, including
-signed decimals/exponents; no ignored garbage. Callers validate count and positivity.
+signed decimals/exponents; no ignored garbage; incrementally reject more than 2*MAX_ELEMENT_POINTS values before allocation. Callers validate count and positivity.
 validate_affine(matrix:Affine2D)->None, compose_affine(outer,inner)->Affine2D,
 apply_svg_point(matrix,point)->Point2D, affine_scale_bound(matrix)->float (finite Euclidean/Frobenius
 upper bound for physical error amplification, excluding translation).
@@ -59,7 +59,8 @@ unknown/defer syntax and unresolved root units. Matrix includes negative viewBox
 ## Domain and bridge
 importers.svg_document.parse_svg_document(source:bytes,source_name:str)->SvgDocument:
 bounded stdlib XML traversal, namespace-local SVG tags, immutable records. Compose viewport/parent/
-element matrices once; local use x/y translation precedes referenced-node transforms. Only local
+element matrices once; local use x/y translation precedes referenced-node transforms. Root SVG
+transforms apply outside the viewBox in viewport CSS pixels, then convert to mm. Only local
 href/#id or xlink:href; unique IDs, no cycles/external refs. Unused definitions/metadata are not drawn.
 Unsupported nonempty CSS, nested svg/symbol viewport, text/fonts, image/script, clip/mask/filter/marker,
 dash/non-scaling stroke, unresolved percentages or geometry-affecting style fail explicitly.
@@ -96,6 +97,8 @@ retain_centerlines:bool=False)->SvgRendered:
 fill nonzero/evenodd for bounded valid simple rings, including implicit closure for open paths with
 >=3 distinct points; reject self-intersecting rings until compound-path scope. Expand stroke on
 source paths before affine transformation with cap/join/miterlimit. Union fill and stroke per element.
+Before stroke buffering, reject self-intersecting or overlapping centreline paths until 019;
+closed simple rings remain supported. This bounds intersection arrangements before buffering.
 Preserve transformed paths for later import report/drill features. No cross-element boolean color
 compositing. Output finite valid planar geometry, all resource excess is explicit failure.
 
@@ -103,8 +106,9 @@ compositing. Output finite valid planar geometry, all resource excess is explici
 ui.svg_import.import_svg_geometry(filename,object_type,units,flip,app)->list[BaseGeometry]|None:
 call bridge; emit bounded source notices via existing app log/inform; return None and error on failure.
 camlib.Geometry.import_svg replaces old parse/scale/text extraction with this thin adapter, keeps
-existing flatten/merge/tool population, and returns 'fail' before mutating host on failure. No
-parameter/default-tool behavior is changed. GUI and Tcl share the seam; no new menu/panel.
+existing flatten/merge/tool population, and returns 'fail' before mutating host on failure.
+Gerber.import_svg uses the same adapter, retains REG aperture population and preserves holes.
+No parameter/default-tool behavior is changed. GUI and Tcl share the seam; no new menu/panel.
 Exact shared signatures precede delegation; root coordinates all commits. Analytic unit/transform,
 fill/stroke, malformed/resource, mm/IN host and atomicity tests precede implementation, then full
 reference/import/growth and actual desktop Geometry/Gerber + save/reopen + old journeys.

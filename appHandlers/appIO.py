@@ -1965,7 +1965,7 @@ class appIO(QtCore.QObject):
 
             geo_obj.multigeo = True
 
-            with open(filename) as f:
+            with open(filename, encoding='utf-8', newline='') as f:
                 file_content = f.read()
             geo_obj.source_file = file_content
 

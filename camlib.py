@@ -13,7 +13,6 @@ from appCommon.Common import GracefulException as grace
 # from scipy.spatial import KDTree, Delaunay
 # from scipy.spatial import Delaunay
 
-from appParsers.ParseSVG import svgparselength, svgparse_viewbox, getsvggeo, getsvgtext
 from appParsers.ParseDXF import getdxfgeo
 
 from numpy.linalg import solve
@@ -1239,63 +1238,24 @@ class Geometry(object):
 
         self.app.log.debug("camlib.Geometry.import_svg()")
 
-        # Parse into list of shapely objects
-        svg_tree = ET.parse(filename)
-        svg_root = svg_tree.getroot()
-
-        # Change origin to bottom left
-        # h = float(svg_root.get('height'))
-        # w = float(svg_root.get('width'))
-        svg_parsed_dims = svgparselength(svg_root.get('height'))
-        h = svg_parsed_dims[0]
-        svg_units = svg_parsed_dims[1]
-
-        # SVG unit to mm conversion factors
-        svg_unit_to_mm = {
-            'mm': 1.0,
-            'cm': 10.0,
-            'in': 25.4,
-            'px': 25.4 / 96.0,     # 1px = 1/96 inch
-            'pt': 25.4 / 72.0,     # 1pt = 1/72 inch
-        }
-
-        if svg_units in ['em', 'ex', '%']:
-            self.app.log.error("camlib.Geometry.import_svg(). SVG units not supported: %s" % svg_units)
-            self.app.inform.emit("[ERROR_NOTCL] %s" % _("Failed."))
-            return
-
+        from mikrocam.ui.svg_import import import_svg_geometry
         units = self.app.app_units if units is None else units
-        res = self._app_option('geometry_circle_steps')
-        factor = svgparse_viewbox(svg_root)
-
-        # Apply unit conversion
-        if svg_units in svg_unit_to_mm:
-            unit_factor = svg_unit_to_mm[svg_units]
-            factor *= unit_factor
-            h *= unit_factor
-
-        geos = getsvggeo(svg_root, object_type, units=units, res=res, factor=factor, app=self.app)
+        geos = import_svg_geometry(filename, object_type, units, flip, self.app)
         if geos is None:
             return 'fail'
-
-        self.app.log.debug("camlib.Geometry.import_svg(). Finished parsing the SVG geometry.")
-
-        if flip:
-            geos = [translate(scale(g, 1.0, -1.0, origin=(0, 0)), yoff=h) for g in geos]
-            self.app.log.debug("camlib.Geometry.import_svg(). SVG geometry was flipped.")
 
         # trying to optimize the resulting geometry by merging contiguous lines
         geos = list(self.flatten_list(geos))
         geos_polys = []
         geos_lines = []
         for g in geos:
-            if isinstance(g, Polygon):
+            if isinstance(g, (Polygon, MultiPolygon)):
                 geos_polys.append(g)
             else:
                 geos_lines.append(g)
 
         try:
-            merged_lines = linemerge(geos_lines)
+            merged_lines = linemerge(geos_lines) if geos_lines else []
         except Exception:
             merged_lines = geos_lines
             self.app.log.error(
@@ -1323,20 +1283,6 @@ class Geometry(object):
 
         # flatten the self.solid_geometry list for import_svg() to import SVG as Gerber
         self.solid_geometry = list(self.flatten_list(self.solid_geometry))
-
-        geos_text = getsvgtext(svg_root, object_type, app=self.app, units=units)
-
-        if geos_text is not None:
-            self.app.log.debug("camlib.Geometry.import_svg(). Processing SVG text.")
-            geos_text_f = []
-            if flip:
-                # Change origin to bottom left
-                for i in geos_text:
-                    __, minimy, __, maximy = i.bounds
-                    h2 = (maximy - minimy) * 0.5
-                    geos_text_f.append(translate(scale(i, 1.0, -1.0, origin=(0, 0)), yoff=(h + h2)))
-            if geos_text_f:
-                self.solid_geometry = self.solid_geometry + geos_text_f
 
         tooldia = float(self._app_option("tools_mill_tooldia"))
         tooldia = float('%.*f' % (self.decimals, tooldia))

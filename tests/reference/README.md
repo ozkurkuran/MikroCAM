@@ -67,3 +67,13 @@ stage, and 2 means invalid or indeterminate evidence. Repeated baseline failures
 indeterminate. Reports are written exclusively outside input directories; there is no
 automatic golden-update option. See the feature validation record for actual captured
 outcomes and observed differences; these developer comparisons do not run the G-code.
+
+## Authored SVG document reference
+
+`svg-physical-transform.svg` is an original MikroCAM MIT fixture, separate from the frozen capture
+harness and PCB corpus. SHA256: `d51453ef6998bd33a67c7a2c92b4fec1f01d2e88920855e728235fb5e56d5fb3`;
+Git preserves its exact bytes. Independent local bounds (20,20)-(60,40), viewport 100x50 mm and
+viewBox 200x100 imply physical bounds (10,10)-(30,20) mm, area 200 mm²; flip gives (10,30)-(30,40).
+`test_svg_reference.py` also exercises the unchanged path fixtures through the new bridge. The old
+helper inferred parity holes; the new importer requires explicit evenodd or nonzero winding.
+Both behaviors are characterized without changing those original expectations or golden data.

@@ -1,7 +1,8 @@
 # Research and decisions
 
 ## Existing Evo assessment
-The shared seam is camlib.Geometry.import_svg (GUI and both Tcl SVG commands call it). It currently
+Geometry reaches camlib.Geometry.import_svg through GUI/Tcl; actual Gerber instances override it in
+appParsers.ParseGerber.Gerber.import_svg. Both now share the same thin adapter. The old code
 uses width/viewBox-width alone, derives document units only from height, scales shape coordinates
 before unscaled transform translations, passes SVG matrix coefficients in Shapely's different order,
 and emits mm coordinates even in an IN object. ParseSVG.parse_svg_transform can log forever without
@@ -36,3 +37,16 @@ Source facts only, no external source code copied:
 - [CSS absolute units](https://www.w3.org/TR/css-values-4/#absolute-lengths)
 
 All runtime packages and their license records already exist. No new binary, font or optional extra.
+
+## Implementation audit
+The existing svg.path tokenizer deliberately stops at some invalid trailing text and accepts invalid
+arc flags until an assertion. A bounded complete grammar pass now validates and canonicalizes command
+groups before calling the dependency. This also avoids large implicit groups in its mutable lexer.
+Source styles normalize CSS property casing/comments and reject unknown or escaped declarations;
+external stylesheet instructions are explicit errors. Viewport inference notices reach the consumer.
+Ellipse endpoint snapping shares the curve error budget instead of adding another full tolerance.
+SVG2 permits miter limits from zero. GEOS clips long miters, unlike SVG miter's complete bevel fallback:
+use bevel material plus bounded per-corner triangles only for eligible miters. Explicitly open paths
+with coincident endpoints retain caps rather than acquiring an implicit stroke closing join.
+Gerber's old QR workaround filled all holes; removing it preserves tested evenodd voids. The host
+source-text read now uses UTF-8 with exact BOM/line endings, avoiding Windows locale mojibake.

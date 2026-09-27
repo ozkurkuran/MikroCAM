@@ -10,7 +10,8 @@ domain parses bounded XML into immutable resolved element records using stdlib o
 reads bounded files, adapts the pinned svg.path parser into core paths and translates final mm
 geometry into host units exactly once. A thin UI adapter reports errors/notices through existing
 application channels; camlib.Geometry.import_svg uses that adapter and retains existing object/tool
-population. No direct legacy-to-domain dependency, extra renderer framework or new import panel.
+population, as does the separate Gerber override. No direct legacy-to-domain dependency, extra
+renderer framework or new import panel.
 
 Source coordinate transforms are not CAM-to-machine Placement. Their result is mm geometry that
 subsequent Placement consumes normally. Unsupported semantics are rejected, never silently repaired.
@@ -25,7 +26,7 @@ path/Illustrator handling remains 019. Existing direct legacy helper tests remai
 | Gate | Result |
 | --- | --- |
 | I layers | Yes: core geometry/math, stdlib domain, svg.path and I/O only in bridge, thin UI adapter |
-| II legacy | Yes: one shared import seam; replace old extraction rather than grow legacy logic |
+| II legacy | Yes: one adapter shared by Geometry/Gerber seams; replace old extraction |
 | III simplicity | Yes: concrete SVG records/functions, existing dependencies, no generic renderer |
 | IV truth | Yes: mm boundary, one accumulated source mapping, existing downstream Placement |
 | V tests first | Yes: analytic units/transforms/strokes and host atomicity before implementation |
@@ -41,7 +42,7 @@ No complexity exception. Every new module <=600 lines, function <=80, public API
 - core/svg_curves.py: bounded curve flattening with physical-space tolerance (root).
 - importers/svg_document.py, svg_style.py: bounded XML/reference/style traversal (root).
 - bridge/svg_import.py, svg_paths.py: bounded read/adaptation/host-unit conversion (root).
-- ui/svg_import.py: existing notice/error channel adapter; camlib.py minimal seam (root).
+- ui/svg_import.py: notice/error adapter; minimal Geometry/Gerber seams and UTF-8 source read (Sol).
 - Dedicated unit/integration/reference tests and tests/smoke_svg.py; no frozen harness edits.
 
 Implementation follows the frozen contract, tests first. File ownership is exclusive; root stages

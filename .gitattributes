@@ -4,3 +4,5 @@ tests/reference/boards/** -text
 # Capture provenance hashes exact helper bytes, including on Windows checkouts.
 tests/reference/*.py -text
 tests/qt_settings_sandbox.py -text
+# Analytic SVG source identity is also byte-stable across checkouts.
+tests/reference/svg-physical-transform.svg -text

@@ -2,7 +2,7 @@
 
 **Feature Branch**: `016-svg-scale-transforms`
 **Created**: 2026-09-27
-**Status**: Specification review
+**Status**: Implemented; full validation pending
 **Input**: Roadmap 016: viewBox scale, units, matrix/translate/rotate/scale/skew,
 inherited stroke-width and conversion of strokes to solid manufacturing geometry.
 
