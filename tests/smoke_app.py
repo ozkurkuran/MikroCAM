@@ -402,6 +402,8 @@ def run_smoke(sandbox, state):
         geometry_drill_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         from smoke_excellon_merge import excellon_merge_journey
         excellon_merge_journey(app, qapp, sandbox, errors, pump_until, ROOT)
+        from smoke_pdf_vectors import pdf_vector_journey
+        pdf_vector_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         cam_journey(app, qapp, sandbox, errors)
         app.ui.showMaximized()
         qapp.processEvents()

@@ -1,6 +1,6 @@
 # Exact-version dependency notices
 
-[inventory.json](inventory.json), schema version 1, covers every one of the 58 exact
+[inventory.json](inventory.json), schema version 1, covers every one of the 59 exact
 runtime, development and optional image pins. Groups include inherited `-r` requirements:
 runtime pins also belong to development and optional-image installs. Five additional
 source-vendored/bundled components have separate records. No optional dependency imports

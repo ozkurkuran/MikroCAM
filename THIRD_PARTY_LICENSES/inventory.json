@@ -1526,6 +1526,41 @@
       ]
     },
     {
+      "name": "pypdf",
+      "version": "6.19.0",
+      "groups": [
+        "development",
+        "optional-image",
+        "runtime"
+      ],
+      "license_metadata": {
+        "expression": "BSD-3-Clause",
+        "license": null,
+        "classifiers": [],
+        "license_files": [
+          "LICENSE"
+        ]
+      },
+      "source": {
+        "kind": "installed-wheel",
+        "url": "https://files.pythonhosted.org/packages/3c/2c/c43c03eaf630435f023f1dc61ec4a4a78951ad5530a62c71cc89bde307b7/pypdf-6.19.0-py3-none-any.whl",
+        "filename": "pypdf-6.19.0-py3-none-any.whl",
+        "sha256": "7e5d6e730e7dae87d560a2cee218b852f6498c8be61966f3cd02ead971e48d14",
+        "wheel_tags": [
+          "py3-none-any"
+        ],
+        "metadata_sha256": "c4f428636f3cb180014024dfb4414b41b8c75b568ffe4a06beeb5175b311c6b5"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/pypdf/6.19.0/wheel/pypdf-6.19.0.dist-info/licenses/LICENSE",
+          "role": "license",
+          "source": "https://files.pythonhosted.org/packages/3c/2c/c43c03eaf630435f023f1dc61ec4a4a78951ad5530a62c71cc89bde307b7/pypdf-6.19.0-py3-none-any.whl#pypdf-6.19.0.dist-info/licenses/LICENSE",
+          "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524"
+        }
+      ]
+    },
+    {
       "name": "pyqt6",
       "version": "6.11.0",
       "groups": [
