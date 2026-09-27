@@ -76,5 +76,9 @@ validation artifact, not shipped source data.
 
 ## Delivery
 
-Pending focused PR, final-head Windows CI and merge. Authored software fixtures do not establish
-physical manufacturing accuracy or vendor-wide PDF compatibility.
+[PR24](https://github.com/ozkurkuran/MikroCAM/pull/24) merged final head
+`ae811f40dfcbc618f39f78f492f2ce78640fd4fd` as
+`47141e972169d3b6d5383ee534fd958008539c6f`.
+[Final-head Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36299527969)
+passed in6m39s. All39tasks complete. Authored software fixtures do not establish physical
+manufacturing accuracy or vendor-wide PDF compatibility.
