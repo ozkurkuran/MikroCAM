@@ -305,6 +305,11 @@ def render_and_quit(app, qapp, errors, machine_transport):
     assert not multiprocessing.active_children(), 'Application child process survived shutdown'
     assert not app._mikrocam_machine_panel.busy and not machine_transport.is_open
     assert not app._mikrocam_preflight_panel.busy
+    from mikrocam.machine.job_models import JobPhase
+    assert app._mikrocam_machine_panel.last_snapshot.job.phase is JobPhase.ABORTED
+    assert app._mikrocam_machine_panel.last_snapshot.job.stop_unverified
+    assert b'\x18' in machine_transport.writes
+    print('JOB_ACTIVE_SHUTDOWN_OK', flush=True)
     print('PREFLIGHT_SHUTDOWN_OK', flush=True)
     print('MACHINE_SHUTDOWN_OK', flush=True)
     print('SHUTDOWN_OK', flush=True)
@@ -393,6 +398,8 @@ def run_smoke(sandbox, state):
         machine_transport = machine_journey(app, qapp, errors)
         from smoke_preflight import preflight_journey
         preflight_journey(app, qapp, sandbox, errors, pump_until, ROOT)
+        from smoke_job import job_journey
+        machine_transport = job_journey(app, qapp, errors, pump_until, ROOT)
         render_and_quit(app, qapp, errors, machine_transport)
     except BaseException:
         traceback.print_exc()
