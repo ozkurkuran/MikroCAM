@@ -8,7 +8,7 @@ from mikrocam.core.svg_models import (SvgDocument, SvgElement, SvgNotice, MAX_SV
                                      MAX_SVG_ELEMENTS, MAX_SVG_DEPTH, MAX_SVG_REFERENCE_DEPTH)
 from mikrocam.core.svg_transform import (compose_affine, parse_svg_transform, parse_svg_length,
                                         resolve_svg_viewport)
-from .svg_style import resolve_style, style_paint
+from .svg_style import resolve_style, style_paint, style_fill_is_white
 
 
 _SVG = 'http://www.w3.org/2000/svg'
@@ -112,7 +112,8 @@ class _Traversal:
             raise ValueError('SVG expanded element limit exceeded')
         name = node.get('id', kind)
         identifier = f'{len(self.elements) + 1}:{name}'[:256]
-        self.elements.append(SvgElement(identifier, kind, tuple(node.attrib.items()), matrix, style_paint(style)))
+        self.elements.append(SvgElement(identifier, kind, tuple(node.attrib.items()), matrix,
+                                        style_paint(style), style_fill_is_white(style)))
 
     def _use(self, node: ET.Element, matrix: tuple, style: dict,
              references: tuple[str, ...], depth: int) -> None:

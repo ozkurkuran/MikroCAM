@@ -132,6 +132,7 @@ class SvgElement:
     attributes: tuple[tuple[str, str], ...]
     matrix: Affine2D
     paint: SvgPaint
+    fill_is_white: bool | None = None
 
     def __post_init__(self) -> None:
         _text(self.element_id, 256, 'Element ID')
@@ -141,6 +142,8 @@ class SvgElement:
         validate_affine(self.matrix)
         if type(self.paint) is not SvgPaint:
             raise ValueError('SVG element requires immutable paint')
+        if self.fill_is_white is not None and type(self.fill_is_white) is not bool:
+            raise ValueError('SVG white-fill fact must be boolean or unavailable')
 
 @dataclass(frozen=True)
 class SvgDocument:

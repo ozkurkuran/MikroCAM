@@ -390,6 +390,8 @@ def run_smoke(sandbox, state):
         app.workers.thread_exception.connect(lambda error: errors.append(error))
         pump_until(qapp, lambda: all(worker.receivers(worker.worker_task_signal) > 0
                    for worker in app.workers.workers), errors, 'worker readiness')
+        from smoke_svg_drills import svg_drill_journey
+        svg_drill_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         from smoke_svg import svg_journey
         svg_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         cam_journey(app, qapp, sandbox, errors)

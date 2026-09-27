@@ -121,3 +121,23 @@ def style_paint(style: dict[str, str]) -> SvgPaint:
                     stroke=stroke not in ('none', 'transparent') and style['stroke-opacity'] == '1',
                     width=parse_svg_length(style['stroke-width']), linecap=style['stroke-linecap'],
                     linejoin=style['stroke-linejoin'], miterlimit=miter[0], fill_rule=style['fill-rule'])
+
+
+def style_fill_is_white(style: dict[str, str]) -> bool | None:
+    """Identify resolved active white fill without changing positive material semantics."""
+    if (not style_paint(style).fill or style['opacity'] == '0'
+            or style['display'] == 'none' or style['visibility'] != 'visible'):
+        return None
+    fill = style['color'] if style['fill'].lower() == 'currentcolor' else style['fill']
+    fill = _solid_paint(fill)
+    if fill in ('white', '#fff', '#ffffff'):
+        return True
+    function = re.fullmatch(r'(rgb|hsl)\(([^()]*)\)', fill)
+    if function is None:
+        return False
+    channels = tuple(component.strip() for component in function[2].split(','))
+    values = tuple(parse_svg_numbers(component.rstrip('%'))[0] for component in channels)
+    if function[1] == 'hsl':
+        return values[2] >= 100
+    maximum = 100 if channels[0].endswith('%') else 255
+    return all(value >= maximum for value in values)
