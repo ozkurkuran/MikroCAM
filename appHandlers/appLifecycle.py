@@ -335,6 +335,11 @@ class AppLifecycle(QtCore.QObject):
             self.inform.emit('[WARNING_NOTCL] %s' % _('Waiting for machine communication to close.'))
             return False
 
+        preflight_panel = getattr(self.app, '_mikrocam_preflight_panel', None)
+        if preflight_panel is not None and not preflight_panel.shutdown():
+            self.inform.emit('[WARNING_NOTCL] %s' % _('Waiting for G-code analysis to close.'))
+            return False
+
         # make sure that any change we made while working in the app is saved to the defaults
         # WARNING !!! Do not hide UI before saving the state of the UI in the defaults file !!!
         # TODO in the future we need to make a difference between settings that need to be persistent all the time

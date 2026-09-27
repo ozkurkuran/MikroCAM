@@ -1821,6 +1821,12 @@ class App(QtCore.QObject):
 
         self.ui.menu_plugins.addAction(_('Machine')).triggered.connect(show_machine_panel)
 
+        def show_preflight_panel():
+            from mikrocam.ui.preflight_panel import open_preflight_panel
+            open_preflight_panel(self)
+
+        self.ui.menu_plugins.addAction(_('G-code preflight')).triggered.connect(show_preflight_panel)
+
         self.calculator_tool = ToolCalculator(self)
         self.calculator_tool.install(icon=QtGui.QIcon(self.resource_location + '/calculator32.png'), separator=True)
 
