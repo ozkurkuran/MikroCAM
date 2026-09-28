@@ -24,8 +24,9 @@ tamamlanmış işaretlenmez.
 
 Tabloda her noktanın G54 X/Y ve ölçülmüş çalışma Z değeri, yükseklik rengi ve min/max Z görünür.
 Harita; ızgara, G54 ofseti, ölçüm/simülasyon kaynağı ve complete/incomplete/failed/aborted sonucuyla
-şema1 JSON olarak kaydedilir. Kaydetme atomik, yükleme sınırlı ve makineden bağımsızdır. Tarihsel
+şema 1 JSON olarak kaydedilir. Kaydetme atomik, yükleme sınırlı ve makineden bağımsızdır. Tarihsel
 harita görüntülenirken değişmemiş canlı durum kayıtları onu değiştirmez.
 
-Sınırlar: eksen başına2..64 nokta, toplam1024; probe Z aralığı en fazla100mm; feed.01..10000;
-işlem başına3..300s; dosya1MiB. Bu dilim Z telafisi yapmaz; telafi ve yay segmentasyonu026'dadır.
+Sınırlar: eksen başına 2..64 nokta, toplam en fazla 1024 nokta; güvenli Z ile en düşük probe Z
+arası en fazla 100 mm; feed 0,01..10000 mm/dakika; zaman aşımı 3..300 s; dosya en fazla 1 MiB.
+Bu dilim Z telafisi yapmaz; telafi ve yay segmentasyonu 026 numaralı dilimdedir.

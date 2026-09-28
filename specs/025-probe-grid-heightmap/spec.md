@@ -1,7 +1,7 @@
 # Feature Specification: probe grid and height map
 
 **Branch**: `025-probe-grid-heightmap` | **Created**: 2026-09-27 | **Status**: Approved design
-**Input**: Roadmap025: ProbeMap, Fake grid probing, save/load and visualization.
+**Input**: Roadmap 025: ProbeMap, Fake grid probing, save/load and visualization.
 
 ## User Scenarios & Testing
 
@@ -9,7 +9,7 @@
 A PCB operator defines a regular rectangular grid in G54 work millimetres, clearance and
 lowest probe Z, feed, and explicit machine travel limits. The operator sees the points and
 the coordinates that will be measured before starting. No action starts from opening a panel.
-Independent test: define a3×2 grid, verify all six positions and reject invalid ranges/counts.
+Independent test: define a 3×2 grid, verify all six positions and reject invalid ranges/counts.
 Given missing/invalid inputs, Review fails without any controller write. Given edited inputs,
 the previous review becomes unavailable until reviewed again.
 
@@ -27,7 +27,7 @@ label. Independent test: exact versioned roundtrip after disconnect; malformed m
 current view unchanged and never write to a machine.
 
 ## Requirements
-- FR001: Use finite bounded G54 work-mm grid axes with2..64 points each and at most1024 total.
+- FR001: Use finite bounded G54 work-mm grid axes with 2..64 points each and at most 1024 total.
 - FR002: Require explicit min/max machine XYZ, initial position/G54 binding, clearance Z above
   minimum Z, bounded positive probe/travel feed and response deadline; validate every generated
   endpoint and initial upward clearance against the envelope before starting.
@@ -56,7 +56,7 @@ reviewed live binding. ProbeMap: grid, ordered optional heights, G54 offset, ori
 ProbeObservation: operation phase/progress/map/diagnostic and explicit admission/stop flags.
 
 ## Success Criteria
-- SC001: Analytic Fake3×2 plane yields six physical heights within.005mm and a verified final retract.
+- SC001: Analytic Fake 3×2 plane yields six physical heights within 0.005 mm and a verified final retract.
 - SC002: Each injected failure prevents further ordinary motion and leaves truthful partial data.
 - SC003: Complete/incomplete maps survive exact save/load; invalid or excessive files are rejected.
 - SC004: Actual desktop shows review/start/progress/map/save/load using Fake; no physical device claim.

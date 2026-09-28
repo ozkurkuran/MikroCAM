@@ -31,9 +31,31 @@ Partial maps now carry incomplete until a terminal outcome; all measurements alo
 the final retract succeeded. Luna independently audited protocol/controller/Fake and found no
 remaining concrete safety blocker after the deadline fix; defensive idle quarantine was also added.
 
-Final focused suite:221passed in16.60s. Runtime head:
+Final focused suite: 221 passed in 16.60 s. Runtime head:
 `bedd649deb6d9fa03d5cc61c1a13e732030ca2a3`.
 
-User paused all roadmap work on2026-09-27. The newly started complete suite was stopped and
-has no completed result. Actual full desktop, screenshot inspection, final-head Windows CI,
-PR and merge remain pending. See docs/PAUSED_CHECKPOINT.md for the saved resume boundary.
+Roadmap work was paused on 2026-09-27 and resumed on 2026-09-28. Later commits on this branch
+change documentation only; the runtime head above is unchanged.
+
+## Complete suite and desktop
+
+Local complete suite at the runtime head (2026-09-28): 5007 passed, 4 failed, 2 upstream
+templates skipped, 11 existing warnings and 310 subtests in 1390.65 s. All four failures are
+60 s subprocess timeouts in tests that start a fresh interpreter and import legacy application
+modules: `test_runtime_compatibility.py::test_import_does_not_consume_test_runner_arguments`,
+`test_excellon_merge_roundtrip.py` (METRIC-MM) and `test_svg_drill_bridge.py` (MM, IN). None
+touches probe code. Unrelated applications kept the machine at 94–100 % CPU with 1.9 GB of
+32 GB free; the run took 23 min against 4.7 min for 024, and the legacy-growth test alone took
+about 7 min. Rerun in isolation, all seven variants of the four tests passed in 18.01 s (2–3 s
+each). Architecture, legacy-growth, probe and prior machine tests passed in the complete run.
+This local run is not counted as a passing complete suite; final-head Windows CI supplies that
+evidence.
+
+Actual desktop, same load: two runs exceeded the smoke's 85 s total watchdog before reaching
+the probe journey. The first had completed seven journeys (startup, About, SVG drill, SVG,
+import report, Illustrator, CAD source, geometry drill); the second stopped during startup. No
+assertion failed, and neither run counts as a passing desktop run. The second run also showed
+an existing harness defect: after the watchdog terminated the application pool workers, the
+pool spawned a replacement that kept the log handle open until it was stopped manually.
+
+Pending: a complete desktop run with screenshot inspection, final-head Windows CI and merge.
