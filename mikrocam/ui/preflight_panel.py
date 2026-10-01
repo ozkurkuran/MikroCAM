@@ -12,6 +12,7 @@ from mikrocam.core.gcode_models import MAX_FINDINGS, PreflightReport, SourceSnap
 from .preflight_setup import PreflightSetupWidget
 from .preflight_worker import PreflightWorker
 from .dry_run_panel import DryRunPanel
+from .autolevel_panel import AutoLevelPanel
 
 
 _ = getattr(builtins, '_', gettext.gettext)
@@ -29,7 +30,9 @@ class PreflightPanel(QtWidgets.QDockWidget):
         self.job_receiver = job_receiver
         self._transfer_alive = True
         self._dry_run_panel: DryRunPanel | None = None
+        self._autolevel_panel: AutoLevelPanel | None = None
         self.source: SourceSnapshot | None = None
+        self.source_path: Path | None = None
         self.report: PreflightReport | None = None
         self._worker: PreflightWorker | None = None
         self._generation = self._worker_generation = 0
@@ -70,6 +73,8 @@ class PreflightPanel(QtWidgets.QDockWidget):
         self.transfer_button = QtWidgets.QPushButton(_('Load reviewed job into Machine'))
         self.dry_run_button = QtWidgets.QPushButton(_('Dry run'))
         self.dry_run_button.clicked.connect(self.open_dry_run)
+        self.autolevel_button = QtWidgets.QPushButton(_('Auto-level'))
+        self.autolevel_button.clicked.connect(self.open_autolevel)
         self.transfer_button.clicked.connect(self.transfer_to_machine)
         self.analyze_button.clicked.connect(self.analyze)
         self.cancel_button.clicked.connect(self.cancel)
@@ -77,6 +82,7 @@ class PreflightPanel(QtWidgets.QDockWidget):
         actions.addWidget(self.cancel_button)
         actions.addWidget(self.transfer_button)
         actions.addWidget(self.dry_run_button)
+        actions.addWidget(self.autolevel_button)
         layout.addLayout(actions)
         self.result_label = QtWidgets.QLabel(_('Supply explicit setup values before analysis.'))
         self.result_label.setWordWrap(True)
@@ -103,6 +109,33 @@ class PreflightPanel(QtWidgets.QDockWidget):
                                         and not self.busy and self.job_receiver is not None)
         self.dry_run_button.setEnabled(self._transfer_alive and self.report is not None
                                        and self.report.allowed and not self.busy)
+
+        self.autolevel_button.setEnabled(self._transfer_alive and self.report is not None
+                                         and self.report.allowed and not self.busy)
+
+    def open_autolevel(self) -> AutoLevelPanel | None:
+        binding = self._execution_binding()
+        if binding is None:
+            return None
+        parent = self.parentWidget()
+        if self._autolevel_panel is None:
+            self._autolevel_panel = AutoLevelPanel(parent or self, source=binding[0], report=binding[1],
+                binding_provider=self._execution_binding, job_receiver=self.job_receiver,
+                protected_paths_provider=self._source_paths)
+            if isinstance(parent, QtWidgets.QMainWindow):
+                parent.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self._autolevel_panel)
+            else:
+                self._autolevel_panel.setFloating(True)
+        else:
+            self._autolevel_panel.set_source(*binding, self._execution_binding,
+                                              protected_paths_provider=self._source_paths)
+            self._autolevel_panel.job_receiver = self.job_receiver
+        self._autolevel_panel.show()
+        self._autolevel_panel.raise_()
+        return self._autolevel_panel
+
+    def _source_paths(self) -> tuple[Path,...]:
+        return () if self.source_path is None else (self.source_path,)
 
     def open_dry_run(self) -> DryRunPanel | None:
         binding = self._execution_binding()
@@ -159,6 +192,7 @@ class PreflightPanel(QtWidgets.QDockWidget):
             raise ValueError(_('A complete immutable source snapshot is required.'))
         self._selected = False
         self.source = source
+        self.source_path = None
         self._invalidate(_('Source changed. Previous result is invalid.'))
         self._label_source(_('Loaded snapshot'))
         self._sync_controls()
@@ -184,6 +218,7 @@ class PreflightPanel(QtWidgets.QDockWidget):
             self._invalidate(message)
             return
         self.load_source(source)
+        self.source_path = Path(path).resolve()
         self._label_source(_('Loaded file snapshot (not a live file)'))
 
     def use_selected(self) -> None:
@@ -317,9 +352,11 @@ class PreflightPanel(QtWidgets.QDockWidget):
             self.cancel()
         dry_closed = (self._dry_run_panel is None or self._dry_run_panel.shutdown(
             max(0, int((deadline - monotonic()) * 1000))))
+        auto_closed = (self._autolevel_panel is None or self._autolevel_panel.shutdown(
+            max(0, int((deadline - monotonic()) * 1000))))
         own_closed = (self._worker is None or self._release_worker(
             self._worker, max(0, int((deadline - monotonic()) * 1000))))
-        return dry_closed and own_closed
+        return dry_closed and auto_closed and own_closed
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         if not self.shutdown():

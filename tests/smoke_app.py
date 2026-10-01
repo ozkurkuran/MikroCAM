@@ -418,6 +418,8 @@ def run_smoke(sandbox, state):
         console_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_preflight import preflight_journey
         preflight_journey(app, qapp, sandbox, errors, pump_until, ROOT)
+        from smoke_autolevel import autolevel_journey
+        autolevel_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_job import job_journey
         machine_transport = job_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_dry_run import dry_run_journey
@@ -454,7 +456,7 @@ def main():
     state = {}
     print('SMOKE_PID', os.getpid(), flush=True)
     def watchdog():
-        print('SMOKE_TIMEOUT: exceeded 85 seconds', file=sys.stderr, flush=True)
+        print('SMOKE_TIMEOUT: exceeded 120 seconds', file=sys.stderr, flush=True)
         # These are this smoke process's children, never another application tree.
         for process in multiprocessing.active_children():
             print('SMOKE_TIMEOUT_CHILD', process.pid, file=sys.stderr, flush=True)
@@ -464,7 +466,7 @@ def main():
                 process.kill()
                 process.join(timeout=1)
         os._exit(1)
-    timeout = threading.Timer(85, watchdog)
+    timeout = threading.Timer(120, watchdog)
     timeout.daemon = True
     timeout.start()
     status, keepalive = 1, None
