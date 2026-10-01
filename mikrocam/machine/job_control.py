@@ -105,6 +105,11 @@ class JobControl:
     def consume(self, line: str) -> bool:
         if not self.active:
             return self.tainted and (line == 'ok' or line.startswith(('error:', '$', '[GC:', '[G5', '[G92:', '[TLO:')))
+        if (self.transaction is not None
+                and self.observation.phase not in (JobPhase.PAUSING, JobPhase.PAUSED)
+                and self.host._clock() >= self.deadline):
+            self.fail('Job transaction response timed out before evidence arrived')
+            return True
         if line == 'ok' or line.startswith('error:'):
             if self.transaction is None:
                 self.fail('Unexpected or duplicate job acknowledgement')
