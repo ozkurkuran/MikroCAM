@@ -70,4 +70,13 @@ preflight/job/pause/resume/stop/dry-run and active-job shutdown journeys passed.
 physical grid coordinates, simulated/complete provenance and controls are readable.
 Existing Qt window-size/teardown warnings did not fail assertions.
 
-Pending: final-head Windows CI and merge.
+Resumed complete local suite on 2026-10-01 at delivery head
+`d677dc2269dcaa6b00770658ce1815eac8a26d7b` (unchanged runtime): **5011 passed,
+2 upstream templates skipped, 11 existing warnings, 310 subtests passed in 361.06 s**.
+Command: shared CPython 3.13.13 `python -m pytest -q -rs` with
+`QT_API=pyqt6`, `QT_QPA_PLATFORM=offscreen`, `PYTHONUTF8=1`.
+Log: `.venv/probe-full-resumed.log`. Architecture and legacy-growth are included.
+The four earlier timeout cases pass in this complete run.
+
+Delivery PR: [#26](https://github.com/ozkurkuran/MikroCAM/pull/26).
+Pending: final-head Windows CI and merge. Physical device validation remains open.
