@@ -1,7 +1,7 @@
 """Bounded immutable queue requests and offline ordered prepared-job snapshots."""
 from dataclasses import dataclass
 from enum import Enum
-from .job_models import JobObservation
+from .job_models import JobObservation, StreamingMode
 from mikrocam.core.cnc_job import PreparedJob
 
 MAX_QUEUE_ENTRIES = 32
@@ -23,12 +23,14 @@ class QueueEntry:
 class StartQueueRequest:
     entries: tuple[QueueEntry, ...]
     mechanical_confirmed: bool
+    streaming_mode: StreamingMode = StreamingMode.SEND_RESPONSE
 
     def __post_init__(self):
         if (type(self.entries) is not tuple or not 1 <= len(self.entries) <= MAX_QUEUE_ENTRIES
                 or any(type(e) is not QueueEntry for e in self.entries)
                 or len({e.key for e in self.entries}) != len(self.entries)
-                or self.mechanical_confirmed is not True):
+                or self.mechanical_confirmed is not True
+                or type(self.streaming_mode) is not StreamingMode):
             raise ValueError("Queue Start requires unique bounded entries and whole-queue approval")
 
 
@@ -121,9 +123,9 @@ class QueueDraft:
         self._editable()
         self.entries = ()
 
-    def start_request(self, confirmed):
+    def start_request(self, confirmed, streaming_mode=StreamingMode.SEND_RESPONSE):
         self._editable()
-        request = StartQueueRequest(self.entries, confirmed)
+        request = StartQueueRequest(self.entries, confirmed, streaming_mode)
         self.locked = True
         return request
 

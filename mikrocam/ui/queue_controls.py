@@ -3,7 +3,7 @@ import builtins
 import gettext
 from PyQt6 import QtCore, QtWidgets
 from mikrocam.core.cnc_job import PreparedJob
-from mikrocam.machine.job_models import JobPhase
+from mikrocam.machine.job_models import JobPhase, StreamingMode
 from mikrocam.machine.models import MachineSnapshot, ConnectionState
 from mikrocam.machine.queue_models import QueueDraft, QueuePhase, QueueResult
 
@@ -46,6 +46,11 @@ class QueueControls(QtWidgets.QDialog):
         self.table.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.Stretch)
         self.table.itemSelectionChanged.connect(self._update_actions)
         layout.addWidget(self.table)
+        self.mode_combo = QtWidgets.QComboBox()
+        self.mode_combo.addItem(_('Send-response (default)'), StreamingMode.SEND_RESPONSE)
+        self.mode_combo.addItem(_('Character counting (GRBL 1.1, verified RX)'), StreamingMode.CHARACTER_COUNTING)
+        self.mode_combo.setToolTip(_('One sending mode for the approved queue; acceptance is not motion completion.'))
+        layout.addWidget(self.mode_combo)
         self._setup_actions(layout)
         self.confirm = QtWidgets.QCheckBox(_(
             "For this whole queue: mechanical spindle only, no laser on spindle/PWM; all jobs "
@@ -136,7 +141,7 @@ class QueueControls(QtWidgets.QDialog):
     def _start(self):
         if not self.start_button.isEnabled():
             return
-        request = self.draft.start_request(self.confirm.isChecked())
+        request = self.draft.start_request(self.confirm.isChecked(), self.mode_combo.currentData())
         self._pending_keys = tuple(e.key for e in request.entries)
         self.confirm.setChecked(False)
         self.status_label.setText(_("Queue requested; waiting for owner admission."))
@@ -200,6 +205,7 @@ class QueueControls(QtWidgets.QDialog):
         self.remove_button.setEnabled(editable and entry is not None)
         self.clear_button.setEnabled(editable and bool(self.draft.entries))
         self.confirm.setEnabled(editable)
+        self.mode_combo.setEnabled(editable)
         queue = self._snapshot.queue
         self.start_button.setEnabled(editable and bool(self.draft.entries)
                                      and self.confirm.isChecked() and queue.can_start)

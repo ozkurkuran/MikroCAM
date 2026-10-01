@@ -30,6 +30,7 @@ def queue_journey(app, qapp, errors, pump_until, root):
         ui.draft.add(job)
     ui._render()
     panel.open_job_queue()
+    ui.mode_combo.setCurrentIndex(1)
     ui.confirm.setChecked(True)
     assert ui.start_button.isEnabled()
     ui.start_button.click()
@@ -37,6 +38,8 @@ def queue_journey(app, qapp, errors, pump_until, root):
                errors, 'three reviewed queue jobs complete', timeout=15)
     assert fake.job_writes == [b.wire for job in jobs for b in job.blocks]
     assert fake.open_count == 1 and not ui.draft.entries
+    assert fake.writes.count(b'$I\n') == 3
+    print('CHAR_COUNTING_QUEUE_COMPLETE_OK', flush=True)
     screenshot = Path(root) / '.venv/queue-smoke.png'
     assert ui.grab().save(str(screenshot))
     print('QUEUE_THREE_COMPLETE_OK', screenshot, flush=True)

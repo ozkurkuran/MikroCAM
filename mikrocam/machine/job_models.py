@@ -7,6 +7,11 @@ from mikrocam.core.cnc_job import PreparedJob
 from mikrocam.core.gcode_models import MAX_LINES
 
 
+class StreamingMode(Enum):
+    SEND_RESPONSE = "send-response"
+    CHARACTER_COUNTING = "character-counting"
+
+
 class JobPhase(Enum):
     READY = 'ready'
     PREPARING = 'preparing'
@@ -62,7 +67,10 @@ class JobObservation:
 class StartJobRequest:
     job: PreparedJob
     mechanical_confirmed: bool
+    streaming_mode: StreamingMode = StreamingMode.SEND_RESPONSE
 
     def __post_init__(self) -> None:
+        if type(self.streaming_mode) is not StreamingMode:
+            raise ValueError('Streaming mode must be exact StreamingMode')
         if type(self.job) is not PreparedJob or self.mechanical_confirmed is not True:
             raise ValueError('Start requires an exact prepared job and explicit mechanical confirmation')

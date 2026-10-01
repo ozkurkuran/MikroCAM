@@ -79,7 +79,7 @@ class QueueControl:
         entry = self.request.entries[self.index]
         self.observation = replace(self.observation, active_key=entry.key)
         try:
-            self.host._job.start(StartJobRequest(entry.job, True))
+            self.host._job.start(StartJobRequest(entry.job, True, self.request.streaming_mode))
         except ValueError as error:
             self.host._job.observation = JobObservation(phase=JobPhase.FAILED,
                 source_name=entry.job.source.name, source_sha256=entry.job.source.sha256,
