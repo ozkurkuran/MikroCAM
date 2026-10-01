@@ -103,3 +103,14 @@ def test_jog_rejects_invalid_step_or_feed(tool, entry, value):
     tool.on_grbl_jog("xplus")
     tool.grbl_ser_port.write.assert_not_called()
     assert tool.app.inform.emit.call_args.args[0].startswith("[ERROR_NOTCL]")
+
+
+@pytest.mark.parametrize("axis,command", [
+    ("x", b"G10 L20 P1 X0\n"), ("y", b"G10 L20 P1 Y0\n"),
+    ("z", b"G10 L20 P1 Z0\n"), ("all", b"G10 L20 P1 X0 Y0 Z0\n"),
+])
+def test_zero_uses_current_position_without_changing_settings(tool, axis, command):
+    tool.on_grbl_get_parameter = MagicMock(return_value=3)
+    tool.on_grbl_zero(axis)
+    tool.grbl_ser_port.write.assert_called_once_with(command)
+    tool.on_grbl_get_parameter.assert_not_called()

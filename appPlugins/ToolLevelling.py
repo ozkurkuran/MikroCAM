@@ -1944,26 +1944,15 @@ class ToolLevelling(CNCjob, AppTool):
         self.send_grbl_command(command=cmd, echo=False)
 
     def on_grbl_zero(self, axis):
-        current_mode = self.on_grbl_get_parameter('10')
-        if current_mode is None:
-            return
-
-        cmd = '$10=0'
-        self.send_grbl_command(command=cmd, echo=False)
-
         if axis == 'x':
-            cmd = 'G10 L2 P1 X0'
+            cmd = 'G10 L20 P1 X0'
         elif axis == 'y':
-            cmd = 'G10 L2 P1 Y0'
+            cmd = 'G10 L20 P1 Y0'
         elif axis == 'z':
-            cmd = 'G10 L2 P1 Z0'
+            cmd = 'G10 L20 P1 Z0'
         else:
             # all
-            cmd = 'G10 L2 P1 X0 Y0 Z0'
-        self.send_grbl_command(command=cmd, echo=False)
-
-        # restore previous mode
-        cmd = '$10=%d' % int(current_mode)
+            cmd = 'G10 L20 P1 X0 Y0 Z0'
         self.send_grbl_command(command=cmd, echo=False)
 
     def on_grbl_homing(self):
