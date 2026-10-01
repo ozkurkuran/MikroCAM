@@ -40,3 +40,13 @@ architecture/growth rules pass. No external implementation was copied; Evo attri
   `.venv/levelling-handoff-card.png` text/button are readable. No physical device was connected.
 - Final-head Windows CI is required and its result is recorded in the PR after this commit.
 - Delivery is a stacked PR on Phase A. ROADMAP delivery status is unchanged before merge.
+
+## Final CI smoke race correction
+The first final-head Windows run (36927765821) passed 5167 cases but failed the existing
+probe desktop helper's offline wire-invariance assertion. Its owner was still polling while
+save/load performed disk I/O. Injecting a 700 ms save delay reproduced the same failure
+locally before the correction. The helper now disconnects and joins the owner before the
+offline save/load assertion, preserving the exact no-write assertion without filtering bytes.
+The same injected-delay case then passed. No production machine behavior changed.
+The related Levelling/probe groups passed: 153 tests and 41 subtests in 19.16s.
+Final-head Windows CI is rerun and its result recorded in the PR.
