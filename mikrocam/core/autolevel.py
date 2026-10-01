@@ -97,6 +97,8 @@ class _Generator:
             self.append('M'+str(int(m['program'])),block.line,executable=True)
 
     def _feed(self, event) -> None:
+        if event.arc is None and event.start==event.end:
+            return
         first=work_point(event.start,self.setup,self.settings)
         target_z=first[2]+surface_height(self.settings.map,*first[:2])-self.settings.reference_z_mm
         horizontal=event.arc is not None or event.start[:2]!=event.end[:2]

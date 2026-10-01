@@ -33,6 +33,7 @@ class AutoLevelPanel(QtWidgets.QDockWidget):
         self.source=self.original_report=self.map=self.result=None
         self._worker=None
         self._generation=self._worker_generation=0
+        self._cancel_notice_generation=None
         self._alive=self._original_valid=True
         self._binding_provider=self._binding_origin=None
         self._dialogs=[]
@@ -97,6 +98,7 @@ class AutoLevelPanel(QtWidgets.QDockWidget):
 
     def _invalidate(self,message: str) -> None:
         self._generation+=1;self.result=None
+        self._cancel_notice_generation=None
         self.confirm_checkbox.setChecked(False);self.preview_table.setRowCount(0)
         if self._worker is not None:self._worker.cancel()
         self.summary_label.setText(message);self._sync_controls();self.reviewed_changed.emit()
@@ -179,7 +181,9 @@ class AutoLevelPanel(QtWidgets.QDockWidget):
         self._sync_controls();worker.start()
 
     def cancel(self) -> None:
-        if self._worker is not None:self._invalidate(_('Cancelling compensation...'))
+        if self._worker is not None:
+            self._invalidate(_('Cancelling compensation...'))
+            self._cancel_notice_generation=self._generation
 
     def _current_result(self) -> bool:
         return (self._worker is not None and self.sender() is self._worker and self._alive
@@ -233,7 +237,8 @@ class AutoLevelPanel(QtWidgets.QDockWidget):
         if self._current_result():self.summary_label.setText(_('Compensation failed: ')+_(message))
 
     def _cancelled(self) -> None:
-        if self.sender() is self._worker:self.summary_label.setText(_('Compensation cancelled.'))
+        if self.sender() is self._worker and self._cancel_notice_generation==self._generation:
+            self.summary_label.setText(_('Compensation cancelled.'))
 
     def _finished(self) -> None:
         self._release_worker(self.sender())

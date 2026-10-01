@@ -52,3 +52,14 @@ matching the existing bridge's exact snapshot semantics. It then passed complete
 Complete local final-runtime suite, architecture/growth result, PR, final-head Windows CI and
 merge pending. Physical CNC/probe/registration/clearance accuracy is not validated; surface
 error describes emitted linear chords, with a separate XY arc approximation budget.
+
+
+## PR review regressions
+PR27 review identified an axis-specified zero-length G1 manufacturing a corrected Z entry,
+and stale worker cancellation overwriting actionable invalidation messages. Six assertions
+failed before the fixes. No-op linear feed now emits no movement (outputs remain preserved;
+full-circle arcs remain processed). Only explicit current-generation cancellation changes the
+status to cancelled; parameter/map/source/shutdown invalidation retains its own explanation.
+Focused auto-level/preflight/dry-run group:207 passed in6.19s. Feature cases now80.
+Pre-review full runtime:5097 passed,2 skipped,11 existing warnings,310 subtests in342.65s.
+Final reviewed runtime full suite, desktop and final-head Windows CI are being rerun.

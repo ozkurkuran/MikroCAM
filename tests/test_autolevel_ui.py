@@ -77,9 +77,12 @@ def test_pending_preparation_cannot_deliver_obsolete_result(panel,qtbot,monkeypa
         elif changed=='map':panel.set_map(height_map(lambda x,y:.03*x))
         elif changed=='source':panel.set_source(*reviewed(HEADER+'G1Z-.2F60\nG1X1'))
         else:panel.cancel()
+        expected_message=panel.summary_label.text()
     finally:release.set()
     qtbot.waitUntil(lambda:not panel.busy,timeout=3000)
     assert panel.result is None and panel.reviewed_binding() is None
+    if changed=='cancel':assert panel.summary_label.text()=='Compensation cancelled.'
+    else:assert panel.summary_label.text()==expected_message
 
 
 def test_current_handoff_and_changed_original_binding(panel,qtbot):

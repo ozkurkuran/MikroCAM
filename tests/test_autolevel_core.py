@@ -199,3 +199,17 @@ def test_historical_same_heights_without_complete_final_retract_rejected():
     incomplete=replace(height_map(),outcome='incomplete')
     with pytest.raises(ValueError,match='complete'):
         prepare_autolevel(source,report,settings(incomplete))
+
+
+@pytest.mark.parametrize('noop', ['G1X1F60', 'G1Z5F60'])
+def test_axis_noop_cannot_establish_compensated_feed_entry(noop):
+    source,report=reviewed(HEADER+'G0X1Y1\n'+noop+'\nG1X2Z-.1')
+    with pytest.raises(ValueError,match='vertical'):
+        prepare_autolevel(source,report,settings())
+
+
+def test_axis_noop_preserves_outputs_without_manufacturing_motion():
+    source,report=reviewed(HEADER+'G0X1Y1\nM3S500G1Z5F60\nG1Z-.1\nG1X2')
+    result=prepare_autolevel(source,report,settings())
+    assert not any(e.motion==1 and e.end[2]>0 for e in motions(result))
+    assert 'M3S500' in result.prepared_job.source.text
