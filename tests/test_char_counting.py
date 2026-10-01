@@ -228,3 +228,24 @@ def test_priority_at_transport_handoff_cancels_latest_unsent_credit():
     stream = controller._job.stream
     assert len(fake.job_writes) == stream.next_index == len(stream.pending) == 1
     assert stream.used == len(fake.job_writes[0])
+
+
+@pytest.mark.parametrize('result', ['short', 'bool', 'none', 'raise'])
+def test_uncertain_source_handoff_is_not_retried_or_followed_by_another_block(result):
+    controller, fake, clock = connected()
+    selected(controller)
+    until(controller, clock, lambda: controller.snapshot().job.phase is JobPhase.RUNNING)
+    original = fake.write_job
+    def uncertain(data):
+        count = original(data)
+        if result == 'raise': raise OSError('uncertain USB handoff')
+        return {'short': count - 1, 'bool': True, 'none': None}[result]
+    fake.write_job = uncertain
+    step(controller, clock)
+    assert len(fake.job_writes) == 1
+    assert controller.snapshot().job.phase is JobPhase.FAILED
+    assert controller.snapshot().job.stop_unverified
+    assert any(r.outcome == 'uncertain' and r.payload == fake.job_writes[0]
+               for r in controller.snapshot().wire.records)
+    for _ in range(10): step(controller, clock)
+    assert len(fake.job_writes) == 1

@@ -9,8 +9,8 @@
 - [x] T008 Complete stop/quarantine/deadline/priority behavior after regressions.
 - [x] T009 Write UI mode-intent tests before selector (FR002/012).
 - [x] T010 Implement selectors on single job and queue, preserve default (FR001/002/012).
-- [ ] T011 Document algorithm/limits, extend actual desktop Fake journey (FR001–012).
-- [ ] T012 Related/full/architecture and actual desktop validation, validation.md/tracker.
+- [x] T011 Document algorithm/limits, extend actual desktop Fake journey (FR001–012).
+- [x] T012 Related/full/architecture and actual desktop validation, validation.md/tracker.
 - [ ] T013 Commit/push separate PR and require final-head Windows CI.
 
 Dependencies T001→T002→T003→T004→T005→T006→T007→T008→T009→T010→T011→T012→T013.
