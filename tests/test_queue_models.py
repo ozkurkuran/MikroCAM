@@ -84,3 +84,13 @@ def test_move_rejects_unknown_or_invalid_destination(key, index):
 def test_execution_requires_bounded_exact_tuple(entries):
     with pytest.raises(ValueError):
         StartQueueRequest(entries, True)
+
+
+def test_ready_or_running_evidence_cannot_settle_approved_draft():
+    from mikrocam.machine.queue_models import QueueObservation, QueuePhase
+    draft = QueueDraft()
+    draft.add(prepared())
+    draft.start_request(True)
+    for phase in (QueuePhase.READY, QueuePhase.RUNNING, QueuePhase.PAUSED):
+        with pytest.raises(ValueError): draft.settle(QueueObservation(phase=phase))
+        assert draft.locked

@@ -43,5 +43,28 @@ def queue_journey(app, qapp, errors, pump_until, root):
     screenshot = Path(root) / '.venv/queue-smoke.png'
     assert ui.grab().save(str(screenshot))
     print('QUEUE_THREE_COMPLETE_OK', screenshot, flush=True)
+    # Second run covers actual Qt Stop signal, worker priority and retained outcomes.
+    source = SourceSnapshot('queue-stop.nc', 'G21G90G17G94\nF60\n' +
+                            ''.join(f'G1X{1+i%2}\n' for i in range(160)) + 'M2\n')
+    active = PreparedJob(source, analyze_gcode(source, setup))
+    ui.draft.add(active)
+    ui.draft.add(jobs[0])
+    ui._render()
+    ui.confirm.setChecked(True)
+    ui.start_button.click()
+    baseline = sum(len(job.blocks) for job in jobs)
+    pump_until(qapp, lambda: panel.last_snapshot.queue.can_stop and
+               len(fake.job_writes) > baseline + 3, errors, 'active queue for Stop')
+    ui.stop_button.click()
+    pump_until(qapp, lambda: panel.last_snapshot.queue.phase is QueuePhase.ABORTED,
+               errors, 'queue Stop terminal owner evidence')
+    result = panel.last_snapshot.queue
+    assert result.entries[0].job.stop_unverified
+    assert result.entries[1].job.total == 0
+    count = len(fake.job_writes)
+    pump_until(qapp, lambda: not panel.last_snapshot.queue.can_stop, errors, 'queue Stop controls')
+    assert len(fake.job_writes) == count
+    assert fake.job_writes[baseline:] == [b.wire for b in active.blocks[:count-baseline]]
+    print('QUEUE_STOP_REMAINDER_NOT_SENT_OK', flush=True)
     ui.close()
     return fake

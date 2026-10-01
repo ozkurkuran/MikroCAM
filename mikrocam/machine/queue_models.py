@@ -135,7 +135,8 @@ class QueueDraft:
     def settle(self, observation):
         """Retire only terminal entries; unsent waiting snapshots remain for explicit Start."""
         from .job_models import JobPhase
-        if type(observation) is not QueueObservation or observation.can_stop:
+        if (type(observation) is not QueueObservation or observation.can_stop
+                or observation.phase not in (QueuePhase.COMPLETE, QueuePhase.FAILED, QueuePhase.ABORTED)):
             raise ValueError("Only terminal queue evidence can settle a draft")
         terminal = {r.entry.key for r in observation.entries
                     if r.job.phase in (JobPhase.COMPLETE, JobPhase.FAILED, JobPhase.ABORTED)}
