@@ -21,7 +21,7 @@ class ProbeControl:
         self.transaction = self.completed = self.waiting = None
         self.records: dict = {}
         self.heights: list[float | None] = []
-        self.position = self.target = None
+        self.position = self.target = self.contact = None
         self.minimum_query = 0
         self.deadline = 0.
         self.report_units = None
@@ -190,7 +190,7 @@ class ProbeControl:
             if purpose == 'probe':
                 contact = records['contact']
                 self._check_contact(contact)
-                self.target = contact
+                self.contact = self.target = contact
             self._wait_status(purpose, self.target)
 
     def _wait_status(self, purpose: str, target: tuple) -> None:
@@ -213,10 +213,12 @@ class ProbeControl:
         value = self.host.snapshot()
         if value.state is MachineState.RUNNING:
             return
-        if not near(value.machine_position_mm, self.target):
+        if self.waiting == 'probe':
+            self._check_stopped(value.machine_position_mm)
+        elif not near(value.machine_position_mm, self.target):
             raise ValueError('Fresh probe Idle endpoint differs from expected motion/contact')
         purpose, self.waiting = self.waiting, None
-        self.position = self.target
+        self.position = value.machine_position_mm
         plan = self.request.plan
         if purpose == 'initial':
             self.observation = replace(self.observation, phase=ProbePhase.PROBING,
@@ -233,10 +235,17 @@ class ProbeControl:
             self._vertical('probe', plan.min_z_mm)
         elif purpose == 'probe':
             index = self.observation.completed
-            self.heights[index] = self.position[2] - plan.g54_offset_mm[2]
+            self.heights[index] = self.contact[2] - plan.g54_offset_mm[2]
             self.observation = replace(self.observation, completed=index + 1,
                                          map=self._map('incomplete'), diagnostic='Contact verified; retracting')
             self._vertical('retract', plan.safe_z_mm)
+
+    def _check_stopped(self, position: tuple) -> None:
+        plan = self.request.plan
+        minimum = plan.min_z_mm + plan.g54_offset_mm[2]
+        if (not near(position[:2], self.contact[:2])
+                or not minimum - .005 <= position[2] <= self.contact[2] + .005):
+            raise ValueError('Stopped probe position lies outside the downward contact segment')
 
     def _vertical(self, purpose: str, z: float) -> None:
         plan = self.request.plan

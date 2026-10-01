@@ -71,6 +71,13 @@ def probe_journey(app, qapp, errors, pump_until, root):
 
     previous = getattr(app, "_mikrocam_machine_panel", None)
     fake = FakeGRBL(machine_position=(0.0, 0.0, 5.0))
+    respond = fake._probe.respond
+    def decelerated(data):
+        respond(data)
+        if b'G38.2' in data:
+            x, y, z = fake.machine_position
+            fake.machine_position = (x, y, z - 0.02)
+    fake._probe.respond = decelerated
     panel = MachinePanel(
         app.ui,
         controller_factory=lambda port: MachineController(fake),
@@ -109,6 +116,9 @@ def probe_journey(app, qapp, errors, pump_until, root):
             "probe partial measurements",
         )
         assert not dialog.close()
+        assert not dialog.viewer.save_button.isEnabled()
+        assert not dialog.viewer.load_button.isEnabled()
+        assert dialog.stop_button.isEnabled()
         dialog.stop_button.click()
         pump_until(
             qapp,

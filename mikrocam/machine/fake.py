@@ -1,6 +1,7 @@
 """Deterministic, hardware-free GRBL simulator with explicit fault injection."""
 
 import math
+from decimal import Decimal
 
 from mikrocam.machine.manual_protocol import validate_command
 from mikrocam.machine.job_protocol import validate_job_command
@@ -127,7 +128,7 @@ class FakeGRBL:
 
     def _format(self, values) -> str:
         divisor = 25.4 if self.report_units == 'inch' else 1.
-        return ','.join(format(value / divisor, '.12g') for value in values)
+        return ','.join(format(Decimal(format(value / divisor, '.12g')), 'f') for value in values)
 
     def _status_report(self) -> bytes:
         if self.status is not None:

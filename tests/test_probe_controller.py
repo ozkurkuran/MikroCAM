@@ -67,3 +67,45 @@ def test_laser_mode_missing_settings_and_changed_binding_fail_before_motion():
     wrong = replace(plan(controller), initial_machine_mm=(1.,0.,0.))
     with pytest.raises(ValueError):
         controller.request_probe(StartProbeGridRequest(wrong))
+
+
+@pytest.mark.parametrize('units', ['mm', 'inch'])
+def test_small_decimal_coordinates_and_heights_complete(units):
+    controller, fake, clock = connected(report_units=units, machine_position=(0., 0., 2.))
+    request_plan = replace(plan(controller), grid=ProbeGrid((0., .001), (0., .001)))
+    controller.request_probe(StartProbeGridRequest(request_plan))
+    result = finish(controller, clock).probe
+    assert result.phase is ProbePhase.COMPLETE, result.diagnostic
+    assert result.map.heights_mm == pytest.approx((0., .00001, .00002, .00003), abs=1e-10)
+
+
+def test_contact_height_is_separate_from_decelerated_idle_position():
+    controller, fake, clock = connected(machine_position=(0., 0., 2.))
+    respond = fake._probe.respond
+    def decelerated(data):
+        respond(data)
+        if b'G38.2' in data:
+            x, y, z = fake.machine_position
+            fake.machine_position = (x, y, z - .02)
+    fake._probe.respond = decelerated
+    controller.request_probe(StartProbeGridRequest(plan(controller)))
+    result = finish(controller, clock)
+    assert result.probe.phase is ProbePhase.COMPLETE, result.probe.diagnostic
+    assert result.probe.map.heights_mm == pytest.approx((0., .01, .02, .02, .03, .04))
+    assert result.machine_position_mm == pytest.approx((2., 1., 5.))
+
+
+@pytest.mark.parametrize('stopped', [(0., 0., .02), (0., 0., -1.02), (.02, 0., -.02)])
+def test_stopped_position_outside_contact_segment_fails(stopped):
+    controller, fake, clock = connected(machine_position=(0., 0., 2.))
+    respond = fake._probe.respond
+    def invalid_stop(data):
+        respond(data)
+        if b'G38.2' in data:
+            fake.machine_position = stopped
+    fake._probe.respond = invalid_stop
+    controller.request_probe(StartProbeGridRequest(plan(controller)))
+    result = finish(controller, clock).probe
+    assert result.phase is ProbePhase.FAILED and result.completed == 0
+    assert result.stop_unverified
+    assert sum(b'G38.2' in data for data in fake.writes) == 1

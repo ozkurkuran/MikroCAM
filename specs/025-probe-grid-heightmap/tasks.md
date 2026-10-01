@@ -38,7 +38,7 @@
 - [x] T029 Add failing regression before each audit fix in tests/test_probe*.py.
 - [x] T030 Document frame, clearance, partial outcomes and physical limits in docs/PROBING.md.
 - [x] T031 Verify focused/architecture/growth and prior machine behavior.
-- [x] T032 Run full suite at final runtime head; record validation.md.
+- [ ] T032 Run full suite at final runtime head; record validation.md.
 - [x] T033 Run actual desktop, inspect screenshot and record validation.md.
 - [x] T034 Update docs/ROADMAP.md and publish focused PR after 024 delivery.
 - [ ] T035 Verify final-head Windows CI.

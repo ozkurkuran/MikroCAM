@@ -220,6 +220,7 @@ class ProbeDialog(QtWidgets.QDialog):
             busy and (self._pending or self._snapshot.probe.can_stop)
         )
         self.viewer.load_button.setEnabled(not busy)
+        self.viewer.save_button.setEnabled(not busy and self.viewer.map is not None)
 
     def reject(self) -> None:
         if not self.busy:

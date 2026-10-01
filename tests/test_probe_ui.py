@@ -170,3 +170,33 @@ def test_offline_historical_map_survives_unchanged_live_snapshot(qtbot):
     new = replace(live, heights_mm=(2.0, 3.0, 4.0, 5.0))
     dialog.update_snapshot(replace(snapshot, probe=replace(snapshot.probe, map=new)))
     assert dialog.viewer.map == new
+
+
+@pytest.mark.parametrize('phase', [ProbePhase.PREPARING, ProbePhase.PROBING])
+def test_modal_file_controls_disabled_while_acquiring(qtbot, phase):
+    from mikrocam.core.probe_map import ProbeGrid, ProbeMap
+    dialog, panel, calls = make_dialog(qtbot)
+    partial = ProbeMap(ProbeGrid((0., 1.), (0., 1.)), (0., None, None, None),
+                       (0., 0., 0.), 'incomplete', 'simulated')
+    dialog.update_snapshot(replace(panel.last_snapshot, probe=ProbeObservation(
+        phase=phase, map=partial, completed=1, total=4, can_stop=True)))
+    assert dialog.stop_button.isEnabled()
+    assert not dialog.viewer.load_button.isEnabled()
+    assert not dialog.viewer.save_button.isEnabled()
+    dialog.update_snapshot(replace(panel.last_snapshot, probe=ProbeObservation(
+        phase=ProbePhase.ABORTED, map=partial, completed=1, total=4)))
+    assert dialog.viewer.save_button.isEnabled()
+
+
+def test_modal_save_disabled_while_start_request_pending(qtbot):
+    from mikrocam.core.probe_map import ProbeGrid, ProbeMap
+    dialog, panel, calls = make_dialog(qtbot)
+    dialog.set_map(ProbeMap(ProbeGrid((0., 1.), (0., 1.)), (0., 0., 0., 0.),
+                            (0., 0., 0.), 'complete', 'simulated'))
+    fill(dialog)
+    dialog.review_grid()
+    dialog.set_map(ProbeMap(ProbeGrid((0., 1.), (0., 1.)), (0., 0., 0., 0.),
+                            (0., 0., 0.), 'complete', 'simulated'))
+    dialog.start_grid()
+    assert dialog.busy and dialog.stop_button.isEnabled()
+    assert not dialog.viewer.save_button.isEnabled()
