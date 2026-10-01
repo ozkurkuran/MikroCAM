@@ -424,6 +424,8 @@ def run_smoke(sandbox, state):
         autolevel_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_job import job_journey
         machine_transport = job_journey(app, qapp, errors, pump_until, ROOT)
+        from smoke_queue import queue_journey
+        machine_transport = queue_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_dry_run import dry_run_journey
         machine_transport = dry_run_journey(app, qapp, errors, pump_until, ROOT)
         render_and_quit(app, qapp, errors, machine_transport)

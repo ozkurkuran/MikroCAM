@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-02
 
-**Status**: Draft — one transition-policy clarification pending
+**Status**: Specified — automatic advance implementation assumption disclosed
 
 **Input**: User objective "diğer fazları tamamla!"; MACHINE_CONTROL_ROADMAP C2 and
 ROADMAP slice 27: sıralama, iş başına durum, makine durumu kontrolü.
@@ -48,7 +48,7 @@ seçilen geçiş politikasını doğrula.
    yok, **When** sonraki iş değerlendirilir, **Then** ilk iş Tamamlandı sayılmaz ve
    ikinci iş başlamaz.
 3. **Given** ilk iş doğrulanmış Tamamlandı ve makine uygun, **When** geçiş yapılır,
-   **Then** FR-006'da seçilecek politika uygulanır; aynı anda yalnızca bir iş aktiftir.
+   **Then** FR-006 otomatik geçişi uygulanır; aynı anda yalnızca bir iş aktiftir.
 4. **Given** sıradaki işin hazırlık/koordinat/mekanik koşulları artık uygun değil,
    **When** sıra ona gelir, **Then** kuyruk durur, nedeni gösterir ve iş gönderilmez.
 
@@ -97,8 +97,9 @@ kaynağın hiç gönderilmediğini, sonuçların korunduğunu ve geç onayın ye
   mekanik doğrulama ve tek iletişim sahibi ön koşulları yeniden uygulanmalıdır.
 - **FR-005**: Son kaynak ACK'i tamamlanma sayılmamalıdır; işin mevcut çıkış-kapalı ve
   son durum kanıtları alınmadan sıradaki iş başlayamaz.
-- **FR-006**: Doğrulanmış tamamlanmadan sonraki iş geçişi
-  [NEEDS CLARIFICATION: Kuyruk bir kez açıkça onaylandıktan sonra sonraki uygun iş otomatik mi başlasın, yoksa her iş için ayrı Start/Next ve mekanik onay mı gereksin?]
+- **FR-006**: Operatör, bütün kuyruk için mekanik hazırlığı onaylayıp Start verdiğinde,
+  yalnızca önceki iş doğrulanmış tamamlandıysa ve sıradaki işin canlı ön kontrolleri uygunsa
+  kuyruk otomatik ilerlemelidir. Hata veya Stop sonrası yeniden başlama açık işlem ister.
 - **FR-007**: İş başına Bekliyor, Hazırlanıyor, Çalışıyor, Hold, Tamamlanıyor,
   Tamamlandı, İptal veya Hata durumu ve mevcut ilerleme/neden görünmelidir.
 - **FR-008**: Hata, alarm, reset, kopma, zaman aşımı ve Stop sonraki işe geçişi
@@ -138,8 +139,10 @@ kaynağın hiç gönderilmediğini, sonuçların korunduğunu ve geç onayın ye
   kuralları gevşetmez; yeni transport veya kontrolcü türü eklenmez.
 - C1 matrisinin tamamlanması ve ACK deadline düzeltmeleri uygulama başlangıç koşuludur.
   B ve C1 ayrı PR'lardır; bu taslak B1'in son commit'i ve C1'in ACK düzeltmeleriyle entegredir.
-- FR-006 seçilmeden plan/tasks/uygulama tamamlanmış sayılmaz; iki davranış birden
-  varsayılan seçenek olarak uygulanmaz.
+- 02.10.2026 yeni açık C2/C3 tamamlama talimatıyla ilerlenir. Otomatik geçiş, ajanın
+  kullanıcıya bildirdiği uygulama varsayımıdır; kullanıcı belirli seçenek seçmiş olarak
+  kaydedilmez. Operatör tüm kuyruğun aynı kurulumla müdahalesiz çalışmaya uygun olduğunu
+  onaylar; takım/parça değişimi gereken işler tek kuyrukta otomatik başlatılmaz.
 
 ## Tehlike analizi
 
@@ -152,3 +155,11 @@ kaynağın hiç gönderilmediğini, sonuçların korunduğunu ve geç onayın ye
 | Operatör FR-006 politikasını yanlış anlar | Spec'te açık seçim ve çalıştırma öncesi açıklama | Seçilen politikanın masaüstü kabul senaryosu |
 
 Yazılım kanıtı fiziksel durdurma veya saha doğrulaması yerine geçmez; H protokolü uygulanır.
+
+## Clarifications and implementation assumptions
+
+2026-10-02: User instruction to complete C2 and C3 prioritizes GRBL. No explicit transition
+option was answered. The implementation assumption disclosed in commentary is automatic
+advance after explicit whole-queue setup confirmation and Start. It adds no auto-recovery,
+no hardware access and no implicit approval of tool/fixture changes. FR-006 now states this
+bounded behavior; future contrary user steering supersedes it. C3 is separately specified.

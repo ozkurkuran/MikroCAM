@@ -13,6 +13,8 @@ from mikrocam.machine.manual_protocol import validate_command
 from mikrocam.machine.models import ManualPhase
 from mikrocam.machine.job_control import JobControl, _PriorityPending
 from mikrocam.machine.job_models import StartJobRequest, JobPhase
+from .queue_models import StartQueueRequest
+from .queue_control import QueueControl
 from mikrocam.machine.job_protocol import validate_job_command
 from mikrocam.machine.console_models import ConsoleRequest
 from mikrocam.machine.console_control import ConsoleControl
@@ -46,6 +48,7 @@ class MachineController:
         self._job = JobControl(self)
         self._console = ConsoleControl(self)
         self._probe = ProbeControl(self)
+        self._queue = QueueControl(self)
         self._interrupted: Callable[[], bool] = lambda: False
         self._pause_requested: Callable[[], bool] = lambda: False
 
@@ -55,6 +58,7 @@ class MachineController:
 
     def request_manual(self, request: JogRequest | ZeroRequest | SelectG54Request) -> None:
         """Admit one typed request on the communication owner, never raw G-code."""
+        self._check_queue_free()
         try:
             self._manual.start(request)
             self._console.publish()
@@ -67,10 +71,12 @@ class MachineController:
 
     def request_console(self, request: ConsoleRequest) -> None:
         """Reserve a finite diagnostic query without performing transport I/O."""
+        self._check_queue_free()
         self._console.start(request)
 
     def request_probe(self, request: StartProbeGridRequest) -> None:
         """Reserve a reviewed grid without writing or admitting competing operations."""
+        self._check_queue_free()
         try:
             self._probe.start(request)
         except ValueError as error:
@@ -112,6 +118,7 @@ class MachineController:
 
     def request_job(self, request: StartJobRequest) -> None:
         """Admit a prepared immutable job; live setup proof follows on this owner."""
+        self._check_queue_free()
         try:
             self._job.start(request)
             self._console.publish()
@@ -122,13 +129,35 @@ class MachineController:
                 self._job.publish()
             raise
 
+    def _check_queue_free(self) -> None:
+        if self._queue.active:
+            raise ValueError('The approved queue reserves the sole communication owner')
+
+    def request_queue(self, request: StartQueueRequest) -> None:
+        try:
+            self._queue.start(request)
+        except ValueError as error:
+            if not self._queue.active and type(request) is StartQueueRequest:
+                self._queue.reject(request, str(error))
+            raise
+
+    def cancel_queue_request(self, request: StartQueueRequest) -> None:
+        self._queue.reject(request, 'Queue intent cancelled before admission', cancelled=True)
+
     def pause_job(self) -> None:
-        self._job.pause()
+        if self._queue.active:
+            self._queue.pause()
+        else:
+            self._job.pause()
 
     def resume_job(self) -> None:
-        self._job.resume()
+        if self._queue.active:
+            self._queue.resume()
+        else:
+            self._job.resume()
 
     def stop_job(self) -> None:
+        self._queue.stop()
         self.stop_probe()
         self._console.fail('Stop cancelled the diagnostic query')
         self._job.stop()
@@ -149,6 +178,7 @@ class MachineController:
 
     def abort(self) -> None:
         """Best-effort controller abort; a failed link cannot prove physical stopping."""
+        self._queue.stop('Abort cancelled the queue; physical stop unverified')
         self._console.fail('Abort cancelled the diagnostic query')
         if self._snapshot.connection is ConnectionState.CONNECTED:
             if self._probe.active:
@@ -173,6 +203,7 @@ class MachineController:
 
     def disconnect(self) -> None:
         """Stop owned motion before closing; idle read-only closure emits no stop command."""
+        self._queue.stop('Disconnected during queue; physical stop unverified')
         self._console.fail('Disconnected during diagnostic query')
         self._probe.stop('Disconnected during probe; physical stop unverified')
         probe = self._snapshot.probe
@@ -238,12 +269,15 @@ class MachineController:
             self._console.tick()
             self._probe.tick()
             self._job.tick()
+            self._queue.tick()
             self._manual.tick()
+            self._queue.publish()
         except Exception as error:
             self._fail(error)
 
     def _reset_session(self, connection: ConnectionState) -> None:
         console = self._snapshot.console
+        queue = self._snapshot.queue
         self._snapshot = MachineSnapshot(connection=connection, wire=self._wire.snapshot())
         self._framer.reset()
         self._status_sent_at = None
@@ -256,6 +290,8 @@ class MachineController:
         self._job = JobControl(self)
         self._console = ConsoleControl(self)
         self._probe = ProbeControl(self)
+        self._queue = QueueControl(self, queue)
+        self._snapshot = replace(self._snapshot, queue=self._queue.observation)
         if connection is not ConnectionState.CONNECTING:
             self._console.observation = replace(console, can_query=False)
             self._snapshot = replace(self._snapshot, console=self._console.observation)
@@ -267,6 +303,7 @@ class MachineController:
         self._manual.lost_evidence(diagnostic)
         self._job.fail(diagnostic)
         self._probe.fail(diagnostic)
+        self._queue.fail(diagnostic)
         probe = self._snapshot.probe
         manual = self._snapshot.manual
         job = self._snapshot.job

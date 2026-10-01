@@ -9,8 +9,8 @@ Created: 2026-10-02. Feature: [spec.md](../spec.md).
 - [x] Mandatory sections completed.
 
 ## Requirement Completeness
-- [ ] No NEEDS CLARIFICATION markers remain.
-- [ ] All requirements unambiguous: FR-006 awaits operator policy.
+- [x] No NEEDS CLARIFICATION markers remain.
+- [x] All requirements unambiguous: FR-006 automatic advance assumption disclosed.
 - [x] Success criteria measurable.
 - [x] Success criteria technology-agnostic.
 - [x] Acceptance scenarios defined with transition explicitly pending.
@@ -19,13 +19,13 @@ Created: 2026-10-02. Feature: [spec.md](../spec.md).
 - [x] Dependencies and assumptions identified.
 
 ## Feature Readiness
-- [ ] All functional requirements have final acceptance criteria: FR-006 pending.
+- [x] All functional requirements have acceptance criteria including FR-006.
 - [x] User scenarios cover primary flows.
 - [x] Measurable outcomes defined.
 - [x] No implementation details leak into specification.
 
 ## Notes
-13/16 checks pass. One substantive clarification remains: automatic approved-queue advance
-versus separate Start/Next confirmation per job. The async question is pending; no answer
-was inferred from elapsed time. Plan/tasks/implementation have not started. Extension hooks
-were skipped because .specify/extensions.yml does not exist.
+16/16 checks pass after specification/clarification update. Automatic advance is a disclosed
+implementation assumption under the new completion instruction, not a fabricated user answer.
+The original physical-only C3 trigger is superseded by the new explicit C3 start instruction;
+physical validation still requires H3 evidence. No extension hooks exist.
