@@ -24,7 +24,7 @@ always refuses. GRBL callbacks reject before serial/UI/worker side effects, incl
 stale handles and low-level helper calls. Legacy source is retained behind guards/private
 helpers. Machine's dock/owner is reused explicitly, without auto-connect/probe/transfer/start.
 Offline controller export/edit/import controls restore across repeated switches.
-One new UI module50 lines; longest function29 lines; legacy net growth10 lines. Existing
+One new UI module50 lines; longest function26 lines; legacy net growth10 lines. Existing
 architecture/growth rules pass. No external implementation was copied; Evo attribution recorded.
 
 ## Final local evidence
