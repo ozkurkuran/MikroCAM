@@ -1721,9 +1721,8 @@ class ToolLevelling(CNCjob, AppTool):
                 pass
 
             answer = self.on_grbl_wake()
-            answer = ['ok']   # FIXME: hack for development without a GRBL controller connected
             for line in answer:
-                if 'ok' in line.lower():
+                if line.startswith('Grbl ') or line.lower() == 'ok':
                     self.ui.com_connect_button.setStyleSheet("QPushButton {background-color: seagreen;}")
                     self.ui.com_connect_button.setText(_("Connected"))
                     self.ui.controller_reset_button.setDisabled(False)
@@ -1777,7 +1776,8 @@ class ToolLevelling(CNCjob, AppTool):
         # Wait for GRBL controller to initialize
         time.sleep(1)
 
-        grbl_out = deepcopy(self.grbl_ser_port.readlines())
+        grbl_out = [line.decode('utf-8', errors='replace').strip()
+                    for line in self.grbl_ser_port.readlines()]
         self.grbl_ser_port.reset_input_buffer()
 
         return grbl_out
