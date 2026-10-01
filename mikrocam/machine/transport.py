@@ -24,3 +24,7 @@ class Transport(Protocol):
     def write_job(self, data: bytes) -> int:
         """Write one separately validated CNC block or owner-controlled hold/resume."""
         ...
+
+    def write_probe(self, data: bytes) -> int:
+        """Write one narrowly validated probe or clearance/XY move from the owner."""
+        ...

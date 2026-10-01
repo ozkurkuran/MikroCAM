@@ -29,6 +29,7 @@ class ConsoleControl:
                 and 0 <= self.host._clock() - value.last_report_at < 2
                 and not self.host._manual.active and not self.host._manual.tainted
                 and not self.host._job.active and not self.host._job.tainted
+                and not self.host._probe.active and not self.host._probe.tainted
                 and self.host._settings_sent_at is None)
 
     def publish(self) -> None:

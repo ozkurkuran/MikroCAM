@@ -10,6 +10,7 @@ from mikrocam.machine.controller import MachineController
 from mikrocam.machine.manual_models import JogRequest, ZeroRequest, SelectG54Request
 from mikrocam.machine.job_models import StartJobRequest
 from mikrocam.machine.console_models import ConsoleRequest
+from mikrocam.machine.probe_models import StartProbeGridRequest
 from mikrocam.machine.models import ConnectionState, MachineSnapshot
 
 
@@ -28,18 +29,20 @@ class MachineWorker(QtCore.QThread):
         self._lock = Lock()
         self._pending = None
         self._cancelled_console: ConsoleRequest | None = None
+        self._cancelled_probe: StartProbeGridRequest | None = None
         self._admission_open = False
         self._latest = MachineSnapshot()
         self.final_snapshot = MachineSnapshot()
 
-    def submit(self, request: JogRequest | ZeroRequest | SelectG54Request | StartJobRequest | ConsoleRequest) -> bool:
+    def submit(self, request: JogRequest | ZeroRequest | SelectG54Request | StartJobRequest | ConsoleRequest | StartProbeGridRequest) -> bool:
         """Reserve one intent slot; admission is rechecked by the communication owner."""
         flags = {JogRequest: 'can_jog', ZeroRequest: 'can_zero', SelectG54Request: 'can_select_g54'}
-        if type(request) not in (*flags, StartJobRequest, ConsoleRequest):
+        if type(request) not in (*flags, StartJobRequest, ConsoleRequest, StartProbeGridRequest):
             return False
         with self._lock:
             if (self._interrupted() or not self._admission_open or self._pending is not None
                     or not (self._latest.job.can_start if type(request) is StartJobRequest
+                            else self._latest.probe.can_start if type(request) is StartProbeGridRequest
                             else self._latest.console.can_query if type(request) is ConsoleRequest
                             else getattr(self._latest.manual, flags[type(request)]))):
                 return False
@@ -52,6 +55,8 @@ class MachineWorker(QtCore.QThread):
             event.set()
             if type(self._pending) is ConsoleRequest:
                 self._cancelled_console = self._pending
+            elif type(self._pending) is StartProbeGridRequest:
+                self._cancelled_probe = self._pending
             self._pending = None
             self._admission_open = False
 
@@ -65,6 +70,9 @@ class MachineWorker(QtCore.QThread):
         self._priority(self._pause)
 
     def stop_job(self) -> None:
+        self._priority(self._job_stop)
+
+    def stop_probe(self) -> None:
         self._priority(self._job_stop)
 
     def resume_job(self) -> bool:
@@ -105,12 +113,14 @@ class MachineWorker(QtCore.QThread):
             self._job_stop.clear()
             self._pause.clear()
             request, self._pending = self._pending, None
-            if type(request) in (StartJobRequest, ConsoleRequest) and not any((abort, job_stop, cancel, pause)):
+            if type(request) in (StartJobRequest, ConsoleRequest, StartProbeGridRequest) and not any((abort, job_stop, cancel, pause)):
                 # request_job only reserves domain state: no serial I/O under this lock.
                 # GUI invalidation and owner admission have one unambiguous ordering.
                 try:
                     if type(request) is ConsoleRequest:
                         controller.request_console(request)
+                    elif type(request) is StartProbeGridRequest:
+                        controller.request_probe(request)
                     else:
                         controller.request_job(request)
                 except ValueError:
@@ -144,8 +154,11 @@ class MachineWorker(QtCore.QThread):
     def _cancel_console_intent(self, controller: MachineController) -> None:
         with self._lock:
             request, self._cancelled_console = self._cancelled_console, None
+            probe, self._cancelled_probe = self._cancelled_probe, None
         if request is not None:
             controller.cancel_console_request(request)
+        if probe is not None:
+            controller.cancel_probe_request(probe)
 
     def _publish(self, snapshot: MachineSnapshot) -> None:
         with self._lock:
@@ -154,7 +167,7 @@ class MachineWorker(QtCore.QThread):
             self._admission_open = (not self._interrupted() and not self._pause.is_set() and self._pending is None
                                     and any((snapshot.manual.can_jog, snapshot.manual.can_zero,
                                              snapshot.manual.can_select_g54, snapshot.job.can_start,
-                                             snapshot.console.can_query)))
+                                             snapshot.console.can_query, snapshot.probe.can_start)))
         if changed:
             self.snapshot_ready.emit(snapshot)
 

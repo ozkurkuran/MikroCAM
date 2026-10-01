@@ -411,6 +411,8 @@ def run_smoke(sandbox, state):
         qapp.processEvents()
         laser_journey(app, qapp, sandbox, errors)
         laser_export_journey(app, qapp, sandbox, errors)
+        from smoke_probe import probe_journey
+        probe_journey(app, qapp, errors, pump_until, ROOT)
         machine_transport = machine_journey(app, qapp, errors)
         from smoke_console import console_journey
         console_journey(app, qapp, errors, pump_until, ROOT)

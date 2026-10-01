@@ -17,6 +17,9 @@ from mikrocam.machine.job_protocol import validate_job_command
 from mikrocam.machine.console_models import ConsoleRequest
 from mikrocam.machine.console_control import ConsoleControl
 from mikrocam.machine.wire_log import WireLog
+from mikrocam.machine.probe_control import ProbeControl
+from mikrocam.machine.probe_models import StartProbeGridRequest, ProbePhase
+from mikrocam.machine.probe_protocol import validate_probe_command
 
 POLL_INTERVAL = 0.25
 STATUS_TIMEOUT = 2.0
@@ -42,6 +45,7 @@ class MachineController:
         self._manual = ManualControl(self)
         self._job = JobControl(self)
         self._console = ConsoleControl(self)
+        self._probe = ProbeControl(self)
         self._interrupted: Callable[[], bool] = lambda: False
         self._pause_requested: Callable[[], bool] = lambda: False
 
@@ -64,6 +68,33 @@ class MachineController:
     def request_console(self, request: ConsoleRequest) -> None:
         """Reserve a finite diagnostic query without performing transport I/O."""
         self._console.start(request)
+
+    def request_probe(self, request: StartProbeGridRequest) -> None:
+        """Reserve a reviewed grid without writing or admitting competing operations."""
+        try:
+            self._probe.start(request)
+        except ValueError as error:
+            if not self._probe.active:
+                self._probe.observation = replace(self._probe.observation, phase=ProbePhase.FAILED,
+                                                    diagnostic=str(error)[:256])
+                self._probe.publish()
+            raise
+
+    def cancel_probe_request(self, request: StartProbeGridRequest) -> None:
+        """Publish a priority-discarded intent without performing transport I/O."""
+        if type(request) is not StartProbeGridRequest:
+            raise ValueError('A typed probe request is required')
+        if not self._probe.active:
+            self._probe.observation = replace(self._probe.observation, phase=ProbePhase.ABORTED,
+                                                diagnostic='Probe request cancelled before admission')
+            self._probe.publish()
+
+    def stop_probe(self) -> None:
+        """Priority abort of the owned grid; preserve all verified samples."""
+        self._probe.stop()
+        self._manual.publish()
+        self._job.publish()
+        self._console.publish()
 
     def cancel_console_request(self, request: ConsoleRequest) -> None:
         """Retain the outcome of a priority-discarded typed intent; never write bytes."""
@@ -98,11 +129,13 @@ class MachineController:
         self._job.resume()
 
     def stop_job(self) -> None:
+        self.stop_probe()
         self._console.fail('Stop cancelled the diagnostic query')
         self._job.stop()
         self._manual.publish()
 
     def cancel_jog(self) -> None:
+        self.stop_probe()
         self._console.fail('Cancel cancelled the diagnostic query')
         try:
             if self._manual.active:
@@ -118,7 +151,9 @@ class MachineController:
         """Best-effort controller abort; a failed link cannot prove physical stopping."""
         self._console.fail('Abort cancelled the diagnostic query')
         if self._snapshot.connection is ConnectionState.CONNECTED:
-            if self._job.active:
+            if self._probe.active:
+                self.stop_probe()
+            elif self._job.active:
                 self.stop_job()
             elif not self._job.tainted:
                 self._manual.abort()
@@ -139,6 +174,8 @@ class MachineController:
     def disconnect(self) -> None:
         """Stop owned motion before closing; idle read-only closure emits no stop command."""
         self._console.fail('Disconnected during diagnostic query')
+        self._probe.stop('Disconnected during probe; physical stop unverified')
+        probe = self._snapshot.probe
         self._close_manual_operation()
         self._job.stop('Disconnected during job; physical stop unverified')
         job = self._snapshot.job
@@ -154,6 +191,8 @@ class MachineController:
             self._reset_session(ConnectionState.DISCONNECTED)
         if preserve:
             self._snapshot = replace(self._snapshot, manual=manual)
+        if probe.phase is not ProbePhase.READY:
+            self._snapshot = replace(self._snapshot, probe=replace(probe, can_start=False, can_stop=False))
         if job.phase is not JobPhase.READY:
             self._snapshot = replace(self._snapshot, job=replace(job, can_start=False,
                                      can_pause=False, can_resume=False, can_stop=False))
@@ -187,6 +226,7 @@ class MachineController:
             except ValueError as error:
                 self._manual.lost_evidence('Corrupt controller framing', framing=True)
                 self._job.fail('Corrupt controller framing')
+                self._probe.fail('Corrupt controller framing')
                 self._console.fail('Corrupt controller framing')
                 self._invalidate(clear_units=True)
                 self._settings_sent_at = None
@@ -196,6 +236,7 @@ class MachineController:
                 self._consume(line)
             self._expire_and_poll()
             self._console.tick()
+            self._probe.tick()
             self._job.tick()
             self._manual.tick()
         except Exception as error:
@@ -214,6 +255,7 @@ class MachineController:
         self._manual = ManualControl(self)
         self._job = JobControl(self)
         self._console = ConsoleControl(self)
+        self._probe = ProbeControl(self)
         if connection is not ConnectionState.CONNECTING:
             self._console.observation = replace(console, can_query=False)
             self._snapshot = replace(self._snapshot, console=self._console.observation)
@@ -224,6 +266,8 @@ class MachineController:
         self._console.fail(diagnostic)
         self._manual.lost_evidence(diagnostic)
         self._job.fail(diagnostic)
+        self._probe.fail(diagnostic)
+        probe = self._snapshot.probe
         manual = self._snapshot.manual
         job = self._snapshot.job
         try:
@@ -232,7 +276,7 @@ class MachineController:
             diagnostic += f'; close failed: {close_error}'
             self._record('IO', b'', 'error', f'Close failed: {close_error}')
         self._reset_session(ConnectionState.ERROR)
-        self._snapshot = replace(self._snapshot, manual=manual, job=job)
+        self._snapshot = replace(self._snapshot, manual=manual, job=job, probe=probe)
         self._diagnose(diagnostic)
 
     def _diagnose(self, message: str) -> None:
@@ -279,6 +323,12 @@ class MachineController:
         self._pending_units = None
         self._send(b'$$\n')
 
+    def _send_probe(self, data: bytes) -> None:
+        validate_probe_command(data)
+        if self._interrupted() or self._pause_requested():
+            raise ValueError('Priority request interrupted probe before serial write')
+        self._transmit(data, self._transport.write_probe)
+
     def _request_status(self) -> None:
         self._query_sequence += 1
         self._pending_query_sequence = self._query_sequence
@@ -298,13 +348,16 @@ class MachineController:
             self._console.fail('Controller reset interrupted diagnostic query')
             self._manual.lost_evidence('Controller reset interrupted manual operation', reset=True)
             self._job.fail('Controller reset interrupted job', reset=True)
+            self._probe.fail('Controller reset interrupted probing', reset=True)
             self._invalidate(clear_units=True)
             self._status_sent_at = None
-            if not self._console.tainted:
+            if not self._console.tainted and not self._probe.tainted:
                 self._request_settings()
             self._diagnose('Controller restarted; awaiting units and fresh status')
         elif line.startswith('<'):
             self._consume_status(line)
+        elif self._probe.consume(line):
+            pass
         elif self._console.consume(line):
             pass
         elif self._job.consume(line):
@@ -330,6 +383,7 @@ class MachineController:
             self._console.fail(f'Controller {line}')
             self._manual.lost_evidence(f'Controller {line}')
             self._job.fail(f'Controller {line}')
+            self._probe.fail(f'Controller {line}')
             self._invalidate()
             self._snapshot = replace(self._snapshot, state=MachineState.ALARM, raw_state=line)
             self._diagnose(line)
@@ -347,6 +401,7 @@ class MachineController:
         if units is None:
             return
         if self._settings_sent_at is None:
+            self._probe.fail('Unsolicited report-unit evidence')
             self._manual.lost_evidence('Unsolicited report-unit evidence')
             self._invalidate(clear_units=True)
             self._diagnose('Unsolicited or late report units; reconnect to verify settings')
@@ -361,6 +416,7 @@ class MachineController:
             self._console.fail(f'Invalid status: {error}')
             self._manual.lost_evidence(f'Invalid status: {error}')
             self._job.fail(f'Invalid status: {error}')
+            self._probe.fail(f'Invalid status: {error}')
             self._invalidate()
             self._diagnose(f'Invalid status: {error}')
             return
@@ -385,6 +441,7 @@ class MachineController:
             diagnostic='' if self._snapshot.report_units is not None else self._snapshot.diagnostic)
         self._manual.on_status()
         self._job.on_status()
+        self._probe.on_status()
 
     @staticmethod
     def _scale(vector: XYZ | None, factor: float) -> XYZ | None:
@@ -399,6 +456,7 @@ class MachineController:
             self._console.fail('Status became stale during diagnostic query')
             self._manual.lost_evidence('Status became stale during manual operation')
             self._job.fail('Status became stale during job')
+            self._probe.fail('Status became stale during probing')
             self._invalidate()
             self._diagnose('Status is stale; awaiting a fresh report')
         if self._settings_sent_at is not None and now - self._settings_sent_at >= SETTINGS_TIMEOUT:

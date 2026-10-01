@@ -1,10 +1,13 @@
 """Deterministic, hardware-free GRBL simulator with explicit fault injection."""
 
 import math
+from decimal import Decimal
 
 from mikrocam.machine.manual_protocol import validate_command
 from mikrocam.machine.job_protocol import validate_job_command
 from mikrocam.machine.fake_job import FakeJob
+from mikrocam.machine.fake_probe import FakeProbe
+from mikrocam.machine.probe_protocol import validate_probe_command
 
 
 class FakeGRBL:
@@ -60,6 +63,22 @@ class FakeGRBL:
         self.job_writes: list[bytes] = []
         self.job_settings = {13: 0 if report_units == 'mm' else 1, 30: 1000, 31: 0, 32: 0}
         self._job = FakeJob(self)
+        self._probe = FakeProbe(self)
+        self.probe_origin = 'simulated'
+
+    def write_probe(self, data: bytes) -> int:
+        """Simulate one independently validated vertical probe or linear travel."""
+        validate_probe_command(data)
+        if not self.is_open:
+            raise OSError('Closed')
+        if self.write_error:
+            raise self.write_error
+        self.writes.append(data)
+        if self.short_write:
+            return len(data) - 1
+        if self.auto_respond:
+            self._probe.respond(data)
+        return len(data)
 
     @staticmethod
     def _vector(values) -> tuple[float, float, float]:
@@ -109,7 +128,7 @@ class FakeGRBL:
 
     def _format(self, values) -> str:
         divisor = 25.4 if self.report_units == 'inch' else 1.
-        return ','.join(format(value / divisor, '.12g') for value in values)
+        return ','.join(format(Decimal(format(value / divisor, '.12g')), 'f') for value in values)
 
     def _status_report(self) -> bytes:
         if self.status is not None:
