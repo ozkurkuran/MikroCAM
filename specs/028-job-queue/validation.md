@@ -25,3 +25,13 @@ adımları tamamlandı. Otomatik ilerleme uygulama varsayımı spec'te açıkça
 - Data model phase terms aligned to paused/aborted. PR body now describes implemented policy
   and the user completion instruction; no unresolved clarification is represented as answered.
 - Final follow-up head requires fresh Windows CI; local5345 full result belongs to2760d219.
+
+
+## Real GRBL modal compatibility regression
+Primary GRBL1.1 Interface documents program-flow M0/M2/M30 in $G reports. Existing parser
+rejected them, preventing real final completion.6 red/3 pass regression cases reproduced it;
+known program-flow group now accepted, duplicate/conflicting/unknown still rejected. Fake
+reports source program end, so all normal job/queue tests exercise it.153 related cases pass.
+Final runtime head includes this fix; earlier CI belongs to earlier commits. CI must rerun.
+All delivery actions including PR-ready/push/required-CI launch are completed; final check-status
+and physical H3 remain explicit independent gates in the central tracker.

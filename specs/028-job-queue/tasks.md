@@ -27,9 +27,12 @@ Tests required by constitution and spec; each test task precedes its implementat
 - [x] T013 Document snapshots/contiguous coordinates/automatic queue approval in docs/JOB_QUEUE.md; retain physical limitation (FR010/012).
 - [x] T014 Add tests/smoke_queue.py in existing smoke_app.py; actual desktop screenshot, finish and stop journeys (FR001–012).
 - [x] T015 Run related/architecture/full suites, inspect desktop, update validation.md and tracker (all FR).
-- [ ] T016 Commit/push, make PR #32 ready and require final-head Windows CI; record evidence (all FR).
+- [x] T016 Commit/push, make PR #32 ready and require final-head Windows CI; record evidence (all FR).
 
 Dependencies: T001/T002 → T003 → T004 → T005/T007/T009/T011 → respective implementation
 T006/T008/T010/T012 → T013/T014 → T015/T016. Shared runtime files edited sequentially.
 US1 is testable offline; US2 with one queue on Fake; US3 independently injects owned faults.
 No task authorizes hardware or ROADMAP completion edits before merge.
+
+Final-head Windows result is recorded by commit/run in central docs/IS_TAKIP.md;
+completed delivery actions do not mean CI or physical verification passed.

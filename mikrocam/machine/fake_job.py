@@ -49,6 +49,7 @@ class FakeJob:
         except ValueError:
             host.inject(b'error:20\r\n')
             return
+        host.program_flow = ''
         for letter, value in block.words:
             if letter == 'G' and value in (20, 21):
                 host.units = f'G{int(value)}'
@@ -56,6 +57,8 @@ class FakeJob:
                 host.distance = f'G{int(value)}'
             elif letter == 'M' and value in (3, 4, 5):
                 host.spindle = f'M{int(value)}'
+            elif letter == 'M' and value in (0, 1, 2, 30):
+                host.program_flow = f'M{int(value)}'
             elif letter == 'M' and value in (8, 9):
                 host.coolant = (f'M{int(value)}',)
         if event.motion is not None and event.start != event.end:
@@ -102,6 +105,7 @@ class FakeJob:
         return False
 
     def clear(self) -> None:
+        self.host.program_flow = ''
         self.targets.clear()
         self.rx.clear()
         self.rx_bytes = 0

@@ -48,6 +48,7 @@ class FakeGRBL:
         self.startup_blocks = startup_blocks
         self.units, self.distance, self.spindle = 'G21', 'G90', 'M5'
         self.coolant = ('M9',)
+        self.program_flow = ''
         self.state = 'Idle'
         self._jog_target = None
         self._jog_reported = False
@@ -157,8 +158,9 @@ class FakeGRBL:
             self.inject(''.join(f'$N{i}={block}\r\n' for i, block in enumerate(
                 self.startup_blocks)).encode('ascii') + b'ok\r\n')
         elif data == b'$G\n':
+            program = f'{self.program_flow} ' if self.program_flow else ''
             self.inject((f'[GC:G0 {self.work_system} G17 {self.units} {self.distance} '
-                         f'G94 {self.spindle} {" ".join(self.coolant)} T0 F0 S0]\r\nok\r\n').encode())
+                         f'G94 {program}{self.spindle} {" ".join(self.coolant)} T0 F0 S0]\r\nok\r\n').encode())
         elif data == b'$#\n':
             rows = ''.join(f'[{name}:{self._format(vector)}]\r\n'
                            for name, vector in self.offsets.items())
