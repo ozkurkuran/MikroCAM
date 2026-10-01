@@ -27,11 +27,11 @@
 ## Audit and delivery
 - [x] T017 Audit requirements/budgets and test-first fixes in specs/026-autolevel-z-compensation/validation.md.
 - [x] T018 Document use/frame/approximation/physical limits in docs/AUTOLEVEL.md.
-- [ ] T019 Verify focused/prior-machine/architecture/growth and full suite in specs/026-autolevel-z-compensation/validation.md.
+- [x] T019 Verify focused/prior-machine/architecture/growth and full suite in specs/026-autolevel-z-compensation/validation.md.
 - [x] T020 Verify desktop and inspect .venv/autolevel-smoke.png; record specs/026-autolevel-z-compensation/validation.md.
-- [ ] T021 Publish PR and verify final-head Windows CI; record specs/026-autolevel-z-compensation/validation.md.
-- [ ] T022 Merge validated head; record specs/026-autolevel-z-compensation/validation.md.
-- [ ] T023 Update delivery tasks and docs/ROADMAP.md.
+- [x] T021 Publish PR and verify final-head Windows CI; record specs/026-autolevel-z-compensation/validation.md.
+- [x] T022 Merge validated head; record specs/026-autolevel-z-compensation/validation.md.
+- [x] T023 Update delivery tasks and docs/ROADMAP.md.
 
 Dependencies: foundations -> US1 -> US2 -> US3 -> delivery. Validate the analytic US1 MVP
 before path work; then validate full derived geometry before UI. Separate file export and UI

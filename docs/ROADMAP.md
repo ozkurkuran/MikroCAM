@@ -133,7 +133,7 @@ birlikte içe aktarılır.
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
 | 25 | `probe-grid-heightmap` — **yazılım tamamlandı** | Tek iletişim sahibiyle sınırlı G54 probe grid, temas/durma ayrımı, durdurmada yarım harita, sürümlü kaydetme/yükleme ve görselleştirme. 5020 test + 310 alt test; gerçek masaüstü ve son commit Windows CI başarılı. [PR #26](https://github.com/ozkurkuran/MikroCAM/pull/26) 01.10.2026 birleştirildi. Fiziksel cihaz doğrulaması açık. [Doğrulama](../specs/025-probe-grid-heightmap/validation.md). | 13 |
-| 26 | `autolevel-z-compensation` — **doğrulama sürüyor** | Tam haritada bilineer Z telafisi, hata sınırlarıyla G2/G3 segmentasyonu, ortak placement/G54 çerçevesi, ayrı çıktı ve mevcut Machine aktarımı uygulandı. Gerçek masaüstü Fake akışı ve ekran incelemesi başarılı; tam takım/son commit CI/merge bekliyor. [Doğrulama](../specs/026-autolevel-z-compensation/validation.md). | 25 |
+| 26 | `autolevel-z-compensation` — **yazılım tamamlandı** | Tam haritada bilineer Z telafisi, hata sınırlarıyla G2/G3 segmentasyonu, ortak placement/G54 çerçevesi, ayrı çıktı ve mevcut Machine aktarımı. 5100 test + 310 alt test; gerçek masaüstü ve son commit Windows CI başarılı. [PR #27](https://github.com/ozkurkuran/MikroCAM/pull/27) 01.10.2026 birleştirildi. Fiziksel cihaz doğrulaması açık. [Doğrulama](../specs/026-autolevel-z-compensation/validation.md). | 25 |
 | 27 | `job-queue` | Sıralama, iş başına durum, makine durumu kontrolü | 13 |
 
 ### 0.7 — Lazer olgunlaştırma

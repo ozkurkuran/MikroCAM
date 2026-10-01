@@ -7,10 +7,10 @@
 | FR003-006 / SC002 | mm/inch/absolute/incremental, rotated/mirrored G54 frames, CW/CCW/full circle/helix, cell curvature, output/dwell/end ancestry |
 | FR007-008 / SC003 | Complete analytic arc extent, outside-map/rounded-radius rejection, cooperative subdivision cancel/output cap, warped-Z/rapid and float32 precision guards |
 | FR009-011 / SC003-004 | Immutable input, obsolete worker suppression, map/source/settings/cancel/shutdown, board confirmation, current handoff, nonmodal file choice, protected atomic export |
-| FR012 / SC005 | Desktop below, complete local suite and final-head Windows CI pending |
+| FR012 / SC005 | Desktop below, complete local suite and final-head Windows CI successful |
 
 All eight constitution gates remain YES. No runtime dependency, copied source, new persistent
-schema, new transport or legacy feature logic. New modules<=259 lines; maximum new function37
+schema, new transport or legacy feature logic. New modules<=264 lines; maximum new function37
 lines at initial implementation audit (AST checked). Legacy growth is zero.
 
 Test-first evidence: missing surface/core modules caused two collection errors before
@@ -48,9 +48,8 @@ Initial snapshot-only desktop also passed. First enhanced file-source run failed
 harness's LF-vs-Windows-CRLF comparison; final assertion now compares exact decoded input bytes,
 matching the existing bridge's exact snapshot semantics. It then passed completely.
 
-## Remaining delivery evidence
-Complete local final-runtime suite, architecture/growth result, PR, final-head Windows CI and
-merge pending. Physical CNC/probe/registration/clearance accuracy is not validated; surface
+## Delivery evidence
+Final reviewed runtime and merge evidence are recorded below. Physical CNC/probe/registration/clearance accuracy is not validated; surface
 error describes emitted linear chords, with a separate XY arc approximation budget.
 
 
@@ -63,3 +62,21 @@ status to cancelled; parameter/map/source/shutdown invalidation retains its own 
 Focused auto-level/preflight/dry-run group:207 passed in6.19s. Feature cases now80.
 Pre-review full runtime:5097 passed,2 skipped,11 existing warnings,310 subtests in342.65s.
 Final reviewed runtime full suite, desktop and final-head Windows CI are being rerun.
+
+
+## Final reviewed runtime and delivery
+- Runtime head: `c0eed7b53655d24f8f3f26ce4a80bf2a3fd2f83f`.
+- Local CPython3.13.13/PyQt6 offscreen complete suite:5100 passed,310 subtests passed,
+  2 existing Qt-context skips,11 existing warnings in260.66s. Exit0;
+  `.venv/autolevel-full-reviewed.log`. Architecture/import-boundary/legacy-growth checks included.
+- Actual desktop final reviewed runtime:exit0, `.venv/autolevel-desktop-reviewed.log`;
+  map/arc/separate-export/Fake completion22 blocks, input-file protection, stale-input invalidation,
+  rendering and shutdown all passed. Screenshot re-inspected and readable.
+- AST size audit: largest new module264 lines, largest function37 lines; zero legacy growth.
+- [PR27](https://github.com/ozkurkuran/MikroCAM/pull/27): both review findings reproduced
+  test-first, fixed and resolved. Final-head
+  [Windows CI36913985665](https://github.com/ozkurkuran/MikroCAM/actions/runs/36913985665)
+  successful:5100 passed,310 subtests,2 skips,11 warnings in357.68s; pip check clean.
+- Merged2026-10-01 at commit `29ca8d276011831c7a6518d00d98aeda662893d4`.
+- ROADMAP026 marked software complete. Physical CNC accuracy/board registration/rapid
+  clearance are still unvalidated; simulator evidence does not establish hardware accuracy.
