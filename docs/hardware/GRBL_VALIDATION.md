@@ -1,0 +1,117 @@
+# GRBL 1.1 physical validation protocol
+
+Status: prepared on 2026-10-01. **No physical device has been tested by an agent.**
+The operator performs H3; software/Fake/CI results do not change a physical cell to passed.
+Use one owner of the COM port at a time. Close Machine and other senders before the optional
+inventory test. Close the inventory test before using Machine. Never run it on an active job.
+
+## Preconditions and stop rules
+
+- Remove the cutting tool. Disconnect spindle/laser power independently of software.
+- Check physical E-stop operation and keep it reachable. Verify clamps, cable routing,
+  axis travel and a safe air-cut clearance before any motion scenario.
+- Record `$20`, `$21`, `$22`, `$23`, `$32`, report units `$13`, homing/position validity and
+  configured limits. Do not change settings to make a test pass. Unexpected settings stop admission.
+- Record startup blocks through Machine's readonly `$N` query. Do not execute or rewrite them.
+- Begin with readonly checks, then bounded manual motion, then a short air job. Only the
+  operator may issue movement, zero, hold/resume, reset or output commands through Machine.
+- USB/serial opening can toggle driver DTR/RTS and reset a controller even when the program
+  sends only queries. Observe this with output power disconnected and the mechanism stopped.
+- If motion/output is unexpected, use physical E-stop, retain evidence and mark the cell failed.
+  Do not rely on a severed USB link to deliver Stop. Feed hold can leave spindle/coolant on;
+  Door can perform configured parking; reset may invalidate position. Record actual behavior.
+- Restoring power/homing/position after a failure is a separate operator decision. No automatic
+  reconnect/restart or replay is part of this protocol.
+
+## Run record
+
+Copy this section for each board/firmware/driver/commit combination. Retain raw wire logs,
+readonly JSON, photographs/screenshots and measurements next to the completed record.
+
+| Field | Value |
+| --- | --- |
+| Run ID / local date and time / timezone | Not tested |
+| Operator | Not tested |
+| Board manufacturer / model / revision | Not tested |
+| Firmware greeting and complete `$I` output | Not tested |
+| USB serial chip / VID PID / driver name and version | Not tested |
+| Windows edition and build / physical COM port / baud | Not tested |
+| MikroCAM commit (`git rev-parse HEAD`) / Python version | Not tested |
+| Homing completed / position validity / `$20` `$21` `$22` `$23` `$32` `$13` | Not tested |
+| Limit values and startup blocks | Not tested |
+| E-stop and output-power isolation evidence | Not tested |
+| Fixture / air clearance / probe type / measuring instrument accuracy | Not tested |
+| Log directory and evidence hashes | Not tested |
+
+## H2 optional readonly inventory
+
+The test is skipped unless `MIKROCAM_HW_PORT` is set and is always skipped when `CI` or
+`GITHUB_ACTIONS` is set. It opens one physical serial port at 115200, allows startup data to
+settle, then sends exactly `?` (one byte), `$I`, `$$`, `$G`, `$#` (each with one newline).
+It sends no movement, `$` setting write, wake line, unlock, homing or reset. Each query has a
+three-second response bound and a 16384-byte capture cap. A missing response, controller
+error or oversized reply fails the test. The port closes and the JSON is retained on failure.
+Inventory passing proves only complete replies to these five queries at this moment.
+
+Operator PowerShell, from the selected MikroCAM checkout:
+
+```powershell
+$env:MIKROCAM_HW_PORT = 'COM7' # replace with your physical device
+$env:MIKROCAM_HW_LOG = 'E:\your-evidence\run-001\readonly.json'
+& E:\VSCode\Flatcam\MikroCAM\.venv\repro-a\Scripts\python.exe -m pytest tests/hardware/test_readonly_grbl.py -q -s
+Remove-Item Env:MIKROCAM_HW_PORT
+Remove-Item Env:MIKROCAM_HW_LOG
+```
+
+Without `MIKROCAM_HW_LOG`, JSON defaults to `.venv/hardware/grbl-readonly-<UTC>.json`.
+Attach the resulting log; copy its firmware/settings/modal/offset replies into the run record.
+The test intentionally does not query `$N`; use Machine for that readonly record separately.
+Agents run only `tests/test_hardware_readonly_guard.py` and the default-skipped collection.
+
+## H3 operator scenarios and acceptance
+
+Each row is derived from the outstanding physical claims in the linked validation document.
+Document expected vs observed behavior, pass/fail/not-tested, log path and measurements for
+**every** row. For unsupported optional configurations, record a reasoned not-applicable value.
+A simulator cannot satisfy any row. Never mark an entire feature validated from inventory alone.
+
+| ID | Slice / source | Operator action and measurable acceptance |
+| --- | --- | --- |
+| H010-1 | [010](../../specs/010-machine-connect-grbl/validation.md) | With mechanisms stopped and power isolated, connect/disconnect/reconnect. Record greeting/reset on open, firmware and USB driver behavior. UI must match causal controller state and close ownership before reconnect. |
+| H010-2 | 010 | Compare fresh Machine MPos, WPos, WCO and report units with controller replies in mm/inch as configured. Interrupt status reporting and verify stale/blank DRO rather than old actionable coordinates. Retain timestamps. |
+| H011-1 | [011](../../specs/011-jog-and-work-zero/validation.md) | Home only after operator checks; perform smallest bounded jog on each free axis. Measure distance/direction and verify limit admission. Cancel during jog; observe actual stop distance and causal Idle. |
+| H011-2 | 011 | Set G54 zero through Machine only at an explicitly chosen position. Compare offset readback. Power-cycle with outputs isolated; re-establish homing/position before checking stored G54. Record persistence and startup/reset effects. |
+| H011-3 | 011 | Record startup blocks, parking/Door configuration and alarm state. Confirm refused manual actions stay refused. Test physical E-stop and configured Door/parking only with a known safe envelope. Do not classify Door as verified stop. |
+| H013-1 | [013](../../specs/013-job-streaming/validation.md) | Review a short bounded air job with output power disconnected. Confirm explicit start, ordered accepted-line progress, final M5 M9 ACK, output-off readback and causal Idle endpoint. Measure observed endpoint against reviewed path. |
+| H013-2 | 013 | Hold a safe air job; record deceleration, held state and physical outputs. Resume explicitly. Repeat with Stop and with panel/application close during hold; record completion of shutdown, no further job lines and actual stop/output state. |
+| H013-3 | 013 | During a safe low-speed air job disconnect USB while E-stop is ready. UI must show failure and invalidate control; confirm no automatic replay after reconnect. Observe independently whether the mechanism continues because a lost link cannot transmit Stop. |
+| H013-4 | 013 | Run a reviewed short-segment air job (including 026 output). Retain wire timing and video. Record visible pauses and attribute them using send/ACK timing; only demonstrated send-response delay can trigger C3. No character-counting mode is implied. |
+| H014-1 | [014](../../specs/014-dry-run/validation.md) | Compare actual air-cut path and safe Z with dry-run/preflight bounds for the same source, placement, zero and limits. Check fixture clearance independently; simulation does not establish physical collision clearance. |
+| H015-1 | [015](../../specs/015-machine-console/validation.md) | Query the readonly inventory and startup blocks through Machine console. Verify one owner, complete causal replies, bounded display and TX/RX timing. Cable loss/timeouts must not present success or allow stale evidence to admit motion. |
+| H025-1 | [025](../../specs/025-probe-grid-heightmap/validation.md) | Check probe polarity/continuity independently. On a known plane acquire a small reviewed grid. Compare contact heights with independent measurements and saved measured provenance; record stopped Z separately from contact Z. |
+| H025-2 | 025 | With safe limited Z travel test no-contact, failed contact, Stop during acquisition and cable loss. Partial map must remain partial; no unsafe retract/resume from unverified stop or stale coordinates. Record actual contact/stop/retract behavior. |
+| H026-1 | [026](../../specs/026-autolevel-z-compensation/validation.md) | Measure board registration/G54 and surface independently, then review/save derived output. First run in air with tool removed; compare placement, rapid clearance and Z bounds to original/map/reference. |
+| H026-2 | 026 | Only after air results pass, restore a suitable tool and output power under operator control for a sacrificial coupon. Measure isolation depth/uniformity and map/probe accuracy with instrument/tolerance declared before cutting. Record all errors; do not infer accuracy from software chord tolerance. |
+
+## Compatibility matrix
+
+Copy the matrix once for each board/firmware/driver/commit run. Every result needs its wire-log
+path and physical measurement or observation reference. Initial values below deliberately
+preserve the absence of evidence; they are not failures or passes.
+
+| Board / firmware / run ID | 010-1 | 010-2 | 011-1 | 011-2 | 011-3 | 013-1 | 013-2 | 013-3 | 013-4 | 014-1 | 015-1 | 025-1 | 025-2 | 026-1 | 026-2 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Not supplied / not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested | Not tested |
+
+Cell format: `passed/failed/not-tested/not-applicable — evidence path; observation; tolerance`.
+A failed case opens a test-first hotfix when existing behavior is wrong, or a separate spec
+proposal when new behavior is required. Keep the raw failure evidence.
+
+## Completion and deferred gates
+
+H1/H2 are agent preparation. H3 is complete only when an operator supplies a completed record
+and matrix for at least one GRBL 1.1 board with sufficient evidence for each applicable row.
+Only then can relevant ROADMAP physical-validation annotations be changed. C3 additionally
+needs measured segment stalls tied to send-response timing. D additionally needs the target
+FluidNC/grblHAL board and explicit removal of relevant items from ROADMAP's deferred list.
+No such evidence or authorization is asserted by this document.
