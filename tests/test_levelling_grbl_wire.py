@@ -51,3 +51,31 @@ def test_connect_requires_real_grbl_response(tool, reply, connected):
 def test_wake_decodes_bytes_with_replacement(tool):
     tool.grbl_ser_port.readlines.return_value = [b"ok\r\n", b"bad\xff\n"]
     assert tool.on_grbl_wake() == ["ok", "bad\ufffd"]
+
+
+@pytest.mark.parametrize("reply,expected", [
+    ([], ""), ([b"ok\r\n"], "ok"),
+    ([b"first\n", b"bad\xff\n", b"ok\n"], "first\nbad\ufffd\nok"),
+])
+def test_command_returns_text(tool, reply, expected):
+    tool.grbl_ser_port.readlines.return_value = reply
+    result = tool.send_grbl_command("$G", echo=False)
+    assert isinstance(result, str)
+    assert result == expected
+    tool.grbl_ser_port.write.assert_called_once_with(b"$G\n")
+
+
+def test_probe_returns_text_on_result(tool, monkeypatch):
+    monkeypatch.setattr(levelling.time, "monotonic", lambda: 0.0)
+    tool.grbl_ser_port.readline.side_effect = [b"ok\n", b"[PRB:1,2,3:1]\n"]
+    result = tool._send_grbl_probe_command("G38.2 Z-1 F10", echo=False)
+    assert isinstance(result, str)
+    assert result == "ok\n[PRB:1,2,3:1]"
+
+
+def test_probe_returns_none_on_timeout(tool, monkeypatch):
+    ticks = iter([0.0, 0.0, 10.1])
+    monkeypatch.setattr(levelling.time, "monotonic", lambda: next(ticks))
+    tool.grbl_ser_port.readline.return_value = b""
+    assert tool._send_grbl_probe_command("G38.2 Z-1 F10", echo=False) is None
+    assert tool.app.inform.emit.call_args.args[0].startswith("[ERROR_NOTCL]")
