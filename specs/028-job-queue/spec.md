@@ -137,7 +137,7 @@ kaynağın hiç gönderilmediğini, sonuçların korunduğunu ve geç onayın ye
 - Hazır işler mevcut doğrulama ve mekanik çalıştırma kurallarından gelir. Kuyruk bu
   kuralları gevşetmez; yeni transport veya kontrolcü türü eklenmez.
 - C1 matrisinin tamamlanması ve ACK deadline düzeltmeleri uygulama başlangıç koşuludur.
-  B ve C1 ayrı PR'lardır; bu taslak B üzerine kurulmuştur ve C1 entegrasyonu planlanacaktır.
+  B ve C1 ayrı PR'lardır; bu taslak B1'in son commit'i ve C1'in ACK düzeltmeleriyle entegredir.
 - FR-006 seçilmeden plan/tasks/uygulama tamamlanmış sayılmaz; iki davranış birden
   varsayılan seçenek olarak uygulanmaz.
 
