@@ -101,9 +101,10 @@ def probe_journey(app, qapp, errors, pump_until, root):
             "six-point analytic height map",
             timeout=25,
         )
-        path = _complete_evidence(app, dialog, fake, root)
         panel.disconnect_machine()
         pump_until(qapp, lambda: not panel.busy, errors, "probe complete session join")
+        # Offline wire invariance requires the polling owner to be fully joined.
+        path = _complete_evidence(app, dialog, fake, root)
         fake = FakeGRBL(machine_position=(0.0, 0.0, 5.0))
         dialog = _connect(panel, fake, qapp, errors, pump_until)
         _fill(dialog, nx=4, ny=2)
