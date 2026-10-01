@@ -79,3 +79,27 @@ def test_probe_returns_none_on_timeout(tool, monkeypatch):
     tool.grbl_ser_port.readline.return_value = b""
     assert tool._send_grbl_probe_command("G38.2 Z-1 F10", echo=False) is None
     assert tool.app.inform.emit.call_args.args[0].startswith("[ERROR_NOTCL]")
+
+
+@pytest.mark.parametrize("direction,axis", [
+    ("xplus", "X5.0"), ("xminus", "X-5.0"),
+    ("yplus", "Y5.0"), ("yminus", "Y-5.0"),
+    ("zplus", "Z5.0"), ("zminus", "Z-5.0"),
+])
+def test_jog_writes_numeric_step(tool, direction, axis):
+    tool.ui.jog_step_entry.get_value.return_value = "5"
+    tool.ui.jog_fr_entry.get_value.return_value = "100"
+    tool.on_grbl_jog(direction)
+    tool.grbl_ser_port.write.assert_called_once_with(
+        f"$J=G91 G21 {axis} F100.0\n".encode())
+
+
+@pytest.mark.parametrize("entry", ["jog_step_entry", "jog_fr_entry"])
+@pytest.mark.parametrize("value", [0, -1, float("nan"), float("inf"), "bad", None])
+def test_jog_rejects_invalid_step_or_feed(tool, entry, value):
+    tool.ui.jog_step_entry.get_value.return_value = 5
+    tool.ui.jog_fr_entry.get_value.return_value = 100
+    getattr(tool.ui, entry).get_value.return_value = value
+    tool.on_grbl_jog("xplus")
+    tool.grbl_ser_port.write.assert_not_called()
+    assert tool.app.inform.emit.call_args.args[0].startswith("[ERROR_NOTCL]")

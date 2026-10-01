@@ -1904,8 +1904,15 @@ class ToolLevelling(CNCjob, AppTool):
             return
         cmd = ''
 
-        step = self.ui.jog_step_entry.get_value(),
-        feedrate = self.ui.jog_fr_entry.get_value()
+        try:
+            step = float(self.ui.jog_step_entry.get_value())
+            feedrate = float(self.ui.jog_fr_entry.get_value())
+        except (TypeError, ValueError):
+            self.app.inform.emit('[ERROR_NOTCL] %s' % _("Jog step and feedrate must be finite and positive."))
+            return
+        if not math.isfinite(step) or step <= 0 or not math.isfinite(feedrate) or feedrate <= 0:
+            self.app.inform.emit('[ERROR_NOTCL] %s' % _("Jog step and feedrate must be finite and positive."))
+            return
         app_defaults = getattr(self.app, "defaults", None) or AppDefaults.factory_defaults
         travelz = float(
             self.app.options.get(
