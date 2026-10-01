@@ -22,6 +22,9 @@ def tool(monkeypatch):
     obj.ui.baudrates_list_combo.currentText.return_value = "115200"
     obj.ui.al_toolbar.count.return_value = 0
     obj.units = "MM"
+    # Isolated mock-only retained wire behavior; runtime connection stays blocked.
+    obj.ui.al_controller_combo.get_value.return_value = "MACH3"
+    obj.on_grbl_connect = obj._legacy_on_grbl_connect
     obj.grbl_ser_port = MagicMock()
     monkeypatch.setattr(levelling.serial, "serial_for_url",
                         MagicMock(return_value=obj.grbl_ser_port))

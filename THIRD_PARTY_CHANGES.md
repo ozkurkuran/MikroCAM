@@ -328,3 +328,18 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 - Verification: A1, A3, A4 and A5 regressions failed before their fixes; A2 lock tests
   passed against existing code. All 47 wire tests pass after fixes. Full-suite and
   Windows CI results are recorded in the phase A pull request.
+
+
+## 2026-10-01 — Evo Levelling GRBL single-owner handoff
+
+- Source repository: https://bitbucket.org/marius_stanciu/flatcam_beta
+- Source branch/commit: Beta_1.0, `e046a2a33926003765f83d6402b96fe6c5c3bcf7`; MIT notices retained.
+- File: appPlugins/ToolLevelling.py; independently implemented UI helper/tests/docs.
+- Reason: prevent legacy port scanning/connection and GRBL callbacks from bypassing Machine.
+- Changes: metadata-only port listing, blocked public connection, GRBL callback guards,
+  hidden/disabled serial frame and explicit reuse of Machine. Legacy implementations retained;
+  offline MACH3/MACH4/LinuxCNC behavior preserved. No outside fork source copied.
+- MikroCAM commit: the implementation commit named `feat: route GRBL Levelling to Machine`.
+- Verification: 20 acceptance cases failed before implementation; related144 tests and41
+  subtests pass. Full-suite, desktop and final-head CI evidence in specs/027-levelling-machine-handoff/validation.md.
+- No physical device was connected or validated.
