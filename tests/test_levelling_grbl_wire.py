@@ -114,3 +114,32 @@ def test_zero_uses_current_position_without_changing_settings(tool, axis, comman
     tool.on_grbl_zero(axis)
     tool.grbl_ser_port.write.assert_called_once_with(command)
     tool.on_grbl_get_parameter.assert_not_called()
+
+
+@pytest.mark.parametrize("checked,command", [(True, b"!"), (False, b"~")])
+def test_pause_resume_writes_only_realtime_byte(tool, checked, command):
+    tool.on_grbl_pause_resume(checked)
+    tool.grbl_ser_port.write.assert_called_once_with(command)
+    tool.grbl_ser_port.readlines.assert_not_called()
+
+
+@pytest.mark.parametrize("command", [b"?", b"!", b"~", b"\x18"])
+def test_realtime_allowed_bytes_do_not_read(tool, command):
+    tool.send_grbl_realtime(command)
+    tool.grbl_ser_port.write.assert_called_once_with(command)
+    tool.grbl_ser_port.readlines.assert_not_called()
+
+
+@pytest.mark.parametrize("command", [b"", b"!\n", b"!!", b"G", b"\x85", "!", 33])
+def test_realtime_rejects_other_values(tool, command):
+    with pytest.raises(ValueError):
+        tool.send_grbl_realtime(command)
+    tool.grbl_ser_port.write.assert_not_called()
+
+
+def test_reset_writes_reset_before_waiting_for_greeting(tool):
+    events = []
+    tool.grbl_ser_port.write.side_effect = lambda data: events.append(("write", data))
+    tool.grbl_ser_port.readlines.side_effect = lambda: events.append(("read", None)) or [b"Grbl 1.1h\n"]
+    tool.on_grbl_reset()
+    assert events == [("write", b"\x18"), ("read", None)]

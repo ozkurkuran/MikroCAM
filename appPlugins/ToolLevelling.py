@@ -1961,20 +1961,25 @@ class ToolLevelling(CNCjob, AppTool):
         self.on_grbl_wake()
         self.send_grbl_command(command=cmd)
 
+    def send_grbl_realtime(self, byte: bytes):
+        """Send one supported GRBL realtime byte without waiting for an ACK."""
+        if not isinstance(byte, bytes) or byte not in (b'?', b'!', b'~', b'\x18'):
+            raise ValueError("Unsupported GRBL realtime byte")
+        self.grbl_ser_port.write(byte)
+
     def on_grbl_reset(self):
-        cmd = '\x18'
+        self.send_grbl_realtime(b'\x18')
         self.app.inform.emit("%s" % _("GRBL software reset was sent."))
-        self.on_grbl_wake()
-        self.send_grbl_command(command=cmd)
+        # Reset emits a startup greeting; wait without sending a wake line.
+        time.sleep(1)
+        self.grbl_ser_port.readlines()
 
     def on_grbl_pause_resume(self, checked):
         if checked is False:
-            cmd = '~'
-            self.send_grbl_command(command=cmd)
+            self.send_grbl_realtime(b'~')
             self.app.inform.emit("%s" % _("GRBL resumed."))
         else:
-            cmd = '!'
-            self.send_grbl_command(command=cmd)
+            self.send_grbl_realtime(b'!')
             self.app.inform.emit("%s" % _("GRBL paused."))
 
     def probing_gcode(self, storage):
