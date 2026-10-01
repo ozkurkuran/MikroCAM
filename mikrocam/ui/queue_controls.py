@@ -160,10 +160,9 @@ class QueueControls(QtWidgets.QDialog):
             self._pending_keys = ()
         if queue.can_stop:
             self.draft.locked = True
-        elif not self._pending_keys:
+        elif (not self._pending_keys and queue.phase in
+              (QueuePhase.COMPLETE, QueuePhase.FAILED, QueuePhase.ABORTED)):
             self.draft.settle(queue)
-        elif snapshot.connection in (ConnectionState.DISCONNECTED, ConnectionState.ERROR):
-            self.start_rejected("Session closed before queue admission")
         self.status_label.setText(f"{_(queue.phase.value)}: {_(queue.diagnostic)}")
         self._render()
 

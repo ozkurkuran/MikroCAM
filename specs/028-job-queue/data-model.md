@@ -6,7 +6,7 @@ move, remove and clear by validated ID; no I/O. Duplicate sources keep independe
 StartQueueRequest: nonempty tuple of unique entries and explicit whole-queue mechanical approval.
 QueueObservation: ordered entry outcomes, one active ID, phase, diagnostic and control flags.
 Each result holds original identity and JobObservation progress/terminal state.
-Queue phases: ready → running → held/complete/failed/stopped. A held boundary may explicitly
-resume; failed/stopped/complete never auto-restart. New execution requires explicit approval,
+Queue phases: ready → running → paused/complete/failed/aborted. A paused boundary may explicitly
+resume; failed/aborted/complete never auto-restart. New execution requires explicit approval,
 and rerun of terminal work requires explicit new addition. Reconnect retains visible outcomes.
 All models use exact types, bounded text/IDs/counts and frozen dataclasses. No Qt imports.

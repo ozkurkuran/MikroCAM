@@ -14,3 +14,14 @@ adımları tamamlandı. Otomatik ilerleme uygulama varsayımı spec'te açıkça
 - Fiziksel doğrulama H3 açık. main/yol haritası teslim durumları birleştirme öncesi değişmedi.
 - PR #32 son-head Windows CI commit/push sonrasında ayrıca kaydedilir; önceki base CI runtime
   kuyruk kanıtı olarak kullanılmaz.
+
+
+## PR review follow-up
+- Disconnect placeholder previously unlocked the draft:2 red regressions reproduced it.
+  Terminal-only settling, retained queue placeholder and pending owner-cancellation evidence
+  now pass40 model/UI/worker tests; a third pending-disconnect regression is also protected.
+- Desktop follow-up exit0 includes QUEUE_STOP_REMAINDER_NOT_SENT_OK with actual Qt Stop,
+  aborted current result and no second-entry source. Completed screenshot remains readable.
+- Data model phase terms aligned to paused/aborted. PR body now describes implemented policy
+  and the user completion instruction; no unresolved clarification is represented as answered.
+- Final follow-up head requires fresh Windows CI; local5345 full result belongs to2760d219.

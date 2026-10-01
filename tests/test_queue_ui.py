@@ -107,3 +107,37 @@ def test_changed_live_candidate_cannot_be_added(controls):
     ui._validator = lambda job: False
     ui.add_button.click()
     assert not ui.draft.entries
+
+
+def test_disconnect_placeholder_cannot_unlock_admitted_queue(controls):
+    from mikrocam.machine.models import MachineSnapshot
+    ui, controller, fake = controls
+    ui.set_candidate(loop_job("shutdown.nc"))
+    ui.add_button.click()
+    entry = ui.draft.entries[0]
+    ui.confirm.setChecked(True)
+    ui.start_button.click()
+    running = replace(controller.snapshot(), queue=QueueObservation(
+        phase=QueuePhase.RUNNING, entries=(QueueResult(entry),), active_key=entry.key, can_stop=True))
+    ui.update_snapshot(running)
+    assert ui.draft.locked and not ui._pending_keys
+    ui.update_snapshot(MachineSnapshot())
+    assert ui.draft.locked and not ui.add_button.isEnabled()
+    ui.update_snapshot(replace(MachineSnapshot(), queue=QueueObservation(
+        phase=QueuePhase.ABORTED, entries=(QueueResult(entry),))))
+    assert not ui.draft.locked
+
+
+def test_pending_disconnect_waits_for_owner_cancellation_evidence(controls):
+    from mikrocam.machine.models import MachineSnapshot
+    ui, controller, fake = controls
+    ui.set_candidate(loop_job("pending-close.nc"))
+    ui.add_button.click()
+    ui.confirm.setChecked(True)
+    ui.start_button.click()
+    entry = ui.draft.entries[0]
+    ui.update_snapshot(MachineSnapshot())
+    assert ui.draft.locked and ui._pending_keys
+    ui.update_snapshot(replace(MachineSnapshot(), queue=QueueObservation(
+        phase=QueuePhase.ABORTED, entries=(QueueResult(entry),))))
+    assert not ui.draft.locked and not ui._pending_keys

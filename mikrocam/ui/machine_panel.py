@@ -314,7 +314,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         self._worker.stop()
         self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job,
                                              console=self.last_snapshot.console, wire=self.last_snapshot.wire,
-                                             probe=self.last_snapshot.probe)
+                                             probe=self.last_snapshot.probe, queue=self.last_snapshot.queue)
         self._render_snapshot()
         self.status_label.setText(_('Closing communication…'))
         self._update_actions()
