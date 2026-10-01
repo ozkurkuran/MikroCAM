@@ -132,7 +132,7 @@ birlikte içe aktarılır.
 
 | Sıra | Kısa ad | Kapsam | Bağımlılık |
 | --- | --- | --- | --- |
-| 25 | `probe-grid-heightmap` | ProbeMap, Fake ile grid probing, kaydetme/yükleme, görselleştirme | 13 |
+| 25 | `probe-grid-heightmap` — **doğrulama sürüyor** | ProbeMap, Fake ile grid probing, kaydetme/yükleme ve görselleştirme uygulandı. 01.10.2026 gerçek masaüstü testi ve ekran incelemesi başarılı; tam takım için Windows CI ve merge bekleniyor. Fiziksel cihaz doğrulaması açık. [Doğrulama](../specs/025-probe-grid-heightmap/validation.md). | 13 |
 | 26 | `autolevel-z-compensation` | Bilineer interpolasyon, G2/G3 segmentasyonu, placement transform ile entegrasyon | 25 |
 | 27 | `job-queue` | Sıralama, iş başına durum, makine durumu kontrolü | 13 |
 

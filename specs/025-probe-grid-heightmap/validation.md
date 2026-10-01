@@ -58,4 +58,16 @@ assertion failed, and neither run counts as a passing desktop run. The second ru
 an existing harness defect: after the watchdog terminated the application pool workers, the
 pool spawned a replacement that kept the log handle open until it was stopped manually.
 
-Pending: a complete desktop run with screenshot inspection, final-head Windows CI and merge.
+Resumed actual desktop on 2026-10-01 using CPython 3.13.13 from
+`E:/VSCode/Flatcam/MikroCAM/.venv/repro-a/Scripts/python.exe`: complete
+`tests/smoke_app.py` passed (exit 0), within the unchanged 85 s watchdog.
+Log: `.venv/probe-desktop-resumed.log`. Six analytic samples and final retract,
+complete map offline roundtrip, priority stop with two preserved samples and incomplete
+map roundtrip all passed. Existing import/CAM/laser, machine/jog/G54/console,
+preflight/job/pause/resume/stop/dry-run and active-job shutdown journeys passed.
+`RENDER_OK` and `SHUTDOWN_OK` were emitted. Inspected
+`.venv/probe-grid-smoke.png`: all six numeric heights (0.00000..0.04000 mm),
+physical grid coordinates, simulated/complete provenance and controls are readable.
+Existing Qt window-size/teardown warnings did not fail assertions.
+
+Pending: final-head Windows CI and merge.
