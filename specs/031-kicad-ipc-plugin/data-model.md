@@ -1,0 +1,2 @@
+# Bridge configuration
+JSON schema1: repo_root (existing directory with flatcam.py), python_executable (existing Python), transfer_directory (resolved local directory). No credentials or tokens stored. User-selected install folder contains plugin.json, bridge.py, requirements.txt, icons and generated config.json. Snapshot temp lifetime ends after helper returns; output package lives in transfer_directory.

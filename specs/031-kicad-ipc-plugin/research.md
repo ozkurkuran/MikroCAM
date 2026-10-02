@@ -1,0 +1,4 @@
+# Research031
+Primary developer guidance: https://dev-docs.kicad.org/en/apis-and-binding/ipc-api/for-addon-developers/ . Official10 schema https://gitlab.com/kicad/code/kicad/-/raw/10.0/api/schemas/api.v1.schema.json . Inspected official0.8.0 wheel methods: KiCad.get_board().name/document, Board.save_as uses SaveCopyOfDocument and include_project, KiCad.get_kicad_binary_path resolves CLI belonging to the running instance. KiCad10 IPC exports absent;030 CLI remains one exporter.
+Official PyPI kicad-python0.8.0 MIT requires Python>=3.9, jsonschema4/protobuf5/pynng0.9. Isolated test venv installed compatible pinned tree; main app requirements untouched.
+No existing IPC server reachable at default socket; native validation must launch a separate test instance with isolated settings, not alter a user's open board.

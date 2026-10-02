@@ -1,0 +1,2 @@
+# IPC contract
+Plugin launched by KiCad passes KICAD_API_SOCKET/KICAD_API_TOKEN to official KiCad client. Board.save_as writes SaveCopyOfDocument to private directory, include_project=True, overwrite=False. No board.save/revert/set_items. Helper argv uses configured interpreter, -m mikrocam.kicad, copy path, --output unique archive, --kicad-cli active KiCad binary. Successful package only launches flatcam.py archive path with cwd repo_root. All subprocesses shell=False; Windows consoles hidden.

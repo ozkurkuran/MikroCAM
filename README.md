@@ -110,3 +110,5 @@ enable it, and update/download/revert controls are unavailable in this fork. Obt
 updates from [this repository](https://github.com/ozkurkuran/MikroCAM); future binary releases
 will be published through the packaging roadmap slice. Existing upstream updater services
 remain in source for provenance, but the MikroCAM UI does not launch them.
+
+KiCad10 PCB Editor can send production files directly through MikroCAM Bridge. See the [KiCad transfer guide](docs/KICAD_TRANSFER.md) and [plugin installation](integrations/kicad/README.md).

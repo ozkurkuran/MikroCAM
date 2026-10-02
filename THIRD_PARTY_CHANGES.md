@@ -366,3 +366,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
 
 ## 2026-10-02 — KiCad production transfer (030)
 Original MikroCAM implementation; no KiCad source copied. External installed KiCad10.0 CLI performs DRC/Gerber/Excellon on a private snapshot. Primary behavioral references: https://docs.kicad.org/10.0/en/cli/cli.html ; https://dev-docs.kicad.org/en/apis-and-binding/ipc-api/for-addon-developers/ . Files: mikrocam/core/kicad_transfer.py, mikrocam/kicad/, mikrocam/bridge/kicad_transfer.py, mikrocam/ui/kicad_transfer.py and short appMain hooks. No new CAM runtime dependency. Commit: feature030 delivery commit carrying this record.
+
+
+## 2026-10-02 — KiCad IPC Bridge (031)
+Original standalone MikroCAM action/installer. No source copied from KiCad or other plugins. Optional official kicad-python0.8.0 (MIT) installed only in KiCad’s separate environment; full compatible transitive tree pinned in integrations/kicad/requirements.txt and original dependency license texts retained under THIRD_PARTY_LICENSES/optional-kicad. Reference package https://pypi.org/project/kicad-python/0.8.0/ and https://gitlab.com/kicad/code/kicad-python ; official10 plugin schema and IPC developer docs consulted for protocol/metadata. SDK implementation was inspected to confirm SaveCopyOfDocument and version0.8 method availability; no SDK implementation ported. Files: integrations/kicad/, mikrocam/kicad/install_plugin.py. Commit:031 delivery commit carrying this record.
