@@ -9,6 +9,7 @@ from mikrocam.core.cnc_job import PreparedJob
 from mikrocam.machine.controller import MachineController
 from mikrocam.machine.manual_models import JogRequest, ZeroRequest, SelectG54Request
 from mikrocam.machine.job_models import StartJobRequest
+from mikrocam.machine.queue_models import StartQueueRequest
 from mikrocam.machine.console_models import ConsoleRequest
 from mikrocam.machine.probe_models import StartProbeGridRequest
 from mikrocam.machine.models import ConnectionState, MachineSnapshot
@@ -28,20 +29,22 @@ class MachineWorker(QtCore.QThread):
         self._job_stop = Event()
         self._lock = Lock()
         self._pending = None
+        self._cancelled_queue: StartQueueRequest | None = None
         self._cancelled_console: ConsoleRequest | None = None
         self._cancelled_probe: StartProbeGridRequest | None = None
         self._admission_open = False
         self._latest = MachineSnapshot()
         self.final_snapshot = MachineSnapshot()
 
-    def submit(self, request: JogRequest | ZeroRequest | SelectG54Request | StartJobRequest | ConsoleRequest | StartProbeGridRequest) -> bool:
+    def submit(self, request: JogRequest | ZeroRequest | SelectG54Request | StartJobRequest | StartQueueRequest | ConsoleRequest | StartProbeGridRequest) -> bool:
         """Reserve one intent slot; admission is rechecked by the communication owner."""
         flags = {JogRequest: 'can_jog', ZeroRequest: 'can_zero', SelectG54Request: 'can_select_g54'}
-        if type(request) not in (*flags, StartJobRequest, ConsoleRequest, StartProbeGridRequest):
+        if type(request) not in (*flags, StartJobRequest, StartQueueRequest, ConsoleRequest, StartProbeGridRequest):
             return False
         with self._lock:
             if (self._interrupted() or not self._admission_open or self._pending is not None
-                    or not (self._latest.job.can_start if type(request) is StartJobRequest
+                    or not (self._latest.queue.can_start if type(request) is StartQueueRequest
+                            else self._latest.job.can_start if type(request) is StartJobRequest
                             else self._latest.probe.can_start if type(request) is StartProbeGridRequest
                             else self._latest.console.can_query if type(request) is ConsoleRequest
                             else getattr(self._latest.manual, flags[type(request)]))):
@@ -53,7 +56,9 @@ class MachineWorker(QtCore.QThread):
     def _priority(self, event: Event) -> None:
         with self._lock:
             event.set()
-            if type(self._pending) is ConsoleRequest:
+            if type(self._pending) is StartQueueRequest:
+                self._cancelled_queue = self._pending
+            elif type(self._pending) is ConsoleRequest:
                 self._cancelled_console = self._pending
             elif type(self._pending) is StartProbeGridRequest:
                 self._cancelled_probe = self._pending
@@ -113,11 +118,13 @@ class MachineWorker(QtCore.QThread):
             self._job_stop.clear()
             self._pause.clear()
             request, self._pending = self._pending, None
-            if type(request) in (StartJobRequest, ConsoleRequest, StartProbeGridRequest) and not any((abort, job_stop, cancel, pause)):
+            if type(request) in (StartJobRequest, StartQueueRequest, ConsoleRequest, StartProbeGridRequest) and not any((abort, job_stop, cancel, pause)):
                 # request_job only reserves domain state: no serial I/O under this lock.
                 # GUI invalidation and owner admission have one unambiguous ordering.
                 try:
-                    if type(request) is ConsoleRequest:
+                    if type(request) is StartQueueRequest:
+                        controller.request_queue(request)
+                    elif type(request) is ConsoleRequest:
                         controller.request_console(request)
                     elif type(request) is StartProbeGridRequest:
                         controller.request_probe(request)
@@ -153,8 +160,11 @@ class MachineWorker(QtCore.QThread):
 
     def _cancel_console_intent(self, controller: MachineController) -> None:
         with self._lock:
+            queue, self._cancelled_queue = self._cancelled_queue, None
             request, self._cancelled_console = self._cancelled_console, None
             probe, self._cancelled_probe = self._cancelled_probe, None
+        if queue is not None:
+            controller.cancel_queue_request(queue)
         if request is not None:
             controller.cancel_console_request(request)
         if probe is not None:
@@ -167,7 +177,7 @@ class MachineWorker(QtCore.QThread):
             self._admission_open = (not self._interrupted() and not self._pause.is_set() and self._pending is None
                                     and any((snapshot.manual.can_jog, snapshot.manual.can_zero,
                                              snapshot.manual.can_select_g54, snapshot.job.can_start,
-                                             snapshot.console.can_query, snapshot.probe.can_start)))
+                                             snapshot.console.can_query, snapshot.probe.can_start, snapshot.queue.can_start)))
         if changed:
             self.snapshot_ready.emit(snapshot)
 

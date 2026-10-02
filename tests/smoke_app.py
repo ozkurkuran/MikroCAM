@@ -414,6 +414,8 @@ def run_smoke(sandbox, state):
         qapp.processEvents()
         laser_journey(app, qapp, sandbox, errors)
         laser_export_journey(app, qapp, sandbox, errors)
+        from smoke_levelling_handoff import levelling_handoff_journey
+        levelling_handoff_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_probe import probe_journey
         probe_journey(app, qapp, errors, pump_until, ROOT)
         machine_transport = machine_journey(app, qapp, errors)
@@ -425,6 +427,8 @@ def run_smoke(sandbox, state):
         autolevel_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_job import job_journey
         machine_transport = job_journey(app, qapp, errors, pump_until, ROOT)
+        from smoke_queue import queue_journey
+        machine_transport = queue_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_dry_run import dry_run_journey
         machine_transport = dry_run_journey(app, qapp, errors, pump_until, ROOT)
         render_and_quit(app, qapp, errors, machine_transport)

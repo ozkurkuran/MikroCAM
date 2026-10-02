@@ -90,6 +90,9 @@ class ManualControl:
 
     def consume(self, line: str) -> bool:
         """Collect one transaction; never transmit its next phase inside this batch."""
+        if self.transaction is not None and self.host._clock() >= self.deadline:
+            self.fail('Manual transaction response timed out before evidence arrived')
+            return True
         if line in ('ok',) or line.startswith('error:'):
             if self.phase is ManualPhase.CANCELLING and self.cancel_ack_pending:
                 self.cancel_ack_pending = False

@@ -30,3 +30,14 @@ harita görüntülenirken değişmemiş canlı durum kayıtları onu değiştirm
 Sınırlar: eksen başına 2..64 nokta, toplam en fazla 1024 nokta; güvenli Z ile en düşük probe Z
 arası en fazla 100 mm; feed 0,01..10000 mm/dakika; zaman aşımı 3..300 s; dosya en fazla 1 MiB.
 Bu dilim Z telafisi yapmaz; telafi ve yay segmentasyonu 026 numaralı dilimdedir.
+
+
+## Legacy Levelling ve GRBL
+
+Levelling aracında GRBL seçilince eski Connect/Control/Sender sekmeleri kapalıdır;
+**Open Machine panel** düğmesi mevcut Machine panelini açar. Port arama veya bağlantı
+kendiliğinden yapılmaz; eski araç ayrı bir COM sahibi olamaz. Probe grid 025, auto-level 026
+ve iş gönderimi 013 kendi inceleme/başlatma/durdurma kurallarıyla kullanılır. Auto-level
+hazırlığı G-code preflight panelinden açılır. Yönlendirme eski haritayı veya işi otomatik
+aktarmaz ve makineye bağlanmaz. MACH3/MACH4/LinuxCNC için mevcut probe G-code üretimi ve
+yükseklik dosyası içe aktarma korunur. Fiziksel cihaz doğrulaması ayrıca yapılmalıdır.

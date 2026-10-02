@@ -5,7 +5,7 @@ import gettext
 from PyQt6 import QtCore, QtWidgets
 
 from mikrocam.core.cnc_job import PreparedJob
-from mikrocam.machine.job_models import JobPhase, StartJobRequest
+from mikrocam.machine.job_models import JobPhase, StartJobRequest, StreamingMode
 from mikrocam.machine.models import ConnectionState, MachineSnapshot
 
 
@@ -29,6 +29,11 @@ class JobControls(QtWidgets.QWidget):
         self.source_label.setWordWrap(True)
         self.source_label.setTextFormat(QtCore.Qt.TextFormat.PlainText)
         layout.addWidget(self.source_label)
+        self.mode_combo = QtWidgets.QComboBox()
+        self.mode_combo.addItem(_('Send-response (default)'), StreamingMode.SEND_RESPONSE)
+        self.mode_combo.addItem(_('Character counting (GRBL 1.1, verified RX)'), StreamingMode.CHARACTER_COUNTING)
+        self.mode_combo.setToolTip(_('Buffered acceptance is not physical completion.'))
+        layout.addWidget(self.mode_combo)
         self.confirm_checkbox = QtWidgets.QCheckBox(_(
             'For this Start: mechanical spindle only;\nno laser connected to spindle/PWM output.'))
         self.confirm_checkbox.toggled.connect(self._render)
@@ -80,7 +85,7 @@ class JobControls(QtWidgets.QWidget):
     def _start(self) -> None:
         if not self.start_button.isEnabled() or self.prepared_job is None:
             return
-        request = StartJobRequest(self.prepared_job, self.confirm_checkbox.isChecked())
+        request = StartJobRequest(self.prepared_job, self.confirm_checkbox.isChecked(), self.mode_combo.currentData())
         self.set_pending()
         self.reset_confirmation()
         self.start_requested.emit(request)
@@ -89,6 +94,7 @@ class JobControls(QtWidgets.QWidget):
         observation = self._snapshot.job
         connected = self._worker_available and self._snapshot.connection is ConnectionState.CONNECTED
         available = connected and self._pending is None
+        self.mode_combo.setEnabled(available and not observation.can_stop)
         self.start_button.setEnabled(available and observation.can_start
                                      and self.prepared_job is not None and self.confirm_checkbox.isChecked())
         self.confirm_checkbox.setEnabled(self.prepared_job is not None and observation.phase in (
