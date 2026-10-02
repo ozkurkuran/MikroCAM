@@ -20,6 +20,8 @@ from mikrocam.machine.models import ConnectionState, MachineSnapshot, MachineSta
 from .machine_controls import MachineManualControls
 from .machine_worker import MachineWorker
 from .job_controls import JobControls
+from .queue_controls import QueueControls
+from mikrocam.machine.queue_models import StartQueueRequest
 from .job_prepare_worker import JobPrepareWorker
 from .console_controls import ConsoleControls
 
@@ -74,6 +76,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         manual_scroll.setWidget(self.manual_controls)
         layout.addWidget(manual_scroll, 1)
         self._setup_job_controls(content, layout)
+        self._setup_queue_controls(content, layout)
         self.console_controls = ConsoleControls(content)
         self.console_controls.query_requested.connect(self.submit_console)
         layout.addWidget(self.console_controls)
@@ -125,12 +128,34 @@ class MachinePanel(QtWidgets.QDockWidget):
         self._binding_timer.timeout.connect(self._refresh_binding)
         self._binding_timer.start()
 
+    def _setup_queue_controls(self, content, layout) -> None:
+        self.queue_controls = QueueControls(self, candidate_validator=self._queue_candidate_current)
+        self.queue_controls.start_requested.connect(self.submit_queue)
+        self.queue_controls.pause_requested.connect(self.pause_job)
+        self.queue_controls.resume_requested.connect(self.resume_job)
+        self.queue_controls.stop_requested.connect(self.stop_job)
+        self.queue_button = QtWidgets.QPushButton(_('Job queue…'), content)
+        self.queue_button.clicked.connect(self.open_job_queue)
+        layout.addWidget(self.queue_button)
+
+    def _queue_candidate_current(self, job) -> bool:
+        return self._refresh_binding() and self.job_controls.prepared_job is job
+
+    def open_job_queue(self) -> None:
+        self.queue_controls.show()
+        self.queue_controls.raise_()
+
+    def submit_queue(self, request: StartQueueRequest) -> None:
+        if (self._worker is None or self._stopping or not self._worker.submit(request)):
+            self.queue_controls.start_rejected('Queue Start rejected by current session admission.')
+
     def _invalidate_preparation(self) -> None:
         job = self.job_controls.prepared_job
         if self._worker is not None and job is not None:
             self._worker.invalidate_pending_job(job)
         self._prepare_generation += 1
         self.job_controls.set_job(None)
+        self.queue_controls.set_candidate(None)
         if self._prepare_worker is not None:
             self._prepare_worker.cancel()
 
@@ -187,6 +212,7 @@ class MachinePanel(QtWidgets.QDockWidget):
                 or self._prepare_generation != self._prepare_worker_generation):
             return
         self.job_controls.set_job(job)
+        self.queue_controls.set_candidate(job)
         self.status_label.setText(_('Reviewed job prepared. Confirm equipment for this Start.'))
 
     def _preparation_failed(self, message: str) -> None:
@@ -288,7 +314,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         self._worker.stop()
         self.last_snapshot = MachineSnapshot(job=self.last_snapshot.job,
                                              console=self.last_snapshot.console, wire=self.last_snapshot.wire,
-                                             probe=self.last_snapshot.probe)
+                                             probe=self.last_snapshot.probe, queue=self.last_snapshot.queue)
         self._render_snapshot()
         self.status_label.setText(_('Closing communication…'))
         self._update_actions()
@@ -389,6 +415,7 @@ class MachinePanel(QtWidgets.QDockWidget):
         self.status_label.setText(status)
         self.manual_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
         self.job_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
+        self.queue_controls.update_snapshot(snapshot)
         self.console_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
         if self._probe_dialog is not None:
             self._probe_dialog.update_snapshot(snapshot)

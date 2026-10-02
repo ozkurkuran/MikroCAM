@@ -44,7 +44,7 @@ def test_authentic_unmarked_kicad_dxf_does_not_guess_from_fonts_or_format():
 
 
 def test_original_upstream_inkscape_asset_is_metadata_evidence_not_pcb_coverage():
-    path = ROOT / 'assets/resources/app_small.svg'
+    path = ROOT / 'tests/reference/cad-source/upstream-inkscape-app-small.svg'
     assessment = detect_cad_source(path.read_bytes(), 'app_small.svg', 'SVG')
     assert assessment.application == 'Inkscape' and assessment.status == 'identified'
     assert any(item.field == 'svg.inkscape.version' for item in assessment.evidence)

@@ -10,7 +10,7 @@ ISSUES_URL = REPOSITORY_URL + '/issues'
 COPYRIGHT = 'Copyright (c) 2026 MikroCAM contributors'
 UPSTREAM_COPYRIGHTS = (
     'Copyright FlatCAM (c) 2014-2018 Juan Pablo Caram',
-    'Copyright FlatCAM Evo (c) 2018-2023 Marius Stanciu',
+    'Copyright FlatCAM (c) 2018-2023 Marius Stanciu',
 )
 UPSTREAM_URL = 'https://bitbucket.org/jpcgt/flatcam/'
 DEPENDENCY_NOTICE = (

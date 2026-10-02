@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout
 
 from appGUI.GUIElements import _BrowserTextEdit, _ExpandableTextEdit, FCLabel
 from defaults import AppDefaults
+from mikrocam.ui import identity as product_identity
 
 import html
 import sys
@@ -321,12 +322,12 @@ class FCShell(TermWidget):
         app_icon.addFile(self.app.resource_location + '/app32.png', QtCore.QSize(32, 32))
 
         self.setWindowIcon(app_icon)
-        self.setWindowTitle(_("FlatCAM Evo Shell"))
+        self.setWindowTitle(_("%s Shell") % product_identity.identity.NAME)
         app_defaults = getattr(self.app, "defaults", None) or AppDefaults.factory_defaults
         self.resize(*self.app.options.get(
             "global_shell_shape", app_defaults.get("global_shell_shape", AppDefaults.factory_defaults.get("global_shell_shape"))
         ))
-        self._append_to_browser('in', "FlatCAM Evo %s - " % version)
+        self._append_to_browser('in', "%s %s - " % (product_identity.identity.NAME, product_identity.identity.VERSION))
         self.append_output('%s\n\n' % _("Type >help< to get started"))
 
         self.app.ui.shell_dock.setWidget(self)

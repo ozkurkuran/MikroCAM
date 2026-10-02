@@ -945,6 +945,9 @@ class App(QtCore.QObject):
             del splash_settings
             show_splash = 1
 
+        self.qapp.setWindowIcon(QtGui.QIcon(self.resource_location + "/app256.png"))
+        self.qapp.setApplicationDisplayName(product_identity.identity.NAME)
+
         if show_splash and self.cmd_line_headless != 1:
             splash_pix = QtGui.QPixmap(self.resource_location + '/splash.png')
             splash_pix = splash_pix.scaled(

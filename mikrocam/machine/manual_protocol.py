@@ -76,6 +76,8 @@ def parse_modal(line: str) -> ModalState | None:
             group = 'units'
         elif token in ('G90', 'G91'):
             group = 'distance'
+        elif token in ('M0', 'M1', 'M2', 'M30'):
+            group = 'program_flow'
         elif token in ('M3', 'M4', 'M5'):
             group = 'spindle'
         elif token in ('M7', 'M8', 'M9'):

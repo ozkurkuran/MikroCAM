@@ -61,6 +61,7 @@ def inspect_about(app, qapp, errors):
             text = '\n'.join(label.text() for label in dialog.findChildren(QtWidgets.QLabel))
             for expected in (NAME, VERSION, REPOSITORY_URL, 'Juan Pablo Caram', 'Marius Stanciu', 'GPL'):
                 assert expected in text, f'Missing About attribution/identity: {expected}'
+            assert 'evo' not in text.casefold(), 'Old product name visible in About'
             screenshot = ROOT / '.venv/about-smoke.png'
             assert dialog.grab().save(str(screenshot)), 'About screenshot could not be saved'
             checked.append(True)
@@ -383,6 +384,8 @@ def run_smoke(sandbox, state):
         assert Path(app.data_path).is_relative_to(sandbox), 'User data sandbox was bypassed'
         assert Path(QtCore.QSettings('Open Source', 'FlatCAM_EVO').fileName()).is_relative_to(settings)
         assert not app.options['first_run'] and not app.options['global_version_check']
+        assert app.shell.windowTitle() == 'MikroCAM Shell'
+        assert 'evo' not in app.shell._browser.toPlainText().casefold()
         print('STARTUP_OK', flush=True)
         assert_product_title(app)
         inspect_about(app, qapp, errors)
@@ -411,6 +414,8 @@ def run_smoke(sandbox, state):
         qapp.processEvents()
         laser_journey(app, qapp, sandbox, errors)
         laser_export_journey(app, qapp, sandbox, errors)
+        from smoke_levelling_handoff import levelling_handoff_journey
+        levelling_handoff_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_probe import probe_journey
         probe_journey(app, qapp, errors, pump_until, ROOT)
         machine_transport = machine_journey(app, qapp, errors)
@@ -422,6 +427,8 @@ def run_smoke(sandbox, state):
         autolevel_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_job import job_journey
         machine_transport = job_journey(app, qapp, errors, pump_until, ROOT)
+        from smoke_queue import queue_journey
+        machine_transport = queue_journey(app, qapp, errors, pump_until, ROOT)
         from smoke_dry_run import dry_run_journey
         machine_transport = dry_run_journey(app, qapp, errors, pump_until, ROOT)
         render_and_quit(app, qapp, errors, machine_transport)

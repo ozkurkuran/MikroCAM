@@ -4,6 +4,7 @@ from enum import Enum
 from math import isfinite
 
 from .job_models import JobObservation
+from .queue_models import QueueObservation
 from .console_models import ConsoleObservation
 from .wire_log import WireSnapshot
 from .probe_models import ProbeObservation
@@ -116,8 +117,11 @@ class MachineSnapshot:
     console: ConsoleObservation = ConsoleObservation()
     wire: WireSnapshot = WireSnapshot()
     probe: ProbeObservation = ProbeObservation()
+    queue: QueueObservation = QueueObservation()
 
     def __post_init__(self) -> None:
+        if type(self.queue) is not QueueObservation:
+            raise ValueError('Snapshot requires an immutable queue observation')
         if type(self.probe) is not ProbeObservation:
             raise ValueError('Snapshot requires immutable probe observation')
         if not isinstance(self.console, ConsoleObservation) or not isinstance(self.wire, WireSnapshot):

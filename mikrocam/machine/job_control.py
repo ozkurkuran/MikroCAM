@@ -2,8 +2,9 @@
 from dataclasses import replace
 from typing import TYPE_CHECKING
 
-from .job_models import JobObservation, JobPhase, StartJobRequest
+from .job_models import JobObservation, JobPhase, StartJobRequest, StreamingMode
 from .job_preparation import near, query_record, verify_modal, verify_parameters, verify_settings
+from .job_stream import JobStream, verified_capacity
 from .models import ConnectionState, MachineState
 
 if TYPE_CHECKING:
@@ -30,6 +31,7 @@ class JobControl:
         self.pause_started = self.pause_deadline = 0.
         self.pause_query = 0
         self.resume_query = 0
+        self.stream = None
 
     @property
     def active(self) -> bool:
@@ -53,6 +55,7 @@ class JobControl:
         if type(request) is not StartJobRequest or not self.eligible():
             raise ValueError('Job Start requires fresh verified Idle and no competing/tainted operation')
         self.request = request
+        self.stream = None
         job = request.job
         self.observation = JobObservation(phase=JobPhase.PREPARING, source_name=job.source.name,
                                          source_sha256=job.source.sha256, total=len(job.blocks),
@@ -105,6 +108,13 @@ class JobControl:
     def consume(self, line: str) -> bool:
         if not self.active:
             return self.tainted and (line == 'ok' or line.startswith(('error:', '$', '[GC:', '[G5', '[G92:', '[TLO:')))
+        if self.stream is not None and self.transaction is None and self.stream.pending:
+            return self._consume_source(line)
+        if (self.transaction is not None
+                and self.observation.phase not in (JobPhase.PAUSING, JobPhase.PAUSED)
+                and self.host._clock() >= self.deadline):
+            self.fail('Job transaction response timed out before evidence arrived')
+            return True
         if line == 'ok' or line.startswith('error:'):
             if self.transaction is None:
                 self.fail('Unexpected or duplicate job acknowledgement')
@@ -120,7 +130,12 @@ class JobControl:
                                                source_line=self.request.job.blocks[count - 1].source_line)
             return True
         try:
-            record = query_record(self.transaction, line, self.host.snapshot().report_units)
+            if self.transaction == 'firmware' and line.startswith(('[VER:', '[OPT:')):
+                if not line.endswith(']') or len(line) > 256:
+                    raise ValueError('Malformed GRBL capacity evidence')
+                record = (line[1:4].lower(), line[5:-1])
+            else:
+                record = query_record(self.transaction, line, self.host.snapshot().report_units)
             if record is not None:
                 key, value = record
                 if key in self.records:
@@ -158,6 +173,9 @@ class JobControl:
                     self._advance(*current)
                 except _PriorityPending:
                     self.completed = current
+            if (self.stream is not None and self.observation.phase is JobPhase.RUNNING
+                    and not self.transaction and not self.waiting_status and not self.resume_query):
+                self._feed_window()
             if self.waiting_status:
                 self._status_progress()
         except _PriorityPending:
@@ -170,6 +188,14 @@ class JobControl:
     def _advance(self, purpose: str, records: dict) -> None:
         job = self.request.job
         if purpose == 'begin':
+            if self.request.streaming_mode is StreamingMode.CHARACTER_COUNTING:
+                self._command('firmware', b'$I\n')
+            else:
+                self._command('startup', b'$N\n')
+        elif purpose == 'firmware':
+            self.stream = JobStream(verified_capacity(records))
+            if any(len(block.wire) > self.stream.capacity for block in job.blocks):
+                raise ValueError('Reviewed source block exceeds verified GRBL RX capacity')
             self._command('startup', b'$N\n')
         elif purpose == 'startup':
             if records != {0: '', 1: ''}:
@@ -196,6 +222,9 @@ class JobControl:
             self._await_status('final', job.ack_timeout_seconds)
 
     def _feed(self) -> None:
+        if self.stream is not None:
+            self._feed_window()
+            return
         job = self.request.job
         index = self.observation.acknowledged
         if index == len(job.blocks):
@@ -259,7 +288,10 @@ class JobControl:
         if self.host.snapshot().raw_state == 'Hold:0':
             if not self._realtime(b'~'):
                 return
-        self.deadline += self.host._clock() - self.pause_started
+        held = self.host._clock() - self.pause_started
+        self.deadline += held
+        if self.stream is not None:
+            self.stream.extend(held)
         self.resume_query = self.host._query_sequence + 1
         self.observation = replace(self.observation, phase=self.resume_phase,
                                    diagnostic='Explicit resume; awaiting fresh controller state')
@@ -308,6 +340,10 @@ class JobControl:
     def fail(self, message: str, *, reset: bool = False) -> None:
         if not self.active:
             return
+        if self.stream is not None and self.stream.pending:
+            block = self.request.job.blocks[self.stream.pending[0].index]
+            self.observation = replace(self.observation, source_line=block.source_line)
+            message = f'Source line {block.source_line}: {message}; buffered motion may have executed'
         if reset:
             self.startup_verified = False
             self._end(JobPhase.FAILED, message + '; physical stop unverified', self.sent_source)
@@ -324,5 +360,52 @@ class JobControl:
         self.tainted = phase is not JobPhase.COMPLETE
         self.request = self.transaction = self.completed = self.waiting_status = None
         self.records = {}
+        self.stream = None
         self.resume_query = 0
         self.publish()
+
+    def _consume_source(self, line: str) -> bool:
+        held = self.observation.phase in (JobPhase.PAUSING, JobPhase.PAUSED)
+        if not held and self.stream.expired(self.host._clock()):
+            self.fail('Source FIFO acknowledgement timed out before evidence arrived')
+            return True
+        if line == 'ok' or line.startswith('error:'):
+            head = self.stream.pending[0]
+            block = self.request.job.blocks[head.index]
+            if line != 'ok':
+                self.fail(f'Source rejected: {line}')
+            else:
+                self.stream.ack()
+                self.observation = replace(self.observation,
+                    acknowledged=self.observation.acknowledged + 1, source_line=block.source_line)
+            return True
+        if line.startswith(('$', '[GC', '[G5', '[G92', '[TLO', '[VER:', '[OPT:')):
+            self.fail('Unsolicited evidence during buffered source')
+            return True
+        return False
+
+    def _feed_window(self) -> None:
+        stream, job = self.stream, self.request.job
+        if stream.expired(self.host._clock()):
+            raise ValueError('Source FIFO acknowledgement timed out')
+        while stream.next_index < len(job.blocks):
+            data = job.blocks[stream.next_index].wire
+            if not stream.fits(data):
+                return
+            self._guard()
+            previous = self.sent_source
+            if not previous and (not near(self.host.snapshot().machine_position_mm, job.initial_machine_mm)
+                                 or not near(self.host.snapshot().work_offset_mm, job.g54_offset_mm)):
+                raise ValueError('Initial position/G54 changed before buffered source')
+            entry = stream.reserve(data, self.host._clock() + job.ack_timeout_seconds)
+            self.sent_source = True
+            try:
+                self.host._send_job(data)
+            except _PriorityPending:
+                stream.cancel_last(entry)
+                self.sent_source = previous
+                raise
+        if not stream.pending:
+            self._command('final_off', b'M5 M9\n', long=True)
+            self.observation = replace(self.observation, phase=JobPhase.COMPLETING,
+                diagnostic='All blocks accepted; verifying output-off and final Idle')

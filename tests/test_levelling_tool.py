@@ -540,6 +540,7 @@ class TestParseGrblProbeResult(unittest.TestCase):
         self.assertFalse(tool.al_heights_valid)
 
 
+# Retained wire bodies are exercised explicitly with mocked ports; runtime guards stay closed.
 class TestSendGrblCommand(unittest.TestCase):
     def test_decodes_bytes_and_joins_lines(self):
         tool = make_tool()
@@ -549,7 +550,7 @@ class TestSendGrblCommand(unittest.TestCase):
             b'[PRB:1.000,2.000,-0.500:1]\r\n',
             b'ok\r\n',
         ]
-        result = tool.send_grbl_command(command='G38.2 Z-1 F50')
+        result = ToolLevelling.send_grbl_command.__wrapped__(tool, command='G38.2 Z-1 F50')
         self.assertIsInstance(result, str)
         self.assertIn('PRB:1.000,2.000,-0.500:1', result)
         self.assertIn('ok', result.lower())
@@ -567,7 +568,7 @@ class TestSendGrblCommand(unittest.TestCase):
                 'appPlugins.ToolLevelling.time.monotonic',
                 side_effect=[0.0, 0.1, 0.2]
         ):
-            result = tool._send_grbl_probe_command('G38.2 Z-1 F50')
+            result = ToolLevelling._send_grbl_probe_command.__wrapped__(tool, 'G38.2 Z-1 F50')
 
         self.assertEqual(result, '[PRB:1.000,2.000,-0.100:1]')
         self.assertEqual(tool.grbl_ser_port.readline.call_count, 2)
@@ -583,7 +584,7 @@ class TestSendGrblCommand(unittest.TestCase):
                 'appPlugins.ToolLevelling.time.monotonic',
                 side_effect=[0.0, 0.1, 10.0]
         ):
-            result = tool._send_grbl_probe_command('G38.2 Z-1 F50')
+            result = ToolLevelling._send_grbl_probe_command.__wrapped__(tool, 'G38.2 Z-1 F50')
 
         self.assertIsNone(result)
         self.assertTrue(any(
@@ -609,7 +610,7 @@ class TestSendGrblCommand(unittest.TestCase):
                 'appPlugins.ToolLevelling.time.monotonic',
                 side_effect=[0.0, 0.1, 0.2, 0.3]
         ):
-            result = tool._send_grbl_probe_command('G38.2 Z-1 F50')
+            result = ToolLevelling._send_grbl_probe_command.__wrapped__(tool, 'G38.2 Z-1 F50')
 
         self.assertEqual(result, '[PRB:1.000,2.000,-0.500:1]')
         self.assertFalse(any(
@@ -640,7 +641,7 @@ class TestGrblAutolevelProbeTimeout(unittest.TestCase):
         tool._send_grbl_probe_command = MagicMock(return_value=None)
         tool.parse_grbl_probe_result = MagicMock()
 
-        tool.on_grbl_autolevel()
+        ToolLevelling.on_grbl_autolevel.__wrapped__(tool)
         worker_task = tool.app.worker_task.emit.call_args.args[0]['fcn']
         worker_task()
 

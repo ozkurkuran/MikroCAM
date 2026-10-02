@@ -8,6 +8,7 @@
 from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import Qt
 from appTool import AppTool
+from mikrocam.ui.levelling_handoff import guard_grbl_callback, reject_legacy_grbl, update_levelling_handoff
 from defaults import AppDefaults
 from appGUI.GUIElements import (
     VerticalScrollArea,
@@ -296,7 +297,7 @@ class ToolLevelling(CNCjob, AppTool):
         self.ui.zero_axs_wdg.grbl_homing_button.clicked.connect(self.on_grbl_homing)
 
         # Sender
-        self.ui.grbl_report_button.clicked.connect(lambda: self.send_grbl_command(command='?'))
+        self.ui.grbl_report_button.clicked.connect(lambda: self.send_grbl_realtime(b'?'))
         self.ui.grbl_get_param_button.clicked.connect(
             lambda: self.on_grbl_get_parameter(param=self.ui.grbl_parameter_entry.get_value()))
         self.ui.view_h_gcode_button.clicked.connect(self.on_edit_probing_gcode)
@@ -1634,22 +1635,15 @@ class ToolLevelling(CNCjob, AppTool):
             self.probing_gcode_text = self.probing_gcode(storage=storage)
 
     def on_controller_change_alter_ui(self):
-        if self.ui.al_controller_combo.get_value() == 'GRBL':
-            self.ui.h_gcode_button.hide()
-            self.ui.view_h_gcode_button.hide()
-
-            self.ui.import_heights_button.hide()
-            self.ui.grbl_frame.show()
-            self.on_grbl_search_ports(muted=True)
-        else:
-            self.ui.h_gcode_button.show()
-            self.ui.view_h_gcode_button.show()
-
-            self.ui.import_heights_button.show()
-            self.ui.grbl_frame.hide()
+        update_levelling_handoff(self)
 
     @staticmethod
     def on_grbl_list_serial_ports():
+        from mikrocam.bridge.serial_transport import list_ports
+        return [port.device for port in list_ports()]
+
+    @staticmethod
+    def _legacy_on_grbl_list_serial_ports():
         """
         Lists serial port names.
         From here: https://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python
@@ -1692,6 +1686,9 @@ class ToolLevelling(CNCjob, AppTool):
             self.app.inform.emit('[WARNING_NOTCL] %s' % _("COM list updated ..."))
 
     def on_grbl_connect(self):
+        reject_legacy_grbl(self.app)
+
+    def _legacy_on_grbl_connect(self):
         port_name = self.ui.com_list_combo.currentText()
         if " (" in port_name:
             port_name = port_name.rpartition(" (")[0]
@@ -1721,9 +1718,8 @@ class ToolLevelling(CNCjob, AppTool):
                 pass
 
             answer = self.on_grbl_wake()
-            answer = ['ok']   # FIXME: hack for development without a GRBL controller connected
             for line in answer:
-                if 'ok' in line.lower():
+                if line.startswith('Grbl ') or line.lower() == 'ok':
                     self.ui.com_connect_button.setStyleSheet("QPushButton {background-color: seagreen;}")
                     self.ui.com_connect_button.setText(_("Connected"))
                     self.ui.controller_reset_button.setDisabled(False)
@@ -1771,17 +1767,20 @@ class ToolLevelling(CNCjob, AppTool):
         current_idx = self.ui.baudrates_list_combo.currentIndex()
         self.ui.baudrates_list_combo.removeItem(current_idx)
 
+    @guard_grbl_callback
     def on_grbl_wake(self):
         # Wake up grbl
         self.grbl_ser_port.write("\r\n\r\n".encode('utf-8'))
         # Wait for GRBL controller to initialize
         time.sleep(1)
 
-        grbl_out = deepcopy(self.grbl_ser_port.readlines())
+        grbl_out = [line.decode('utf-8', errors='replace').strip()
+                    for line in self.grbl_ser_port.readlines()]
         self.grbl_ser_port.reset_input_buffer()
 
         return grbl_out
 
+    @guard_grbl_callback
     def on_grbl_send_command(self):
         cmd = self.ui.grbl_command_entry.get_value()
 
@@ -1794,6 +1793,7 @@ class ToolLevelling(CNCjob, AppTool):
 
         self.app.worker_task.emit({'fcn': worker_task, 'params': []})
 
+    @guard_grbl_callback
     def send_grbl_command(self, command, echo=True):
         """
 
@@ -1828,6 +1828,7 @@ class ToolLevelling(CNCjob, AppTool):
 
         return '\n'.join(decoded_lines)
 
+    @guard_grbl_callback
     def _send_grbl_probe_command(self, command, echo=True):
         cmd = command.strip()
         if echo:
@@ -1865,6 +1866,7 @@ class ToolLevelling(CNCjob, AppTool):
         )
         return None
 
+    @guard_grbl_callback
     def send_grbl_block(self, command, echo=True):
         stripped_cmd = command.strip()
 
@@ -1884,6 +1886,7 @@ class ToolLevelling(CNCjob, AppTool):
                     except Exception as e:
                         self.app.log.error("CNCJobObject.send_grbl_block() --> %s" % str(e))
 
+    @guard_grbl_callback
     def on_grbl_get_parameter(self, param):
         if '$' in param:
             param = param.replace('$', '')
@@ -1899,13 +1902,21 @@ class ToolLevelling(CNCjob, AppTool):
                 self.app.shell_message("GRBL Parameter: %s = %s" % (str(param), str(result)), show=True)
                 return result
 
+    @guard_grbl_callback
     def on_grbl_jog(self, direction=None):
         if direction is None:
             return
         cmd = ''
 
-        step = self.ui.jog_step_entry.get_value(),
-        feedrate = self.ui.jog_fr_entry.get_value()
+        try:
+            step = float(self.ui.jog_step_entry.get_value())
+            feedrate = float(self.ui.jog_fr_entry.get_value())
+        except (TypeError, ValueError):
+            self.app.inform.emit('[ERROR_NOTCL] %s' % _("Jog step and feedrate must be finite and positive."))
+            return
+        if not math.isfinite(step) or step <= 0 or not math.isfinite(feedrate) or feedrate <= 0:
+            self.app.inform.emit('[ERROR_NOTCL] %s' % _("Jog step and feedrate must be finite and positive."))
+            return
         app_defaults = getattr(self.app, "defaults", None) or AppDefaults.factory_defaults
         travelz = float(
             self.app.options.get(
@@ -1936,49 +1947,48 @@ class ToolLevelling(CNCjob, AppTool):
 
         self.send_grbl_command(command=cmd, echo=False)
 
+    @guard_grbl_callback
     def on_grbl_zero(self, axis):
-        current_mode = self.on_grbl_get_parameter('10')
-        if current_mode is None:
-            return
-
-        cmd = '$10=0'
-        self.send_grbl_command(command=cmd, echo=False)
-
         if axis == 'x':
-            cmd = 'G10 L2 P1 X0'
+            cmd = 'G10 L20 P1 X0'
         elif axis == 'y':
-            cmd = 'G10 L2 P1 Y0'
+            cmd = 'G10 L20 P1 Y0'
         elif axis == 'z':
-            cmd = 'G10 L2 P1 Z0'
+            cmd = 'G10 L20 P1 Z0'
         else:
             # all
-            cmd = 'G10 L2 P1 X0 Y0 Z0'
+            cmd = 'G10 L20 P1 X0 Y0 Z0'
         self.send_grbl_command(command=cmd, echo=False)
 
-        # restore previous mode
-        cmd = '$10=%d' % int(current_mode)
-        self.send_grbl_command(command=cmd, echo=False)
-
+    @guard_grbl_callback
     def on_grbl_homing(self):
         cmd = '$H'
         self.app.inform.emit("%s" % _("GRBL is doing a home cycle."))
         self.on_grbl_wake()
         self.send_grbl_command(command=cmd)
 
-    def on_grbl_reset(self):
-        cmd = '\x18'
-        self.app.inform.emit("%s" % _("GRBL software reset was sent."))
-        self.on_grbl_wake()
-        self.send_grbl_command(command=cmd)
+    @guard_grbl_callback
+    def send_grbl_realtime(self, byte: bytes):
+        """Send one supported GRBL realtime byte without waiting for an ACK."""
+        if not isinstance(byte, bytes) or byte not in (b'?', b'!', b'~', b'\x18'):
+            raise ValueError("Unsupported GRBL realtime byte")
+        self.grbl_ser_port.write(byte)
 
+    @guard_grbl_callback
+    def on_grbl_reset(self):
+        self.send_grbl_realtime(b'\x18')
+        self.app.inform.emit("%s" % _("GRBL software reset was sent."))
+        # Reset emits a startup greeting; wait without sending a wake line.
+        time.sleep(1)
+        self.grbl_ser_port.readlines()
+
+    @guard_grbl_callback
     def on_grbl_pause_resume(self, checked):
         if checked is False:
-            cmd = '~'
-            self.send_grbl_command(command=cmd)
+            self.send_grbl_realtime(b'~')
             self.app.inform.emit("%s" % _("GRBL resumed."))
         else:
-            cmd = '!'
-            self.send_grbl_command(command=cmd)
+            self.send_grbl_realtime(b'!')
             self.app.inform.emit("%s" % _("GRBL paused."))
 
     def probing_gcode(self, storage):
@@ -2311,6 +2321,7 @@ class ToolLevelling(CNCjob, AppTool):
         if self.ui.plot_probing_pts_cb.get_value():
             self.show_probing_geo_sig.emit(True, True)
 
+    @guard_grbl_callback
     def on_grbl_autolevel(self):
         # show the Shell Dock
         self.app.ui.shell_dock.show()
