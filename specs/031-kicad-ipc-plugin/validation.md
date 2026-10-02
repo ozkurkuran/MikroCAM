@@ -1,4 +1,7 @@
 # Validation031 — 2026-10-02
+
+**Current status:** features delivered through PR#35; responsive-preparation correctionc76f02cf validated by39 related tests,83 architecture tests and native KiCad/CAM/render/normal-shutdown PASS. Final main complete-suite commit/run is recorded in the central local docs/IS_TAKIP.md. Earlier pending/failed entries below are retained chronological evidence.
+
 Official installed KiCad10.0.6; optional kicad-python0.8.0 pinned with its complete dependency tree and license texts. Official KiCad10 plugin schema validates. Test-first missing installer ERROR, backup-in-plugin duplicate action red and SDK0.8 no-public-close red fixed without adopting unsupported API.
 
 Real isolated IPC evidence PASS exit0 (.venv/kicad-ipc-native.log): live unsaved text copied with SaveCopyOfDocument, original PCB byte-for-byte unchanged, real CLI produced retained package, CAM launch argv recorded. Toolbar button click itself NOT_RUN. Official include_project snapshot also copies custom DRC rules; no KiCad source copied into implementation.
@@ -25,3 +28,9 @@ The additional KiCad scenario is now a separate `python tests/smoke_kicad_app.py
 
 ## Post-delivery responsive-preparation review
 PR#35 review identified synchronous archive/decompression/inspection/extraction on the GUI thread (FR010). New Qt worker prepares the validated immutable result; a queued GUI slot publishes widgets. Selection review uses only validated metadata/DTOs; the existing import worker still freshly rereads/checks every source before any owner publication. Test-first4 FAIL/1 PASS plus additional GUI I/O red regression; after correction39 KiCad/import/existing manufacturing UI+bridge tests PASS in3.64s. A blocking reader test proves the GUI timer runs during preparation, reads occur off the GUI thread, and closing stays locked until completion. Final architecture/native/full Windows checks pending for this correction. Public command examples now use the standard README .venv interpreter rather than the private validation interpreter.
+
+## Responsive correction gates and delivery
+-39 related tests PASS3.64s (.venv/kicad-responsive-final-green.log);83 architecture tests PASS142.98s (.venv/kicad-responsive-architecture.log).
+-Final correction native PASS exit0 (.venv/kicad-responsive-native.log): authored startup/direct import/MM alignment/source+manifest save/reopen, real IPC package four-role import/DRC acknowledgement, normal CAM/project journey, real VisPy/OpenGL render and normal worker/pool/ArgsThread shutdown. Original120s watchdog preserved. General native runner and all non-KiCad product code remain unchanged from the separately passing f6517254 state.
+-Local installed plugin source/config/API/interpreter matches; one live manifest and one backup directory outside plugin discovery. Public Windows setup commands use .venv/Scripts as README documents.
+-The correction is a test-first follow-up to the delivered feature. Main delivery and its exact final complete-suite Windows result are recorded centrally; previous PASS belongs only to its named source commit.
