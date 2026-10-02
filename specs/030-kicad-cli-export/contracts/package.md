@@ -1,0 +1,2 @@
+# Package contract
+.mcam-transfer is bounded ZIP containing schema1 manifest, raw DRC JSON and role-assigned Gerber/Excellon source bytes. CRC/SHA/member limits and exact inventory validate before write/extract/import. Manifest is never executable or an instruction. CLI exit nonzero/missing outputs prevents publication. DRC report counts derive from violations/unconnected_items/schematic_parity with severity. All errors gate import until explicit acknowledgement.

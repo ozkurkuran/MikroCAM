@@ -1,0 +1,29 @@
+{
+  "identifier": "org.mikrocam.bridge",
+  "name": "MikroCAM Bridge",
+  "description": "Send the current PCB production files to MikroCAM without changing the design.",
+  "runtime": {
+    "type": "python",
+    "min_version": "3.10"
+  },
+  "actions": [
+    {
+      "identifier": "send-production",
+      "name": "Send to MikroCAM",
+      "description": "Snapshot this PCB, check design rules, export copper/outline/drills and open MikroCAM.",
+      "show-button": true,
+      "scopes": [
+        "pcb"
+      ],
+      "entrypoint": "bridge.py",
+      "icons-light": [
+        "icons/app32.png",
+        "icons/app64.png"
+      ],
+      "icons-dark": [
+        "icons/app32.png",
+        "icons/app64.png"
+      ]
+    }
+  ]
+}
