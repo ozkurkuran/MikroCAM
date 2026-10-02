@@ -5,3 +5,6 @@ Final related/architecture/full/native GUI/Windows checks still RUNNING/NOT_RUN;
 
 ## Final native evidence
 Aligned native startup/import, source and manifest project roundtrip PASS; real IPC export four roles with DRC acknowledgement PASS. Both desktop screenshots inspected; evidence and earlier correction history in031 validation and central IS_TAKIP.md. Final complete suite/CI/main pending.
+
+## Windows CI review correction
+Source f93111dc local complete suite5552 tests/310 subtests/3 skips PASS in320.04s, but exact-head Windows run36998939918 had5550 PASS/2 UI FAIL. A noncanonical temporary path falsely differed in the existing canonical source-freshness comparison. Regression first failed locally; prepare_transfer now resolves its extraction directory before creating file records. UI assertions include actual status text for future diagnostics. Freshness checks remain unchanged. New source related/full/native/exact-head checks pending; prior results remain attributed to f93111dc.

@@ -8,3 +8,6 @@ Native Qt/OpenGL MikroCAM smoke PASS exit0 (.venv/kicad-native-desktop.log): KIC
 Local installer PASS in real Windows Documents known folder: C:/Users/ozkur/OneDrive/Documents/KiCad/10.0/plugins/org.mikrocam.bridge. Published source bytes match, CAM interpreter/configured checkout exist, API already enabled so its settings were unchanged. Existing unrelated plugin files/settings preserved; reinstall backup behavior unit-tested. Restart PCB Editor to discover action and provision its isolated optional Python environment.
 
 Final complete suite, exact-head Windows CI and main delivery remain pending; no prior PASS inherited. No physical serial port opened.
+
+## Windows CI review correction
+Source f93111dc local complete suite5552 tests/310 subtests/3 skips PASS in320.04s, but exact-head Windows run36998939918 had5550 PASS/2 UI FAIL. A noncanonical temporary path falsely differed in the existing canonical source-freshness comparison. Regression first failed locally; prepare_transfer now resolves its extraction directory before creating file records. UI assertions include actual status text for future diagnostics. Freshness checks remain unchanged. New source related/full/native/exact-head checks pending; prior results remain attributed to f93111dc.

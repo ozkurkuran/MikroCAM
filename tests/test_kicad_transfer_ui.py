@@ -20,7 +20,7 @@ def dialog(qtbot,tmp_path):
 def test_clean_package_direct_import_one_worker(dialog):
     value,dispatch,root=dialog;path=root/'set.mcam-transfer';write_package(path,sample())
     value.load_path(path)
-    assert len(dispatch)==1 and value.busy and value.review is not None
+    assert len(dispatch)==1 and value.busy and value.review is not None, value.status_label.text()
     assert value.table.cellWidget(0,3).currentText()=='F.Cu'
     value._finished(((), 'test owner cleanup'))
 
@@ -29,7 +29,7 @@ def test_drc_errors_require_checkbox_and_recheck_at_import(dialog):
     value,dispatch,root=dialog;p=sample();d=b'{"violations":[{"severity":"error"}],"unconnected_items":[],"schematic_parity":[]}'
     p=replace(p,drc_bytes=d,manifest=replace(p.manifest,drc_sha256=sha256(d).hexdigest(),drc_errors=1))
     path=root/'errors.mcam-transfer';write_package(path,p);value.load_path(path)
-    assert not dispatch and not value.import_button.isEnabled() and value.acknowledge.isVisibleTo(value)
+    assert not dispatch and not value.import_button.isEnabled() and value.acknowledge.isVisibleTo(value), value.status_label.text()
     value.import_selected();assert not dispatch
     value.acknowledge.setChecked(True);value.review_selected();assert value.import_button.isEnabled()
     value.acknowledge.setChecked(False);value.import_selected();assert not dispatch

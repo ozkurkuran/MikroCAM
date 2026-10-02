@@ -46,3 +46,11 @@ def test_transfer_provenance_survives_real_object_serializer(kind,tmp_path,host)
     restored=create_owner(kind,'restored evidence')
     restored.from_dict(stored)
     assert read_transfer_metadata(restored)==sample().manifest
+
+
+def test_transfer_directory_normalized_before_fresh_review(tmp_path):
+    # Windows CI TEMP may use an8.3 alias; canonical freshness must compare the same paths.
+    (tmp_path/'nested').mkdir()
+    directory=tmp_path/'nested'/'..'/'production'
+    review=prepare_transfer(sample(),directory)
+    assert all(Path(f.path).is_absolute() and str(Path(f.path).resolve())==f.path for f in review.files)

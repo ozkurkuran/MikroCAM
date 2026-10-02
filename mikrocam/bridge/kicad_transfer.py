@@ -14,7 +14,7 @@ def prepare_transfer(package: TransferPackage, directory: Path) -> Manufacturing
         if known.format_hint!=row.kind or known.units_hint!='MM' or known.role_hint not in (row.role,'unknown'):
             raise ValueError('KiCad member format/role/units contradicts its production metadata: '+row.name)
         inspected.append(known)
-    root=Path(directory);root.mkdir(exist_ok=True,parents=True)
+    root=Path(directory).resolve();root.mkdir(exist_ok=True,parents=True)
     files=[];assignments=[]
     for i,(row,data,known) in enumerate(zip(package.manifest.files,package.contents,inspected)):
         path=root/row.name
