@@ -22,3 +22,15 @@
   CI pending push; result belongs in central docs/IS_TAKIP.md and PR body, not inherited.
 - H3 physical GRBL throughput/stopping/compatibility still open. Main/reference/user roadmap
   untouched. FluidNC/grblHAL/TCP/SD deferred. No firmware implementation copied.
+
+## Final source merge and completion-race review
+Original final local source merge `0fe8b58a790ba527ab8b77b4d20aa9f4469e6cbc` had
+5407 passed, 2 skipped, 310 subtests in 248.92 s; related/architecture 333 passed.
+The final desktop run exited 0 with character-counting queue completion, three completed
+jobs, Stop preventing the next entry and normal shutdown. This merge is now pushed to PR #33.
+The final GRBL program-flow fix is included; the previous badf760e counts above are historical.
+A subsequent delivery review reproduced priority Hold at final_off admission leaving the job
+permanently completing. A before-fix regression now verifies explicit Resume reaches complete;
+phase transition follows the successful output-off handoff. The 412-case related group passes.
+The final integration head requires its own full, desktop and Windows run; central tracking
+records those results by exact commit. H3 physical verification remains open.

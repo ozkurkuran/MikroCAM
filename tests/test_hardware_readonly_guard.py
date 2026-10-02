@@ -98,3 +98,32 @@ def test_operator_entry_retains_log_and_closes_mock_port(monkeypatch, tmp_path, 
     transport.close.assert_called_once()
     assert queries == ([b"?"] if failure else list(COMMANDS))
     assert json.loads(log.read_text(encoding="utf-8"))["result"] == ("failed" if failure else "passed")
+
+
+@pytest.mark.parametrize('command,reply', [
+    (b'?', b'<Idle>\n'), (b'?', b'<Idle|MPos:0,nan,0>\n'),
+    (b'$I\n', b'[VER:\nok\n'), (b'$I\n', b'[VER:1.1h]\nok\n'),
+    (b'$$\n', b'$0=\nok\n'), (b'$$\n', b'$0=nan\nok\n'),
+    (b'$G\n', b'[GC:\nok\n'), (b'$G\n', b'[GC:]\nok\n'),
+    (b'$#\n', b'[G54:0,0]\nok\n'), (b'$#\n', b'[G54:0,0,nan]\nok\n'),
+])
+def test_inventory_rejects_structurally_invalid_records(command, reply):
+    transport = MagicMock()
+    transport.write.return_value = len(command)
+    transport.read.return_value = reply
+    with pytest.raises(ValueError):
+        read_query(transport, command, [], clock=lambda: 0)
+
+
+@pytest.mark.parametrize('failure', ['short', 'exception'])
+def test_transcript_never_claims_successful_tx_when_write_fails(failure):
+    transport = MagicMock()
+    transport.write.return_value = 1
+    if failure == 'exception':
+        transport.write.side_effect = OSError('mock uncertain write')
+    transcript = []
+    with pytest.raises(OSError):
+        read_query(transport, b'$I\n', transcript)
+    assert transcript and transcript[0]['direction'] == 'tx-attempt'
+    assert not any(entry['direction'] == 'tx' for entry in transcript)
+    transport.read.assert_not_called()

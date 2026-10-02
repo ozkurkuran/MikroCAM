@@ -249,3 +249,24 @@ def test_uncertain_source_handoff_is_not_retried_or_followed_by_another_block(re
                for r in controller.snapshot().wire.records)
     for _ in range(10): step(controller, clock)
     assert len(fake.job_writes) == 1
+
+
+def test_pause_at_final_off_handoff_resumes_to_verified_completion(monkeypatch):
+    from mikrocam.machine.job_control import _PriorityPending
+    controller, fake, clock = connected()
+    command = controller._job._command
+    paused = []
+    def interleave(purpose, data, **kwargs):
+        if purpose == 'final_off' and not paused:
+            paused.append(True)
+            controller.pause_job()
+            raise _PriorityPending()
+        return command(purpose, data, **kwargs)
+    monkeypatch.setattr(controller._job, '_command', interleave)
+    selected(controller)
+    until(controller, clock, lambda: controller.snapshot().job.phase is JobPhase.PAUSED)
+    assert paused and b'M5 M9\n' not in fake.writes[-1:]
+    controller.resume_job()
+    until(controller, clock, lambda: controller.snapshot().job.phase is JobPhase.COMPLETE, count=100)
+    assert fake.writes.count(b'M5 M9\n') == 2
+    assert controller.snapshot().job.acknowledged == len(long_job().blocks)

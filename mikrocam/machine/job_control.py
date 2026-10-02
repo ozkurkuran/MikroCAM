@@ -406,6 +406,6 @@ class JobControl:
                 self.sent_source = previous
                 raise
         if not stream.pending:
+            self._command('final_off', b'M5 M9\n', long=True)
             self.observation = replace(self.observation, phase=JobPhase.COMPLETING,
                 diagnostic='All blocks accepted; verifying output-off and final Idle')
-            self._command('final_off', b'M5 M9\n', long=True)

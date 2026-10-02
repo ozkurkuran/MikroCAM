@@ -50,3 +50,12 @@ offline save/load assertion, preserving the exact no-write assertion without fil
 The same injected-delay case then passed. No production machine behavior changed.
 The related Levelling/probe groups passed: 153 tests and 41 subtests in 19.16s.
 Final-head Windows CI is rerun and its result recorded in the PR.
+
+## Recorded original final CI and delivery review
+Original final head `730d4bdef4dc07b1c490e0836ab93ad7cda8be57` passed Windows validation:
+https://github.com/ozkurkuran/MikroCAM/actions/runs/36929106301 (5168 passed, 2 skipped,
+310 subtests). This is historical evidence for that exact head, not for subsequent changes.
+The 2026-10-02 delivery review reproduced stale/direct GRBL calls under all three offline
+selections. Runtime guards now reject unconditionally; mock-only retained wire tests use
+explicit wrapped-body access. All existing offline Levelling journeys remain covered.
+Final integration results belong to central `docs/IS_TAKIP.md` and the delivery PR.

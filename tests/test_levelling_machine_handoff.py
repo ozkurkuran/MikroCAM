@@ -33,7 +33,9 @@ def tool(qapp):
     ("send_grbl_realtime", (b"!",)), ("on_grbl_reset", ()),
     ("on_grbl_pause_resume", (True,)), ("on_grbl_autolevel", ()),
 ])
-def test_grbl_callbacks_cannot_open_write_read_or_schedule(tool, monkeypatch, name, args):
+@pytest.mark.parametrize("controller", ["GRBL", "MACH3", "MACH4", "LinuxCNC"])
+def test_grbl_callbacks_cannot_open_write_read_or_schedule(tool, monkeypatch, name, args, controller):
+    tool.ui.al_controller_combo.get_value.return_value = controller
     serial_url = MagicMock(side_effect=AssertionError("port open attempted"))
     serial_class = MagicMock(side_effect=AssertionError("serial constructor attempted"))
     monkeypatch.setattr(levelling.serial, "serial_for_url", serial_url)

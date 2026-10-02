@@ -1,6 +1,7 @@
 """Opt-in operator-run inventory. Agents and CI never connect to hardware."""
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import time
@@ -8,10 +9,10 @@ import time
 import pytest
 
 from mikrocam.bridge.serial_transport import SerialIO
+from mikrocam.machine.grbl import parse_status
+from mikrocam.machine.job_preparation import query_record
 
 COMMANDS = (b"?", b"$I\n", b"$$\n", b"$G\n", b"$#\n")
-PREFIXES = {b"?": "<", b"$I\n": "[VER:", b"$$\n": "$0=",
-            b"$G\n": "[GC:", b"$#\n": "[G54:"}
 
 
 def enabled(environ):
@@ -19,17 +20,38 @@ def enabled(environ):
         environ.get("CI") or environ.get("GITHUB_ACTIONS"))
 
 
+def inventory_record(command, line):
+    """Validate complete raw inventory syntax without claiming physical positions."""
+    if len(line) > 512 or any(not 32 <= ord(char) <= 126 for char in line):
+        raise ValueError("Inventory record must be bounded printable ASCII")
+    if command == b"?" and line.startswith("<"):
+        parse_status(line)
+        return True
+    if command == b"$I\n" and line.startswith("[VER"):
+        if re.fullmatch(r"\[VER:1\.1[a-z]?(?:\.[0-9]{8})?:[^\[\]]{0,200}\]", line) is None:
+            raise ValueError("Malformed GRBL build record")
+        return True
+    purpose = {b"$$\n": "settings", b"$G\n": "modal", b"$#\n": "parameters"}.get(command)
+    if purpose:
+        # Only validate parameter syntax; the returned converted value is never retained.
+        record = query_record(purpose, line, "mm")
+        return record is not None and record[0] == {"settings": 0, "modal": "modal", "parameters": "G54"}[purpose]
+    return False
+
+
 def read_query(transport, command, transcript, clock=time.monotonic):
     """Bounded fragmented-line read; an inventory record alone never consumes an ACK."""
     if type(command) is not bytes or command not in COMMANDS:
         raise ValueError("Only the five readonly GRBL queries are allowed")
-    transcript.append({"direction": "tx", "hex": command.hex()})
+    transcript.append({"direction": "tx-attempt", "hex": command.hex()})
     if transport.write(command) != len(command):
         raise OSError("Incomplete readonly query write")
+    transcript.append({"direction": "tx", "hex": command.hex()})
     deadline = clock() + 3.0
     buffer = b""
     lines = []
     received = 0
+    record = False
     while clock() < deadline:
         chunk = transport.read(4096)
         if not isinstance(chunk, bytes):
@@ -43,15 +65,20 @@ def read_query(transport, command, transcript, clock=time.monotonic):
         buffer += chunk
         while b"\n" in buffer:
             raw, buffer = buffer.split(b"\n", 1)
-            line = raw.decode("utf-8", errors="replace").strip()
+            try:
+                line = raw.decode("ascii").removesuffix("\r")
+            except UnicodeDecodeError as error:
+                raise ValueError("Inventory record must be ASCII") from error
             lines.append(line)
             if line.startswith(("error:", "ALARM:")):
                 raise ValueError(f"Readonly query rejected: {line}")
-            record = any(item.startswith(PREFIXES[command]) for item in lines)
+            record = inventory_record(command, line) or record
             if command == b"?" and record and line.startswith("<") and line.endswith(">"):
                 return lines
             if command != b"?" and line == "ok" and record:
                 return lines
+        if len(buffer) > 512:
+            raise ValueError("Inventory record exceeds 512 bytes")
     raise TimeoutError(f"No complete readonly reply for {command!r}")
 
 

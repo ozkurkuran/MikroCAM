@@ -15,10 +15,8 @@ def guard_grbl_callback(callback: Callable[..., Any]) -> Callable[..., Any]:
     """Reject stale/direct legacy callbacks before UI, worker or serial side effects."""
     @wraps(callback)
     def guarded(tool: Any, *args: Any, **kwargs: Any) -> Any:
-        if tool.ui.al_controller_combo.get_value() == "GRBL":
-            reject_legacy_grbl(tool.app)
-            return None
-        return callback(tool, *args, **kwargs)
+        reject_legacy_grbl(tool.app)
+        return None
     return guarded
 
 

@@ -340,6 +340,25 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   hidden/disabled serial frame and explicit reuse of Machine. Legacy implementations retained;
   offline MACH3/MACH4/LinuxCNC behavior preserved. No outside fork source copied.
 - MikroCAM commit: the implementation commit named `feat: route GRBL Levelling to Machine`.
-- Verification: 20 acceptance cases failed before implementation; related144 tests and41
-  subtests pass. Full-suite, desktop and final-head CI evidence in specs/027-levelling-machine-handoff/validation.md.
+- Verification: 21 acceptance cases; related 153 tests and 41 subtests pass after the
+  documented smoke race correction. Final original head 730d4bde Windows CI passed:
+  https://github.com/ozkurkuran/MikroCAM/actions/runs/36929106301.
+  Current integration validation is recorded separately in docs/IS_TAKIP.md.
 - No physical device was connected or validated.
+
+
+## 2026-10-02 — GRBL delivery review corrections and visual identity
+
+- Source/license: the same MIT ToolLevelling provenance recorded above; original author notices retained.
+- Public GRBL callbacks are rejected for all controller selections; retained implementations
+  are accessed only explicitly by mock tests. The hidden legacy report callback uses one realtime byte.
+- Character-counting completion commits its phase after the final output-off handoff, so
+  a priority hold before that handoff can resume and finish the same job.
+- Operator-only inventory validates bounded complete records with the existing GRBL parsers
+  and records TX attempts separately from successful complete writes. No physical port was used.
+- Before-fix review group: 52 failed / 48 passed; final related/architecture group: 412 passed,
+  41 subtests. Full, desktop and final commit Windows checks are tracked centrally.
+- MikroCAM visual assets are independently generated from local Shapely/Pillow geometry.
+  The replaced upstream Inkscape SVG is retained unchanged as a metadata test fixture at
+  tests/reference/cad-source/upstream-inkscape-app-small.svg under the existing source license.
+- Protocol facts: https://github.com/gnea/grbl/wiki/Grbl-v1.1-Interface ; no firmware code copied.

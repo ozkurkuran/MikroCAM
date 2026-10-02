@@ -297,7 +297,7 @@ class ToolLevelling(CNCjob, AppTool):
         self.ui.zero_axs_wdg.grbl_homing_button.clicked.connect(self.on_grbl_homing)
 
         # Sender
-        self.ui.grbl_report_button.clicked.connect(lambda: self.send_grbl_command(command='?'))
+        self.ui.grbl_report_button.clicked.connect(lambda: self.send_grbl_realtime(b'?'))
         self.ui.grbl_get_param_button.clicked.connect(
             lambda: self.on_grbl_get_parameter(param=self.ui.grbl_parameter_entry.get_value()))
         self.ui.view_h_gcode_button.clicked.connect(self.on_edit_probing_gcode)

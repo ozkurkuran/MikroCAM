@@ -25,6 +25,11 @@ def tool(monkeypatch):
     # Isolated mock-only retained wire behavior; runtime connection stays blocked.
     obj.ui.al_controller_combo.get_value.return_value = "MACH3"
     obj.on_grbl_connect = obj._legacy_on_grbl_connect
+    # Bypass runtime guards explicitly in this mock-only retained implementation test.
+    for name in dir(ToolLevelling):
+        method = getattr(ToolLevelling, name)
+        if callable(method) and hasattr(method, '__wrapped__'):
+            setattr(obj, name, method.__wrapped__.__get__(obj, ToolLevelling))
     obj.grbl_ser_port = MagicMock()
     monkeypatch.setattr(levelling.serial, "serial_for_url",
                         MagicMock(return_value=obj.grbl_ser_port))

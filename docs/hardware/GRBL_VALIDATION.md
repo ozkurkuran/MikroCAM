@@ -51,6 +51,7 @@ settle, then sends exactly `?` (one byte), `$I`, `$$`, `$G`, `$#` (each with one
 It sends no movement, `$` setting write, wake line, unlock, homing or reset. Each query has a
 three-second response bound and a 16384-byte capture cap. A missing response, controller
 error or oversized reply fails the test. The port closes and the JSON is retained on failure.
+Inventory rows are checked with strict GRBL parsers; TX attempts and successful writes are recorded separately.
 Inventory passing proves only complete replies to these five queries at this moment.
 
 Operator PowerShell, from the selected MikroCAM checkout:
@@ -58,7 +59,7 @@ Operator PowerShell, from the selected MikroCAM checkout:
 ```powershell
 $env:MIKROCAM_HW_PORT = 'COM7' # replace with your physical device
 $env:MIKROCAM_HW_LOG = 'E:\your-evidence\run-001\readonly.json'
-& E:\VSCode\Flatcam\MikroCAM\.venv\repro-a\Scripts\python.exe -m pytest tests/hardware/test_readonly_grbl.py -q -s
+& .\.venv\Scripts\python.exe -m pytest tests/hardware/test_readonly_grbl.py -q -s
 Remove-Item Env:MIKROCAM_HW_PORT
 Remove-Item Env:MIKROCAM_HW_LOG
 ```
