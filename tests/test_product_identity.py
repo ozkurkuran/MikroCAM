@@ -80,6 +80,7 @@ def test_about_contains_product_links_license_and_upstream_credits(qapp, monkeyp
     assert all(copyright in text for copyright in identity.UPSTREAM_COPYRIGHTS)
     assert 'GPLv3' in text
     assert 'MIT' in text and 'Unstable' not in text
+    assert 'evo' not in text.casefold()
 
 
 def test_shell_banner_uses_product_identity(qapp):
@@ -88,3 +89,10 @@ def test_shell_banner_uses_product_identity(qapp):
     browser.clear()
     assert 'MikroCAM 0.1.0' in browser.toPlainText()
     assert 'Unstable' not in browser.toPlainText()
+
+
+def test_update_explanation_uses_only_product_name():
+    from mikrocam.ui.identity import update_unavailable_message
+    text = update_unavailable_message()
+    assert 'MikroCAM' in text
+    assert 'evo' not in text.casefold()

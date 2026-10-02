@@ -296,7 +296,7 @@ class AppUIActions(QtCore.QObject):
 
                 # FlatCAM EVO Author
                 self.prog_grid_lay.addWidget(FCLabel('%s' % "Marius Stanciu"), 2, 0)
-                self.prog_grid_lay.addWidget(FCLabel('%s' % _("FlatCAM Evo Author/Maintainer")), 2, 1)
+                self.prog_grid_lay.addWidget(FCLabel('%s' % _("Original project author/maintainer")), 2, 1)
                 self.prog_grid_lay.addWidget(FCLabel('%s' % "<marius_adrian@yahoo.com>"), 2, 2)
                 self.prog_grid_lay.addWidget(FCLabel(''), 3, 0)
 

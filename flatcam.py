@@ -100,7 +100,7 @@ if __name__ == '__main__':
     major_v = sys.version_info.major
     minor_v = sys.version_info.minor
 
-    v_msg = "FlatCAM Evo uses PYTHON 3 or later. The version minimum is %s.%s\n"\
+    v_msg = "MikroCAM requires Python %s.%s or later.\n"\
             "Your Python version is: %s.%s" % (MIN_VERSION_MAJOR, MIN_VERSION_MINOR, str(major_v), str(minor_v))
 
     # Supported Python version is >= 3.6

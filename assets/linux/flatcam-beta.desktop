@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=FlatCAM Beta
+Name=MikroCAM
 Exec=./bin/flatcam-beta
 Type=Application
 StartupNotify=true

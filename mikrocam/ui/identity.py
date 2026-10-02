@@ -33,7 +33,7 @@ def about_description(architecture: str, translate: Callable[[str], str] = gette
     lines = (f'{identity.NAME} {identity.VERSION} ({identity.RELEASE_DATE}) - {architecture}',
              identity.COPYRIGHT, *identity.UPSTREAM_COPYRIGHTS)
     return ('<br>'.join(escape(line) for line in lines) + '<br>' +
-            f'<a href="{escape(identity.UPSTREAM_URL, quote=True)}">{escape(translate("FlatCAM / Evo upstream"))}</a>' +
+            f'<a href="{escape(identity.UPSTREAM_URL, quote=True)}">{escape(translate("Original project"))}</a>' +
             '<br><br>' + escape(translate(identity.DEPENDENCY_NOTICE)))
 
 
@@ -48,7 +48,7 @@ def updates_unavailable(app: object, translate: Callable[[str], str] = gettext.g
 
 def update_unavailable_message(translate: Callable[[str], str] = gettext.gettext) -> str:
     """Use the authoritative product name in the translated update explanation."""
-    return translate('%s updates are not available. The inherited Evo update channel is disabled.') % identity.NAME
+    return translate('%s updates are not available. Check the project releases page.') % identity.NAME
 
 
 def disable_update_controls(ui: object, translate: Callable[[str], str] = gettext.gettext) -> None:
