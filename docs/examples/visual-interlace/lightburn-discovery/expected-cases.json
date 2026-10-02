@@ -1,0 +1,622 @@
+{
+  "kind": "lightburn_discovery_source_kit",
+  "schema_version": 1,
+  "native_verified": false,
+  "cases": [
+    {
+      "case_id": "asymmetric-13x10-N1",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 1,
+      "effective_orders": [
+        [
+          0
+        ]
+      ],
+      "active_group_ids": [
+        0
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0
+      ],
+      "empty_groups": [],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "asymmetric-13x10-N2",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 2,
+      "effective_orders": [
+        [
+          0,
+          1
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        1
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        1
+      ],
+      "empty_groups": [],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "asymmetric-13x10-N3",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 3,
+      "effective_orders": [
+        [
+          0,
+          2,
+          1
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        2,
+        1
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        2,
+        1
+      ],
+      "empty_groups": [],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "asymmetric-13x10-N4",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 4,
+      "effective_orders": [
+        [
+          0,
+          1,
+          2,
+          3
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        1,
+        2
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        1,
+        2
+      ],
+      "empty_groups": [
+        3
+      ],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "asymmetric-13x10-N5",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 5,
+      "effective_orders": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "empty_groups": [
+        1
+      ],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "asymmetric-13x10-N6",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 6,
+      "effective_orders": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "empty_groups": [
+        1
+      ],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "asymmetric-13x10-N7",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 7,
+      "effective_orders": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "empty_groups": [
+        3,
+        6
+      ],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "asymmetric-13x10-N8",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 8,
+      "effective_orders": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "empty_groups": [
+        3,
+        6,
+        7
+      ],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "short-13x2-N8",
+      "width_px": 13,
+      "height_px": 2,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.1
+      ],
+      "mask_sha256": "1ce00e25a0d2ec34c56334129a84c26e98b135dc82585843e45bdd0b6b925627",
+      "master_file_sha256": "2ec37bf82a82780c23651ad18cd06221a5f3ab56e0c21938944976dbacb510d9",
+      "count": 8,
+      "effective_orders": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        1
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 1,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        1
+      ],
+      "empty_groups": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "native_status": "NOT_RUN"
+    },
+    {
+      "case_id": "cycles-13x10-N3-R2",
+      "width_px": 13,
+      "height_px": 10,
+      "dpi": 508,
+      "canvas_mm": [
+        0.65,
+        0.5
+      ],
+      "mask_sha256": "a83517ac2d69b215c8a51841e6529f2f34372ab656c23922dd31380491d450c3",
+      "master_file_sha256": "3f97bf27be3c6dc090b3492a3cab64db033666fb9c52c34a6088be3b3d0e91eb",
+      "count": 3,
+      "effective_orders": [
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ]
+      ],
+      "active_group_ids": [
+        0,
+        2,
+        1
+      ],
+      "active_rows": [
+        {
+          "index": 0,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 2,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 4,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 5,
+          "requested_source_direction": "right_to_left"
+        },
+        {
+          "index": 8,
+          "requested_source_direction": "left_to_right"
+        },
+        {
+          "index": 9,
+          "requested_source_direction": "right_to_left"
+        }
+      ],
+      "layer_output_sequence": [
+        0,
+        2,
+        1,
+        1,
+        0,
+        2
+      ],
+      "empty_groups": [],
+      "native_status": "NOT_RUN"
+    }
+  ]
+}

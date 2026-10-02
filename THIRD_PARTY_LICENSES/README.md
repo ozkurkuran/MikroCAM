@@ -1,9 +1,9 @@
 # Exact-version dependency notices
 
-[inventory.json](inventory.json), schema version 1, covers every one of the 59 exact
+[inventory.json](inventory.json), schema version 1, covers every one of the 60 exact
 runtime, development and optional image pins. Groups include inherited `-r` requirements:
-runtime pins also belong to development and optional-image installs. Five additional
-source-vendored/bundled components have separate records. No optional dependency imports
+runtime pins also belong to development and optional-image installs. Five baseline source-vendored/bundled components have separate records. Visual
+interlace additionally records 75 exact Rust source crates and their source manifest. No optional dependency imports
 are needed to check this inventory.
 
 Each dependency record preserves its exact version and supplied license expression,
@@ -46,3 +46,22 @@ The inventory's `audit_gaps` and [NOTICE.md](../NOTICE.md) explicitly track unkn
 artwork provenance, unrecorded theme-resource revisions, Descartes's missing original full
 text and Rasterio's missing aggregate native-DLL inventory. Downloaded browser binaries
 are not vendored. License terms for any later bundled installer must be audited separately.
+
+Visual interlace adds optional `resvg_py==0.5.0` (MIT wrapper) under the optional-image
+group; exact ABI3 Windows artifact, metadata and wrapper license are retained.
+`requirements-visual.txt` is included by the image extra. The exact Rust source notice graph is retained; wheel build provenance and final bundle
+composition remain explicit binary-release audit gaps in inventory.json.
+
+## Visual renderer source notice graph
+
+The exact resvg_py 0.5.0 sdist (SHA256 6d3bf8e866b4e129524d9432a809138b2d100931d8d635bc81294002abcdfd46)
+contains the retained Cargo.lock. All 75 registry packages were downloaded from the
+primary static.crates.io source and verified against their lockfile checksums.
+152 original license/notice files are retained byte-for-byte under resvg-py/0.5.0/rust-crates.
+Authors/copyright notices are distinguished from full license texts.
+
+This is a conservative source-lock superset, including platform and build dependencies.
+Both PyPI wheel and sdist build-provenance endpoints returned 404. The exact source graph
+is recorded without claiming a proven mapping from every stripped binary component to
+that graph. Final bundle composition and binary build provenance remain a release audit.
+Offline coverage is checked by tests/test_visual_notices.py and test_dependency_notices.py.

@@ -16,6 +16,7 @@ geçerlidir.
 | K3 | Makine kontrolü | **GRBL + Serial** yeterli. Mach3 ileride düşünülebilir (aşağıdaki nota bakın). |
 | K4 | Öncelik | Önce ilk gerçek lazer PCB'ye giden kısa yol; ardından mekanik CAM stabilizasyonu ve GRBL kontrolü. |
 | K5 | Sona ertelenenler | Arayüzün baştan tasarımı (Faz 3), feature flag sistemi, termal zamanlayıcı, galvo kontrolü. |
+| K6 | Görsel interlace | Bitmap/SVG/PDF, KiCad/Gerber bağımsız ana maske ve aynı tuvalde N Image geçişi; native LightBurn gerçek sürüm/cihaz kabulü zorunlu. |
 
 ## Orijinal yol haritasından farklar
 
@@ -86,6 +87,25 @@ içe aktarma ve fiziksel PCB kuponu henüz doğrulanmadığı için kilometre ta
 | 6 | `laser-contour-hatch` — **tamamlandı** | Dış/iç/iz/pad/kart konturları, kırpılmış açılı/çapraz hatch, açık alan seçimi, iptal edilebilir Laser CAM paneli ve Geometry önizlemesi. Gerçek masaüstü döngüsü ve Windows CI: 944 test + 310 subtest başarılı. [Doğrulama](../specs/006-laser-contour-hatch/validation.md). | 5 |
 | 7 | `hatch-interlace-multipass` — **tamamlandı** | Interlace N, boşlukları koruyan sıra; her pass için açık parametreli recipe düzenleyici ve atomik JSON kaydı. İki geçişli masaüstü döngüsü; Windows CI: 995 test + 310 subtest başarılı. [Doğrulama](../specs/007-hatch-interlace-multipass/validation.md). | 6 |
 | 8 | `laser-export-svg-dxf` — **yazılım tamamlandı** | Her pass için mm SVG/DXF, recipe ve şemalı eşleme içeren atomik ZIP; iptal edilebilir panel aktarımı. Windows CI: 1110 test + 310 subtest başarılı. Hedef uygulama/fiziksel doğrulama açık. [Doğrulama](../specs/008-laser-export-svg-dxf/validation.md). | 7 |
+
+### 0.2A — Kaynak biçiminden bağımsız görsel satır serpiştirme
+
+**Çıktı:** Yaygın bitmap, SVG veya seçilmiş PDF sayfasından aynı konum/DPI/boyutta,
+birbirini tamamlayan N Image katmanlı **doğrulanmış LightBurn projesi**.
+PNG ZIP tek başına bu kilometre taşını tamamlamaz. KiCad/Gerber yalnız ek kaynaktır.
+
+| Spec no | Kısa ad | Durum / kapsam | Bağımlılık |
+| --- | --- | --- | --- |
+| 032 | `visual-interlace` | Yerel kod: mask/grid/partition, preview/zoom, PNG ZIP, JSON/proje kaydı; final full5744/310 ve native PASS | 2,4,5; G01 |
+| 033 | `visual-svg-pdf` | Yerel kod: resvg statikSVG, QtPdf seçili sayfa, optional Gerber ROI; binary notice audit açık | 032 |
+| 034 | `lightburn-image-project` | WAITING: gerçek sürüm/device/app/fixture ve Open→Save→Open→Preview; exporter henüz yok | 032,G02 |
+| 035 | `interlace-cycle-controls` | Plan/kayıt mevcut; native R*N katman kapasitesi, tur ve dwell doğrulaması WAITING | 034 |
+
+Bu tablo hedefte alınan gerçek **spec numaralarını** gösterir. Yol haritasının mevcut
+ürünleştirme32/33 sıra numaraları aynı kalır; onlar spec tahsisi değildir.
+[Tasarım](design/visual-interlace/README.md), [kullanım](visual-interlace.md),
+[LightBurn destek tablosu](lightburn-compatibility.md). Çalışma032 dalında; main'e teslim
+henüz yapılmadı. Etkin native profil bulunmadan uyumluluk iddiası yapılmaz.
 
 ### 0.3 — Güvenilir mekanik CAM
 

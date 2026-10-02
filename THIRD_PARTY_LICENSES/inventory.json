@@ -2547,6 +2547,39 @@
           "sha256": "e06ef33485e7498ad592887c41fa79cc8a7fecde576c7210e11bfdddef58040e"
         }
       ]
+    },
+    {
+      "name": "resvg-py",
+      "version": "0.5.0",
+      "groups": [
+        "optional-image"
+      ],
+      "license_metadata": {
+        "expression": null,
+        "license": null,
+        "classifiers": [],
+        "license_files": [
+          "LICENSE"
+        ]
+      },
+      "source": {
+        "kind": "installed-wheel",
+        "url": "https://files.pythonhosted.org/packages/fe/53/aa8f92ce6eb2f97095d8b6359a1613c5a5ee0aa9b1a33434df9294362979/resvg_py-0.5.0-cp310-abi3-win_amd64.whl",
+        "filename": "resvg_py-0.5.0-cp310-abi3-win_amd64.whl",
+        "sha256": "1f6b8956c4143dbfe107bcd35799d0dfd778a40a8cd537893c0bf489898a6c3c",
+        "wheel_tags": [
+          "cp310-abi3-win_amd64"
+        ],
+        "metadata_sha256": "fc83aeb20793d33c6815318421445e04d6f8ff87c4d36f5f694b062438780037"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/wheel/resvg_py-0.5.0.dist-info/licenses/LICENSE",
+          "role": "license",
+          "source": "https://files.pythonhosted.org/packages/fe/53/aa8f92ce6eb2f97095d8b6359a1613c5a5ee0aa9b1a33434df9294362979/resvg_py-0.5.0-cp310-abi3-win_amd64.whl#resvg_py-0.5.0.dist-info/licenses/LICENSE",
+          "sha256": "753a9e3c09cece8584467a0f605e065005c2a5e5c6da4f0cbb0493d2d52b96f6"
+        }
+      ]
     }
   ],
   "components": [
@@ -2701,6 +2734,2232 @@
         }
       ],
       "notes": "Header credits Andras Jankovics and FredHappyface tracing tweaks. Only the complete attribution/license comment prefix is copied; executable JavaScript is not added to MikroCAM."
+    },
+    {
+      "name": "resvg-py-rust-adler2-2.0.1",
+      "crate_name": "adler2",
+      "version": "2.0.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "0BSD OR MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/adler2/adler2-2.0.1.crate",
+        "sha256": "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/adler2/2.0.1/LICENSE-0BSD",
+          "role": "license",
+          "source": "https://static.crates.io/crates/adler2/adler2-2.0.1.crate#adler2-2.0.1/LICENSE-0BSD",
+          "sha256": "861399f8c21c042b110517e76dc6b63a2b334276c8cf17412fc3c8908ca8dc17"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/adler2/2.0.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/adler2/adler2-2.0.1.crate#adler2-2.0.1/LICENSE-APACHE",
+          "sha256": "8ada45cd9f843acf64e4722ae262c622a2b3b3007c7310ef36ac1061a30f6adb"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/adler2/2.0.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/adler2/adler2-2.0.1.crate#adler2-2.0.1/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-arrayref-0.3.9",
+      "crate_name": "arrayref",
+      "version": "0.3.9",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "BSD-2-Clause",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/arrayref/arrayref-0.3.9.crate",
+        "sha256": "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/arrayref/0.3.9/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/arrayref/arrayref-0.3.9.crate#arrayref-0.3.9/LICENSE",
+          "sha256": "1bc7e6f475b3ec99b7e2643411950ae2368c250dd4c5c325f80f9811362a94a1"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-arrayvec-0.7.8",
+      "crate_name": "arrayvec",
+      "version": "0.7.8",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/arrayvec/arrayvec-0.7.8.crate",
+        "sha256": "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/arrayvec/0.7.8/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/arrayvec/arrayvec-0.7.8.crate#arrayvec-0.7.8/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/arrayvec/0.7.8/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/arrayvec/arrayvec-0.7.8.crate#arrayvec-0.7.8/LICENSE-MIT",
+          "sha256": "4da95ec4ecb65b738d470b7d762894ad9c97da93e6cbfb18b570fc2c96f4b871"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-autocfg-1.5.1",
+      "crate_name": "autocfg",
+      "version": "1.5.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/autocfg/autocfg-1.5.1.crate",
+        "sha256": "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/autocfg/1.5.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/autocfg/autocfg-1.5.1.crate#autocfg-1.5.1/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/autocfg/1.5.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/autocfg/autocfg-1.5.1.crate#autocfg-1.5.1/LICENSE-MIT",
+          "sha256": "27995d58ad5c1145c1a8cd86244ce844886958a35eb2b78c6b772748669999ac"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-base64-0.23.1",
+      "crate_name": "base64",
+      "version": "0.23.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/base64/base64-0.23.1.crate",
+        "sha256": "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/base64/0.23.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/base64/base64-0.23.1.crate#base64-0.23.1/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/base64/0.23.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/base64/base64-0.23.1.crate#base64-0.23.1/LICENSE-MIT",
+          "sha256": "ab499c75a0f0da8e0fe83bf9ba3a27e5c39705310f07107c6c66b69958d2401c"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-bitflags-2.13.1",
+      "crate_name": "bitflags",
+      "version": "2.13.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/bitflags/bitflags-2.13.1.crate",
+        "sha256": "b588b76d00fde79687d7646a9b5bdf3cc0f655e0bbd080335a95d7e96f3587da"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/bitflags/2.13.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/bitflags/bitflags-2.13.1.crate#bitflags-2.13.1/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/bitflags/2.13.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/bitflags/bitflags-2.13.1.crate#bitflags-2.13.1/LICENSE-MIT",
+          "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-bytemuck-1.25.2",
+      "crate_name": "bytemuck",
+      "version": "1.25.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Zlib OR Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/bytemuck/bytemuck-1.25.2.crate",
+        "sha256": "95832e849adfb21180ccb6826a99da14e5d266ae5c2e668e1602cf234f153797"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/bytemuck/1.25.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/bytemuck/bytemuck-1.25.2.crate#bytemuck-1.25.2/LICENSE-APACHE",
+          "sha256": "e3ba223bb1423f0aad8c3dfce0fe3148db48926d41e6fbc3afbbf5ff9e1c89cb"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/bytemuck/1.25.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/bytemuck/bytemuck-1.25.2.crate#bytemuck-1.25.2/LICENSE-MIT",
+          "sha256": "9df9ba60a11af705f2e451b53762686e615d86f76b169cf075c3237730dbd7e2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/bytemuck/1.25.2/LICENSE-ZLIB",
+          "role": "license",
+          "source": "https://static.crates.io/crates/bytemuck/bytemuck-1.25.2.crate#bytemuck-1.25.2/LICENSE-ZLIB",
+          "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-bytemuck_derive-1.12.0",
+      "crate_name": "bytemuck_derive",
+      "version": "1.12.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Zlib OR Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/bytemuck_derive/bytemuck_derive-1.12.0.crate",
+        "sha256": "fc0e56a716f1e132ff6bf4bdac1c944a3fcdc1cae65f70a4a2a1ac3b401d2d1f"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/bytemuck_derive/1.12.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/bytemuck_derive/bytemuck_derive-1.12.0.crate#bytemuck_derive-1.12.0/LICENSE-APACHE",
+          "sha256": "e3ba223bb1423f0aad8c3dfce0fe3148db48926d41e6fbc3afbbf5ff9e1c89cb"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/bytemuck_derive/1.12.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/bytemuck_derive/bytemuck_derive-1.12.0.crate#bytemuck_derive-1.12.0/LICENSE-MIT",
+          "sha256": "9df9ba60a11af705f2e451b53762686e615d86f76b169cf075c3237730dbd7e2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/bytemuck_derive/1.12.0/LICENSE-ZLIB",
+          "role": "license",
+          "source": "https://static.crates.io/crates/bytemuck_derive/bytemuck_derive-1.12.0.crate#bytemuck_derive-1.12.0/LICENSE-ZLIB",
+          "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-byteorder-lite-0.1.0",
+      "crate_name": "byteorder-lite",
+      "version": "0.1.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Unlicense OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/byteorder-lite/byteorder-lite-0.1.0.crate",
+        "sha256": "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/byteorder-lite/0.1.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/byteorder-lite/byteorder-lite-0.1.0.crate#byteorder-lite-0.1.0/LICENSE-MIT",
+          "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/byteorder-lite/0.1.0/UNLICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/byteorder-lite/byteorder-lite-0.1.0.crate#byteorder-lite-0.1.0/UNLICENSE",
+          "sha256": "7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-cfg-if-1.0.4",
+      "crate_name": "cfg-if",
+      "version": "1.0.4",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/cfg-if/cfg-if-1.0.4.crate",
+        "sha256": "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/cfg-if/1.0.4/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/cfg-if/cfg-if-1.0.4.crate#cfg-if-1.0.4/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/cfg-if/1.0.4/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/cfg-if/cfg-if-1.0.4.crate#cfg-if-1.0.4/LICENSE-MIT",
+          "sha256": "378f5840b258e2779c39418f3f2d7b2ba96f1c7917dd6be0713f88305dbda397"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-color_quant-1.1.0",
+      "crate_name": "color_quant",
+      "version": "1.1.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/color_quant/color_quant-1.1.0.crate",
+        "sha256": "3d7b894f5411737b7867f4827955924d7c254fc9f4d91a6aad6b097804b1018b"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/color_quant/1.1.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/color_quant/color_quant-1.1.0.crate#color_quant-1.1.0/LICENSE",
+          "sha256": "592dc80f1a865d20d61a2006a2d29ce34a2bc28cd7e868ab300fdeed6da154ca"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-crc32fast-1.5.0",
+      "crate_name": "crc32fast",
+      "version": "1.5.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/crc32fast/crc32fast-1.5.0.crate",
+        "sha256": "9481c1c90cbf2ac953f07c8d4a58aa3945c425b7185c9154d67a65e4230da511"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/crc32fast/1.5.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/crc32fast/crc32fast-1.5.0.crate#crc32fast-1.5.0/LICENSE-APACHE",
+          "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/crc32fast/1.5.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/crc32fast/crc32fast-1.5.0.crate#crc32fast-1.5.0/LICENSE-MIT",
+          "sha256": "61d383b05b87d78f94d2937e2580cce47226d17823c0430fbcad09596537efcf"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-data-url-0.3.2",
+      "crate_name": "data-url",
+      "version": "0.3.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/data-url/data-url-0.3.2.crate",
+        "sha256": "be1e0bca6c3637f992fc1cc7cbc52a78c1ef6db076dbf1059c4323d6a2048376"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/data-url/0.3.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/data-url/data-url-0.3.2.crate#data-url-0.3.2/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/data-url/0.3.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/data-url/data-url-0.3.2.crate#data-url-0.3.2/LICENSE-MIT",
+          "sha256": "b38f11f6096706e6de553dabe2a7ed142d59b6fa8c97e290c67496154745cdd5"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-euclid-0.22.14",
+      "crate_name": "euclid",
+      "version": "0.22.14",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/euclid/euclid-0.22.14.crate",
+        "sha256": "f1a05365e3b1c6d1650318537c7460c6923f1abdd272ad6842baa2b509957a06"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/euclid/0.22.14/COPYRIGHT",
+          "role": "notice",
+          "source": "https://static.crates.io/crates/euclid/euclid-0.22.14.crate#euclid-0.22.14/COPYRIGHT",
+          "sha256": "ec82b96487e9e778ee610c7ab245162464782cfa1f555c2299333f8dbe5c036a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/euclid/0.22.14/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/euclid/euclid-0.22.14.crate#euclid-0.22.14/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/euclid/0.22.14/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/euclid/euclid-0.22.14.crate#euclid-0.22.14/LICENSE-MIT",
+          "sha256": "62065228e42caebca7e7d7db1204cbb867033de5982ca4009928915e4095f3a3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-fdeflate-0.3.7",
+      "crate_name": "fdeflate",
+      "version": "0.3.7",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/fdeflate/fdeflate-0.3.7.crate",
+        "sha256": "1e6853b52649d4ac5c0bd02320cddc5ba956bdb407c4b75a2c6b75bf51500f8c"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/fdeflate/0.3.7/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/fdeflate/fdeflate-0.3.7.crate#fdeflate-0.3.7/LICENSE-APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/fdeflate/0.3.7/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/fdeflate/fdeflate-0.3.7.crate#fdeflate-0.3.7/LICENSE-MIT",
+          "sha256": "c77a4cf9da729987d0fe7ccd811e3bd27393914ddf3d23467c18cc22954513b3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-flate2-1.1.9",
+      "crate_name": "flate2",
+      "version": "1.1.9",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/flate2/flate2-1.1.9.crate",
+        "sha256": "843fba2746e448b37e26a819579957415c8cef339bf08564fe8b7ddbd959573c"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/flate2/1.1.9/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/flate2/flate2-1.1.9.crate#flate2-1.1.9/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/flate2/1.1.9/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/flate2/flate2-1.1.9.crate#flate2-1.1.9/LICENSE-MIT",
+          "sha256": "025436edff4cfcdde17a5811fdea78892d8482efd1abdec5a17872d07a4f2112"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-float-cmp-0.9.0",
+      "crate_name": "float-cmp",
+      "version": "0.9.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/float-cmp/float-cmp-0.9.0.crate",
+        "sha256": "98de4bbd547a563b716d8dfa9aad1cb19bfab00f4fa09a6a4ed21dbcf44ce9c4"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/float-cmp/0.9.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/float-cmp/float-cmp-0.9.0.crate#float-cmp-0.9.0/LICENSE",
+          "sha256": "40be1e77825d7e49485a2e43d89bed29dfff29f8f529e71d3c683656021f0d08"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-font-types-0.12.3",
+      "crate_name": "font-types",
+      "version": "0.12.3",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/font-types/font-types-0.12.3.crate",
+        "sha256": "75382bc7392ef10aad10935f92fc3db36d2d4dad0e5d96d8d65e04f89a07ec39"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/font-types/0.12.3/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/font-types/font-types-0.12.3.crate#font-types-0.12.3/LICENSE-APACHE",
+          "sha256": "eba684204073ed715c4abb48129acdfd2bff8ae48339e6a7da3b341d3027b7f0"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/font-types/0.12.3/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/font-types/font-types-0.12.3.crate#font-types-0.12.3/LICENSE-MIT",
+          "sha256": "7b4c9a3946dfcea7967582760e963e27799e225dcf20565c8ef55324bb017427"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-fontconfig-parser-0.5.8",
+      "crate_name": "fontconfig-parser",
+      "version": "0.5.8",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/fontconfig-parser/fontconfig-parser-0.5.8.crate",
+        "sha256": "bbc773e24e02d4ddd8395fd30dc147524273a83e54e0f312d986ea30de5f5646"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/fontconfig-parser/0.5.8/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/fontconfig-parser/fontconfig-parser-0.5.8.crate#fontconfig-parser-0.5.8/LICENSE",
+          "sha256": "1f90908c18012716ff9965086920050b7d31ad2a9da41e3473a6a5a46e9c908f"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-fontdb-0.24.0",
+      "crate_name": "fontdb",
+      "version": "0.24.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/fontdb/fontdb-0.24.0.crate",
+        "sha256": "2660c5e9157bf76d2db1294e4a9feba604ef610819a3b591088d0d8392a3290f"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/fontdb/0.24.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/fontdb/fontdb-0.24.0.crate#fontdb-0.24.0/LICENSE",
+          "sha256": "59a1fdac3bd550043599bd159fd70f09a1108c2b09e3751d39b11e1ff8e51f00"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/fontdb/0.24.0/tests/fonts/LICENSE.txt",
+          "role": "license",
+          "source": "https://static.crates.io/crates/fontdb/fontdb-0.24.0.crate#fontdb-0.24.0/tests/fonts/LICENSE.txt",
+          "sha256": "b84fdd2c3da5db56385cdbb639795e90aa3e035c53bc3591135f18df3331451f"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-gif-0.14.2",
+      "crate_name": "gif",
+      "version": "0.14.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/gif/gif-0.14.2.crate",
+        "sha256": "ee8cfcc411d9adbbaba82fb72661cc1bcca13e8bba98b364e62b2dba8f960159"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/gif/0.14.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/gif/gif-0.14.2.crate#gif-0.14.2/LICENSE-APACHE",
+          "sha256": "769f80b5bcb42ed0af4e4d2fd74e1ac9bf843cb80c5a29219d1ef3544428a6bb"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/gif/0.14.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/gif/gif-0.14.2.crate#gif-0.14.2/LICENSE-MIT",
+          "sha256": "77257f3d2181236b1aee78920238062ae64efe13c5d858b2db126e79c9e1b14f"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-harfrust-0.12.0",
+      "crate_name": "harfrust",
+      "version": "0.12.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/harfrust/harfrust-0.12.0.crate",
+        "sha256": "c03d949a14aa089bbb282f7dd76a498a7f684428e4257202efc119ec010376f9"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/harfrust/0.12.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/harfrust/harfrust-0.12.0.crate#harfrust-0.12.0/LICENSE",
+          "sha256": "3a7c3f0b887abb7c638faf022d29257418458614c6724b120ceeffb279f9c7d2"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-heck-0.5.0",
+      "crate_name": "heck",
+      "version": "0.5.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/heck/heck-0.5.0.crate",
+        "sha256": "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/heck/0.5.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/heck/heck-0.5.0.crate#heck-0.5.0/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/heck/0.5.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/heck/heck-0.5.0.crate#heck-0.5.0/LICENSE-MIT",
+          "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-image-webp-0.2.4",
+      "crate_name": "image-webp",
+      "version": "0.2.4",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/image-webp/image-webp-0.2.4.crate",
+        "sha256": "525e9ff3e1a4be2fbea1fdf0e98686a6d98b4d8f937e1bf7402245af1909e8c3"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/image-webp/0.2.4/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/image-webp/image-webp-0.2.4.crate#image-webp-0.2.4/LICENSE-APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/image-webp/0.2.4/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/image-webp/image-webp-0.2.4.crate#image-webp-0.2.4/LICENSE-MIT",
+          "sha256": "c77a4cf9da729987d0fe7ccd811e3bd27393914ddf3d23467c18cc22954513b3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-imagesize-0.15.0",
+      "crate_name": "imagesize",
+      "version": "0.15.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/imagesize/imagesize-0.15.0.crate",
+        "sha256": "65b27460c2c92b037f3f94c538ed9a3342f3fdf923606781629ccb35f82d042a"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/imagesize/0.15.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/imagesize/imagesize-0.15.0.crate#imagesize-0.15.0/LICENSE",
+          "sha256": "fa0d694967d5c279e70a5c7b7e4b9929e4c1c8c1b8506998e66fc2f1547b200a"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-kurbo-0.13.1",
+      "crate_name": "kurbo",
+      "version": "0.13.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/kurbo/kurbo-0.13.1.crate",
+        "sha256": "4b60dfc32f652b926df6192e55525b16d186c69d47876c3ead4da5cc9f8450e2"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/kurbo/0.13.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/kurbo/kurbo-0.13.1.crate#kurbo-0.13.1/LICENSE-APACHE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/kurbo/0.13.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/kurbo/kurbo-0.13.1.crate#kurbo-0.13.1/LICENSE-MIT",
+          "sha256": "23c23145f6eac25c28cdcc03d38506a5712a9a8cffb5bd5301457f6173ea696e"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-libc-0.2.189",
+      "crate_name": "libc",
+      "version": "0.2.189",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/libc/libc-0.2.189.crate",
+        "sha256": "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/libc/0.2.189/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/libc/libc-0.2.189.crate#libc-0.2.189/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/libc/0.2.189/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/libc/libc-0.2.189.crate#libc-0.2.189/LICENSE-MIT",
+          "sha256": "123a331b5dbf04c30097fa43b8f858bc85df671fe776de498d01f3d6b7c1f69e"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-log-0.4.34",
+      "crate_name": "log",
+      "version": "0.4.34",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/log/log-0.4.34.crate",
+        "sha256": "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/log/0.4.34/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/log/log-0.4.34.crate#log-0.4.34/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/log/0.4.34/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/log/log-0.4.34.crate#log-0.4.34/LICENSE-MIT",
+          "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-memchr-2.8.3",
+      "crate_name": "memchr",
+      "version": "2.8.3",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Unlicense OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/memchr/memchr-2.8.3.crate",
+        "sha256": "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/memchr/2.8.3/COPYING",
+          "role": "license",
+          "source": "https://static.crates.io/crates/memchr/memchr-2.8.3.crate#memchr-2.8.3/COPYING",
+          "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/memchr/2.8.3/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/memchr/memchr-2.8.3.crate#memchr-2.8.3/LICENSE-MIT",
+          "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/memchr/2.8.3/UNLICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/memchr/memchr-2.8.3.crate#memchr-2.8.3/UNLICENSE",
+          "sha256": "7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-memmap2-0.9.11",
+      "crate_name": "memmap2",
+      "version": "0.9.11",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/memmap2/memmap2-0.9.11.crate",
+        "sha256": "d1219ed1b7f229ee7104d281dd01d6802fe28bb6e95d292942c4daacdeb798c0"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/memmap2/0.9.11/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/memmap2/memmap2-0.9.11.crate#memmap2-0.9.11/LICENSE-APACHE",
+          "sha256": "04ea4849dba9dcae07113850c6f1b1a69052c625210639914eee352023f750ad"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/memmap2/0.9.11/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/memmap2/memmap2-0.9.11.crate#memmap2-0.9.11/LICENSE-MIT",
+          "sha256": "0d25d03b5ab49576178ad0cae7a2648d12c17ad0452fe49c07e55e4b59aa5257"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-miniz_oxide-0.8.9",
+      "crate_name": "miniz_oxide",
+      "version": "0.8.9",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Zlib OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/miniz_oxide/miniz_oxide-0.8.9.crate",
+        "sha256": "1fa76a2c86f704bdb222d66965fb3d63269ce38518b83cb0575fca855ebb6316"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/miniz_oxide/0.8.9/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/miniz_oxide/miniz_oxide-0.8.9.crate#miniz_oxide-0.8.9/LICENSE",
+          "sha256": "4108245a1f2df9d4e94df8abed5b4ba0759bb2f9b40a6b939f1be141077ae50b"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/miniz_oxide/0.8.9/LICENSE-APACHE.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/miniz_oxide/miniz_oxide-0.8.9.crate#miniz_oxide-0.8.9/LICENSE-APACHE.md",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/miniz_oxide/0.8.9/LICENSE-MIT.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/miniz_oxide/miniz_oxide-0.8.9.crate#miniz_oxide-0.8.9/LICENSE-MIT.md",
+          "sha256": "799e9ca9d179295ef372f25d3769cdda7d25bb2668add6a6a1e22d1e4c678b8d"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/miniz_oxide/0.8.9/LICENSE-ZLIB.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/miniz_oxide/miniz_oxide-0.8.9.crate#miniz_oxide-0.8.9/LICENSE-ZLIB.md",
+          "sha256": "0a54e647fe54104658b5e563c04c6f9edf251710e47bce692e0bd990a4ddaa39"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-num-traits-0.2.19",
+      "crate_name": "num-traits",
+      "version": "0.2.19",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/num-traits/num-traits-0.2.19.crate",
+        "sha256": "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/num-traits/0.2.19/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/num-traits/num-traits-0.2.19.crate#num-traits-0.2.19/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/num-traits/0.2.19/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/num-traits/num-traits-0.2.19.crate#num-traits-0.2.19/LICENSE-MIT",
+          "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-once_cell-1.21.4",
+      "crate_name": "once_cell",
+      "version": "1.21.4",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/once_cell/once_cell-1.21.4.crate",
+        "sha256": "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/once_cell/1.21.4/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/once_cell/once_cell-1.21.4.crate#once_cell-1.21.4/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/once_cell/1.21.4/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/once_cell/once_cell-1.21.4.crate#once_cell-1.21.4/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-pico-args-0.5.0",
+      "crate_name": "pico-args",
+      "version": "0.5.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/pico-args/pico-args-0.5.0.crate",
+        "sha256": "5be167a7af36ee22fe3115051bc51f6e6c7054c9348e28deb4f49bd6f705a315"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pico-args/0.5.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pico-args/pico-args-0.5.0.crate#pico-args-0.5.0/LICENSE",
+          "sha256": "f71452d91682fdae0ca948b18cfed53a953d1237740dd80371c76a5c1c7bbe91"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-png-0.18.1",
+      "crate_name": "png",
+      "version": "0.18.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/png/png-0.18.1.crate",
+        "sha256": "60769b8b31b2a9f263dae2776c37b1b28ae246943cf719eb6946a1db05128a61"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/png/0.18.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/png/png-0.18.1.crate#png-0.18.1/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/png/0.18.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/png/png-0.18.1.crate#png-0.18.1/LICENSE-MIT",
+          "sha256": "eaf40297c75da471f7cda1f3458e8d91b4b2ec866e609527a13acfa93b638652"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-polycool-0.4.0",
+      "crate_name": "polycool",
+      "version": "0.4.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/polycool/polycool-0.4.0.crate",
+        "sha256": "50596ddc09eb5ad5f75cacd40209568e66df71baf86e1499a0e99c4cff12a5a6"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/polycool/0.4.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/polycool/polycool-0.4.0.crate#polycool-0.4.0/LICENSE-APACHE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/polycool/0.4.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/polycool/polycool-0.4.0.crate#polycool-0.4.0/LICENSE-MIT",
+          "sha256": "23c23145f6eac25c28cdcc03d38506a5712a9a8cffb5bd5301457f6173ea696e"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-portable-atomic-1.15.0",
+      "crate_name": "portable-atomic",
+      "version": "1.15.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/portable-atomic/portable-atomic-1.15.0.crate",
+        "sha256": "05c8b63e8d9609db387f0324918f81d68fe27748f084ef092fb35954d0539a85"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/portable-atomic/1.15.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/portable-atomic/portable-atomic-1.15.0.crate#portable-atomic-1.15.0/LICENSE-APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/portable-atomic/1.15.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/portable-atomic/portable-atomic-1.15.0.crate#portable-atomic-1.15.0/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-proc-macro2-1.0.107",
+      "crate_name": "proc-macro2",
+      "version": "1.0.107",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/proc-macro2/proc-macro2-1.0.107.crate",
+        "sha256": "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/proc-macro2/1.0.107/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/proc-macro2/proc-macro2-1.0.107.crate#proc-macro2-1.0.107/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/proc-macro2/1.0.107/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/proc-macro2/proc-macro2-1.0.107.crate#proc-macro2-1.0.107/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-pyo3-0.29.2",
+      "crate_name": "pyo3",
+      "version": "0.29.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/pyo3/pyo3-0.29.2.crate",
+        "sha256": "4688ddedf473e32662b9b067670129a8afb8c18e351482c70d62ba4a88171e8b"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3/0.29.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3/pyo3-0.29.2.crate#pyo3-0.29.2/LICENSE-APACHE",
+          "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3/0.29.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3/pyo3-0.29.2.crate#pyo3-0.29.2/LICENSE-MIT",
+          "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3/0.29.2/pyo3-runtime/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3/pyo3-0.29.2.crate#pyo3-0.29.2/pyo3-runtime/LICENSE-APACHE",
+          "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3/0.29.2/pyo3-runtime/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3/pyo3-0.29.2.crate#pyo3-0.29.2/pyo3-runtime/LICENSE-MIT",
+          "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-pyo3-build-config-0.29.2",
+      "crate_name": "pyo3-build-config",
+      "version": "0.29.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/pyo3-build-config/pyo3-build-config-0.29.2.crate",
+        "sha256": "f41027e41b4bd03f6e60f9f417fe24a6341a6bb744edd62b6f709f2a52ea30e9"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3-build-config/0.29.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3-build-config/pyo3-build-config-0.29.2.crate#pyo3-build-config-0.29.2/LICENSE-APACHE",
+          "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3-build-config/0.29.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3-build-config/pyo3-build-config-0.29.2.crate#pyo3-build-config-0.29.2/LICENSE-MIT",
+          "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-pyo3-ffi-0.29.2",
+      "crate_name": "pyo3-ffi",
+      "version": "0.29.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/pyo3-ffi/pyo3-ffi-0.29.2.crate",
+        "sha256": "e591a95526fead067432c3b3a33fc74770b87b1e04e73671090d9c2055a2b327"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3-ffi/0.29.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3-ffi/pyo3-ffi-0.29.2.crate#pyo3-ffi-0.29.2/LICENSE-APACHE",
+          "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3-ffi/0.29.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3-ffi/pyo3-ffi-0.29.2.crate#pyo3-ffi-0.29.2/LICENSE-MIT",
+          "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-pyo3-macros-0.29.2",
+      "crate_name": "pyo3-macros",
+      "version": "0.29.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/pyo3-macros/pyo3-macros-0.29.2.crate",
+        "sha256": "73225868fc1cd84eef2c3c230ddb91273bf1de46aeb8a4248da76d32a0924a1c"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3-macros/0.29.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3-macros/pyo3-macros-0.29.2.crate#pyo3-macros-0.29.2/LICENSE-APACHE",
+          "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3-macros/0.29.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3-macros/pyo3-macros-0.29.2.crate#pyo3-macros-0.29.2/LICENSE-MIT",
+          "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-pyo3-macros-backend-0.29.2",
+      "crate_name": "pyo3-macros-backend",
+      "version": "0.29.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/pyo3-macros-backend/pyo3-macros-backend-0.29.2.crate",
+        "sha256": "571575aa3749fa6216757dd47d2a3e7ef360f329a40f0666a9fbd14889024952"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3-macros-backend/0.29.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3-macros-backend/pyo3-macros-backend-0.29.2.crate#pyo3-macros-backend-0.29.2/LICENSE-APACHE",
+          "sha256": "32c76dbe0e73d79100d5ece77c158399f2e2541bc5c78548a4ba45c1cb53c5c9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/pyo3-macros-backend/0.29.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/pyo3-macros-backend/pyo3-macros-backend-0.29.2.crate#pyo3-macros-backend-0.29.2/LICENSE-MIT",
+          "sha256": "afcbe3b2e6b37172b5a9ca869ee4c0b8cdc09316e5d4384864154482c33e5af6"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-quick-error-2.0.1",
+      "crate_name": "quick-error",
+      "version": "2.0.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT/Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/quick-error/quick-error-2.0.1.crate",
+        "sha256": "a993555f31e5a609f617c12db6250dedcac1b0a85076912c436e6fc9b2c8e6a3"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/quick-error/2.0.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/quick-error/quick-error-2.0.1.crate#quick-error-2.0.1/LICENSE-APACHE",
+          "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/quick-error/2.0.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/quick-error/quick-error-2.0.1.crate#quick-error-2.0.1/LICENSE-MIT",
+          "sha256": "058f01fe181608d027fcde7e528fc03ea3cf90f30903c407644b0a9bbc54f500"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-quote-1.0.47",
+      "crate_name": "quote",
+      "version": "1.0.47",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/quote/quote-1.0.47.crate",
+        "sha256": "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/quote/1.0.47/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/quote/quote-1.0.47.crate#quote-1.0.47/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/quote/1.0.47/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/quote/quote-1.0.47.crate#quote-1.0.47/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-read-fonts-0.41.0",
+      "crate_name": "read-fonts",
+      "version": "0.41.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/read-fonts/read-fonts-0.41.0.crate",
+        "sha256": "046a7d674daf459825b32f5062056d6882db0d2f5a479fbd76ccfc870ac18709"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/read-fonts/0.41.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/read-fonts/read-fonts-0.41.0.crate#read-fonts-0.41.0/LICENSE-APACHE",
+          "sha256": "eba684204073ed715c4abb48129acdfd2bff8ae48339e6a7da3b341d3027b7f0"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/read-fonts/0.41.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/read-fonts/read-fonts-0.41.0.crate#read-fonts-0.41.0/LICENSE-MIT",
+          "sha256": "7b4c9a3946dfcea7967582760e963e27799e225dcf20565c8ef55324bb017427"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-resvg-0.48.1",
+      "crate_name": "resvg",
+      "version": "0.48.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/resvg/resvg-0.48.1.crate",
+        "sha256": "67e3803f97b999e80cbf7c6ecdd07a8102204d92e1633cf48783720c521196bd"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/resvg/0.48.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/resvg/resvg-0.48.1.crate#resvg-0.48.1/LICENSE-APACHE",
+          "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/resvg/0.48.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/resvg/resvg-0.48.1.crate#resvg-0.48.1/LICENSE-MIT",
+          "sha256": "f5d934dc281b44e0003ee461ac740b18b6629a454decd872c774d34e4ee0b21d"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-rgb-0.8.53",
+      "crate_name": "rgb",
+      "version": "0.8.53",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/rgb/rgb-0.8.53.crate",
+        "sha256": "47b34b781b31e5d73e9fbc8689c70551fd1ade9a19e3e28cfec8580a79290cc4"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/rgb/0.8.53/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/rgb/rgb-0.8.53.crate#rgb-0.8.53/LICENSE",
+          "sha256": "457b464bc0fba8a3d67d2458569104f5611869f0c1563a1a12d9c51a0bca9261"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-roxmltree-0.20.0",
+      "crate_name": "roxmltree",
+      "version": "0.20.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/roxmltree/roxmltree-0.20.0.crate",
+        "sha256": "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/roxmltree/0.20.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/roxmltree/roxmltree-0.20.0.crate#roxmltree-0.20.0/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/roxmltree/0.20.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/roxmltree/roxmltree-0.20.0.crate#roxmltree-0.20.0/LICENSE-MIT",
+          "sha256": "fffe218c1e349e1d482a05677f2ce850502f88298174d77f6ac7c04821db7899"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-roxmltree-0.21.1",
+      "crate_name": "roxmltree",
+      "version": "0.21.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/roxmltree/roxmltree-0.21.1.crate",
+        "sha256": "f1964b10c76125c36f8afe190065a4bf9a87bf324842c05701330bba9f1cacbb"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/roxmltree/0.21.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/roxmltree/roxmltree-0.21.1.crate#roxmltree-0.21.1/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/roxmltree/0.21.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/roxmltree/roxmltree-0.21.1.crate#roxmltree-0.21.1/LICENSE-MIT",
+          "sha256": "fffe218c1e349e1d482a05677f2ce850502f88298174d77f6ac7c04821db7899"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-simd-adler32-0.3.10",
+      "crate_name": "simd-adler32",
+      "version": "0.3.10",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/simd-adler32/simd-adler32-0.3.10.crate",
+        "sha256": "3a219298ac11a56ea9a6d2120044824d6f01aeb034955e7af7bc16858527deea"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/simd-adler32/0.3.10/LICENSE.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/simd-adler32/simd-adler32-0.3.10.crate#simd-adler32-0.3.10/LICENSE.md",
+          "sha256": "42a35170233e83e18856792e748de4c1ce4a63b2afce9a370c89ef3fe23f9f2d"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-simplecss-0.2.2",
+      "crate_name": "simplecss",
+      "version": "0.2.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/simplecss/simplecss-0.2.2.crate",
+        "sha256": "7a9c6883ca9c3c7c90e888de77b7a5c849c779d25d74a1269b0218b14e8b136c"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/simplecss/0.2.2/AUTHORS",
+          "role": "notice",
+          "source": "https://static.crates.io/crates/simplecss/simplecss-0.2.2.crate#simplecss-0.2.2/AUTHORS",
+          "sha256": "29b6467090ed36f94401083b58f40565571e9849047e8059f320a1b877304910"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/simplecss/0.2.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/simplecss/simplecss-0.2.2.crate#simplecss-0.2.2/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/simplecss/0.2.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/simplecss/simplecss-0.2.2.crate#simplecss-0.2.2/LICENSE-MIT",
+          "sha256": "0b5f24524360e15bcf9fb79bca875f5aa62f01f94f2988e23238c7ec0e6e8784"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-siphasher-1.0.3",
+      "crate_name": "siphasher",
+      "version": "1.0.3",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT/Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/siphasher/siphasher-1.0.3.crate",
+        "sha256": "8ee5873ec9cce0195efcb7a4e9507a04cd49aec9c83d0389df45b1ef7ba2e649"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/siphasher/1.0.3/COPYING",
+          "role": "license",
+          "source": "https://static.crates.io/crates/siphasher/siphasher-1.0.3.crate#siphasher-1.0.3/COPYING",
+          "sha256": "c962ee4d1d05ddc138b202b2540219ebc57893fcf97b364852094a9a94ce1365"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-skrifa-0.44.0",
+      "crate_name": "skrifa",
+      "version": "0.44.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/skrifa/skrifa-0.44.0.crate",
+        "sha256": "819ab7d62b1d3e72d9d9dea5650bac30424f9111364bb94928dbf5ecad1baa68"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/skrifa/0.44.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/skrifa/skrifa-0.44.0.crate#skrifa-0.44.0/LICENSE-APACHE",
+          "sha256": "eba684204073ed715c4abb48129acdfd2bff8ae48339e6a7da3b341d3027b7f0"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/skrifa/0.44.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/skrifa/skrifa-0.44.0.crate#skrifa-0.44.0/LICENSE-MIT",
+          "sha256": "7b4c9a3946dfcea7967582760e963e27799e225dcf20565c8ef55324bb017427"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-slotmap-1.1.1",
+      "crate_name": "slotmap",
+      "version": "1.1.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Zlib",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/slotmap/slotmap-1.1.1.crate",
+        "sha256": "bdd58c3c93c3d278ca835519292445cb4b0d4dc59ccfdf7ceadaab3f8aeb4038"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/slotmap/1.1.1/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/slotmap/slotmap-1.1.1.crate#slotmap-1.1.1/LICENSE",
+          "sha256": "6cec81441b2ab2b5090954c1fb5d0bcca81b86487b5849061fa8952d20ef67d4"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-smallvec-1.15.2",
+      "crate_name": "smallvec",
+      "version": "1.15.2",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/smallvec/smallvec-1.15.2.crate",
+        "sha256": "8ed6a63f02c8539c91a8685a86f4099661ba3da017932f6ebbea6de3f0fa7c90"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/smallvec/1.15.2/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/smallvec/smallvec-1.15.2.crate#smallvec-1.15.2/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/smallvec/1.15.2/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/smallvec/smallvec-1.15.2.crate#smallvec-1.15.2/LICENSE-MIT",
+          "sha256": "0b28172679e0009b655da42797c03fd163a3379d5cfa67ba1f1655e974a2a1a9"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-strict-num-0.1.1",
+      "crate_name": "strict-num",
+      "version": "0.1.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/strict-num/strict-num-0.1.1.crate",
+        "sha256": "6637bab7722d379c8b41ba849228d680cc12d0a45ba1fa2b48f2a30577a06731"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/strict-num/0.1.1/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/strict-num/strict-num-0.1.1.crate#strict-num-0.1.1/LICENSE",
+          "sha256": "3085885678bb161f6c472bbd331f66a2550b555eb76128f7f8247779128199c0"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-svgtypes-0.16.1",
+      "crate_name": "svgtypes",
+      "version": "0.16.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/svgtypes/svgtypes-0.16.1.crate",
+        "sha256": "695b5790b3131dafa99b3bbfd25a216edb3d216dad9ca208d4657bfb8f2abc3d"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/svgtypes/0.16.1/AUTHORS",
+          "role": "notice",
+          "source": "https://static.crates.io/crates/svgtypes/svgtypes-0.16.1.crate#svgtypes-0.16.1/AUTHORS",
+          "sha256": "f49d7e15695022ed1dcd72eb88adf16c9e3fa7f2de63cd71963ba233d3d51264"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/svgtypes/0.16.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/svgtypes/svgtypes-0.16.1.crate#svgtypes-0.16.1/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/svgtypes/0.16.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/svgtypes/svgtypes-0.16.1.crate#svgtypes-0.16.1/LICENSE-MIT",
+          "sha256": "f3c9fe731c701ed77fd5fbaac573872af04dc5869385eb9bd5e3c73c42713814"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-syn-2.0.119",
+      "crate_name": "syn",
+      "version": "2.0.119",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/syn/syn-2.0.119.crate",
+        "sha256": "872831b642d1a07999a962a351ed35b955ea2cfc8f3862091e2a240a84f17297"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/syn/2.0.119/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/syn/syn-2.0.119.crate#syn-2.0.119/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/syn/2.0.119/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/syn/syn-2.0.119.crate#syn-2.0.119/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-syn-3.0.3",
+      "crate_name": "syn",
+      "version": "3.0.3",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/syn/syn-3.0.3.crate",
+        "sha256": "53e9bae58849f64dfa4f5d5ae372c8341f7305f82a3868709269343628b659a3"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/syn/3.0.3/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/syn/syn-3.0.3.crate#syn-3.0.3/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/syn/3.0.3/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/syn/syn-3.0.3.crate#syn-3.0.3/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-target-lexicon-0.13.5",
+      "crate_name": "target-lexicon",
+      "version": "0.13.5",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Apache-2.0 WITH LLVM-exception",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/target-lexicon/target-lexicon-0.13.5.crate",
+        "sha256": "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/target-lexicon/0.13.5/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/target-lexicon/target-lexicon-0.13.5.crate#target-lexicon-0.13.5/LICENSE",
+          "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-tiny-skia-0.12.0",
+      "crate_name": "tiny-skia",
+      "version": "0.12.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "BSD-3-Clause",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/tiny-skia/tiny-skia-0.12.0.crate",
+        "sha256": "47ffee5eaaf5527f630fb0e356b90ebdec84d5d18d937c5e440350f88c5a91ea"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/tiny-skia/0.12.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/tiny-skia/tiny-skia-0.12.0.crate#tiny-skia-0.12.0/LICENSE",
+          "sha256": "6d41e05f1d54fe726997cb0334ec539f1dff50600b1d5d90462ec2b392770ced"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-tiny-skia-path-0.12.0",
+      "crate_name": "tiny-skia-path",
+      "version": "0.12.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "BSD-3-Clause",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/tiny-skia-path/tiny-skia-path-0.12.0.crate",
+        "sha256": "edca365c3faccca67d06593c5980fa6c57687de727a03131735bb85f01fdeeb9"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/tiny-skia-path/0.12.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/tiny-skia-path/tiny-skia-path-0.12.0.crate#tiny-skia-path-0.12.0/LICENSE",
+          "sha256": "6d41e05f1d54fe726997cb0334ec539f1dff50600b1d5d90462ec2b392770ced"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-tinyvec-1.12.0",
+      "crate_name": "tinyvec",
+      "version": "1.12.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Zlib OR Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/tinyvec/tinyvec-1.12.0.crate",
+        "sha256": "bb4ebadaa0af04fab11ae01eb5f9fdb5f9c5b875506e210e71c07873528baa7f"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/tinyvec/1.12.0/LICENSE-APACHE.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/tinyvec/tinyvec-1.12.0.crate#tinyvec-1.12.0/LICENSE-APACHE.md",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/tinyvec/1.12.0/LICENSE-MIT.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/tinyvec/tinyvec-1.12.0.crate#tinyvec-1.12.0/LICENSE-MIT.md",
+          "sha256": "fd80a26fbb3f644af1fa994134446702932968519797227e07a1368dea80f0bc"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/tinyvec/1.12.0/LICENSE-ZLIB.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/tinyvec/tinyvec-1.12.0.crate#tinyvec-1.12.0/LICENSE-ZLIB.md",
+          "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-tinyvec_macros-0.1.1",
+      "crate_name": "tinyvec_macros",
+      "version": "0.1.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0 OR Zlib",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/tinyvec_macros/tinyvec_macros-0.1.1.crate",
+        "sha256": "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/tinyvec_macros/0.1.1/LICENSE-APACHE.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/tinyvec_macros/tinyvec_macros-0.1.1.crate#tinyvec_macros-0.1.1/LICENSE-APACHE.md",
+          "sha256": "4f44572785f35152c1fd2eadf565b7e079c0f300b4324f0af653419f9d76b735"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/tinyvec_macros/0.1.1/LICENSE-MIT.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/tinyvec_macros/tinyvec_macros-0.1.1.crate#tinyvec_macros-0.1.1/LICENSE-MIT.md",
+          "sha256": "1dd8eca0f83669e75fa119e34fb9e1be9d16e3e9b6368962b8019db6e8ae5f7b"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/tinyvec_macros/0.1.1/LICENSE-ZLIB.md",
+          "role": "license",
+          "source": "https://static.crates.io/crates/tinyvec_macros/tinyvec_macros-0.1.1.crate#tinyvec_macros-0.1.1/LICENSE-ZLIB.md",
+          "sha256": "41ace205715d9f19a3214218cc1c01d57c533e02cd0fef7c8e51a49a7fce5ac5"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-unicode-bidi-0.3.18",
+      "crate_name": "unicode-bidi",
+      "version": "0.3.18",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/unicode-bidi/unicode-bidi-0.3.18.crate",
+        "sha256": "5c1cb5db39152898a79168971543b1cb5020dff7fe43c8dc468b0885f5e29df5"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-bidi/0.3.18/AUTHORS",
+          "role": "notice",
+          "source": "https://static.crates.io/crates/unicode-bidi/unicode-bidi-0.3.18.crate#unicode-bidi-0.3.18/AUTHORS",
+          "sha256": "1ff3a7c8519b29544bb28ba9b1e7502df0cb764051fb9a1172e60006aa2b8dcc"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-bidi/0.3.18/COPYRIGHT",
+          "role": "notice",
+          "source": "https://static.crates.io/crates/unicode-bidi/unicode-bidi-0.3.18.crate#unicode-bidi-0.3.18/COPYRIGHT",
+          "sha256": "edb20b474f6cbd4f4db066b54a9e0f687d0009d309412a63431189b59b8e2a07"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-bidi/0.3.18/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-bidi/unicode-bidi-0.3.18.crate#unicode-bidi-0.3.18/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-bidi/0.3.18/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-bidi/unicode-bidi-0.3.18.crate#unicode-bidi-0.3.18/LICENSE-MIT",
+          "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-unicode-ident-1.0.24",
+      "crate_name": "unicode-ident",
+      "version": "1.0.24",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "(MIT OR Apache-2.0) AND Unicode-3.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/unicode-ident/unicode-ident-1.0.24.crate",
+        "sha256": "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-ident/1.0.24/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-ident/unicode-ident-1.0.24.crate#unicode-ident-1.0.24/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-ident/1.0.24/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-ident/unicode-ident-1.0.24.crate#unicode-ident-1.0.24/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-ident/1.0.24/LICENSE-UNICODE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-ident/unicode-ident-1.0.24.crate#unicode-ident-1.0.24/LICENSE-UNICODE",
+          "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-unicode-script-0.5.8",
+      "crate_name": "unicode-script",
+      "version": "0.5.8",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/unicode-script/unicode-script-0.5.8.crate",
+        "sha256": "383ad40bb927465ec0ce7720e033cb4ca06912855fc35db31b5755d0de75b1ee"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-script/0.5.8/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-script/unicode-script-0.5.8.crate#unicode-script-0.5.8/LICENSE-APACHE",
+          "sha256": "7cbb56d1b5d83d735056b363ab20958524120afafc4ad8206e6be98cdec5d737"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-script/0.5.8/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-script/unicode-script-0.5.8.crate#unicode-script-0.5.8/LICENSE-MIT",
+          "sha256": "7ad3ea8ca3caf894db98c3f31d5d4949173ffa93c883ef19a9e529ad48960f8c"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-unicode-vo-0.1.0",
+      "crate_name": "unicode-vo",
+      "version": "0.1.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT/Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/unicode-vo/unicode-vo-0.1.0.crate",
+        "sha256": "b1d386ff53b415b7fe27b50bb44679e2cc4660272694b7b6f3326d8480823a94"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-vo/0.1.0/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-vo/unicode-vo-0.1.0.crate#unicode-vo-0.1.0/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/unicode-vo/0.1.0/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/unicode-vo/unicode-vo-0.1.0.crate#unicode-vo-0.1.0/LICENSE-MIT",
+          "sha256": "0b5f24524360e15bcf9fb79bca875f5aa62f01f94f2988e23238c7ec0e6e8784"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-usvg-0.48.1",
+      "crate_name": "usvg",
+      "version": "0.48.1",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "Apache-2.0 OR MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/usvg/usvg-0.48.1.crate",
+        "sha256": "977d0a4abdef933f424a99fe09f95576e089b90aebc6f016a3bc813762493e91"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/usvg/0.48.1/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/usvg/usvg-0.48.1.crate#usvg-0.48.1/LICENSE-APACHE",
+          "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/usvg/0.48.1/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/usvg/usvg-0.48.1.crate#usvg-0.48.1/LICENSE-MIT",
+          "sha256": "f5d934dc281b44e0003ee461ac740b18b6629a454decd872c774d34e4ee0b21d"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-version_check-0.9.5",
+      "crate_name": "version_check",
+      "version": "0.9.5",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT/Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/version_check/version_check-0.9.5.crate",
+        "sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/version_check/0.9.5/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/version_check/version_check-0.9.5.crate#version_check-0.9.5/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/version_check/0.9.5/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/version_check/version_check-0.9.5.crate#version_check-0.9.5/LICENSE-MIT",
+          "sha256": "b7e650f3fce5c53249d1cdc608b54df156a97edd636cf9d23498d0cfe7aec63e"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-weezl-0.1.12",
+      "crate_name": "weezl",
+      "version": "0.1.12",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/weezl/weezl-0.1.12.crate",
+        "sha256": "a28ac98ddc8b9274cb41bb4d9d4d5c425b6020c50c46f25559911905610b4a88"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/weezl/0.1.12/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/weezl/weezl-0.1.12.crate#weezl-0.1.12/LICENSE-APACHE",
+          "sha256": "769f80b5bcb42ed0af4e4d2fd74e1ac9bf843cb80c5a29219d1ef3544428a6bb"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/weezl/0.1.12/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/weezl/weezl-0.1.12.crate#weezl-0.1.12/LICENSE-MIT",
+          "sha256": "573f5227db835cd30bbdd3aed3f82615f80119a4d5c82b4daf642dbfe2b6afde"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-xmlwriter-0.1.0",
+      "crate_name": "xmlwriter",
+      "version": "0.1.0",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/xmlwriter/xmlwriter-0.1.0.crate",
+        "sha256": "ec7a2a501ed189703dba8b08142f057e887dfc4b2cc4db2d343ac6376ba3e0b9"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/xmlwriter/0.1.0/LICENSE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/xmlwriter/xmlwriter-0.1.0.crate#xmlwriter-0.1.0/LICENSE",
+          "sha256": "2cdce1ff4ca8f455ef169691ea493407e23c32ecdea5fd9b3a6fc82be5b49b5a"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-zune-core-0.5.3",
+      "crate_name": "zune-core",
+      "version": "0.5.3",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0 OR Zlib",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/zune-core/zune-core-0.5.3.crate",
+        "sha256": "d56377fd46368984a170bc5aac5567e52ca5da874caa60bea39fcbca78fb658b"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/zune-core/0.5.3/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/zune-core/zune-core-0.5.3.crate#zune-core-0.5.3/LICENSE-APACHE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/zune-core/0.5.3/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/zune-core/zune-core-0.5.3.crate#zune-core-0.5.3/LICENSE-MIT",
+          "sha256": "d30047bca3b516639339a3c279bb84c3483124fb5a9dafe3c75056a85090e745"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/zune-core/0.5.3/LICENSE-ZLIB",
+          "role": "license",
+          "source": "https://static.crates.io/crates/zune-core/zune-core-0.5.3.crate#zune-core-0.5.3/LICENSE-ZLIB",
+          "sha256": "d201d14804d3bcd3b944147173175e4abfbd838b7c8069b6bd3452496bf13e6c"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-rust-zune-jpeg-0.5.15",
+      "crate_name": "zune-jpeg",
+      "version": "0.5.15",
+      "scope": "resvg-py-source-lock",
+      "license_metadata": {
+        "expression": "MIT OR Apache-2.0 OR Zlib",
+        "license_file": null
+      },
+      "source": {
+        "kind": "exact-crate-source",
+        "url": "https://static.crates.io/crates/zune-jpeg/zune-jpeg-0.5.15.crate",
+        "sha256": "27bc9d5b815bc103f142aa054f561d9187d191692ec7c2d1e2b4737f8dbd7296"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/zune-jpeg/0.5.15/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://static.crates.io/crates/zune-jpeg/zune-jpeg-0.5.15.crate#zune-jpeg-0.5.15/LICENSE-APACHE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/zune-jpeg/0.5.15/LICENSE-MIT",
+          "role": "license",
+          "source": "https://static.crates.io/crates/zune-jpeg/zune-jpeg-0.5.15.crate#zune-jpeg-0.5.15/LICENSE-MIT",
+          "sha256": "d30047bca3b516639339a3c279bb84c3483124fb5a9dafe3c75056a85090e745"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/zune-jpeg/0.5.15/LICENSE-ZLIB",
+          "role": "license",
+          "source": "https://static.crates.io/crates/zune-jpeg/zune-jpeg-0.5.15.crate#zune-jpeg-0.5.15/LICENSE-ZLIB",
+          "sha256": "d201d14804d3bcd3b944147173175e4abfbd838b7c8069b6bd3452496bf13e6c"
+        }
+      ]
+    },
+    {
+      "name": "resvg-py-exact-source-manifest",
+      "version": "0.5.0",
+      "scope": "renderer-source-provenance",
+      "license_metadata": {
+        "expression": "MIT"
+      },
+      "source": {
+        "kind": "exact-sdist",
+        "url": "https://files.pythonhosted.org/packages/2a/64/a24f8f29d8bf158e01f6ccad68a1366afd922dc0f0977cbd0c0aaa7a22f2/resvg_py-0.5.0.tar.gz",
+        "sha256": "6d3bf8e866b4e129524d9432a809138b2d100931d8d635bc81294002abcdfd46"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/sdist/resvg_py-0.5.0/LICENSE",
+          "role": "license",
+          "source": "https://files.pythonhosted.org/packages/2a/64/a24f8f29d8bf158e01f6ccad68a1366afd922dc0f0977cbd0c0aaa7a22f2/resvg_py-0.5.0.tar.gz#resvg_py-0.5.0/LICENSE",
+          "sha256": "753a9e3c09cece8584467a0f605e065005c2a5e5c6da4f0cbb0493d2d52b96f6"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/sdist/resvg_py-0.5.0/Cargo.lock",
+          "role": "provenance",
+          "source": "https://files.pythonhosted.org/packages/2a/64/a24f8f29d8bf158e01f6ccad68a1366afd922dc0f0977cbd0c0aaa7a22f2/resvg_py-0.5.0.tar.gz#resvg_py-0.5.0/Cargo.lock",
+          "sha256": "578b2a28b47041de07b6722712aca776efdf8b1b1b2ac49e91f5e829df4ea70a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/sdist/resvg_py-0.5.0/Cargo.toml",
+          "role": "provenance",
+          "source": "https://files.pythonhosted.org/packages/2a/64/a24f8f29d8bf158e01f6ccad68a1366afd922dc0f0977cbd0c0aaa7a22f2/resvg_py-0.5.0.tar.gz#resvg_py-0.5.0/Cargo.toml",
+          "sha256": "7c6a37c58b1edceee96c0380235e31e9e70d191b16d1a4fbf5a271d7a578583a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/sdist/resvg_py-0.5.0/pyproject.toml",
+          "role": "provenance",
+          "source": "https://files.pythonhosted.org/packages/2a/64/a24f8f29d8bf158e01f6ccad68a1366afd922dc0f0977cbd0c0aaa7a22f2/resvg_py-0.5.0.tar.gz#resvg_py-0.5.0/pyproject.toml",
+          "sha256": "56c8832c3ffb1e71301efe80e06d3c566f804da4487e26c7a8313e075fe2c4e4"
+        }
+      ]
     }
   ],
   "audit_gaps": [
@@ -2727,6 +4986,12 @@
       "scope": "original Material icons and QDarkStyleSheet resource revisions",
       "status": "unrecorded-revisions",
       "detail": "qdarktheme1.1.1 records Apache2 icon and MIT stylesheet attribution, but not the original resource commits. Complete pinned upstream license snapshots retained without asserting that those snapshots identify each resource revision."
+    },
+    {
+      "component": "resvg-py",
+      "scope": "statically linked Rust dependency notices",
+      "status": "source-notices-retained",
+      "detail": "The exact0.5.0 source Cargo.lock and complete original notices for all75 locked Rust crates (a conservative superset including build/platform dependencies) are retained with crate checksums. PyPI build provenance is unavailable (404) for both wheel and sdist, so correspondence of the stripped Windows binary to this source graph and final release bundle composition remain unproven. No complete binary-release audit is claimed."
     }
   ]
 }

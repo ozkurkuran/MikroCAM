@@ -11,3 +11,5 @@ playwright==1.63.0
 pyee==13.0.1
 rasterio==1.5.1
 svgtrace==2023.0.1
+
+-r requirements-visual.txt
