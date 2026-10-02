@@ -23,3 +23,23 @@ now pass along with the original 24 mock guards. The operator command uses the d
 checkout-relative interpreter. Physical inventory remains skipped; no device was connected.
 Original ddc9c7ab Windows evidence: https://github.com/ozkurkuran/MikroCAM/actions/runs/36925087618 .
 The final integration's separate exact-head CI result is recorded in central docs/IS_TAKIP.md.
+
+## Integrated delivery, 2026-10-02
+
+Delivered to `main` through [PR #34](https://github.com/ozkurkuran/MikroCAM/pull/34),
+merge `d173f5fde47008f04de824ea26b6903896a69f16`. PRs #28–#33 are also confirmed merged;
+their original commit histories are preserved. Earlier pending/open statements above are historical.
+
+Exact tested source head `405da9519c8ebd3bc73c38517e818eae4c56e53b`:
+- Complete local CPython 3.13 suite: 5487 passed, 3 skipped, 11 existing warnings,
+  310 subtests, 595.42 s; `.venv/grbl-delivery-full.log`.
+- [Windows CI PASS](https://github.com/ozkurkuran/MikroCAM/actions/runs/36989955432):
+  same 5487 tests and 310 subtests, 306.13 s.
+- Native Qt/OpenGL desktop smoke exit 0; character-counting queue completes three jobs,
+  Stop prevents the next source, new MikroCAM logo/About renders and shutdown passes.
+  Queue and About screenshots visually inspected; `.venv/grbl-delivery-desktop.log`.
+
+Three skips are the operator-only hardware inventory and two existing full-Qt-context tests.
+No physical device was connected. H3 remains open; FluidNC/grblHAL/TCP/SD remain deferred.
+The final main documentation head requires its own CI; its exact status is recorded in
+central `docs/IS_TAKIP.md`, without transferring this source-head PASS to a newer commit.

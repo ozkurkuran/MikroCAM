@@ -35,3 +35,26 @@ reports source program end, so all normal job/queue tests exercise it.153 relate
 Final runtime head includes this fix; earlier CI belongs to earlier commits. CI must rerun.
 All delivery actions including PR-ready/push/required-CI launch are completed; final check-status
 and physical H3 remain explicit independent gates in the central tracker.
+
+## Integrated delivery, 2026-10-02
+
+Delivered to `main` through [PR #34](https://github.com/ozkurkuran/MikroCAM/pull/34),
+merge `d173f5fde47008f04de824ea26b6903896a69f16`. PRs #28–#33 are also confirmed merged;
+their original commit histories are preserved. Earlier pending/open statements above are historical.
+
+Exact tested source head `405da9519c8ebd3bc73c38517e818eae4c56e53b`:
+- Complete local CPython 3.13 suite: 5487 passed, 3 skipped, 11 existing warnings,
+  310 subtests, 595.42 s; `.venv/grbl-delivery-full.log`.
+- [Windows CI PASS](https://github.com/ozkurkuran/MikroCAM/actions/runs/36989955432):
+  same 5487 tests and 310 subtests, 306.13 s.
+- Native Qt/OpenGL desktop smoke exit 0; character-counting queue completes three jobs,
+  Stop prevents the next source, new MikroCAM logo/About renders and shutdown passes.
+  Queue and About screenshots visually inspected; `.venv/grbl-delivery-desktop.log`.
+
+Three skips are the operator-only hardware inventory and two existing full-Qt-context tests.
+No physical device was connected. H3 remains open; FluidNC/grblHAL/TCP/SD remain deferred.
+The final main documentation head requires its own CI; its exact status is recorded in
+central `docs/IS_TAKIP.md`, without transferring this source-head PASS to a newer commit.
+
+Original PR #32 final head `b4141ea3e11936f012698f3929a8db39e9993f53` passed its own
+[Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36940578220) before integration.
