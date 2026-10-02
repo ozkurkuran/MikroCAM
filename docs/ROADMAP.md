@@ -154,6 +154,8 @@ birlikte içe aktarılır.
 | 30 | `kicad-cli-export` | `kicad-cli` veya `.kicad_jobset` ile DRC, Gerber ve Drill üretip şema sürümlü transfer paketi oluşturma; paketi MikroCAM'e aktarma | 24 |
 | 31 | `kicad-ipc-plugin` | MikroCAM Bridge: IPC API ve kicad-python ile ayrı süreçte çalışan eklenti; toolbar action'ı 30'u çağırır | 30 |
 
+**02.10.2026 teslimi:** Kullanıcının doğrudan KiCad aktarımı talimatıyla30 ve31 tamamlandı; [PR#35](https://github.com/ozkurkuran/MikroCAM/pull/35) main’e birleştirildi. Canlı kart kopyası, DRC/Gerber/Drill paketi, mevcut CAM içe aktarma ve yerel KiCad düğme kurulumu hazır. [Kullanım](KICAD_TRANSFER.md); kaynak/CI/native kanıtları specs/030 ve031 validation dosyalarında. Diğer dilimlerin mevcut sırası/kapsamı korunur.
+
 ### 1.0 — Ürünleştirme
 
 **Çıktı:** GitHub Releases'tan indirilip kurulabilen MikroCAM.

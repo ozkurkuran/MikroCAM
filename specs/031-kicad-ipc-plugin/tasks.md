@@ -7,8 +7,8 @@
 - [x] T006 Write installer targeted backup/reinstall/API tests first (FR007/008).
 - [x] T007 Implement reversible targeted installer and pinned optional tree (FR007/008).
 - [x] T008 Document install/use/provenance/licenses (FR001/008).
-- [ ] T009 Related/full/architecture and official schema validation (FR009).
+- [x] T009 Related/full/architecture and official schema validation (FR009).
 - [x] T010 RealIPC copy/CLI/nativeCAM/project evidence (FR003/005/009).
-- [ ] T011 Commit/push/PR/exact-head WindowsCI (allFR).
-- [ ] T012 Deliver main, install locally and central tracker (FR007/allFR).
+- [x] T011 Commit/push/PR/exact-head WindowsCI (allFR).
+- [x] T012 Deliver main, install locally and central tracker (FR007/allFR).
 T001→T002→T003→T004→T005→T006→T007→T008→T009/T010→T011→T012. Tests precede code; no hooks/extensions.
