@@ -60,3 +60,8 @@ the JUnit report even on failure. It has read-only repository permissions.
 
 GUI changes also require `python tests/smoke_app.py` on a working desktop/OpenGL environment.
 The hosted headless job does not claim to validate real OpenGL or physical machines.
+
+## KiCad desktop validation
+Run `python tests/smoke_kicad_app.py` with the same validated CAM interpreter on the native desktop. It checks direct transfer startup, mm alignment, DRC acknowledgement, source/manifest project roundtrip, CAM generation, OpenGL rendering and normal shutdown. Set `MIKROCAM_REAL_KICAD_PACKAGE` to a retained real IPC export to include its four-role import. Settings are isolated; no physical port is opened.
+
+The existing `python tests/smoke_app.py` validates the general desktop journeys separately. Each command retains the shared120s watchdog; KiCad's additional project/export scenarios do not consume the aggregate desktop time budget.

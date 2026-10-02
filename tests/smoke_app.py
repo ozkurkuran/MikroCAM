@@ -409,8 +409,6 @@ def run_smoke(sandbox, state):
         pdf_vector_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         from smoke_manufacturing_import import manufacturing_import_journey
         manufacturing_import_journey(app, qapp, sandbox, errors, pump_until, ROOT)
-        from smoke_kicad_transfer import kicad_transfer_journey
-        kicad_transfer_journey(app, qapp, sandbox, errors, pump_until, ROOT)
         cam_journey(app, qapp, sandbox, errors)
         app.ui.showMaximized()
         qapp.processEvents()
