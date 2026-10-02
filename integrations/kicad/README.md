@@ -5,7 +5,7 @@ Standalone IPC toolbar action. It snapshots the current named PCB (including uns
 ## Install on Windows
 From the MikroCAM checkout with its validated Python3.13 environment:
 ```powershell
-.\.venv\repro-a\Scripts\python.exe -m mikrocam.kicad.install_plugin
+.\.venv\Scripts\python.exe -m mikrocam.kicad.install_plugin
 ```
 The installer resolves the real Windows Documents known folder and publishes `KiCad/10.0/plugins/org.mikrocam.bridge`. It records the checkout and Python paths in config.json and enables the API server in `APPDATA/kicad/10.0/kicad_common.json`, preserving all other keys. Existing bridge files and changed settings are backed up. Bridge backups live beside the plugins directory so KiCad cannot load them as duplicate actions.
 

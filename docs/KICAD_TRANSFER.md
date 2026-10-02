@@ -11,7 +11,7 @@ Nesneler kaynak dosyasını ve format/katman raporunu; kart hash’i, KiCad sür
 
 ## Komut satırı
 ```powershell
-.\.venv\repro-a\Scripts\python.exe -m mikrocam.kicad kart.kicad_pcb --output kart.mcam-transfer
+.\.venv\Scripts\python.exe -m mikrocam.kicad kart.kicad_pcb --output kart.mcam-transfer
 ```
 İsteğe bağlı `--kicad-cli "C:/Program Files/KiCad/10.0/bin/kicad-cli.exe"` ile executable seçilir. Komut kart ve proje kopyasında çalışır; zone doldurma orijinal tasarımı değiştirmez. Paket yalnızca bütün komutlar ve bütünlük doğrulaması başarılı olursa atomik yazılır.
 
