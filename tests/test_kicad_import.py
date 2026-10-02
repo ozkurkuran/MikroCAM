@@ -33,7 +33,8 @@ def test_changed_extract_refused_at_review(tmp_path,monkeypatch):
 
 @pytest.mark.parametrize('kind',['gerber','excellon'])
 def test_transfer_provenance_survives_real_object_serializer(kind,tmp_path,host):
-    from copy import deepcopy
+    import json
+    from camlib import to_dict,dict2obj
     from mikrocam.bridge.kicad_transfer import attach_transfer_metadata,read_transfer_metadata
     app,create_owner,_,_=host
     # Existing host fixture creates real parser/serializer classes.
@@ -41,7 +42,7 @@ def test_transfer_provenance_survives_real_object_serializer(kind,tmp_path,host)
     if obj is None:
         pytest.fail('Host fixture must publish owner')
     attach_transfer_metadata(obj,sample().manifest)
-    stored=deepcopy(obj.to_dict())
+    stored=json.loads(json.dumps(obj.to_dict(),default=to_dict),object_hook=dict2obj)
     restored=create_owner(kind,'restored evidence')
     restored.from_dict(stored)
     assert read_transfer_metadata(restored)==sample().manifest

@@ -74,3 +74,8 @@ def test_symlink_archive_member_rejected(tmp_path):
     with zipfile.ZipFile(path,'a') as z:
         info=zipfile.ZipInfo('files/link');info.create_system=3;info.external_attr=(0o120777<<16);z.writestr(info,b'outside')
     with pytest.raises(ValueError):read_package(path)
+
+
+@pytest.mark.parametrize('name',['CON.gbr','nul.drl','COM1.gbr','LPT9.drl','COM¹.gbr','board.gbr.'])
+def test_windows_device_names_rejected(name):
+    with pytest.raises(ValueError):replace(sample().manifest.files[0],name=name)

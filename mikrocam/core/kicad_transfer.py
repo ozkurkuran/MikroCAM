@@ -17,6 +17,9 @@ def text(value: str, limit: int = 256) -> None:
 
 def filename(value: str) -> None:
     text(value)
+    device=value.split('.')[0].upper()
+    if value.endswith('.') or device in ('CON','PRN','AUX','NUL') or re.fullmatch(r'(?:COM|LPT)[1-9¹²³]',device):
+        raise ValueError('Transfer filename cannot name a Windows device')
     if value in ('.','..') or any(c in value for c in '/\\:'):
         raise ValueError('Transfer filename must be a local basename')
 
