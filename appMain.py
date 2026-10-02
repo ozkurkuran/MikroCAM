@@ -1620,6 +1620,10 @@ class App(QtCore.QObject):
 
         self.log.debug("Application was started with arguments: %s. Processing ..." % str(args_to_process))
         for argument in args_to_process:
+            if str(argument).lower().endswith(('.mcam-transfer', '.kicad_pcb')):
+                from mikrocam.ui.kicad_transfer import open_kicad_transfer
+                open_kicad_transfer(self, str(argument))
+                continue
             if '.FlatPrj'.lower() in argument.lower():
                 try:
                     project_name = str(argument)
@@ -1847,6 +1851,12 @@ class App(QtCore.QObject):
             open_manufacturing_import(self)
 
         self.ui.menufileimport.addAction(_('Production file set...')).triggered.connect(show_manufacturing_import)
+
+        def show_kicad_transfer():
+            from mikrocam.ui.kicad_transfer import open_kicad_transfer
+            open_kicad_transfer(self)
+
+        self.ui.menufileimport.addAction(_('KiCad board or transfer...')).triggered.connect(show_kicad_transfer)
 
         def show_geometry_drills():
             from mikrocam.ui.geometry_drills import open_geometry_drills

@@ -362,3 +362,7 @@ contributor guide. The upstream guide remains available at `upstream-evo-beta1-b
   The replaced upstream Inkscape SVG is retained unchanged as a metadata test fixture at
   tests/reference/cad-source/upstream-inkscape-app-small.svg under the existing source license.
 - Protocol facts: https://github.com/gnea/grbl/wiki/Grbl-v1.1-Interface ; no firmware code copied.
+
+
+## 2026-10-02 — KiCad production transfer (030)
+Original MikroCAM implementation; no KiCad source copied. External installed KiCad10.0 CLI performs DRC/Gerber/Excellon on a private snapshot. Primary behavioral references: https://docs.kicad.org/10.0/en/cli/cli.html ; https://dev-docs.kicad.org/en/apis-and-binding/ipc-api/for-addon-developers/ . Files: mikrocam/core/kicad_transfer.py, mikrocam/kicad/, mikrocam/bridge/kicad_transfer.py, mikrocam/ui/kicad_transfer.py and short appMain hooks. No new CAM runtime dependency. Commit: feature030 delivery commit carrying this record.
