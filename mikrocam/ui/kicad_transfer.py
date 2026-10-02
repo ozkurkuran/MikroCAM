@@ -6,6 +6,7 @@ import tempfile
 from typing import Any
 from PyQt6 import QtCore,QtWidgets
 from mikrocam.core.kicad_transfer import json_object
+from mikrocam.core.manufacturing_models import ManufacturingAssignment,ManufacturingReview
 from mikrocam.kicad.export import export_board
 from mikrocam.kicad.package import read_package
 from mikrocam.bridge.kicad_transfer import prepare_transfer,attach_transfer_metadata
@@ -27,6 +28,21 @@ class KiCadExportWorker(QtCore.QObject):
         self.finished.emit(result)
 
 
+class KiCadPrepareWorker(QtCore.QObject):
+    finished=QtCore.pyqtSignal(object)
+
+    def __init__(self,path: Path,directory: Path,parent: QtCore.QObject) -> None:
+        super().__init__(parent);self.path=path;self.directory=directory
+
+    def run(self) -> None:
+        try:
+            package=read_package(self.path)
+            review=prepare_transfer(package,self.directory)
+            result=(package,review,'')
+        except Exception as error:result=(None,None,str(error)[:500])
+        self.finished.emit(result)
+
+
 class KiCadTransferDialog(ManufacturingImportDialog):
     def __init__(self,app: Any) -> None:
         super().__init__(app)
@@ -35,7 +51,7 @@ class KiCadTransferDialog(ManufacturingImportDialog):
         temporary=self._temporary
         self.finished.connect(lambda _result:temporary.cleanup())
         self.destroyed.connect(lambda:temporary.cleanup())
-        self.package=None;self._export_worker=None
+        self.package=None;self._export_worker=None;self._prepare_worker=None
         self.summary=QtWidgets.QLabel(self)
         self.summary.setTextFormat(QtCore.Qt.TextFormat.PlainText);self.summary.setWordWrap(True)
         self.layout().insertWidget(0,self.summary)
@@ -60,9 +76,22 @@ class KiCadTransferDialog(ManufacturingImportDialog):
             try:self.app.worker_task.emit({'fcn':self._export_worker.run,'params':[]})
             except Exception as error:self._export_finished((None,str(error)))
             return
+        self._set_busy(True)
+        self.summary.setText(_('Validating and preparing the KiCad production package…'))
+        self._prepare_worker=KiCadPrepareWorker(source,Path(self._temporary.name)/'files',self)
+        self._prepare_worker.finished.connect(self._prepare_finished,QtCore.Qt.ConnectionType.QueuedConnection)
+        try:self.app.worker_task.emit({'fcn':self._prepare_worker.run,'params':[]})
+        except Exception as error:self._prepare_finished((None,None,str(error)))
+
+    @QtCore.pyqtSlot(object)
+    def _prepare_finished(self,result: tuple) -> None:
+        self._set_busy(False)
+        if self._prepare_worker is not None:self._prepare_worker.deleteLater();self._prepare_worker=None
+        package,review,error=result
+        if error:
+            self.review=None;self.import_button.setEnabled(False)
+            self.status_label.setText(_('KiCad transfer failed: ')+_plain(error));return
         try:
-            package=read_package(source)
-            review=prepare_transfer(package,Path(self._temporary.name)/'files')
             self.package=package;self.files=review.files;self.report_button.setEnabled(True)
             self._paths=tuple(f.path for f in self.files);self._inspected_paths=self._paths
             self._show_files()
@@ -99,7 +128,18 @@ class KiCadTransferDialog(ManufacturingImportDialog):
 
     def review_selected(self) -> None:
         if self.busy or self.package is None:return
-        super().review_selected()
+        self._invalidate()
+        try:
+            # Collect only UI values here. The import worker freshly verifies every source.
+            assignments=tuple(ManufacturingAssignment(row,self.table.cellWidget(row,2).currentText(),
+                self.table.cellWidget(row,3).currentText(),self.table.item(row,5).text().strip())
+                for row in range(len(self.files)) if row not in self.imported_indices
+                and self.table.item(row,0).checkState()==QtCore.Qt.CheckState.Checked)
+            self.review=ManufacturingReview(self.files,assignments)
+        except (ValueError,TypeError) as error:
+            self.status_label.setText(_('Review failed: ')+_plain(str(error)[:500]));return
+        self.import_button.setEnabled(True)
+        self.status_label.setText(_('Reviewed {count} files. Explicit import uses current destination defaults.').format(count=len(assignments)))
         if self.package.manifest.needs_acknowledgement and not self.acknowledge.isChecked():
             self.import_button.setEnabled(False)
             self.status_label.setText(_('Review the DRC report before acknowledging errors.'))
