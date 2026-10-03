@@ -41,9 +41,22 @@ Log: main `.venv/laser-devices-native.log`. Worktree screenshots
 `.venv/mopa-device-native.png` and `.venv/diode-device-native.png` visually inspected;
 narrow dock uses the table's horizontal scrollbar for additional fields.
 
+Supplemental actual CAM run: exit 0 PASS, using the same private desktop harness
+with an additional post-Gerber journey. Both MOPA and diode profiles generated
+an actual Laser CAM preview and exported SVG and DXF ZIPs through the panel's
+controls; decoded recipe/manifest v2 matched the requested profile. Normal
+OpenGL/worker/process shutdown passed. Main `.venv/laser-devices-cam-native.log`,
+markers `LASER_CAM_MOPA_ACTUAL_GENERATE_SVG_DXF_PROFILE_OK` and
+`LASER_CAM_DIODE_ACTUAL_GENERATE_SVG_DXF_PROFILE_OK`.
+
 ## Delivery and external acceptance
 
-Local source acceptance: PASS. PR/final-head CI/main merge: pending delivery.
+Local source acceptance and source push `98a8dfa4`: PASS.
+[PR #37](https://github.com/ozkurkuran/MikroCAM/pull/37) is the delivery record;
+its final-head Windows CI and main merge are pending at this document checkpoint.
+Manual source review completed; Copilot review was unavailable because its
+requester's quota was exhausted, so no automated review approval is claimed.
+Final run/merge status is recorded by GitHub and the user's central local ledger.
 Unknown M7 manufacturer ranges were not supplied or inferred. No laser emission,
 motion, firmware setting or physical production was tested. Native `.lbrn2`
 requires an actual Image fixture and LightBurn version/device/Open→Save→Preview;

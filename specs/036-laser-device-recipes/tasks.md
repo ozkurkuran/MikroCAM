@@ -33,3 +33,7 @@
 - [ ] T022 Push/PR, review corrections and final-head Windows CI.
 - [ ] T023 Merge, local main sync and exact-main Windows CI.
 - [ ] T024 Central ledger final source acceptance; keep native LightBurn/binary pending separate.
+
+T022–T024 are delivery checkpoints after source acceptance. Their final run/merge
+evidence is recorded in [PR #37](https://github.com/ozkurkuran/MikroCAM/pull/37)
+and the single user-maintained central ledger; this checklist is the source checkpoint.
