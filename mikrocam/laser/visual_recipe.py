@@ -31,7 +31,7 @@ def job_to_data(job: VisualInterlaceJob, mask_png: bytes) -> dict:
     plan = build_plan(job.mask, job.interlace, job.revision)
     source = {'name': job.source.name, 'data_base64': b64encode(job.source.data).decode('ascii'),
               'sha256': job.source.sha256, 'page_index': job.source.page_index, 'info': asdict(job.source.info)}
-    return {'schema_version': 1, 'kind': 'visual_interlace', 'source': source,
+    return {'schema_version': 2 if job.laser_recipe and job.laser_recipe.device else 1, 'kind': 'visual_interlace', 'source': source,
             'preparation': asdict(job.preparation), 'grid': grid_data(job.mask.grid),
             'mask': {'encoding': 'png-1bit', 'data_base64': b64encode(mask_png).decode('ascii'),
                      'sha256': job.mask.sha256, 'black_pixel_count': job.mask.black_pixel_count},
@@ -53,9 +53,12 @@ def validate_document(value: object) -> dict:
     data = dict(value)
     data.setdefault('interlace', {'count': 1})
     _fields(data, JOB_KEYS, 'visual_interlace')
-    if type(data['schema_version']) is not int or data['schema_version'] != 1:
+    if type(data['schema_version']) is not int or data['schema_version'] not in (1, 2):
         raise ValueError('RECIPE_VERSION_UNSUPPORTED')
     if data['kind'] != 'visual_interlace': raise ValueError('RECIPE_CORRUPT: kind')
+    recipe = data['laser_recipe']
+    profiled = isinstance(recipe, dict) and type(recipe.get('schema_version')) is int and recipe['schema_version'] == 2
+    if profiled != (data['schema_version'] == 2): raise ValueError('RECIPE_CORRUPT: nested recipe version')
     return data
 
 

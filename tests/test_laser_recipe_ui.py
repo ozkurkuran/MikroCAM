@@ -23,7 +23,7 @@ def test_loaded_values_preserve_precision_and_emit_one_change(editor, qtbot):
     with qtbot.waitSignal(editor.changed):
         editor.set_recipe(example())
     assert editor.name_edit.text() == example().name
-    assert editor.table.columnCount() == 5
+    assert editor.table.columnCount() == 7
     assert editor.table.item(0, 1).text() == repr(example().passes[0].power_percent)
     assert editor.get_recipe() == example()
 
@@ -36,9 +36,11 @@ def test_added_pass_has_no_numeric_defaults_and_requires_explicit_values(editor,
     with pytest.raises(ValueError):
         editor.get_recipe()
     editor.name_edit.setText('new recipe')
+    editor.device_editor.kind.setCurrentIndex(editor.device_editor.kind.findData('mopa'))
     for column, value in enumerate(('named', '20', '250', '30', '100')):
         editor.table.item(0, column).setText(value)
-    assert editor.get_recipe() == LaserRecipe('new recipe', (LaserPass('named', 20, 250, 30, 100),))
+    assert editor.get_recipe().passes == (LaserPass('named', 20, 250, 30, 100),)
+    assert editor.get_recipe().device.kind == 'mopa'
 
 
 def test_reorder_remove_and_edit_keep_row_values_together(editor, qtbot):

@@ -8,6 +8,7 @@ from shapely.geometry import GeometryCollection, MultiPolygon, Polygon
 from shapely.geometry.base import BaseGeometry
 
 from .placement import Placement, _finite_real, _validate_geometry
+from .laser_device import LaserDeviceProfile, PARAMETER_FIELDS
 
 
 def _name(value: object, context: str) -> None:
@@ -28,20 +29,26 @@ def _canonical_wkb(geometry: BaseGeometry) -> str:
 
 @dataclass(frozen=True)
 class LaserPass:
-    """One named pass with explicit positive scalar parameters and their units."""
+    """Named scalar settings; the recipe profile determines applicable parameters."""
     name: str
-    power_percent: float
+    power_percent: float | None
     speed_mm_s: float
-    frequency_khz: float
-    pulse_width_ns: float
+    frequency_khz: float | None = None
+    pulse_width_ns: float | None = None
+    min_power_percent: float | None = None
+    pwm_frequency_khz: float | None = None
 
     def __post_init__(self) -> None:
         _name(self.name, 'pass')
-        for field in ('power_percent', 'speed_mm_s', 'frequency_khz', 'pulse_width_ns'):
+        for field in PARAMETER_FIELDS:
+            if getattr(self, field) is None and field != 'speed_mm_s': continue
             value = _finite_real(getattr(self, field), field)
-            if value <= 0 or (field == 'power_percent' and value > 100):
-                raise ValueError(f'{field} must be positive' + (' and <=100' if field == 'power_percent' else ''))
+            if value < 0 or (value == 0 and field != 'min_power_percent') or (
+                field in ('power_percent', 'min_power_percent') and value > 100
+            ): raise ValueError(f'{field} must be finite and in its valid range')
             object.__setattr__(self, field, value)
+        if self.min_power_percent is not None and self.power_percent is not None and self.min_power_percent > self.power_percent:
+            raise ValueError('min_power_percent cannot exceed power_percent')
 
 
 @dataclass(frozen=True)
@@ -49,6 +56,7 @@ class LaserRecipe:
     """An ordered nonempty tuple of uniquely named laser passes."""
     name: str
     passes: tuple[LaserPass, ...]
+    device: LaserDeviceProfile | None = None
 
     def __post_init__(self) -> None:
         _name(self.name, 'recipe')
@@ -59,6 +67,16 @@ class LaserRecipe:
         names = [value.name for value in self.passes]
         if len(set(names)) != len(names):
             raise ValueError('recipe.passes contains duplicate pass names')
+        if self.device is not None and not isinstance(self.device, LaserDeviceProfile):
+            raise ValueError('recipe.device requires LaserDeviceProfile or None')
+        for value in self.passes:
+            if self.device is not None:
+                self.device.validate_pass(value)
+            else:
+                for field in ('power_percent', 'frequency_khz', 'pulse_width_ns'):
+                    if getattr(value, field) is None: raise ValueError(f'{field} is required for a legacy recipe')
+                if value.min_power_percent is not None or value.pwm_frequency_khz is not None:
+                    raise ValueError('New laser parameters require an explicit device profile')
 
 
 @dataclass(frozen=True)

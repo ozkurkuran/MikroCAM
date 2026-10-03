@@ -70,6 +70,12 @@ Install the optional visual codecs in this checkout's environment:
 See the [visual interlace guide](docs/visual-interlace.md). Native LightBurn `.lbrn2`
 export awaits an actual Image project and version/device profile; its button is disabled.
 
+Both laser panels now support device-specific recipes: diode/CO₂, Ruida RF CO₂
+PWM, fiber, MOPA and UV. Select the family to show its applicable speed, power,
+frequency and pulse fields; optional manufacturer limits validate your values.
+JSON/project/export packages preserve the profile, including old unspecified
+recipes. See [laser recipe settings](docs/LASER_RECIPES.md).
+
 ## Optional image import and tracing
 
 Core CAM and startup work without rasterio, svgtrace, Playwright or a downloaded browser.

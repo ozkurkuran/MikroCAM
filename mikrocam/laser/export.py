@@ -1,5 +1,6 @@
 """Build geometry-only pass ZIPs and publish them at one atomic commit boundary."""
 import hashlib
+import json
 import math
 import os
 from pathlib import Path
@@ -7,7 +8,7 @@ import tempfile
 import zipfile
 from typing import BinaryIO
 
-from mikrocam.core.laser_json import PASS_FIELDS, recipe_to_json
+from mikrocam.core.laser_json import PASS_FIELDS, DEVICE_PASS_FIELDS, recipe_to_json
 from mikrocam.core.laser_manifest import MAX_PASSES, manifest_to_json
 from mikrocam.core.laser_paths import CancelCheck, LaserPlan, check_cancelled
 
@@ -27,6 +28,11 @@ passes after import; never automatically centre each pass independently.
 Manually transfer each pass's power_percent (power %), speed_mm_s (speed mm/s),
 frequency_khz (frequency kHz), and pulse_width_ns (pulse width ns) from recipe.json.
 Geometry files do not apply these settings. Check target machine support and calibration.
+Profiled recipes also retain optional min_power_percent and pwm_frequency_khz.
+Only non-null parameters supported by the saved device family apply; null values
+are inapplicable or an optional setting without an override, not production defaults.
+PWM frequency is distinct from fiber pulse frequency. Manufacturer bounds in the
+saved profile are user-supplied, not verified machine configuration.
 Target optimization can reorder paths and defeat interlace order; inspect or disable it.
 
 Structural/parser checks do not establish target-app import or physical process validation.
@@ -89,12 +95,14 @@ def _write_archive(stream: BinaryIO, plan: LaserPlan, bounds: list[float], forma
             entries.append({'index': index, 'name': settings.name, 'file': filename,
                             'sha256': hashlib.sha256(geometry).hexdigest(),
                             'path_count': len(plan.paths),
-                            'settings': {field: getattr(settings, field) for field in PASS_FIELDS}})
-        manifest = {'kind': 'mikrocam.laser-export', 'schema_version': 1, 'format': format,
+                            'settings': {field: getattr(settings, field) for field in
+                                         (DEVICE_PASS_FIELDS if plan.job.recipe.device else PASS_FIELDS)}})
+        manifest = {'kind': 'mikrocam.laser-export', 'schema_version': 2 if plan.job.recipe.device else 1, 'format': format,
                     'units': 'mm', 'job_name': plan.job.name, 'bounds_mm': bounds,
                     'interlace_n': plan.options.interlace_n,
                     'coordinate_mapping': 'svg-local-y-down' if format == 'svg' else 'placed-xy',
                     'recipe_file': 'recipe.json', 'passes': entries}
+        if plan.job.recipe.device: manifest['device'] = json.loads(recipe_to_json(plan.job.recipe))['device']
         _write_entry(archive, 'recipe.json', recipe_to_json(plan.job.recipe).encode('utf-8'), cancelled)
         _write_entry(archive, 'manifest.json', manifest_to_json(manifest).encode('utf-8'), cancelled)
         _write_entry(archive, 'README.txt', README.encode('utf-8'), cancelled)
