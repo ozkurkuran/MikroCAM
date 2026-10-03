@@ -1,0 +1,485 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:mikrocam:visual-interlace:v1",
+  "title": "MikroCAM visual interlace job v1",
+  "description": "Source and canonical mask are embedded. Loader additionally verifies hashes, dimensions, page indices, pixel limits and effective-order permutations. Missing legacy interlace means count1.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "kind": {
+      "const": "visual_interlace"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "data_base64": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "minLength": 4,
+          "maxLength": 89478488
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "page_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "info": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "enum": [
+                "bitmap",
+                "svg",
+                "pdf",
+                "geometry_snapshot"
+              ]
+            },
+            "media_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "page_count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            },
+            "native_size_px": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              ]
+            },
+            "suggested_size_mm": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              ]
+            },
+            "size_origin": {
+              "enum": [
+                "document",
+                "metadata",
+                "user",
+                "default_508dpi"
+              ]
+            },
+            "import_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "media_type",
+            "page_count",
+            "native_size_px",
+            "suggested_size_mm",
+            "size_origin",
+            "import_notes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "data_base64",
+        "sha256",
+        "page_index",
+        "info"
+      ],
+      "additionalProperties": false
+    },
+    "preparation": {
+      "type": "object",
+      "properties": {
+        "requested_width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "requested_height_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "requested_dpi": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "threshold": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "invert": {
+          "type": "boolean"
+        },
+        "mirror_x": {
+          "type": "boolean"
+        },
+        "mirror_y": {
+          "type": "boolean"
+        },
+        "quarter_turns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "crop_rect": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "minItems": 4,
+              "maxItems": 4,
+              "items": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          ]
+        },
+        "normalization_version": {
+          "const": 1
+        }
+      },
+      "required": [
+        "requested_width_mm",
+        "requested_height_mm",
+        "requested_dpi",
+        "threshold",
+        "invert",
+        "mirror_x",
+        "mirror_y",
+        "quarter_turns",
+        "crop_rect",
+        "normalization_version"
+      ],
+      "additionalProperties": false
+    },
+    "grid": {
+      "type": "object",
+      "properties": {
+        "requested_width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "requested_height_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "requested_dpi": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pitch_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "canvas_width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "canvas_height_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "width_px": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 40000000
+        },
+        "height_px": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 40000000
+        }
+      },
+      "required": [
+        "requested_width_mm",
+        "requested_height_mm",
+        "requested_dpi",
+        "pitch_mm",
+        "canvas_width_mm",
+        "canvas_height_mm",
+        "width_px",
+        "height_px"
+      ],
+      "additionalProperties": false
+    },
+    "mask": {
+      "type": "object",
+      "properties": {
+        "encoding": {
+          "const": "png-1bit"
+        },
+        "data_base64": {
+          "type": "string",
+          "contentEncoding": "base64",
+          "minLength": 4,
+          "maxLength": 89478488
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "black_pixel_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 40000000
+        }
+      },
+      "required": [
+        "encoding",
+        "data_base64",
+        "sha256",
+        "black_pixel_count"
+      ],
+      "additionalProperties": false
+    },
+    "interlace": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "order_mode": {
+          "enum": [
+            "sequential",
+            "mixed"
+          ]
+        },
+        "order_algorithm": {
+          "const": "bit_reverse_v1"
+        },
+        "round_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "vary_order_each_round": {
+          "type": "boolean"
+        },
+        "delay_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600000
+        },
+        "bidirectional": {
+          "type": "boolean"
+        },
+        "direction_policy": {
+          "enum": [
+            "lightburn_managed",
+            "source_row_parity"
+          ]
+        },
+        "spot_diameter_mm": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          ]
+        },
+        "effective_orders": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 999,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 7
+            }
+          }
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "placement": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "translation": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "rotation_deg": {
+          "type": "number"
+        },
+        "mirror_x": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "origin",
+        "translation",
+        "rotation_deg",
+        "mirror_x"
+      ],
+      "additionalProperties": false
+    },
+    "laser_recipe": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "mikrocam.laser-recipe"
+            },
+            "schema_version": {
+              "const": 1
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "passes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "power_percent": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 100
+                  },
+                  "speed_mm_s": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "frequency_khz": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pulse_width_ns": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "name",
+                  "power_percent",
+                  "speed_mm_s",
+                  "frequency_khz",
+                  "pulse_width_ns"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "schema_version",
+            "name",
+            "passes"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "normalizer_version": {
+          "const": 1
+        },
+        "renderer_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "renderer_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "normalizer_version",
+        "renderer_name",
+        "renderer_version"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "kind",
+    "source",
+    "preparation",
+    "grid",
+    "mask",
+    "placement",
+    "laser_recipe",
+    "revision",
+    "provenance"
+  ],
+  "additionalProperties": false
+}

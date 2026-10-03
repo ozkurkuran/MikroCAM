@@ -1,5 +1,6 @@
 # Test tooling; all runtime pins are inherited.
 -r requirements.txt
+-r requirements-visual.txt
 iniconfig==2.3.0
 pluggy==1.6.0
 pygments==2.21.0

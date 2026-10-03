@@ -370,3 +370,22 @@ Original MikroCAM implementation; no KiCad source copied. External installed KiC
 
 ## 2026-10-02 — KiCad IPC Bridge (031)
 Original standalone MikroCAM action/installer. No source copied from KiCad or other plugins. Optional official kicad-python0.8.0 (MIT) installed only in KiCad’s separate environment; full compatible transitive tree pinned in integrations/kicad/requirements.txt and original dependency license texts retained under THIRD_PARTY_LICENSES/optional-kicad. Reference package https://pypi.org/project/kicad-python/0.8.0/ and https://gitlab.com/kicad/code/kicad-python ; official10 plugin schema and IPC developer docs consulted for protocol/metadata. SDK implementation was inspected to confirm SaveCopyOfDocument and version0.8 method availability; no SDK implementation ported. Files: integrations/kicad/, mikrocam/kicad/install_plugin.py. Commit:f93111dc (IPC/installer); delivery merge90926e0b.
+
+## 2026-10-02 — Visual SVG renderer source notices (032–033)
+
+Optional resvg_py 0.5.0 remains pinned; no additional runtime dependency or upstream
+implementation was copied. Its exact PyPI sdist SHA256
+6d3bf8e866b4e129524d9432a809138b2d100931d8d635bc81294002abcdfd46 supplies the retained
+unmodified Cargo.lock/Cargo.toml/pyproject.toml/LICENSE provenance. The lock covers
+75 registry crates; every primary static.crates.io archive matches its checksum.
+152 original license/notice files are retained byte-for-byte with source URL/hash
+and original license expression in THIRD_PARTY_LICENSES/inventory.json. No upstream
+commit was inferred from version alone. Wheel build provenance and final bundle
+composition remain unproven. See docs/design/visual-interlace/notice-audit.md.
+Original MikroCAM code, tests and synthetic discovery images; implementation is
+preserved on branch 032-visual-interlace; current remote delivery is tracked by PR#36.
+
+2026-10-03 review correction: siphasher's original COPYING is a copyright/licensing
+declaration, not a full license. Its referenced Apache-2.0 text was fetched unchanged
+from https://www.apache.org/licenses/LICENSE-2.0.txt and retained separately with
+URL/hash provenance; the 152 exact-archive original notice bytes remain unchanged.

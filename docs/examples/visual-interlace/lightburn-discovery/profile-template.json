@@ -1,0 +1,16 @@
+{
+  "kind": "lightburn_discovery_record",
+  "schema_version": 1,
+  "status": "NOT_RUN",
+  "profile_id": null,
+  "lightburn_version": null,
+  "device_family": null,
+  "fixture_files": [],
+  "tested_layer_limit": null,
+  "supports_passthrough": null,
+  "supports_blank_row_skip": null,
+  "supports_source_row_parity": null,
+  "supports_interpass_delay": null,
+  "supports_cycle_expansion": null,
+  "observations": []
+}

@@ -1,0 +1,31 @@
+[package]
+name = "resvg_py"
+version = "0.5.0"
+edition = "2024"
+authors = ['baseplate-admin']
+build = 'build.rs'
+readme = "README.md"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "resvg_py"
+path = "src/rust/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+log = "0.4.29"
+pyo3 = { version = "0.29.0", features = ["extension-module", "abi3-py310", "abi3t-py315"] }
+resvg = { version = "0.48.0", features = ["raster-images", "text"] }
+svgtypes = "0.16.0"
+
+
+[profile.release.package."*"]
+codegen-units = 1
+opt-level = 'z'
+strip = true
+
+[profile.release]
+# PyO3 can only translate Rust panics into Python exceptions when they unwind.
+codegen-units = 1
+lto = "fat"
+opt-level = 'z'
+strip = true

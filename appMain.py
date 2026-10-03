@@ -1822,6 +1822,12 @@ class App(QtCore.QObject):
 
         self.ui.menu_plugins.addAction(_('Laser CAM')).triggered.connect(show_laser_cam)
 
+        def show_visual_interlace():
+            from mikrocam.ui.visual_interlace_panel import open_visual_interlace
+            open_visual_interlace(self)
+
+        self.ui.menu_plugins.addAction(_('Görsel satır serpiştirme')).triggered.connect(show_visual_interlace)
+
         def show_machine_panel():
             from mikrocam.ui.machine_panel import open_machine_panel
             open_machine_panel(self)

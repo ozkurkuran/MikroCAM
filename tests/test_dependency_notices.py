@@ -90,6 +90,10 @@ def test_pinned_dependency_notice_coverage_and_integrity():
     validate_inventory(record, ROOT, pinned_requirements(ROOT))
 
 
+def test_standard_development_install_includes_svg_renderer():
+    assert 'development' in pinned_requirements(ROOT)['resvg-py']['groups']
+
+
 @pytest.fixture
 def notice_fixture(tmp_path):
     path = tmp_path / 'THIRD_PARTY_LICENSES/example/LICENSE'
