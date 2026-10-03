@@ -197,3 +197,25 @@ def test_preview_zoom_uses_snapshot_without_changing_production_mask(qtbot):
     assert dialog.image.pixmap().width()==widget.labels[2].original.width()*2
     assert original.mask.sha256==widget.job.mask.sha256
     dialog.close()
+
+
+@pytest.mark.parametrize('units', ['MM', 'IN'])
+def test_project_carrier_keeps_host_units_and_embedded_mm_job(units):
+    from test_visual_recipe import job
+    from mikrocam.bridge.visual_host import VisualHost
+    from mikrocam.bridge.visual_recipe import job_to_payload, job_from_payload
+    from mikrocam.bridge.visual_project import PAYLOAD_KEY
+    original = job(); payload = job_to_payload(original)
+    owner = SimpleNamespace(units=units, obj_options={})
+    def create(kind, name, initialize, plot):
+        assert kind == 'geometry' and not plot
+        initialize(owner, None)
+        assert owner.units == units  # The real factory converts mismatches before UI setup.
+        return owner
+    app = SimpleNamespace(main_thread=SimpleNamespace(isCurrentThread=lambda: True),
+                          app_obj=SimpleNamespace(new_object=create))
+    VisualHost(app).publish_payload(original, payload)
+    restored = job_from_payload(owner.obj_options[PAYLOAD_KEY])
+    assert restored.mask.grid == original.mask.grid
+    assert restored.placement == original.placement
+    assert restored.mask.sha256 == original.mask.sha256

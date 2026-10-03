@@ -49,7 +49,7 @@ are not vendored. License terms for any later bundled installer must be audited 
 
 Visual interlace adds optional `resvg_py==0.5.0` (MIT wrapper) under the optional-image
 group; exact ABI3 Windows artifact, metadata and wrapper license are retained.
-`requirements-visual.txt` is included by the image extra. The exact Rust source notice graph is retained; wheel build provenance and final bundle
+`requirements-visual.txt` is included by the image extra and development requirements. The exact Rust source notice graph is retained; wheel build provenance and final bundle
 composition remain explicit binary-release audit gaps in inventory.json.
 
 ## Visual renderer source notice graph
@@ -59,6 +59,9 @@ contains the retained Cargo.lock. All 75 registry packages were downloaded from 
 primary static.crates.io source and verified against their lockfile checksums.
 152 original license/notice files are retained byte-for-byte under resvg-py/0.5.0/rust-crates.
 Authors/copyright notices are distinguished from full license texts.
+Siphasher's original COPYING contains copyright and references to MIT/Apache-2.0,
+not either full text. Its referenced canonical Apache-2.0 text is retained separately
+as LICENSE-APACHE with its own official Apache URL and SHA256 provenance.
 
 This is a conservative source-lock superset, including platform and build dependencies.
 Both PyPI wheel and sdist build-provenance endpoints returned 404. The exact source graph

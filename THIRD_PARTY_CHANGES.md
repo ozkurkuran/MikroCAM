@@ -383,4 +383,9 @@ and original license expression in THIRD_PARTY_LICENSES/inventory.json. No upstr
 commit was inferred from version alone. Wheel build provenance and final bundle
 composition remain unproven. See docs/design/visual-interlace/notice-audit.md.
 Original MikroCAM code, tests and synthetic discovery images; implementation is
-preserved in a local checkpoint on branch 032-visual-interlace; commit recorded in central IS_TAKIP. Not delivered to main.
+preserved on branch 032-visual-interlace; current remote delivery is tracked by PR#36.
+
+2026-10-03 review correction: siphasher's original COPYING is a copyright/licensing
+declaration, not a full license. Its referenced Apache-2.0 text was fetched unchanged
+from https://www.apache.org/licenses/LICENSE-2.0.txt and retained separately with
+URL/hash provenance; the 152 exact-archive original notice bytes remain unchanged.

@@ -31,3 +31,12 @@ def test_notice_graph_does_not_claim_unavailable_wheel_build_provenance():
     gap=next(item for item in inventory['audit_gaps'] if item['component']=='resvg-py')
     assert gap['status']=='source-notices-retained'
     assert '75' in gap['detail'] and 'build provenance' in gap['detail']
+
+
+def test_siphasher_reference_declaration_is_backed_by_full_license_text():
+    inventory=json.loads((ROOT/'THIRD_PARTY_LICENSES/inventory.json').read_text(encoding='utf-8'))
+    record=next(item for item in inventory['components'] if item['name']=='resvg-py-rust-siphasher-1.0.3')
+    licenses=[(ROOT/file['path']).read_text(encoding='utf-8') for file in record['files'] if file['role']=='license']
+    assert any('TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION' in text for text in licenses)
+    declaration=next(file for file in record['files'] if file['path'].endswith('/COPYING'))
+    assert declaration['role']=='copyright'

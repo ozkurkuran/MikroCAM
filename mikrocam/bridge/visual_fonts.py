@@ -18,21 +18,23 @@ def _font_paths() -> list[Path]:
     paths = []
     for root in roots:
         if root.is_dir():
-            paths.extend(p for p in root.rglob('*') if p.suffix.lower() in ('.ttf', '.otf'))
+            paths.extend(p for p in root.rglob('*') if p.suffix.lower() in ('.ttf', '.otf', '.ttc', '.otc'))
         if len(paths) > 5000: raise ValueError('FONT_MISSING: font inventory exceeds limit; convert text to paths')
     return sorted(set(paths))
 
 
 def _font_inventory() -> dict:
-    try: from fontTools.ttLib import TTFont, TTLibError
+    try: from fontTools.ttLib import TTFont, TTCollection, TTLibError
     except ImportError as error: raise ValueError('FONT_MISSING: fontTools unavailable; convert text to paths') from error
     families = {}
     for path in _font_paths():
         if path.stat().st_size > 32 * 1024 * 1024: continue
         try:
-            with TTFont(path, lazy=True) as font:
-                family = font['name'].getDebugName(16) or font['name'].getDebugName(1)
-                if family: families.setdefault(family.casefold(), []).append((str(path), frozenset(font.getBestCmap() or {})))
+            collection = path.suffix.lower() in ('.ttc', '.otc')
+            with (TTCollection(path, lazy=True) if collection else TTFont(path, lazy=True)) as opened:
+                for font in (opened.fonts if collection else [opened]):
+                    family = font['name'].getDebugName(16) or font['name'].getDebugName(1)
+                    if family: families.setdefault(family.casefold(), []).append((str(path), frozenset(font.getBestCmap() or {})))
         except (OSError, TTLibError): continue
     return families
 
@@ -53,6 +55,10 @@ def svg_font_options(root: object) -> dict:
     glyphs = set()
     # Explicit default families are bundled in the already pinned matplotlib data.
     for declaration in (*declarations, *GENERIC.values()):
+        declaration = re.sub(r'\s*!important\s*$', '', declaration, flags=re.I).strip()
+        # The renderer resolves CSS-wide values through its cascade; parent/default
+        # declarations are independently loaded here, without substituting a family.
+        if declaration.casefold() in ('inherit', 'initial', 'unset', 'revert', 'revert-layer'): continue
         candidates = [value.strip().strip('"').strip("'") for value in declaration.split(',')]
         resolved = None
         for family in candidates:

@@ -2552,6 +2552,7 @@
       "name": "resvg-py",
       "version": "0.5.0",
       "groups": [
+        "development",
         "optional-image"
       ],
       "license_metadata": {
@@ -4266,9 +4267,22 @@
       "files": [
         {
           "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/siphasher/1.0.3/COPYING",
-          "role": "license",
+          "role": "copyright",
           "source": "https://static.crates.io/crates/siphasher/siphasher-1.0.3.crate#siphasher-1.0.3/COPYING",
           "sha256": "c962ee4d1d05ddc138b202b2540219ebc57893fcf97b364852094a9a94ce1365"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/resvg-py/0.5.0/rust-crates/siphasher/1.0.3/LICENSE-APACHE",
+          "role": "license",
+          "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ],
+      "additional_sources": [
+        {
+          "kind": "referenced-license-text",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
         }
       ]
     },
@@ -4991,7 +5005,7 @@
       "component": "resvg-py",
       "scope": "statically linked Rust dependency notices",
       "status": "source-notices-retained",
-      "detail": "The exact0.5.0 source Cargo.lock and complete original notices for all75 locked Rust crates (a conservative superset including build/platform dependencies) are retained with crate checksums. PyPI build provenance is unavailable (404) for both wheel and sdist, so correspondence of the stripped Windows binary to this source graph and final release bundle composition remain unproven. No complete binary-release audit is claimed."
+      "detail": "The exact0.5.0 source Cargo.lock and original notices for all75 locked Rust crates plus the canonical Apache-2.0 full text referenced by siphasher COPYING (a conservative superset including build/platform dependencies) are retained with crate checksums. PyPI build provenance is unavailable (404) for both wheel and sdist, so correspondence of the stripped Windows binary to this source graph and final release bundle composition remain unproven. No complete binary-release audit is claimed."
     }
   ]
 }

@@ -23,7 +23,11 @@ Bu kayıt runtime kodunu veya renderer sürümünü değiştirmez.
 ## Kapsam ve açık sınır
 
 Bu, build ve platform bağımlılıklarını da içeren konservatif kaynak kümesidir.
-Bütün 75 crate için en az bir tam lisans dosyası korunur. Exact kaynak arşivleri
+74 crate için exact arşivden tam lisans metni korunur. Siphasher 1.0.3 arşivindeki
+`COPYING` yalnız copyright ve MIT/Apache-2.0 seçimine referans içerir; full-license
+olarak sınıflandırılmaz. Referans verdiği [resmi Apache-2.0 tam metni](https://www.apache.org/licenses/LICENSE-2.0.txt)
+ayrıca `LICENSE-APACHE` olarak saklanır; bu ek metnin URL/hash provenance kaydı,
+crate arşivinden çıkan 152 orijinal notice kaydından ayrıdır. Exact kaynak arşivleri
 özel audit cache'inde kaldı; ürün deposuna native binary veya crate uygulama kodu taşınmadı.
 
 PyPI wheel ve sdist build-provenance endpoint'leri 404 döndü; wheel için hem
@@ -64,7 +68,15 @@ Historical5744-test records above remain historical rather than the current full
 
 A local source checkpoint preserves V1/V2 and their tests/specs/notice records.
 The commit is recorded in the central IS_TAKIP after git verifies it.
-Push/PR/hosted CI/main delivery remain NOT_RUN. Two real historical vector-only
+Remote delivery and current hosted CI are tracked in [PR#36](https://github.com/ozkurkuran/MikroCAM/pull/36). Two real historical vector-only
 projects provide limited format metadata; they are not Image fixtures. Current
 LightBurn executable/device/embedded Image evidence and native V3/V4 remain open.
 No complete binary-release audit or complete .lbrn2 product delivery is claimed.
+
+## 2026-10-03 — PR review corrections
+
+The siphasher full-text regression first failed; its original COPYING is now
+classified as copyright, with the referenced official Apache text retained separately.
+Notice, development installation, SVG font and carrier regressions passed together:
+46 tests, 82.09 s. Current full-suite/remote delivery evidence is tracked by PR#36;
+the earlier 5746-test checkpoint above predates these corrections.

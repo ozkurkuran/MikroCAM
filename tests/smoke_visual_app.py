@@ -57,8 +57,22 @@ def visual_journey(app, qapp, sandbox, errors):
     with zipfile.ZipFile(package) as archive:
         for k in range(3): total += decode_mask_png(archive.read(f'group-{k:02d}.png'), panel.job.mask.grid).burn
     assert np.array_equal(total, panel.job.mask.burn)
-    panel.save_to_project()
-    smoke_app.pump_until(qapp, lambda: panel.worker is None and bool(app.collection.get_names()), errors, 'visual project carrier')
+    original_units = app.options['units']
+    original_app_units = app.app_units
+    for units in ('MM', 'IN'):
+        app.options['units'] = units
+        app.app_units = units
+        before_names = set(app.collection.get_names())
+        panel.save_to_project()
+        smoke_app.pump_until(qapp, lambda: panel.worker is None and bool(set(app.collection.get_names()) - before_names),
+                             errors, 'visual project carrier ' + units)
+        name = (set(app.collection.get_names()) - before_names).pop()
+        carrier = app.collection.get_by_name(name)
+        assert carrier.units == units, (units, carrier.units)
+        assert read_visual_job(carrier).mask.grid == panel.job.mask.grid
+        if units == 'MM':
+            app.collection.set_active(name); app.collection.delete_active()
+            smoke_app.pump_until(qapp, lambda: name not in app.collection.get_names(), errors, 'MM carrier cleanup')
     names = app.collection.get_names()
     assert len(names) == 1, (names, panel.status.text())
     owner = app.collection.get_by_name(names[0]); expected = panel.job.mask.sha256
@@ -70,6 +84,7 @@ def visual_journey(app, qapp, sandbox, errors):
     for path, _ in files: path.unlink()
     _reopen(app, qapp, project, owner, names[0], errors, smoke_app.pump_until)
     restored = read_visual_job(app.collection.get_by_name(names[0]))
+    assert app.collection.get_by_name(names[0]).units == 'IN'
     assert restored.mask.sha256 == expected and restored.source.info.kind == 'pdf'
     panel.project_sources.clear(); panel.project_sources.addItems(panel.host.source_names())
     panel.load_project_source()
@@ -80,8 +95,11 @@ def visual_journey(app, qapp, sandbox, errors):
     assert panel.grab().save(str(smoke_app.ROOT / '.venv/visual-dock-native.png'))
     panel.shutdown(); panel.close()
     app.collection.delete_all()
+    app.options['units'] = original_units
+    app.app_units = original_app_units
     smoke_app.pump_until(qapp, lambda: not app.collection.get_names() and app.workers._pending_count == 0, errors, 'visual carrier cleanup')
     print('VISUAL_BITMAP_SVG_PDF_PNG_JSON_HOST_PROJECT_ROUNDTRIP_OK', flush=True)
+    print('VISUAL_MM_IN_CARRIER_EMBEDDED_MM_ROUNDTRIP_OK', flush=True)
 
 
 def run_native_smoke(sandbox, state):

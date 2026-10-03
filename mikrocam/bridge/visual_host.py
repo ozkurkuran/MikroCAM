@@ -29,7 +29,7 @@ class VisualHost:
         # Encoding has already completed in the worker, never in this Qt callback.
         name = job.source.name + '_visual_interlace'
         def initialize(owner: object, _app: object) -> None:
-            owner.units = 'MM'
+            # Keep factory/host units: only the embedded job has a millimetre grid.
             owner.solid_geometry = None
             owner.multigeo = False
             owner.tools = {}
