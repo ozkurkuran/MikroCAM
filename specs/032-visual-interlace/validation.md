@@ -44,3 +44,23 @@ GitHub; previous NOT_RUN/local-only statements retain their checkpoint dates.
 Local main separately passed192 visual tests/20.67s and a fresh native desktop
 journey/47.94s with normal shutdown, using the SHA-verified resvg_py0.5.0 wheel.
 No native LightBurn or binary-release acceptance changed.
+
+## PR review validation — 2026-10-03
+
+Code checkpoint c098a643 fixes IN-unit host-carrier creation and offline SVG font
+inheritance, `!important`, TTC/OTC collections. Standard development requirements
+include the pinned renderer, with matching license inventory groups.
+New regressions first failed: 8 failed/1 passed; after fixes the related group
+passed46 tests/82.09s and pip check passed. Fresh complete suite passed
+**5755 tests,310subtests,3skips,11existing warnings,399.82s** (exit0), recorded in
+`.venv/visual-review-full.log` and `.venv/visual-review-full.xml`.
+Fresh real desktop smoke passed (exit0): actual MM and IN factory carriers,
+embedded mm-grid/hash preservation, IN project save/reopen, bitmap/SVG/PDF,
+PNG/JSON, legacy CAM, OpenGL and normal shutdown. Evidence:
+`.venv/visual-review-native-final.log`, marker `VISUAL_MM_IN_CARRIER_EMBEDDED_MM_ROUNDTRIP_OK`.
+The first native harness incorrectly changed options units without app_units;
+its separate failure log is retained. The corrected harness changes both host
+fields and restores them. The product fix did not change between those runs.
+Documentation/notice-record newline cleanup changes no runtime or test behavior.
+Latest exact-head hosted checks and source merge are authoritative in PR#36.
+LightBurn native and binary-release acceptance remain open.
