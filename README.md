@@ -53,6 +53,23 @@ application and verify dimensions, orientation and ordering. Actual LightBurn/EZ
 and physical PCB manufacture remain external validation steps. See the
 [laser transfer guide](docs/LASER_CAM.md).
 
+## Visual interlace from bitmap, SVG and PDF
+
+Open **Plugins → Görsel satır serpiştirme** to prepare a 1-bit mask from a bitmap,
+static SVG or a selected PDF page. N=1–8 splits preserve the full canvas, physical
+size and DPI. Preview each pass or their union, save embedded JSON/project jobs,
+and export complementary PNG images in one ZIP.
+
+Install the optional visual codecs in this checkout's environment:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-visual.txt
+.\.venv\Scripts\python.exe -m pip check
+```
+
+See the [visual interlace guide](docs/visual-interlace.md). Native LightBurn `.lbrn2`
+export awaits an actual Image project and version/device profile; its button is disabled.
+
 ## Optional image import and tracing
 
 Core CAM and startup work without rasterio, svgtrace, Playwright or a downloaded browser.
@@ -72,7 +89,7 @@ not needed for the baseline smoke test.
 ## Development checks
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt -r requirements-visual.txt
 .\.venv\Scripts\python.exe -m pip check
 .\.venv\Scripts\python.exe -m pytest -q -rs
 .\.venv\Scripts\python.exe tests/smoke_app.py

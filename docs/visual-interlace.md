@@ -1,12 +1,11 @@
 # Görsel satır serpiştirme kullanımı
 
-Yerel çalışma dalı032-visual-interlace: bitmap/SVG/PDF hazırlama, satır grupları,
-önizleme ve taşınabilir kayıt kullanılabilir. Native `.lbrn2` henüz desteklenmiyor;
+MikroCAM bitmap/SVG/PDF hazırlama, satır grupları, önizleme ve taşınabilir kayıt sunar. Native `.lbrn2` henüz desteklenmiyor;
 [gerçek LightBurn profil doğrulaması](lightburn-compatibility.md) bekliyor.
 
 ## Çalıştırma
 
-MikroCAM Evo checkout'unda Python 3.13 ve mevcut runtime kurulumu gerekir:
+MikroCAM checkout'unda Python 3.13 ve mevcut runtime kurulumu gerekir:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements-visual.txt

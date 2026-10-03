@@ -18,7 +18,7 @@ Manifest: `.venv/visual-resume-source.json` (201 files SHA256). Runtime/config h
 | Markdown local links/fences | PASS |Broken=[]; typed source mutation check=[] |
 | LightBurn native Open/Save/Preview | WAITING / NOT_RUN |G02dependency; no real program/fixture/version/device supplied |
 | Binary installer/release audit | WAITING / NOT_RUN |75 exact source-crate notices retained; wheel build provenance/final bundle audit still open |
-| Local checkpoint / remote delivery | PASS / NOT_RUN |Local checkpoint; commit recorded centrally. Push/PR/CI/main remain NOT_RUN |
+| Source publication / delivery record | PASS |[PR#36](https://github.com/ozkurkuran/MikroCAM/pull/36) is open; its Checks and timeline record hosted CI and remote merge state. Local source commit d77a7cb1 is verified |
 | Physical machine/laser | NOT_RUN |No COM/USB/emission; outside file-generation scope |
 
 Detailed40acceptance mapping: [matrix](../../docs/design/visual-interlace/validation.md).
@@ -35,3 +35,12 @@ test skip was used to remove the failures. The201-file checkpoint stayed unchang
 Two historical vector-only .lbrn2 projects were discovered; they do not close G02.
 Current executable/device and a real embedded Image fixture remain required.
 Native LightBurn and binary-release acceptance remain WAITING/NOT_RUN.
+
+## Source publication and local main
+
+[PR#36](https://github.com/ozkurkuran/MikroCAM/pull/36) publishes source commit
+d77a7cb1. The current PR head, hosted checks and merge result are recorded by
+GitHub; previous NOT_RUN/local-only statements retain their checkpoint dates.
+Local main separately passed192 visual tests/20.67s and a fresh native desktop
+journey/47.94s with normal shutdown, using the SHA-verified resvg_py0.5.0 wheel.
+No native LightBurn or binary-release acceptance changed.

@@ -2,7 +2,7 @@
 
 2026-10-02. Hedef `E:/VSCode/Flatcam/MikroCAM-visual-interlace`, dal032-visual-interlace,
 base `c5a666cf`. **Yerel V1/V2 kodu hazır; native LightBurn hedefi tamamlanmadı.**
-Main/push/PR/CI/merge yapılmadı; altın referans aynı kaldı.
+GitHub entegrasyonu [PR#36](https://github.com/ozkurkuran/MikroCAM/pull/36) üzerinden izlenir. Aşağıdaki checkpoint kayıtları kendi tarihlerindeki durumları korur; PR Checks ve timeline güncel hosted CI/birleştirme kanıtıdır. Altın referans aynı kaldı.
 
 ## Tasarım özeti
 
@@ -83,3 +83,19 @@ Push/PR/hosted CI/main delivery remain NOT_RUN. Two real historical vector-only
 projects provide limited format metadata; they are not Image fixtures. Current
 LightBurn executable/device/embedded Image evidence and native V3/V4 remain open.
 No complete binary-release audit or complete .lbrn2 product delivery is claimed.
+
+## 2026-10-03 — source workflow delivery
+
+Source commit d77a7cb1 is integrated into local main and published in
+[PR#36](https://github.com/ozkurkuran/MikroCAM/pull/36). The PR timeline and Checks
+record the hosted CI and remote merge state; preceding local-only records are history.
+
+Local main passed192 visual tests in20.67s, pip check and a new actual desktop
+smoke in47.94s: menu, bitmap/SVG/PDF, PNG union, embedded JSON, host project
+round-trip, OpenGL and normal shutdown. The panel screenshot was inspected.
+The201-file source/notice checkpoint matches the complete5746-test/310-subtest
+feature run; no runtime/config code changed for this documentation update.
+
+This delivery covers source preparation, interlace, preview and portable PNG/JSON/project
+jobs. Native LightBurn Image export and native cycle/dwell remain unavailable pending
+G02; binary-release provenance/packaging acceptance remains open.
