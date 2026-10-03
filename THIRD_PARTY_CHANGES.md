@@ -389,3 +389,12 @@ preserved on branch 032-visual-interlace; current remote delivery is tracked by 
 declaration, not a full license. Its referenced Apache-2.0 text was fetched unchanged
 from https://www.apache.org/licenses/LICENSE-2.0.txt and retained separately with
 URL/hash provenance; the 152 exact-archive original notice bytes remain unchanged.
+
+## 2026-10-03 — Device-aware laser recipes (036)
+
+Original MikroCAM core, codecs, schemas, shared UI and regression/native tests;
+no external implementation copied and no new dependency. LightBurn's official
+GalvoSpecificCutSettings, SharedSettings, LineMode PWM override and GalvoPorts
+documentation informed parameter names, units and family distinctions. Links
+and scope are recorded in docs/LASER_RECIPES.md and the feature research.md.
+No manufacturer-specific M7 numerical limits or native project encoding inferred.

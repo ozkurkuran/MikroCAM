@@ -68,7 +68,7 @@ def test_explicit_recipe_required_and_visible_errors(panel):
     value, host = panel
     value.generate()
     assert not value.busy and not host.snapshots
-    assert 'recipe' in value.status_label.text().lower()
+    assert 'cihaz türü seçin' in value.status_label.text().lower()
     assert value.last_plan is None
 
 
@@ -336,7 +336,7 @@ def test_editor_draft_and_interlace_are_used_without_stale_recipe_fallback(panel
     assert 'error' in value.status_label.text().lower()
 
 
-@pytest.mark.parametrize('change', ['recipe', 'interlace'])
+@pytest.mark.parametrize('change', ['recipe', 'interlace', 'device'])
 def test_programmatic_editor_or_interlace_edits_cancel_immutable_running_request(panel, qtbot, monkeypatch, change):
     import mikrocam.ui.laser_worker as worker
     entered, release = threading.Event(), threading.Event()
@@ -354,6 +354,8 @@ def test_programmatic_editor_or_interlace_edits_cancel_immutable_running_request
     assert not value.recipe_editor.isEnabled()
     if change == 'recipe':
         value.recipe_editor.table.item(0, 1).setText('50')
+    elif change == 'device':
+        value.recipe_editor.device_editor.kind.setCurrentIndex(value.recipe_editor.device_editor.kind.findData('diode'))
     else:
         value.interlace_n.setValue(4)
     release.set()

@@ -1,8 +1,8 @@
-"""Strict deterministic schema-one metadata for geometry-only transfer packages."""
+"""Strict deterministic versioned metadata for geometry transfer packages."""
 import math
 
 from .laser_job import LaserPass, LaserRecipe, _name
-from .laser_json import PASS_FIELDS, _dump, _envelope, _fields, _load
+from .laser_json import PASS_FIELDS, DEVICE_PASS_FIELDS, device_from_data, _dump, _envelope, _fields, _load
 from .laser_paths import validate_interlace_n
 from .placement import _finite_real
 
@@ -13,7 +13,7 @@ MANIFEST_FIELDS = {'kind', 'schema_version', 'format', 'units', 'job_name', 'bou
 ENTRY_FIELDS = {'index', 'name', 'file', 'sha256', 'path_count', 'settings'}
 
 
-def _pass_entry(value: object, index: int, format: str) -> LaserPass:
+def _pass_entry(value: object, index: int, format: str, profiled: bool = False) -> LaserPass:
     data = _fields(value, ENTRY_FIELDS, f'manifest.passes[{index - 1}]')
     if type(data['index']) is not int or data['index'] != index:
         raise ValueError('Manifest pass index must follow consecutive 1-based order')
@@ -25,14 +25,17 @@ def _pass_entry(value: object, index: int, format: str) -> LaserPass:
         raise ValueError('Manifest sha256 must contain 64 lowercase hex characters')
     if type(data['path_count']) is not int or data['path_count'] <= 0:
         raise ValueError('Manifest path_count must be a positive integer')
-    settings = LaserPass(**_fields(data['settings'], PASS_FIELDS, 'manifest pass settings'))
+    settings = LaserPass(**_fields(data['settings'], DEVICE_PASS_FIELDS if profiled else PASS_FIELDS, 'manifest pass settings'))
     if data['name'] != settings.name:
         raise ValueError('Manifest pass name must equal its settings name')
     return settings
 
 
 def _validate_manifest(value: object) -> dict:
-    data = _envelope(value, MANIFEST_FIELDS, 'mikrocam.laser-export', 'manifest')
+    profiled = isinstance(value, dict) and type(value.get('schema_version')) is int and value['schema_version'] == 2
+    data = _envelope(value, MANIFEST_FIELDS | ({'device'} if profiled else set()),
+                     'mikrocam.laser-export', 'manifest', (1, 2))
+    device = device_from_data(data['device']) if profiled else None
     if data['format'] not in ('svg', 'dxf'):
         raise ValueError('Manifest format must be svg or dxf')
     expected_mapping = 'svg-local-y-down' if data['format'] == 'svg' else 'placed-xy'
@@ -52,9 +55,9 @@ def _validate_manifest(value: object) -> dict:
     entries = data['passes']
     if not isinstance(entries, list) or not entries or len(entries) > MAX_PASSES:
         raise ValueError(f'Manifest passes must be a nonempty array of at most {MAX_PASSES} passes')
-    settings = tuple(_pass_entry(item, index, data['format'])
+    settings = tuple(_pass_entry(item, index, data['format'], profiled)
                      for index, item in enumerate(entries, 1))
-    LaserRecipe(data['job_name'], settings)
+    LaserRecipe(data['job_name'], settings, device)
     return data
 
 

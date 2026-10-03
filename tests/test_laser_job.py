@@ -24,7 +24,7 @@ def test_pass_recipe_values_are_explicit_ordered_and_frozen():
         value.name = 'changed'
     with pytest.raises(FrozenInstanceError):
         value.passes[0].power_percent = 90
-    from mikrocam.core.laser_job import LaserPass
+    from mikrocam.core.laser_job import LaserPass, LaserRecipe
     with pytest.raises(TypeError):
         LaserPass('missing')
 
@@ -32,11 +32,11 @@ def test_pass_recipe_values_are_explicit_ordered_and_frozen():
 @pytest.mark.parametrize('field', ['power_percent', 'speed_mm_s', 'frequency_khz', 'pulse_width_ns'])
 @pytest.mark.parametrize('invalid', [True, False, 0, -1, math.nan, math.inf, -math.inf, '20', None, 10**400])
 def test_pass_parameters_reject_implicit_or_nonpositive_nonfinite_values(field, invalid):
-    from mikrocam.core.laser_job import LaserPass
+    from mikrocam.core.laser_job import LaserPass, LaserRecipe
     data = dict(name='explicit', power_percent=20, speed_mm_s=250, frequency_khz=30, pulse_width_ns=100)
     data[field] = invalid
     with pytest.raises(ValueError, match=field):
-        LaserPass(**data)
+        LaserRecipe('legacy', (LaserPass(**data),))
 
 
 def test_power_ceiling_and_recipe_names_and_pass_types():

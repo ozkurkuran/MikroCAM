@@ -1,4 +1,4 @@
-"""Explicit recipe drafts and atomic schema-1 recipe file replacement."""
+"""Device-aware recipe drafts and atomic versioned recipe file replacement."""
 import builtins
 import gettext
 import os
@@ -9,11 +9,12 @@ from PyQt6 import QtCore, QtWidgets
 
 from mikrocam.core.laser_job import LaserPass, LaserRecipe
 from mikrocam.core.laser_json import recipe_to_json
+from .laser_device import LaserDeviceEditor
 
 
 _ = getattr(builtins, '_', gettext.gettext)
-FIELDS = ('name', 'power_percent', 'speed_mm_s', 'frequency_khz', 'pulse_width_ns')
-HEADERS = ('Pass name', 'Power (%)', 'Speed (mm/s)', 'Frequency (kHz)', 'Pulse width (ns)')
+FIELDS = ('name', 'power_percent', 'speed_mm_s', 'frequency_khz', 'pulse_width_ns', 'min_power_percent', 'pwm_frequency_khz')
+HEADERS = ('Geçiş adı', 'Güç (%)', 'Hız (mm/s)', 'Frekans (kHz)', 'Atım süresi (ns)', 'Min. güç (%) — isteğe bağlı', 'PWM (kHz) — isteğe bağlı')
 
 
 class LaserRecipeEditor(QtWidgets.QWidget):
@@ -27,6 +28,8 @@ class LaserRecipeEditor(QtWidgets.QWidget):
         self.name_edit = QtWidgets.QLineEdit()
         name_form.addRow(_('Recipe name'), self.name_edit)
         layout.addLayout(name_form)
+        self.device_editor = LaserDeviceEditor()
+        layout.addWidget(self.device_editor)
         self.table = QtWidgets.QTableWidget(0, len(FIELDS))
         self.table.setHorizontalHeaderLabels([_(text) for text in HEADERS])
         self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
@@ -45,24 +48,36 @@ class LaserRecipeEditor(QtWidgets.QWidget):
         layout.addLayout(buttons)
         self.name_edit.textChanged.connect(self.changed)
         self.table.cellChanged.connect(self.changed)
+        self.device_editor.changed.connect(self._device_changed)
+        self._sync_columns()
+
+    def _device_changed(self) -> None:
+        self._sync_columns(); self.changed.emit()
+
+    def _sync_columns(self) -> None:
+        fields = self.device_editor.active_fields
+        for column, field in enumerate(FIELDS):
+            self.table.setColumnHidden(column, field != 'name' and field not in fields)
 
     def set_recipe(self, recipe: LaserRecipe) -> None:
         """Show round-trip-safe float representations without rounding loaded settings."""
         if not isinstance(recipe, LaserRecipe):
             raise ValueError(_('A valid laser recipe is required.'))
-        with QtCore.QSignalBlocker(self.name_edit), QtCore.QSignalBlocker(self.table):
+        with QtCore.QSignalBlocker(self.name_edit), QtCore.QSignalBlocker(self.table), QtCore.QSignalBlocker(self.device_editor):
+            self.device_editor.set_profile(recipe.device)
             self.name_edit.setText(recipe.name)
             self.table.setRowCount(len(recipe.passes))
             for row, settings in enumerate(recipe.passes):
                 for column, field in enumerate(FIELDS):
                     value = getattr(settings, field)
-                    text = value if column == 0 else repr(value)
+                    text = value if column == 0 else ('' if value is None else repr(value))
                     self.table.setItem(row, column, QtWidgets.QTableWidgetItem(text))
             self.table.setCurrentCell(0, 0)
-        self.changed.emit()
+        self._sync_columns(); self.changed.emit()
 
     def get_recipe(self) -> LaserRecipe:
         """Return a validated immutable snapshot or an actionable field/row error."""
+        device = self.device_editor.get_profile()
         passes = []
         for row in range(self.table.rowCount()):
             values = {}
@@ -71,6 +86,9 @@ class LaserRecipeEditor(QtWidgets.QWidget):
                 text = item.text() if item is not None else ''
                 if column == 0:
                     values[field] = text
+                elif field not in self.device_editor.active_fields or (
+                    field in ('min_power_percent', 'pwm_frequency_khz') and not text.strip()
+                ): values[field] = None
                 else:
                     try:
                         values[field] = float(text)
@@ -81,7 +99,7 @@ class LaserRecipeEditor(QtWidgets.QWidget):
                 passes.append(LaserPass(**values))
             except ValueError as error:
                 raise ValueError(_('Pass {row}: {message}').format(row=row + 1, message=_(str(error)))) from error
-        return LaserRecipe(self.name_edit.text(), tuple(passes))
+        return LaserRecipe(self.name_edit.text(), tuple(passes), device)
 
     def add_pass(self) -> None:
         """Insert an entirely blank pass; numeric parameters are never invented."""
