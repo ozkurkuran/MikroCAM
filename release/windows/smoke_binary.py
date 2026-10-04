@@ -28,6 +28,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import winreg
 import zipfile
 
 HERE = Path(__file__).resolve().parent
@@ -183,24 +184,39 @@ def installer_journey(setup: Path, work: Path, native: bool) -> dict:
     target = work / local_name('Kurulum Dizini ğüş', 'Install Dir ü')
     # NSIS requires /D=path last and unquoted, so the command line is passed verbatim.
     code = run(f'"{setup}" /S /D={target}', dict(os.environ), work / 'setup.log', timeout=600)
-    assert code == 0 and (target / layout.APP_EXE).is_file(), 'silent install failed'
     shortcut = START_MENU / f'{identity.NAME}.lnk'
-    assert shortcut.is_file(), 'Start Menu shortcut missing'
-    query = reg('query', UNINSTALL_KEY)
-    assert query.returncode == 0 and identity.VERSION in query.stdout and str(target) in query.stdout
-    assert (target / 'config' / 'configuration.txt').read_text() == layout.configuration_text(False)
     appdata = work / 'installed-appdata'
-    result = tcl_journey(target / layout.APP_EXE, environment(appdata, native), work / 'installed', 'installed')
-    assert (appdata / 'FlatCAM').is_dir(), 'installed app did not use APPDATA\\FlatCAM'
-    run([str(target / layout.UNINSTALLER_EXE), '/S'], dict(os.environ), work / 'uninstall.log')
-    deadline = time.monotonic() + 120
-    while target.exists() and time.monotonic() < deadline:
-        time.sleep(0.5)
+    try:
+        assert code == 0 and (target / layout.APP_EXE).is_file(), 'silent install failed'
+        assert shortcut.is_file(), 'Start Menu shortcut missing'
+        entry = uninstall_entry()
+        assert entry['DisplayVersion'] == identity.VERSION and entry['Publisher'] == identity.PUBLISHER, entry
+        # Compare real paths: TEMP may use 8.3 short names (RUNNER~1) on hosted runners.
+        assert os.path.samefile(entry['InstallLocation'], target), (entry['InstallLocation'], target)
+        assert (target / 'config' / 'configuration.txt').read_text() == layout.configuration_text(False)
+        result = tcl_journey(target / layout.APP_EXE, environment(appdata, native), work / 'installed', 'installed')
+        assert (appdata / 'FlatCAM').is_dir(), 'installed app did not use APPDATA\\FlatCAM'
+    finally:
+        # Always uninstall, also after a failed check, so no test installation is left behind.
+        stop_leftovers(target)
+        if (target / layout.UNINSTALLER_EXE).is_file():
+            run([str(target / layout.UNINSTALLER_EXE), '/S'], dict(os.environ), work / 'uninstall.log')
+        deadline = time.monotonic() + 120
+        while target.exists() and time.monotonic() < deadline:
+            time.sleep(0.5)
     assert not target.exists(), f'uninstall left files: {list(target.rglob("*"))[:5]}'
     assert not shortcut.exists(), 'uninstall left the Start Menu shortcut'
     assert reg('query', UNINSTALL_KEY).returncode != 0, 'uninstall left the registry entry'
     assert (appdata / 'FlatCAM').is_dir(), 'uninstall must keep user data'
     return dict(result, installed_to=str(target), user_data_kept=True)
+
+
+def uninstall_entry() -> dict[str, object]:
+    """Read the per-user uninstall entry without console code-page decoding."""
+    subkey = UNINSTALL_KEY.split('\\', 1)[1]
+    with winreg.OpenKey(winreg.HKEY_CURRENT_USER, subkey) as key:
+        return {winreg.EnumValue(key, i)[0]: winreg.EnumValue(key, i)[1]
+                for i in range(winreg.QueryInfoKey(key)[1])}
 
 
 def guards(installer: bool) -> None:
