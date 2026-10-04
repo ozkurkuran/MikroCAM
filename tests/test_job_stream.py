@@ -46,3 +46,9 @@ def test_verified_compiled_capacity_is_capped(records, expected):
     {"ver":"FluidNC:","opt":"V,15,128"}, {"ver":"1.1h:","opt":"V,15,abc"}])
 def test_missing_or_malformed_capability_refuses(records):
     with pytest.raises(ValueError): verified_capacity(records)
+
+
+@pytest.mark.parametrize("options", ["V0,15,128", "V+,15,128", "VNMCPZHTAD0SRL+*$#IEW2,15,128"])
+def test_every_documented_grbl11_option_letter_keeps_capacity(options):
+    """gnea/grbl bfb67f0c report.c:375-441 prints '0' and '+' as OPT letters."""
+    assert verified_capacity({"ver": "1.1h.20190830:", "opt": options}) == 128
