@@ -147,6 +147,21 @@ def cam_journey(app, qapp, sandbox, errors):
     print('PROJECT_ROUNDTRIP_OK', actual, flush=True)
 
 
+def recipe_database_journey(app, panel):
+    from mikrocam.laser.recipe_db_store import load_database
+    library = panel.recipe_library
+    assert Path(library.path).is_relative_to(Path(app.data_path)), library.path
+    assert library.writable, library.status_label.text()
+    library.save_current()
+    stored, _revision = load_database(library.path)
+    assert [entry.recipe for entry in stored.recipes] == [panel.recipe_editor.get_recipe()], library.status_label.text()
+    library.reload()
+    library.table.selectRow(0)
+    library.load_selected()
+    assert panel.recipe_editor.get_recipe() == stored.recipes[0].recipe
+    print('LASER_RECIPE_DB_SAVE_RELOAD_OK', library.path, flush=True)
+
+
 def laser_journey(app, qapp, sandbox, errors):
     from mikrocam.core.laser_job import LaserPass, LaserRecipe
     from mikrocam.core.laser_json import recipe_from_json, recipe_to_json
@@ -166,6 +181,7 @@ def laser_journey(app, qapp, sandbox, errors):
                            (LaserPass('Reference', 20, 100, 20, 80),
                             LaserPass('Finish', 10, 150, 30, 60)))), encoding='utf-8')
     panel.set_recipe(recipe_from_json(recipe_file.read_text(encoding='utf-8')))
+    recipe_database_journey(app, panel)
     panel.hatch_enabled.setChecked(True)
     panel.hatch_spacing.setValue(1)
     panel.hatch_angle.setValue(30)

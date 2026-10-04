@@ -11,6 +11,7 @@ from mikrocam.core.laser_json import recipe_from_json
 from mikrocam.core.laser_paths import CopperFeatures, LaserPlan, PlanOptions
 from mikrocam.core.placement import Placement
 from .laser_recipe import LaserRecipeEditor, save_recipe_file
+from .laser_recipe_db import LaserRecipeLibrary
 from .laser_export import LaserExportControls
 from .laser_worker import LaserWorker
 
@@ -102,6 +103,8 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         self.recipe_editor = LaserRecipeEditor()
         self.recipe_editor.changed.connect(self._recipe_changed)
         layout.addWidget(self.recipe_editor)
+        self.recipe_library = LaserRecipeLibrary(self.recipe_editor, self.host.recipe_database_path())
+        layout.addWidget(self.recipe_library)
 
     def _build_placement(self, layout: QtWidgets.QVBoxLayout) -> None:
         group = QtWidgets.QGroupBox(_('Placement (mm)'))

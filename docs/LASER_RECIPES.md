@@ -51,3 +51,41 @@ Davranış referansları: LightBurn'un [galvo ayarları](https://docs.lightburns
 [ortak katman ayarları](https://docs.lightburnsoftware.com/latest/Reference/CutSettingsEditor/SharedSettings/),
 [PWM override](https://docs.lightburnsoftware.com/latest/Reference/CutSettingsEditor/LineMode/#override-pwm-frequency)
 ve [galvo port ayarları](https://docs.lightburnsoftware.com/latest/Reference/DeviceSettings/GalvoPorts/).
+
+## Reçete veritabanı
+
+**Lazer CAM** panelindeki **Reçete veritabanı** bölümü malzeme, lens, makine ve
+reçeteleri tek dosyada saklar. Dosya yolu bölümün üstünde gösterilir; Windows'ta
+normalde `%APPDATA%\FlatCAM\mikrocam\laser_recipe_db.json` konumundadır.
+
+1. **Malzeme → Yeni…** ve **Lens → Yeni…** ile kayıt ekleyin. Kalınlık ve odak
+   uzaklığı isteğe bağlıdır; boş bırakılırsa boş kalır, değer tahmin edilmez.
+2. Editörde lazer türünü ve model adını seçip **Makine → Editör profilini kaydet**
+   deyin. Aynı adlı makinenin profilini (ör. üretici sınırları) değiştirmek, ona
+   bağlı bütün reçeteleri yeni profille yeniden doğrular; biri uymazsa hiçbir şey
+   değişmez.
+3. Malzeme ve lensi seçip **Editördekini kaydet** deyin. Makine, editördeki cihaz
+   profilinden belirlenir; yoksa eklenir. Aynı malzeme/makine/lens için aynı adlı
+   ama farklı değerli reçetenin üzerine yazmadan önce onay istenir.
+4. **Ara** kutusu reçete, malzeme, makine ve lens adlarında arar. Satırı seçip
+   **Editöre yükle** (veya çift tıklama) reçeteyi editöre kopyalar.
+
+Hazırlanan iş, proje ve SVG/DXF/PNG paketleri reçetenin tam kopyasını saklar;
+veritabanında sonradan yapılan bir değişiklik kaydedilmiş işleri değiştirmez.
+Kullanılan malzeme, lens veya makine silinemez.
+
+### Eski JSON reçeteleri
+
+**JSON içe aktar…** sürüm 1 (cihazsız) ve sürüm 2 (cihazlı) reçete dosyalarını
+seçili malzeme/lens altında ekler. Sürüm 1 reçete makinesiz, “cihaz türü
+belirtilmemiş” olarak kalır. Seçilen dosyalardan biri hatalıysa hiçbiri eklenmez.
+**JSON dışa aktar…** seçili reçeteyi yeniden tek dosya olarak yazar; MikroCAM'in
+yazdığı bir dosya içe ve dışa aktarıldığında bayt bayt aynı kalır. **Load/Save recipe
+JSON** düğmeleri de değişmeden çalışır.
+
+Veritabanı dosyası `schema_version: 1` taşır. Açılamayan, bozuk veya daha yeni
+sürümlü dosya **salt okunur** gösterilir ve üzerine yazılmaz. Dosya başka bir
+MikroCAM penceresinde değiştiyse kayıt reddedilir; **Yeniden yükle** ile güncelleyin.
+
+Veritabanındaki bir reçete fiziksel olarak doğrulanmış sayılmaz. Değerleri kendi
+cihazınızda test kuponuyla doğrulayın; yazılım fiziksel interlock'un yerine geçmez.
