@@ -120,3 +120,13 @@ Local checks at test head `51b65b3d` (CPython 3.13.13, `.venv/repro-a`): new fix
 same 12 fail identically on unmodified origin/main `70800e5b` there, and those five visual test files
 pass (46) with the main `.venv`. Logs: `.venv/vendor-fixtures-*.log` (ignored). PR Windows CI is the
 delivery gate.
+
+## Spec 041 takibi (2026-10-04)
+Yukarıdaki DOCTYPE önerisi [spec 041](../041-svg-vendor-compat/validation.md) ile uygulandı. PR #41'in saklanan aynı 731 dosyalık Commons
+derlemi (ağ erişimi olmadan) yeniden çalıştırıldı: içe aktarılan dosya 91'den **367**'ye çıktı
+(SVG 1.1 DOCTYPE'lı 441 dosyanın 270'i, SVG 1.0 DOCTYPE'lı 17 dosyanın 6'sı); önceden geçen hiçbir
+dosya gerilemedi. İç entity alt kümeli 48 dosya ve 1 SVG 1.1 Tiny dosyası açık hatayla reddedilmeye
+devam eder. DOCTYPE'tan sonra en sık sınırlar: pattern (54), kısmi opaklık (38), linearGradient
+(35), dash (32), kendini kesen stroke (29), metin (20). Ayrıca gerçek, değiştirilmemiş CC0
+Illustrator 16.0.4 ikon dışa aktarımı (`illustrator-commons-hex-star-doctype/`, standart SVG 1.1
+DOCTYPE) analitik malzeme ve sınırlarla doğrulanır. Gerçek Illustrator clip örneği hâlâ açık.

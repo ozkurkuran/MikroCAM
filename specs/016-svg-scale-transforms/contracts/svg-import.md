@@ -112,3 +112,11 @@ No parameter/default-tool behavior is changed. GUI and Tcl share the seam; no ne
 Exact shared signatures precede delegation; root coordinates all commits. Analytic unit/transform,
 fill/stroke, malformed/resource, mm/IN host and atomicity tests precede implementation, then full
 reference/import/growth and actual desktop Geometry/Gerber + save/reopen + old journeys.
+
+## Spec 041 amendment
+DOCTYPE: one standard SVG 1.0/1.1 public DOCTYPE without internal subset, before the root, is blanked
+before parsing (importers.svg_doctype.strip_svg_doctype); every other DTD/entity form still fails.
+vector-effect is non-inherited: none | non-scaling-stroke on shapes only. Unpainted stroke: no-op.
+Painted stroke: width in root viewport CSS px (25.4/96 mm), converted by
+core.svg_transform.non_scaling_stroke_width(width_px, matrix) for similarity user->mm matrices only;
+non-similarity, scaling root transform, other values or group/use/root use fail explicitly.

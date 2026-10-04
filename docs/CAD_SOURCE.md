@@ -39,6 +39,8 @@ Illustrator olarak tanınır. Gerçek Illustrator veya Proteus DXF örneği uygu
 bildirimleri yalnız özgün test girdileriyle doğrulanır. Lisans, komut ve hash kayıtları
 [örnek klasörlerindedir](../tests/reference/cad-source/).
 
-Kaynak inceleyici, sabit SVG 1.1 dış DTD bildirimini ağdan okumadan inceleyebilir. Bu, geometri
-içe aktarıcısının DTD desteği kazandığı anlamına gelmez; mevcut SVG geometri okuyucusu bu bildirimi
-reddeder. Kaynak tespiti ile bir dosyanın CAM geometrisine dönüştürülebilmesi ayrı kontrollerdir.
+Kaynak inceleyici ve SVG geometri içe aktarıcısı aynı izin listesini kullanır (spec 041): kök
+elemandan önce, iç alt kümesi olmayan tek bir standart SVG 1.0 veya SVG 1.1 public DOCTYPE kabul
+edilir ve ağdan hiçbir şey okunmadan ayrıştırmadan önce silinir. İç alt küme, entity bildirimi, yalnız
+`SYSTEM`, bilinmeyen tanımlayıcı veya ikinci DOCTYPE içeren dosya her iki yolda da açık hatayla
+reddedilir. Kaynak tespiti ile bir dosyanın CAM geometrisine dönüştürülebilmesi yine ayrı kontrollerdir.

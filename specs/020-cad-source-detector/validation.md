@@ -120,3 +120,10 @@ Local checks at test head `51b65b3d` (CPython 3.13.13, `.venv/repro-a`): new fix
 same 12 fail identically on unmodified origin/main `70800e5b` there, and those five visual test files
 pass (46) with the main `.venv`. Logs: `.venv/vendor-fixtures-*.log` (ignored). PR Windows CI is the
 delivery gate.
+
+## Spec 041 takibi (2026-10-04)
+Kaynak algılayıcı artık geometri içe aktarıcısıyla aynı DOCTYPE izin listesini kullanır
+([spec 041](../041-svg-vendor-compat/validation.md)): SVG 1.1'e ek olarak standart SVG 1.0 public DOCTYPE de çevrim dışı kabul edilir; DOCTYPE
+yalnız kök elemandan önce ve bir kez bulunabilir, ayrıştırıcı silinmiş metni görür. İç alt küme,
+entity, yalnız `SYSTEM`, bilinmeyen tanımlayıcı veya ikinci DOCTYPE açık hatayla Unknown/unavailable
+kalır. "Geometry import of genuine Proteus SVG" boşluğu kapandı (018 takibi). DXF boşlukları açık.

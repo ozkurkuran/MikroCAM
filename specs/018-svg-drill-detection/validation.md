@@ -99,3 +99,14 @@ Local checks at test head `51b65b3d` (CPython 3.13.13, `.venv/repro-a`): new fix
 same 12 fail identically on unmodified origin/main `70800e5b` there, and those five visual test files
 pass (46) with the main `.venv`. Logs: `.venv/vendor-fixtures-*.log` (ignored). PR Windows CI is the
 delivery gate.
+
+## Spec 041 takibi (2026-10-04)
+Yukarıdaki "Still open: drill review on genuine Proteus output" boşluğu [spec 041](../041-svg-vendor-compat/validation.md) ile kapandı.
+Gerçek `proteus-breath-analyzer/B_A_.svg` içe aktarılır ve drill incelemesi 25 adayın tamamını
+bulur: merkezler testte dosyanın ham `d` metninden bağımsız hesaplananlarla 1e-6 mm içinde
+(flip açık/kapalı), çap 1,0001–1,00014 mm (dört kübik Bezier yaklaşımı), tek takım grubu ~1,00 mm.
+Bu, dosyanın yanındaki Proteus CADCAM notundaki `D=1mm` ile uyumludur. Değişen sözleşme: tek alt
+yol uçları 1e-6 mm içinde çakışıyorsa kapalı sayılıp aynı daire uyumuyla sınanır (360° şartı
+korunur); dairesel destek yoksa ağırlık merkezi ≤0,02 mm ve deliği 0,01 mm payla içeren beyaz
+olmayan dolu poligon pad destek olur. Delik merkezi/çapı yalnız beyaz daireden gelir.
+Hâlâ açık: fiziksel delme, başka Proteus sürümleri ve diğer EDA araçlarının delik çizim biçimleri.

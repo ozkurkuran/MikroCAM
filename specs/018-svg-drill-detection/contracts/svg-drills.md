@@ -52,3 +52,11 @@ stays with useful error and never invents success. GUI layer uses only bridge AP
 Creation first verifies current source bytes; failed verification clears review/selection and asks
 for analysis again. This covers edits to a file without changing the path text.
 One File/Import menu action, existing translation via gettext/builtins convention; no worker.
+
+## Spec 041 amendment
+core.svg_drill_circles.COINCIDENT_ENDPOINT_MM = 1e-6: a single open subpath whose end lies within it of
+its start is closed at that point and must pass the unchanged fit (one turn of exactly 2*pi).
+core.svg_drills.PAD_MARGIN_MM = 0.01. Without circular support, a nonwhite filled unclipped single
+Polygon pad supports an opening when its centroid is <=0.02 mm from the centre, it contains the centre
+and its boundary distance is >= radius + 0.01 mm; the smallest-area pad is reported. Centre and
+diameter always come from the white circle; pads never become candidates.
