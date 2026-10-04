@@ -1,0 +1,8 @@
+# Windows binary build tools (release/windows/build.py). Not runtime dependencies.
+# Install together with requirements.txt and requirements-visual.txt in an isolated venv;
+# packaging and setuptools pins come from requirements.txt.
+altgraph==0.17.5
+pefile==2024.8.26
+pyinstaller==6.22.3
+pyinstaller-hooks-contrib==2026.8
+pywin32-ctypes==0.2.3

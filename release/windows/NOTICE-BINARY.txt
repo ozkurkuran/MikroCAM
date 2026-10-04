@@ -1,0 +1,47 @@
+MikroCAM for Windows (x64) - binary distribution notice
+=====================================================
+
+MikroCAM's own source code is licensed under the MIT license (LICENSE.txt). FlatCAM and
+FlatCAM Evo copyrights are preserved (NOTICE.md).
+
+This binary package also contains third-party components that keep their own licenses.
+Their complete license and notice texts are in the "licenses" folder; "bundle-manifest.json"
+maps every file of this package to the component that supplied it.
+
+Combined work: this package includes PyQt6, which is licensed under the GNU General Public
+License version 3 (licenses/pyqt6/...). The binary package as a whole is therefore conveyed
+under the terms of the GPL version 3. MikroCAM's MIT source code is compatible with the GPL;
+the MIT license of the MikroCAM source is not changed. Other components (for example Qt under
+the GNU LGPL version 3, svglib under the LGPL version 3 or later, GEOS under the LGPL 2.1 or
+later) also keep their own terms.
+
+Corresponding source:
+  - MikroCAM: https://github.com/ozkurkuran/MikroCAM (the commit or tag of this release; the
+    exact build is reproducible with release/windows/build.py and the pinned requirements).
+  - PyQt6 6.11.0: https://pypi.org/project/PyQt6/6.11.0/#files (source distribution).
+  - Qt 6.11.2: https://download.qt.io/archive/qt/6.11/6.11.2/ (single/ source archive).
+  - Every other Python package: the exact version listed in licenses/inventory.json, available
+    as a source distribution from https://pypi.org or the upstream project.
+  If any of these locations becomes unavailable, request the corresponding source for this
+  release through https://github.com/ozkurkuran/MikroCAM/issues.
+
+Replaceable libraries: the Qt libraries (_internal/PyQt6/Qt6/bin/*.dll) and svglib
+(_internal/svglib/*.py) are separate files; you may replace them with modified compatible
+versions. To rebuild the whole package from modified sources, use release/windows/build.py.
+
+Microsoft Distributable Code: the Microsoft Visual C++ runtime libraries in this package
+(vcruntime140*.dll, msvcp140*.dll) are Microsoft Distributable Code redistributed with the
+CPython, Qt and NumPy binaries. You may not alter Microsoft's copyright, trademark or patent
+notices in them, use Microsoft's trademarks to suggest endorsement, run them on non-Microsoft
+platforms, or include them in malicious, deceptive or unlawful programs. See
+licenses/cpython/3.13.13/LICENSE.txt ("Additional Conditions for this Windows binary build").
+
+Not included in this binary: the optional image import/tracing stack (rasterio/GDAL,
+svgtrace, Playwright/Chromium) and Google OR-Tools. Drill and mill path ordering uses the
+built-in RTree optimizer in this package. Install from source to use the optional tools.
+
+The executables in this package are not code-signed. Windows SmartScreen or antivirus
+software may warn about them; verify the SHA-256 checksums published with the release.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. Software checks never replace
+physical interlocks of a machine or laser. See the documentation before operating hardware.

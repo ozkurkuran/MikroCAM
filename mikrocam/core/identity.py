@@ -7,7 +7,8 @@ DESCRIPTION = 'PCB manufacturing files viewer/editor with plugins'
 REPOSITORY_URL = 'https://github.com/ozkurkuran/MikroCAM'
 RELEASES_URL = REPOSITORY_URL + '/releases'
 ISSUES_URL = REPOSITORY_URL + '/issues'
-COPYRIGHT = 'Copyright (c) 2026 MikroCAM contributors'
+PUBLISHER = 'MikroCAM contributors'
+COPYRIGHT = f'Copyright (c) 2026 {PUBLISHER}'
 UPSTREAM_COPYRIGHTS = (
     'Copyright FlatCAM (c) 2014-2018 Juan Pablo Caram',
     'Copyright FlatCAM (c) 2018-2023 Marius Stanciu',

@@ -2630,7 +2630,8 @@ class appIO(QtCore.QObject):
         else:
             self.on_file_new_project()
 
-        if not run_from_arg or not cli or from_tcl is False:
+        # Tcl/CLI opens are non-interactive: a modal here blocked startup and headless scripts.
+        if not (cli or from_tcl):
             msgbox = FCMessageBox(parent=self.app.ui)
             title = _("Import Settings")
             txt = _("Do you want to import the loaded project settings?")

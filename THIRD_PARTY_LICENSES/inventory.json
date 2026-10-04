@@ -2581,6 +2581,177 @@
           "sha256": "753a9e3c09cece8584467a0f605e065005c2a5e5c6da4f0cbb0493d2d52b96f6"
         }
       ]
+    },
+    {
+      "name": "altgraph",
+      "version": "0.17.5",
+      "groups": [
+        "build"
+      ],
+      "license_metadata": {
+        "expression": null,
+        "license": "MIT",
+        "classifiers": [
+          "License :: OSI Approved :: MIT License"
+        ],
+        "license_files": [
+          "LICENSE"
+        ]
+      },
+      "source": {
+        "kind": "installed-wheel",
+        "url": "https://files.pythonhosted.org/packages/a9/ba/000a1996d4308bc65120167c21241a3b205464a2e0b58deda26ae8ac21d1/altgraph-0.17.5-py2.py3-none-any.whl",
+        "filename": "altgraph-0.17.5-py2.py3-none-any.whl",
+        "sha256": "f3a22400bce1b0c701683820ac4f3b159cd301acab067c51c653e06961600597",
+        "wheel_tags": [
+          "py2-none-any",
+          "py3-none-any"
+        ]
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/altgraph/0.17.5/wheel/altgraph-0.17.5.dist-info/LICENSE",
+          "role": "license",
+          "source": "https://files.pythonhosted.org/packages/a9/ba/000a1996d4308bc65120167c21241a3b205464a2e0b58deda26ae8ac21d1/altgraph-0.17.5-py2.py3-none-any.whl#altgraph-0.17.5.dist-info/LICENSE",
+          "sha256": "6c194d6db0c64d45535d10c95142b9b0cda7b7dcc7f1ddee302b3d536f3dbe46"
+        }
+      ],
+      "notes": "Build tool only; not shipped in the Windows binary."
+    },
+    {
+      "name": "pefile",
+      "version": "2024.8.26",
+      "groups": [
+        "build"
+      ],
+      "license_metadata": {
+        "expression": null,
+        "license": "MIT",
+        "classifiers": [],
+        "license_files": [
+          "LICENSE"
+        ]
+      },
+      "source": {
+        "kind": "installed-wheel",
+        "url": "https://files.pythonhosted.org/packages/54/16/12b82f791c7f50ddec566873d5bdd245baa1491bac11d15ffb98aecc8f8b/pefile-2024.8.26-py3-none-any.whl",
+        "filename": "pefile-2024.8.26-py3-none-any.whl",
+        "sha256": "76f8b485dcd3b1bb8166f1128d395fa3d87af26360c2358fb75b80019b957c6f",
+        "wheel_tags": [
+          "py3-none-any"
+        ]
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/pefile/2024.8.26/wheel/pefile-2024.8.26.dist-info/LICENSE",
+          "role": "license",
+          "source": "https://files.pythonhosted.org/packages/54/16/12b82f791c7f50ddec566873d5bdd245baa1491bac11d15ffb98aecc8f8b/pefile-2024.8.26-py3-none-any.whl#pefile-2024.8.26.dist-info/LICENSE",
+          "sha256": "b44409c067c6da52bfb54bb6624fb11a7b52157c3a13ae1400232f8196e86ad3"
+        }
+      ],
+      "notes": "Build tool only; not shipped in the Windows binary."
+    },
+    {
+      "name": "pyinstaller",
+      "version": "6.22.3",
+      "groups": [
+        "build"
+      ],
+      "license_metadata": {
+        "expression": null,
+        "license": "GPLv2-or-later with a special exception which allows to use PyInstaller to build and distribute non-free programs (including commercial ones)",
+        "classifiers": [
+          "License :: OSI Approved :: GNU General Public License v2 (GPLv2)"
+        ],
+        "license_files": [
+          "COPYING.txt"
+        ]
+      },
+      "source": {
+        "kind": "installed-wheel",
+        "url": "https://files.pythonhosted.org/packages/24/83/c5422204772a27aef643280fdc887b7ef55679989096b21dceb1b9625fc4/pyinstaller-6.22.3-py3-none-win_amd64.whl",
+        "filename": "pyinstaller-6.22.3-py3-none-win_amd64.whl",
+        "sha256": "500bd58c7bf7e584a8435adccbd763a0b918d5c12b08d74ff50fd79b2915458b",
+        "wheel_tags": [
+          "py3-none-win_amd64"
+        ]
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/pyinstaller/6.22.3/wheel/pyinstaller-6.22.3.dist-info/licenses/COPYING.txt",
+          "role": "license",
+          "source": "https://files.pythonhosted.org/packages/24/83/c5422204772a27aef643280fdc887b7ef55679989096b21dceb1b9625fc4/pyinstaller-6.22.3-py3-none-win_amd64.whl#pyinstaller-6.22.3.dist-info/licenses/COPYING.txt",
+          "sha256": "0598064c7d2718e38d7914a7d08343b2fa008e3bea9ebba2aa7a6ffa5900dd64"
+        }
+      ],
+      "notes": "Build tool. Not imported at runtime; PyInstaller bootloader and runtime hooks are embedded in MikroCAM.exe under the bootloader exception."
+    },
+    {
+      "name": "pyinstaller-hooks-contrib",
+      "version": "2026.8",
+      "groups": [
+        "build"
+      ],
+      "license_metadata": {
+        "expression": null,
+        "license": null,
+        "classifiers": [
+          "License :: OSI Approved :: Apache Software License",
+          "License :: OSI Approved :: GNU General Public License v2 (GPLv2)"
+        ],
+        "license_files": [
+          "LICENSE"
+        ]
+      },
+      "source": {
+        "kind": "installed-wheel",
+        "url": "https://files.pythonhosted.org/packages/8f/f1/3eee0263b487e571aed9204257b45bc2a0b6fec34d0a1adade4d8d8a968c/pyinstaller_hooks_contrib-2026.8-py3-none-any.whl",
+        "filename": "pyinstaller_hooks_contrib-2026.8-py3-none-any.whl",
+        "sha256": "6d21d65323ea4467753afc21f52d7d0e69416ae8101dd88269bf273ad48db084",
+        "wheel_tags": [
+          "py3-none-any"
+        ]
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/pyinstaller-hooks-contrib/2026.8/wheel/pyinstaller_hooks_contrib-2026.8.dist-info/licenses/LICENSE",
+          "role": "license",
+          "source": "https://files.pythonhosted.org/packages/8f/f1/3eee0263b487e571aed9204257b45bc2a0b6fec34d0a1adade4d8d8a968c/pyinstaller_hooks_contrib-2026.8-py3-none-any.whl#pyinstaller_hooks_contrib-2026.8.dist-info/licenses/LICENSE",
+          "sha256": "91d0baaff00773038e72c0a1fc9d5d2d38706b7a2b9c04f34296608f931b9cd0"
+        }
+      ],
+      "notes": "Build tool only; not shipped in the Windows binary."
+    },
+    {
+      "name": "pywin32-ctypes",
+      "version": "0.2.3",
+      "groups": [
+        "build"
+      ],
+      "license_metadata": {
+        "expression": null,
+        "license": "BSD-3-Clause",
+        "classifiers": [],
+        "license_files": []
+      },
+      "source": {
+        "kind": "installed-wheel",
+        "url": "https://files.pythonhosted.org/packages/de/3d/8161f7711c017e01ac9f008dfddd9410dff3674334c233bde66e7ba65bbf/pywin32_ctypes-0.2.3-py3-none-any.whl",
+        "filename": "pywin32_ctypes-0.2.3-py3-none-any.whl",
+        "sha256": "8a1513379d709975552d202d942d9837758905c8d01eb82b8bcc30918929e7b8",
+        "wheel_tags": [
+          "py3-none-any"
+        ]
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/pywin32-ctypes/0.2.3/wheel/pywin32_ctypes-0.2.3.dist-info/LICENSE.txt",
+          "role": "license",
+          "source": "https://files.pythonhosted.org/packages/de/3d/8161f7711c017e01ac9f008dfddd9410dff3674334c233bde66e7ba65bbf/pywin32_ctypes-0.2.3-py3-none-any.whl#pywin32_ctypes-0.2.3.dist-info/LICENSE.txt",
+          "sha256": "dfa83b3e2709adfcdb838d9ad55823ca674abb780e60563d9dd9544ccbf785e9"
+        }
+      ],
+      "notes": "Build tool only; not shipped in the Windows binary."
     }
   ],
   "components": [
@@ -4974,6 +5145,477 @@
           "sha256": "56c8832c3ffb1e71301efe80e06d3c566f804da4487e26c7a8313e075fe2c4e4"
         }
       ]
+    },
+    {
+      "name": "cpython",
+      "version": "3.13.13",
+      "groups": [
+        "windows-binary"
+      ],
+      "license_metadata": {
+        "declared": "PSF-2.0 with bundled third-party notices"
+      },
+      "source": {
+        "kind": "official-installer",
+        "url": "https://www.python.org/ftp/python/3.13.13/python-3.13.13-amd64.exe"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/cpython/3.13.13/LICENSE.txt",
+          "role": "license",
+          "source": "https://www.python.org/ftp/python/3.13.13/python-3.13.13-amd64.exe#LICENSE.txt",
+          "sha256": "62bec384df47b0328307db41455ff6ea2559e5546b394ac69148561b21703120"
+        }
+      ],
+      "notes": "Interpreter, stdlib, DLLs and Tcl/Tk from the official Windows build; includes the Microsoft Distributable Code additional conditions."
+    },
+    {
+      "name": "nsis",
+      "version": "3.12",
+      "groups": [
+        "installer"
+      ],
+      "license_metadata": {
+        "declared": "zlib/libpng (zlib compressor; bzip2 and CPL-1.0 modules unused)"
+      },
+      "source": {
+        "kind": "official-release",
+        "url": "https://sourceforge.net/projects/nsis/files/NSIS%203/3.12/"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/nsis/3.12/COPYING",
+          "role": "license",
+          "source": "https://sourceforge.net/projects/nsis/files/NSIS%203/3.12/#COPYING",
+          "sha256": "388357c1215ff403c5ebde3a5ecd273e68f8b79a579996775245d1ee65442aba"
+        }
+      ],
+      "notes": "Installer stub and plug-ins embedded in the setup executable."
+    },
+    {
+      "name": "qt-third-party",
+      "version": "6.11.2",
+      "groups": [
+        "windows-binary"
+      ],
+      "license_metadata": {
+        "declared": "Per-component licenses of third-party code in Qt modules"
+      },
+      "source": {
+        "kind": "official-documentation",
+        "url": "https://doc.qt.io/qt-6.11/licenses-used-in-qt.html"
+      },
+      "files": [
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/licenses-used-in-qt.html",
+          "role": "attribution",
+          "source": "https://doc.qt.io/qt-6.11/licenses-used-in-qt.html",
+          "sha256": "c2cad0e2d2fc2e18a4a67dfe6f22d94c25be725f9a79cf9b4ceb41f101b14a5a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/pdf-licensing.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/pdf-licensing.html",
+          "sha256": "00b1501e7ac2206e68638966655ef1287632e802f5b3e4fd244060eed0b198ef"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qt-attribution-llvmpipe.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qt-attribution-llvmpipe.html",
+          "sha256": "43e4cf8c2846bc0736e14e7779112f6b7a343889be6a768e829e0c560cc84d10"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-blake2.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-blake2.html",
+          "sha256": "c15c5a2e7a8891002afaddc362e1ceaa8de667a112f33f8101d3dc5c2000512f"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-doubleconversion.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-doubleconversion.html",
+          "sha256": "8f278b0a3d0614bed2eff7f16401ebbe622389ee2a38acc93d717bcd44bade9d"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-easing.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-easing.html",
+          "sha256": "81e738ad0c214d81d0ff3dc4b22478f882e64ccbd558c681f816514c6accef95"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-forkfd.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-forkfd.html",
+          "sha256": "7cfcad8798f106495c8382a4359bc9a25f59dec2968aadb30d864cf98577bc6f"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-md4.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-md4.html",
+          "sha256": "3cd379a71461e002d7c55b682b87f7f29f782455d03fec5a256fa3cf7695f62b"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-md5.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-md5.html",
+          "sha256": "5bdfc509285f1fda24a20ae5eb51e0318dcf0b1d5450f3c72962178fec88fb55"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-pcre2-sljit.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-pcre2-sljit.html",
+          "sha256": "e3366f79c9623202a311ec2a6a535f3b1be57415dfbe3a5622945a6e30d6df4a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-pcre2.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-pcre2.html",
+          "sha256": "879709e8fbdb8ab9491613b941eb5be2398f1215a4b1fdd21d3f0092dda9da53"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-qeventdispatcher-cf.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-qeventdispatcher-cf.html",
+          "sha256": "9005ab8a6e81f57586b5e8c681d1f0ae18536056e4aaa142e90d99aa2fe6718a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-rfc6234.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-rfc6234.html",
+          "sha256": "70173325c5ac8e4a00601392b9f5ac5f568dbc226b99d3f6f4eb1be2eb17b134"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-sha1.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-sha1.html",
+          "sha256": "c3452a11083c2cab9816f9e89b80abebacd2f65118bde19a6215dbd741335152"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-sha3-endian.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-sha3-endian.html",
+          "sha256": "9cdc8643aedd71c2c7ecc14cec0efbae9dedd340f9671565e8df90fef1e1ea67"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-sha3-keccak.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-sha3-keccak.html",
+          "sha256": "e075c7dd7e3d4628b6da67afaea3a03861df87783bd3ea339aab2e6a441b2278"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-siphash.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-siphash.html",
+          "sha256": "0f84aa28d13902be42d0afddc385456d47c81b75a3c3db530734170afe91991f"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-tika-mimetypes.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-tika-mimetypes.html",
+          "sha256": "cc970077733934085d59d9346644b3bccc2792096b109fabded44a5318f5a55a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-tinycbor.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-tinycbor.html",
+          "sha256": "76e9342674266d8cadc12b3a27831a929c0748f9fb627016896329353c9755d3"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-tlexpected.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-tlexpected.html",
+          "sha256": "5b10ad331f87c2c90c71fb27cc6830b8655106e3f75c8e07ea83a4229415e408"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-unicode-character-database.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-unicode-character-database.html",
+          "sha256": "440a13bb53a807615d74ee710da9092f96518345a42df60ed1627dabe79a0e00"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-unicode-cldr.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-unicode-cldr.html",
+          "sha256": "add84040ba01a848e4947edd9e1cb13992804467c1b7855edb651f538a608398"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtcore-attribution-zlib.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtcore-attribution-zlib.html",
+          "sha256": "f09f85986a6e80fc34a0076f5525ea8ead43cfcab497503c80d5d6a5343a001b"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-aglfn.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-aglfn.html",
+          "sha256": "090a805cd5108a3bb90785b9b7f794c4b18d7ca10c200def97dc475b1e77b7a6"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-android-native-style.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-android-native-style.html",
+          "sha256": "7b0354a08ad300587ee7638fa0254ff0445c79539e44ece1e17ef0dea9c01911"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-cocoa-platform-plugin.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-cocoa-platform-plugin.html",
+          "sha256": "43cf11cd33ef99aeefb093e2e79f354bc82a1cc7b3506b359abd3a9204dcf91d"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-d3d12memoryallocator.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-d3d12memoryallocator.html",
+          "sha256": "b745228f1c57810541575d17af228a460cf74fc13d77e25c8db9f3bad24f0da6"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-dejayvu.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-dejayvu.html",
+          "sha256": "a73b547586542bf7fa2248e3996b05c2598f659f9cded30e4acadb5273a5cc73"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-emoji-segmenter.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-emoji-segmenter.html",
+          "sha256": "88d9ad1dafa942572491dc6b10bf2b03d51b821d6e4ad11974dcc95394cabadc"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-freetype-bdf.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-freetype-bdf.html",
+          "sha256": "d208dd87b5b57587722abfabb045b18c871f671b966daabc449a038e7529a5ac"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-freetype-pcf.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-freetype-pcf.html",
+          "sha256": "0ba332fc4446962c247393201f0f1ec8ca5bcaf5adf3bf599ddb0b14f57531aa"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-freetype-zlib.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-freetype-zlib.html",
+          "sha256": "3d762e1143a721f65b207a1d5e4970cd145a2dbeffa1c0064759a96040dec900"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-freetype.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-freetype.html",
+          "sha256": "47d0068bf7ccc0044fa0af6dfa9718b2b494f4467604fa1202b8106a5febd8d0"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-grayraster.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-grayraster.html",
+          "sha256": "fa24f4b9586cbdd6889bb09e9a3145915d74b187fc4af5213b3b520d4c7f5588"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-harfbuzz-ng.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-harfbuzz-ng.html",
+          "sha256": "60c0117b6fb0bf0a50eed4b71ebc1f57629bf636ae9babd841c31be6df01c553"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-icc-srgb-color-profile.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-icc-srgb-color-profile.html",
+          "sha256": "3bf1d82ce29906d0a971f4dae45ae8b8bb2534ca948032e28f5858b3a785b6f4"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-libjpeg.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-libjpeg.html",
+          "sha256": "78e44d48db72f43bf844539d9be8f6993aea770bf2bb256463f7b90b736c1668"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-libpng.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-libpng.html",
+          "sha256": "08480b3d18f2ad46aa26ef2a5876b43a3242dcbeadb51ba39b9de690ce13a0d1"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-md4c.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-md4c.html",
+          "sha256": "35b39b528b4c6597faad0c68c60a8c11c25404fa4659d3e5f22b5c92179c490e"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-opengl-es2-headers.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-opengl-es2-headers.html",
+          "sha256": "0b6d7f5b9e11e3ef063cc7874279b333638163c01c6f40cd5c98eddce1178013"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-opengl-headers.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-opengl-headers.html",
+          "sha256": "6b97a63879947ec9185756a30f54df9a8886bf86a46b10ccbe291cb99d8925bc"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-pixman.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-pixman.html",
+          "sha256": "f366f5361aabd425bb79add07d10feb16495a7511ae3b4c1751d24d23dfd93c0"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-rhi-miniengine-d3d12-mipmap.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-rhi-miniengine-d3d12-mipmap.html",
+          "sha256": "858ae14cc9f8d1056ccf459c860c8f3e384c1f38d92a6cf04fe8473e7a2285e2"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-smooth-scaling-algorithm.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-smooth-scaling-algorithm.html",
+          "sha256": "0a4f3a5564f163fffa407f1ffaee8398e466d68c21b0e3f55f6dcdd493b08d0e"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-vulkan-xml-spec.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-vulkan-xml-spec.html",
+          "sha256": "1567670618ee88ee6653a1c1ebe7ad136fe6ee99542faae84022d762f34854da"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-vulkanmemoryallocator.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-vulkanmemoryallocator.html",
+          "sha256": "ad5859b86279648b79efe3cecab89bcc528a2950800c39d33f52f3a3cd0fef71"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-webgradients.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-webgradients.html",
+          "sha256": "bef54bcbb1418256cc7a85f3f1a14126c65c8c00a4f6ae8eed7c7b296ee74155"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-wintab.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-wintab.html",
+          "sha256": "f5c13a0fa2a4eaa15993c9f15c3c05623b60dddd7bfac67239b408697270d22a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-xcb-xinput.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-xcb-xinput.html",
+          "sha256": "b266935f105c1a16c12205175b9be6dc1fcf5d06768618523ad191028c64ab4d"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtgui-attribution-xserverhelper.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtgui-attribution-xserverhelper.html",
+          "sha256": "7197851c5e017b574f0168a55532ed7b1a1d3743a52209d4e0948dc5f8ddc8c9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtimageformats-attribution-libtiff.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtimageformats-attribution-libtiff.html",
+          "sha256": "99ee35115095573cf36147abbb1b968beb70aaf4ce684cb02fcaff5c2691e9a3"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtimageformats-attribution-libwebp.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtimageformats-attribution-libwebp.html",
+          "sha256": "1bbbe45609769041aab96b98538077c53d93ddbc113e0ca544b7bb1b1e036a25"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtnetwork-attribution-libpsl.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtnetwork-attribution-libpsl.html",
+          "sha256": "7fad81d9a5f2dd2f04f4e323f2a89d5d292dd100f53a44c2fb3f211dbc9d609b"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtnetwork-attribution-psl-data.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtnetwork-attribution-psl-data.html",
+          "sha256": "83b681de0f730eeb762abf146189e80f61dbed3b1c70b2897bb4fc036d673af9"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-abseil.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-abseil.html",
+          "sha256": "9a83efa7502c32f27d4298d0b0c25d25ed5345c1c1345c2cf6ce7798b5aec93a"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-fast-float.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-fast-float.html",
+          "sha256": "e6fd7aeed86828bacd9719862879feac88a3fbaa23d9aa38224006b982e06bcd"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-freetype.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-freetype.html",
+          "sha256": "b7ab4211678a46c56a93c07c153ce7537d96d3ced66e747685f98efddcddcd8e"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-icu.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-icu.html",
+          "sha256": "8854c69a0b657e2eae6fb659e8ee7c65dbac6982c7360c0ad1420e8c54c6131e"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-libjpeg-turbo.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-libjpeg-turbo.html",
+          "sha256": "ab1e9ce5412c2bd6743f387339fb56a0230a3aa9e2e3efe022c389eae25edddb"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-libpng.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-libpng.html",
+          "sha256": "0a20f5a96fca74ec9676993231a0c042a428d603d3dd7202ca7dd229b643e97c"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-pdfium.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-pdfium.html",
+          "sha256": "adf2dd0fa77c85423d7f3e2fe47069177a923ffbf8120c50ac571835cc1f3bc4"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-the-chromium-project.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-the-chromium-project.html",
+          "sha256": "d89213f07fca2ac57be697dfc74b40a700609e20f6d7d9f9d164a01270fe2d0d"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtpdf-3rdparty-zlib.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtpdf-3rdparty-zlib.html",
+          "sha256": "860ecdc367f740de53472ca70dde60eaed126b736ba828131afbbc87c5c42dea"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qtsvg-attribution-xsvg.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qtsvg-attribution-xsvg.html",
+          "sha256": "237388ef1841f4b164ab9dbdf454f4b5ae65662071913bf4418afdb44710ea14"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qttestlib-attribution-catch2.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qttestlib-attribution-catch2.html",
+          "sha256": "467e64eec7beb102cd07071f0824e6dfe74350ca56ebda40de0e6958ae15cd34"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qttestlib-attribution-cycle.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qttestlib-attribution-cycle.html",
+          "sha256": "7797fac29882a2b745bd6673f9a5cb45ed7c88441e4c9c3b1382e24fecbc80dd"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qttestlib-attribution-linuxperf.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qttestlib-attribution-linuxperf.html",
+          "sha256": "532bb347994f41c17cf018091d80223af48744f125847b1bd66c4e481bdb7ea7"
+        },
+        {
+          "path": "THIRD_PARTY_LICENSES/qt-third-party/6.11.2/qttestlib-attribution-valgrind.html",
+          "role": "license",
+          "source": "https://doc.qt.io/qt-6.11/qttestlib-attribution-valgrind.html",
+          "sha256": "5587ab566efb72a96d530e6b2cd3f5c35cdb3cc8a431b331ee22b494089e1b0a"
+        }
+      ],
+      "notes": "Third-party code in the shipped Qt Core, GUI, Image Formats, Network, PDF (PDFium), SVG and Test modules and Mesa llvmpipe (opengl32sw.dll). Pages kept as fetched."
     }
   ],
   "audit_gaps": [
@@ -4981,31 +5623,64 @@
       "component": "rasterio",
       "scope": "Windows wheel native DLL dependencies",
       "status": "open",
-      "detail": "All supplied package/GDAL/PROJ data notices are retained. The supplied wheel does not include an aggregate license inventory for every native DLL in rasterio.libs. A distributable bundle needs an exact native-library/source/license audit before shipment."
+      "detail": "All supplied package/GDAL/PROJ data notices are retained. The supplied wheel does not include an aggregate license inventory for every native DLL in rasterio.libs. A distributable bundle needs an exact native-library/source/license audit before shipment. The Windows binary (spec 040) excludes requirements-image.txt; this gap applies only to optional source installations.",
+      "windows_binary": "excluded"
     },
     {
       "component": "inherited-assets",
       "scope": "assets/resources and other inherited artwork",
-      "status": "open",
-      "detail": "Inherited About credits are retained in NOTICE.md. Per-file origins, applicable license versions and required notices were not recorded by Evo; no MIT relicensing or distribution clearance is asserted."
+      "status": "upstream-provenance-recorded",
+      "detail": "Every shipped file under assets/resources, assets/examples and assets/icon.png has a git provenance record (THIRD_PARTY_LICENSES/inherited-assets/provenance.json: SHA-256, adding and last commit, author, date; 722 unchanged FlatCAM/Evo upstream files, 46 replaced by MikroCAM branding). The inherited About credits (Freepik, Icons8, oNline Web Fonts, Pixel perfect, Anggara, Kharisma) ship in NOTICE.md. Git history names the committer, not the original artwork author or license version per icon; that per-icon license verification remains open. No MIT relicensing is asserted.",
+      "windows_binary": "shipped-with-credits-and-provenance"
     },
     {
       "component": "descartes",
       "scope": "original full upstream BSD text",
       "status": "downstream-evidence",
-      "detail": "Exact1.1.0 metadata retained; the published source archive and wheels omit full text and original upstream repository is unavailable. Downstream conda-forge/Debian full notices retained with explicit provenance."
+      "detail": "Exact1.1.0 metadata retained; the published source archive and wheels omit full text and original upstream repository is unavailable. Downstream conda-forge/Debian full notices retained with explicit provenance.",
+      "windows_binary": "shipped-with-downstream-notices"
     },
     {
       "component": "qdarktheme-resources",
       "scope": "original Material icons and QDarkStyleSheet resource revisions",
       "status": "unrecorded-revisions",
-      "detail": "qdarktheme1.1.1 records Apache2 icon and MIT stylesheet attribution, but not the original resource commits. Complete pinned upstream license snapshots retained without asserting that those snapshots identify each resource revision."
+      "detail": "qdarktheme1.1.1 records Apache2 icon and MIT stylesheet attribution, but not the original resource commits. Complete pinned upstream license snapshots retained without asserting that those snapshots identify each resource revision.",
+      "windows_binary": "shipped-with-attribution"
     },
     {
       "component": "resvg-py",
       "scope": "statically linked Rust dependency notices",
       "status": "source-notices-retained",
-      "detail": "The exact0.5.0 source Cargo.lock and original notices for all75 locked Rust crates plus the canonical Apache-2.0 full text referenced by siphasher COPYING (a conservative superset including build/platform dependencies) are retained with crate checksums. PyPI build provenance is unavailable (404) for both wheel and sdist, so correspondence of the stripped Windows binary to this source graph and final release bundle composition remain unproven. No complete binary-release audit is claimed."
+      "detail": "The exact0.5.0 source Cargo.lock and original notices for all75 locked Rust crates plus the canonical Apache-2.0 full text referenced by siphasher COPYING (a conservative superset including build/platform dependencies) are retained with crate checksums. PyPI build provenance is unavailable (404) for both wheel and sdist, so correspondence of the stripped Windows binary to this source graph and final release bundle composition remain unproven. No complete binary-release audit is claimed. The Windows binary ships the wheel extension unchanged (installed RECORD hash verified by release/windows/build.py) together with all retained crate notices.",
+      "windows_binary": "shipped-with-crate-notices"
+    },
+    {
+      "component": "ortools",
+      "scope": "Windows binary distribution",
+      "status": "excluded-from-windows-binary",
+      "windows_binary": "excluded",
+      "detail": "ortools 9.15.6755 statically links COIN-OR CLP/CBC (EPL-2.0 without a GPL secondary-license designation) into ortools.dll and ships abseil/protobuf/re2/HiGHS/SCIP/zlib/bzip2 DLLs without their notices. EPL-2.0 code combined in one process with GPLv3 PyQt6 is not distributable as one GPLv3 work, so the Windows binary excludes OR-Tools; camlib falls back to RTree path ordering. Source installations keep the pinned package."
+    },
+    {
+      "component": "qt-third-party",
+      "scope": "third-party code inside PyQt6-Qt6 6.11.2 DLLs and plugins",
+      "status": "notices-retained",
+      "windows_binary": "shipped-with-attributions",
+      "detail": "The wheel supplies only the LGPL text. Qt 6.11.2 attribution pages for the shipped Core, GUI, Image Formats, Network, PDF (PDFium), SVG and Test modules and Mesa llvmpipe are retained under THIRD_PARTY_LICENSES/qt-third-party."
+    },
+    {
+      "component": "microsoft-runtime",
+      "scope": "vcruntime140*.dll / msvcp140*.dll in CPython, Qt and NumPy",
+      "status": "documented",
+      "windows_binary": "shipped-with-distributable-code-terms",
+      "detail": "Microsoft Distributable Code redistributed inside the pinned CPython build and wheels; the restrictions from the CPython Windows LICENSE.txt are repeated in NOTICE-BINARY.txt. UCRT api-ms-win-* forwarders are not shipped (part of Windows 10/11)."
+    },
+    {
+      "component": "pyopengl-dlls",
+      "scope": "OpenGL/DLLS freeglut and GLE builds",
+      "status": "excluded-from-windows-binary",
+      "windows_binary": "excluded",
+      "detail": "Unused by MikroCAM and dependent on MSVCR90/MSVCR100; a local PyInstaller hook omits them."
     }
   ]
 }

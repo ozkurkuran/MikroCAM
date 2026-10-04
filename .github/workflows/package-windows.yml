@@ -1,0 +1,128 @@
+name: Windows packaging
+
+# Builds the portable ZIP and per-user installer as workflow artifacts.
+# Pull requests that change packaging inputs validate the build without releasing anything.
+# A tag push additionally prepares a DRAFT GitHub Release; publishing it stays a manual decision.
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'release/windows/**'
+      - 'requirements*.txt'
+      - '.python-version'
+      - 'THIRD_PARTY_LICENSES/inventory.json'
+      - '.github/workflows/package-windows.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      PYTHONUTF8: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    steps:
+      - name: Check out complete history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up pinned CPython x64
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version-file: .python-version
+          architecture: x64
+
+      - name: Create isolated build environment
+        run: |
+          python -m venv "$env:RUNNER_TEMP\build-venv"
+          $python = "$env:RUNNER_TEMP\build-venv\Scripts\python.exe"
+          & $python -m pip install --only-binary=:all: -r requirements.txt -r requirements-visual.txt -r requirements-build.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned build requirements failed to install' }
+          & $python -m pip check
+          if ($LASTEXITCODE -ne 0) { throw 'pip check failed' }
+          Add-Content -LiteralPath $env:GITHUB_ENV -Value "BUILD_PYTHON=$python" -Encoding utf8
+
+      - name: Ensure NSIS 3.12
+        run: |
+          $makensis = Join-Path ${env:ProgramFiles(x86)} 'NSIS\makensis.exe'
+          $version = if (Test-Path $makensis) { & $makensis -VERSION } else { '' }
+          if ($version -ne 'v3.12') {
+            choco install nsis --version=3.12.0 --no-progress -y --allow-downgrade
+            if ($LASTEXITCODE -ne 0) { throw 'NSIS 3.12 installation failed' }
+            $version = & $makensis -VERSION
+          }
+          if ($version -ne 'v3.12') { throw "NSIS v3.12 required, found $version" }
+          Add-Content -LiteralPath $env:GITHUB_ENV -Value "MAKENSIS=$makensis" -Encoding utf8
+
+      - name: Build portable ZIP and installer
+        run: |
+          & $env:BUILD_PYTHON release/windows/build.py --out dist/windows
+          if ($LASTEXITCODE -ne 0) { throw 'Windows build failed' }
+
+      - name: Binary smoke (offscreen, portable + install/uninstall)
+        run: |
+          & $env:BUILD_PYTHON release/windows/smoke_binary.py --dist dist/windows --installer --keep --report dist/windows/smoke-report.json
+          if ($LASTEXITCODE -ne 0) { throw 'Binary smoke failed' }
+
+      - name: Retain smoke logs
+        if: always()
+        run: |
+          New-Item -ItemType Directory -Force dist/windows/smoke-logs | Out-Null
+          Get-ChildItem $env:TEMP -Directory -Filter 'mikrocam-binary-smoke-*' | ForEach-Object {
+            Get-ChildItem $_.FullName -Recurse -Include *.log,*.tcl | Copy-Item -Destination dist/windows/smoke-logs -Force
+          }
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mikrocam-windows-x64
+          path: |
+            dist/windows/*.zip
+            dist/windows/*-setup.exe
+            dist/windows/*-SHA256SUMS.txt
+            dist/windows/payload/MikroCAM/bundle-manifest.json
+          if-no-files-found: error
+
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mikrocam-windows-smoke
+          path: |
+            dist/windows/smoke-report.json
+            dist/windows/smoke-logs/
+          if-no-files-found: warn
+
+  draft-release:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: mikrocam-windows-x64
+          path: artifacts
+
+      - name: Create draft release (never published automatically)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          files=$(find artifacts -maxdepth 1 -type f \( -name '*.zip' -o -name '*-setup.exe' -o -name '*-SHA256SUMS.txt' \))
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft --verify-tag \
+            --title "MikroCAM $TAG" \
+            --notes "Draft prepared by the Windows packaging workflow. Unsigned binaries: see docs/RELEASE_WINDOWS.md before publishing." \
+            $files

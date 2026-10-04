@@ -12,13 +12,20 @@ The product version is defined once in `mikrocam/core/identity.py`.
 Application source is MIT licensed. Dependencies retain their own terms, including PyQt6
 GPLv3 and Qt LGPL/GPL terms. See [NOTICE](NOTICE.md) and the
 [dependency inventory and full license texts](THIRD_PARTY_LICENSES/README.md).
-Those records also identify inherited asset provenance and optional native-wheel notice gaps
-that must be resolved before a bundled binary distribution.
+Those records also identify inherited asset provenance and optional native-wheel notice gaps;
+the Windows binary's own license bundle and exclusions are described in NOTICE.
 
 The selected upstream is Bitbucket `Beta_1.0` at `e046a2a3`, preserved as
 `upstream-evo-beta1-baseline`. The original mekatrol fork remains at
 `upstream-evo-baseline`. See [preparation history](docs/PREPARATION.md) and
 [roadmap](docs/ROADMAP.md).
+
+## Windows binary (portable ZIP or installer)
+
+Windows 11 x64 users can run MikroCAM without Python from the portable ZIP or the per-user
+installer published on [Releases](https://github.com/ozkurkuran/MikroCAM/releases). The binaries
+are unsigned; SmartScreen guidance, the optional tools left out of the binary (image tracing,
+OR-Tools) and the maintainer build/smoke commands are in [Windows packages](docs/RELEASE_WINDOWS.md).
 
 ## Windows 11 setup
 
@@ -130,8 +137,8 @@ Architecture checks and Windows CI are now documented in [Development checks](do
 
 MikroCAM does not use Evo's automatic-update channel. Inherited update preferences do not
 enable it, and update/download/revert controls are unavailable in this fork. Obtain source
-updates from [this repository](https://github.com/ozkurkuran/MikroCAM); future binary releases
-will be published through the packaging roadmap slice. Existing upstream updater services
+updates from [this repository](https://github.com/ozkurkuran/MikroCAM); Windows binaries are
+built by the packaging workflow and published on the Releases page by the maintainer. Existing upstream updater services
 remain in source for provenance, but the MikroCAM UI does not launch them.
 
 KiCad10 PCB Editor can send production files directly through MikroCAM Bridge. See the [KiCad transfer guide](docs/KICAD_TRANSFER.md) and [plugin installation](integrations/kicad/README.md).

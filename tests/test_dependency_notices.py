@@ -11,7 +11,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 GROUPS = {'runtime': 'requirements.txt', 'development': 'requirements-dev.txt',
-          'optional-image': 'requirements-image.txt'}
+          'optional-image': 'requirements-image.txt', 'build': 'requirements-build.txt'}
 CODE_OR_BINARY_SUFFIXES = {'.py', '.pyi', '.pyc', '.pyo', '.dll', '.exe', '.pyd', '.so',
                           '.dylib', '.a', '.lib', '.js', '.mjs', '.c', '.h', '.cpp', '.rs',
                           '.whl', '.zip', '.tar', '.gz'}
