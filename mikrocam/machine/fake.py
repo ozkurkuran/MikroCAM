@@ -7,6 +7,7 @@ from mikrocam.machine.manual_protocol import validate_command
 from mikrocam.machine.job_protocol import validate_job_command
 from mikrocam.machine.fake_job import FakeJob
 from mikrocam.machine.fake_probe import FakeProbe
+from mikrocam.machine.fake_firmware import profile
 from mikrocam.machine.probe_protocol import validate_probe_command
 
 
@@ -19,10 +20,16 @@ class FakeGRBL:
                  work_system: str = 'G54',
                  offsets: dict[str, tuple[float, float, float]] | None = None,
                  g92: tuple[float, float, float] = (0., 0., 0.), tlo: float = 0.,
-                 startup_blocks: tuple[str, str] = ('', '')) -> None:
+                 startup_blocks: tuple[str, str] = ('', ''), firmware: str = 'grbl',
+                 build_reply: bytes | None = None) -> None:
         if report_units not in ('mm', 'inch'):
             raise ValueError('Expected mm or inch report units')
         self.auto_respond = auto_respond
+        self.banner, self.build_reply = profile(firmware)
+        if build_reply is not None:
+            if not isinstance(build_reply, bytes):
+                raise ValueError('Build reply must be bytes')
+            self.build_reply = build_reply
         self.report_units = report_units
         self.status = status
         if status is not None and not isinstance(status, bytes):
@@ -153,7 +160,7 @@ class FakeGRBL:
         elif data == b'$$\n':
             self.inject(''.join(f'${key}={value}\r\n' for key, value in self.job_settings.items()).encode() + b'ok\r\n')
         elif data == b'$I\n':
-            self.inject(b'[VER:1.1h:FakeGRBL]\r\n[OPT:V,15,128]\r\nok\r\n')
+            self.inject(self.build_reply)
         elif data == b'$N\n':
             self.inject(''.join(f'$N{i}={block}\r\n' for i, block in enumerate(
                 self.startup_blocks)).encode('ascii') + b'ok\r\n')
@@ -209,7 +216,7 @@ class FakeGRBL:
         self.state = 'Idle'
         self.units, self.distance, self.work_system = 'G21', 'G90', 'G54'
         self.g92, self.tlo = (0., 0., 0.), 0.
-        self.inject(b"Grbl 1.1h ['$' for help]\r\n")
+        self.inject(self.banner)
 
     def close(self) -> None:
         self.is_open = False

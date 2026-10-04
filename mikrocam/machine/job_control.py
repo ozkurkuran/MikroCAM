@@ -189,11 +189,13 @@ class JobControl:
         job = self.request.job
         if purpose == 'begin':
             if self.request.streaming_mode is StreamingMode.CHARACTER_COUNTING:
+                if self.host.snapshot().firmware.capabilities.streaming_rx_budget is None:
+                    raise ValueError('Character counting requires a proven firmware RX budget')
                 self._command('firmware', b'$I\n')
             else:
                 self._command('startup', b'$N\n')
         elif purpose == 'firmware':
-            self.stream = JobStream(verified_capacity(records))
+            self.stream = JobStream(self._streaming_capacity(records))
             if any(len(block.wire) > self.stream.capacity for block in job.blocks):
                 raise ValueError('Reviewed source block exceeds verified GRBL RX capacity')
             self._command('startup', b'$N\n')
@@ -220,6 +222,15 @@ class JobControl:
         elif purpose == 'final_modal':
             verify_modal(records)
             self._await_status('final', job.ack_timeout_seconds)
+
+    def _streaming_capacity(self, records: dict) -> int:
+        """C3 evidence must still verify and match the identified session firmware (042)."""
+        capacity = verified_capacity(records)
+        firmware = self.host.snapshot().firmware
+        budget = firmware.capabilities.streaming_rx_budget
+        if budget is None or f"[VER:{records.get('ver', '')}]" not in firmware.evidence:
+            raise ValueError('Firmware build evidence changed since identification')
+        return min(capacity, budget)
 
     def _feed(self) -> None:
         if self.stream is not None:

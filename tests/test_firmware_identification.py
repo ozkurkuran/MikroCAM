@@ -73,11 +73,12 @@ def test_grblhal_compatibility_mode_reply_is_not_mistaken_for_gnea_grbl():
     assert caps.version == '1.1f' and '255' in caps.note
 
 
-@pytest.mark.parametrize('lines', [FNC4, FNC37,
-                                   ('[VER:3.9 FluidNC v3.9.9 (main-abc1234-dirty) (esp32-wifi) :My mill]',
-                                    '[OPT:PHSEW]', '[CLUSTER:16]')])
-def test_fluidnc_presents_as_grbl_but_is_identified_as_fluidnc(lines):
-    caps = identify(FNC4_BANNER, lines)
+@pytest.mark.parametrize('banner,lines', [
+    (FNC4_BANNER, FNC4), ('', FNC37), ("Grbl 3.7 [FluidNC v3.7.8 (wifi) '$' for help]", FNC37),
+    ("Grbl 3.9 [FluidNC v3.9.9 (main-abc1234-dirty) (esp32-wifi) '$' for help]",
+     ('[VER:3.9 FluidNC v3.9.9 (main-abc1234-dirty) (esp32-wifi) :My mill]', '[OPT:PHSEW]', '[CLUSTER:16]'))])
+def test_fluidnc_presents_as_grbl_but_is_identified_as_fluidnc(banner, lines):
+    caps = identify(banner, lines)
     assert caps.family is FirmwareFamily.FLUIDNC
     assert caps.rx_buffer_bytes is None and caps.streaming_rx_budget is None
     assert not caps.motion_supported and '044' in caps.note

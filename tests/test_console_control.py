@@ -110,7 +110,7 @@ def test_priority_cancels_reserved_query_before_transmission(action):
     controller.request_console(ConsoleRequest('$I'))
     getattr(controller, action)()
     step(controller, clock)
-    assert b'$I\n' not in fake.writes
+    assert fake.writes.count(b'$I\n') == 1  # One session identification $I precedes settings (spec 042, UA-1).
     assert controller.snapshot().console.phase is ConsolePhase.FAILED
 
 
@@ -125,7 +125,7 @@ def test_priority_arriving_during_read_blocks_deferred_query():
     controller.set_interrupt_check(lambda: stop[0])
     controller.request_console(ConsoleRequest('$I'))
     step(controller, clock)
-    assert b'$I\n' not in fake.writes
+    assert fake.writes.count(b'$I\n') == 1  # One session identification $I precedes settings (spec 042, UA-1).
 
 
 def test_raw_fragments_and_final_failure_evidence_survive_disconnect():
@@ -170,7 +170,7 @@ def test_validation_rejection_logs_no_attempt_and_reconnect_resets_log():
     assert controller.snapshot().wire == old
     controller.connect()
     assert controller.snapshot().wire.records[0].sequence == 1
-    assert len(controller.snapshot().wire.records) == 2
+    assert [r.payload for r in controller.snapshot().wire.records] == [b'$I\n', b'$$\n', b'?']  # 042 UA-1
 
 
 def test_old_poll_timeout_cannot_be_relabelled_as_causal_console_response():

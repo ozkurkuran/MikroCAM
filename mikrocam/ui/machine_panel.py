@@ -24,6 +24,7 @@ from .queue_controls import QueueControls
 from mikrocam.machine.queue_models import StartQueueRequest
 from .job_prepare_worker import JobPrepareWorker
 from .console_controls import ConsoleControls
+from .machine_firmware import describe_firmware, firmware_details
 
 
 _ = getattr(builtins, '_', gettext.gettext)
@@ -61,6 +62,9 @@ class MachinePanel(QtWidgets.QDockWidget):
         self.connection_label, self.state_label = QtWidgets.QLabel(), QtWidgets.QLabel()
         form.addRow(_('Connection'), self.connection_label)
         form.addRow(_('Machine state'), self.state_label)
+        self.firmware_label = QtWidgets.QLabel()
+        self.firmware_label.setWordWrap(True)
+        form.addRow(_('Firmware'), self.firmware_label)
         self.machine_labels = self._position_row(form, _('Machine XYZ (mm)'))
         self.work_labels = self._position_row(form, _('Work XYZ (mm)'))
         layout.addLayout(form)
@@ -400,6 +404,8 @@ class MachinePanel(QtWidgets.QDockWidget):
         if snapshot.raw_state:
             state += f' ({snapshot.raw_state})'
         self.state_label.setText(state)
+        self.firmware_label.setText(describe_firmware(snapshot.firmware))
+        self.firmware_label.setToolTip(firmware_details(snapshot.firmware))
         available = (snapshot.connection is ConnectionState.CONNECTED and not snapshot.stale
                      and snapshot.report_units is not None)
         for labels, vector in ((self.machine_labels, snapshot.machine_position_mm),

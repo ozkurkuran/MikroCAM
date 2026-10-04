@@ -168,7 +168,7 @@ def test_reset_on_open_reidentifies_with_banner_evidence():
     controller, fake, clock = session()
     fake._incoming.clear()
     fake.inject(fake.banner)
-    snap = steps(controller, clock, 2)
+    snap = steps(controller, clock, 8)
     assert fake.writes[:5] == [b'$I\n', b'$$\n', b'?', b'$I\n', b'$$\n']
     assert snap.firmware.phase is IdentificationPhase.IDENTIFIED
     assert snap.firmware.banner == "Grbl 1.1h ['$' for help]" and snap.manual.can_jog

@@ -18,6 +18,8 @@ def pending(kind):
         fake, clock = FakeGRBL(auto_respond=False), Clock()
         controller = MachineController(fake, clock)
         controller.connect()
+        fake.inject(b"[VER:1.1h.20190830:]\r\n[OPT:V,15,128]\r\nok\r\n")  # 042 identification first.
+        controller.tick()
         return controller, fake, clock, b"$13=0\r\nok\r\n", SETTINGS_TIMEOUT
     if kind in ("job", "hold"):
         controller, fake, clock = (running_scripted() if kind == "job" else at_boundary("paused"))
