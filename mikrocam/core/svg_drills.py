@@ -3,12 +3,16 @@ from dataclasses import dataclass
 import math
 import re
 
+from shapely import STRtree
+from shapely.geometry import Point
+
 from .svg_drill_circles import circle_evidence
-from .svg_models import SvgImportResult, SvgNotice, _number, _point
+from .svg_models import SvgElement, SvgImportResult, SvgNotice, SvgRendered, _number, _point
 
 MAX_DRILL_CANDIDATES = 1000
 CENTER_TOLERANCE_MM = .02
 DIAMETER_TOLERANCE_MM = .01
+PAD_MARGIN_MM = .01
 
 
 def _text(value: str, limit: int, label: str) -> None:
@@ -76,8 +80,16 @@ class _Notices:
         return tuple(self.items)
 
 
-def _circles(result: SvgImportResult, notices: _Notices) -> tuple[list, list]:
-    holes, pads = [], []
+def _polygon_pad(element: SvgElement, rendered: SvgRendered):
+    """Nonwhite filled single-polygon material: support evidence only, never a hole source."""
+    if element.fill_is_white is not False or not element.paint.fill or len(rendered.geometry_mm) != 1:
+        return None
+    geometry = rendered.geometry_mm[0]
+    return geometry if geometry.geom_type == 'Polygon' and not geometry.is_empty else None
+
+
+def _circles(result: SvgImportResult, notices: _Notices) -> tuple[list, list, list]:
+    holes, pads, polygons = [], [], []
     for element, rendered in zip(result.document.elements, result.rendered):
         if element.clips:
             notices.add('clipped-drill-evidence', 'Clipped artwork is excluded from full-circle drill inference.',
@@ -88,6 +100,8 @@ def _circles(result: SvgImportResult, notices: _Notices) -> tuple[list, list]:
             if element.fill_is_white is True and element.paint.fill:
                 notices.add('noncircular-opening', 'White artwork is not a sufficiently resolved single circle.',
                             element.element_id)
+            elif (polygon := _polygon_pad(element, rendered)) is not None:
+                polygons.append((polygon, element.element_id))
             continue
         if len(holes) + len(pads) >= MAX_DRILL_CANDIDATES:
             raise ValueError('Circular evidence exceeds the 1000 item limit')
@@ -101,21 +115,39 @@ def _circles(result: SvgImportResult, notices: _Notices) -> tuple[list, list]:
             holes.append(item)
         else:
             pads.append(item)
-    return holes, pads
+    return holes, pads, polygons
 
 
-def _pair(holes: list, pads: list, notices: _Notices) -> list[DrillCandidate]:
+def _polygon_support(center: tuple, radius: float, polygons: list, tree: STRtree | None) -> str | None:
+    """Smallest concentric polygon pad containing the whole opening disc plus the pad margin."""
+    if tree is None:
+        return None
+    point, best = Point(center), None
+    for index in tree.query(point, predicate='within'):
+        geometry, pad_id = polygons[int(index)]
+        centroid = geometry.centroid
+        if (math.dist(center, (centroid.x, centroid.y)) <= CENTER_TOLERANCE_MM
+                and geometry.boundary.distance(point) >= radius + PAD_MARGIN_MM):
+            key = (geometry.area, pad_id)
+            best = key if best is None or key < best else best
+    return None if best is None else best[1]
+
+
+def _pair(holes: list, pads: list, polygons: list, notices: _Notices) -> list[DrillCandidate]:
     candidates = []
+    tree = STRtree([geometry for geometry, _ in polygons]) if polygons else None
     for center, radius, identifier in holes:
         supports = []
         for pad_center, pad_radius, pad_id in pads:
             offset = math.dist(center, pad_center)
-            if offset <= CENTER_TOLERANCE_MM and pad_radius >= radius + offset + .01:
+            if offset <= CENTER_TOLERANCE_MM and pad_radius >= radius + offset + PAD_MARGIN_MM:
                 supports.append((pad_radius, pad_id))
-        if not supports:
-            notices.add('unsupported-opening', 'White circle has no larger concentric nonwhite circular pad.', identifier)
+        pad_id = min(supports)[1] if supports else _polygon_support(center, radius, polygons, tree)
+        if pad_id is None:
+            notices.add('unsupported-opening', 'White circle has no larger concentric nonwhite pad: a circular '
+                        'pad, or a polygon whose centroid matches and which contains the opening plus '
+                        '0.01 mm.', identifier)
             continue
-        _, pad_id = min(supports)
         candidates.append(DrillCandidate(center, 2 * radius, identifier, pad_id))
     return candidates
 
@@ -154,8 +186,8 @@ def detect_svg_drills(result: SvgImportResult) -> DrillReview:
                 'Review centres and diameters before selecting holes.')
     for notice in result.notices:
         notices.add(notice.code, notice.message, notice.element_id)
-    holes, pads = _circles(result, notices)
-    candidates = _unique(_pair(holes, pads, notices), notices)
+    holes, pads, polygons = _circles(result, notices)
+    candidates = _unique(_pair(holes, pads, polygons, notices), notices)
     if not candidates:
         notices.add('no-drills', 'No unambiguous circular drill candidates found in this source.')
     return DrillReview(result.document.source_name, result.document.source_sha256,

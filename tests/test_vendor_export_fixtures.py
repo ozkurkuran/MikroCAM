@@ -1,6 +1,7 @@
 """Genuine third-party vendor exports, kept byte-identical with recorded provenance and licenses."""
 import hashlib
 import json
+import math
 from pathlib import Path
 
 import pytest
@@ -67,6 +68,46 @@ def test_genuine_proteus_geometry_imports_with_unpainted_non_scaling_stroke(obje
     assert union_all(result.geometry_mm).bounds == pytest.approx((0, 0, 54.11, 44.28), abs=1e-9)
     tracks = [element for element in result.document.elements if element.kind == 'polyline']
     assert len(tracks) == 140 and {round(e.paint.width) for e in tracks} == {25, 102}
+
+
+def _raw_proteus_white_circles() -> list[tuple[float, float, float]]:
+    """Independent of the importer: white four-cubic paths straight from the exported text."""
+    import re
+    text = (PROTEUS / 'B_A_.svg').read_text(encoding='utf-8')
+    circles = []
+    for group in re.finditer(r'<g fill="#ffffff"[^>]*>\s*<path [^>]*d="([^"]*)"', text):
+        data = group[1]
+        if re.sub(r'[^A-Za-z]', '', data) != 'MCCCC':
+            continue
+        numbers = [float(value) for value in re.findall(r'-?\d+(?:\.\d+)?', data)]
+        xs, ys = numbers[0::2], numbers[1::2]
+        assert (xs[0], ys[0]) == (xs[-1], ys[-1])  # Returns to its start without Z.
+        circles.append(((max(xs) + min(xs)) / 2, (max(ys) + min(ys)) / 2, (max(xs) - min(xs)) / 2))
+    return circles
+
+
+@pytest.mark.parametrize('flip', [False, True])
+def test_genuine_proteus_drill_review_finds_every_unclosed_white_hole(flip):
+    from mikrocam.core.svg_drills import detect_svg_drills
+    raw = _raw_proteus_white_circles()
+    assert len(raw) == 25 and {radius for *_, radius in raw} == {50.0}  # 50 units = 0.5 mm.
+    source = (PROTEUS / 'B_A_.svg').read_bytes()
+    review = detect_svg_drills(import_svg_bytes(source, 'B_A_.svg', flip=flip))
+    expected = [(x / 100, 44.28 - y / 100 if flip else y / 100) for x, y, _ in raw]
+    found = [candidate.center_mm for candidate in review.candidates]
+    assert len(found) == 25
+    for wanted in expected:  # One-to-one: holes are at least 2.5 mm apart.
+        assert sum(math.dist(actual, wanted) <= 1e-6 for actual in found) == 1, wanted
+    # Proteus approximates each 1 mm hole with four cubics (kappa 0.5522); the fitted diameter
+    # exceeds 1 mm only by that approximation (<= 0.027 % of r per side).
+    assert all(1 <= candidate.diameter_mm <= 1.0003 for candidate in review.candidates)
+    from mikrocam.core.drill_groups import group_drill_selection
+    tools = group_drill_selection(review, tuple(range(25)))
+    assert len(tools) == 1 and len(tools[0].centers_mm) == 25
+    assert tools[0].diameter_mm == pytest.approx(1, abs=3e-4)
+    codes = [item.code for item in review.notices]
+    assert codes.count('noncircular-opening') == 1  # Only the white board background rectangle.
+    assert 'unsupported-opening' not in codes and 'heuristic' in codes
 
 
 ILLUSTRATOR_XMP = ROOT / 'illustrator-wortschule-hilfsverb'
