@@ -1,9 +1,15 @@
-"""Strict deterministic versioned metadata for geometry transfer packages."""
+"""Strict deterministic versioned metadata for geometry transfer packages.
+
+Schema 1 has no device profile, schema 2 a device profile, and schema 3 records island
+tiling with an optional (nullable) device profile. Older manifests read unchanged and
+``upgrade_manifest`` migrates them to schema 3 with ``island: null``.
+"""
+import json
 import math
 
 from .laser_job import LaserPass, LaserRecipe, _name
 from .laser_json import PASS_FIELDS, DEVICE_PASS_FIELDS, device_from_data, _dump, _envelope, _fields, _load
-from .laser_paths import validate_interlace_n
+from .laser_paths import IslandSettings, validate_interlace_n
 from .placement import _finite_real
 
 
@@ -11,6 +17,25 @@ MAX_PASSES = 1_000
 MANIFEST_FIELDS = {'kind', 'schema_version', 'format', 'units', 'job_name', 'bounds_mm',
                    'interlace_n', 'coordinate_mapping', 'recipe_file', 'passes'}
 ENTRY_FIELDS = {'index', 'name', 'file', 'sha256', 'path_count', 'settings'}
+ISLAND_FIELDS = ('tile_size_mm', 'overlap_mm', 'angle_step_deg', 'order')
+MANIFEST_VERSIONS = (1, 2, 3)
+
+
+def island_to_data(island: IslandSettings | None) -> dict | None:
+    """Encode explicit island tiling settings, or None when tiling is off."""
+    if island is None:
+        return None
+    if not isinstance(island, IslandSettings):
+        raise ValueError('Expected IslandSettings or None')
+    return {field: getattr(island, field) for field in ISLAND_FIELDS}
+
+
+def island_from_data(value: object) -> IslandSettings | None:
+    """Decode strict island settings without substituting defaults."""
+    if value is None:
+        return None
+    data = _fields(value, set(ISLAND_FIELDS), 'manifest.island')
+    return IslandSettings(**data)
 
 
 def _pass_entry(value: object, index: int, format: str, profiled: bool = False) -> LaserPass:
@@ -31,11 +56,21 @@ def _pass_entry(value: object, index: int, format: str, profiled: bool = False) 
     return settings
 
 
+def _version(value: object) -> int | None:
+    version = value.get('schema_version') if isinstance(value, dict) else None
+    return version if type(version) is int else None
+
+
 def _validate_manifest(value: object) -> dict:
-    profiled = isinstance(value, dict) and type(value.get('schema_version')) is int and value['schema_version'] == 2
-    data = _envelope(value, MANIFEST_FIELDS | ({'device'} if profiled else set()),
-                     'mikrocam.laser-export', 'manifest', (1, 2))
-    device = device_from_data(data['device']) if profiled else None
+    version = _version(value)
+    extra = {2: {'device'}, 3: {'device', 'island'}}.get(version, set())
+    data = _envelope(value, MANIFEST_FIELDS | extra, 'mikrocam.laser-export', 'manifest', MANIFEST_VERSIONS)
+    device = None
+    if version == 2 or (version == 3 and data['device'] is not None):
+        device = device_from_data(data['device'])
+    if version == 3:
+        island_from_data(data['island'])
+    profiled = device is not None
     if data['format'] not in ('svg', 'dxf'):
         raise ValueError('Manifest format must be svg or dxf')
     expected_mapping = 'svg-local-y-down' if data['format'] == 'svg' else 'placed-xy'
@@ -69,3 +104,18 @@ def manifest_to_json(data: dict) -> str:
 def manifest_from_json(text: str) -> dict:
     """Reject unknown, duplicate, incomplete, future or nonfinite transfer metadata."""
     return _validate_manifest(_load(text, 'manifest'))
+
+
+def manifest_island(data: dict) -> IslandSettings | None:
+    """Return the island tiling of a validated manifest; schemas 1 and 2 have none."""
+    data = _validate_manifest(data)
+    return island_from_data(data['island']) if data['schema_version'] == 3 else None
+
+
+def upgrade_manifest(data: dict) -> dict:
+    """Migrate a validated schema 1/2 manifest to schema 3 without changing any value."""
+    upgraded = json.loads(_dump(_validate_manifest(data)))
+    if upgraded['schema_version'] != 3:
+        upgraded.setdefault('device', None)
+        upgraded.update(schema_version=3, island=None)
+    return _validate_manifest(upgraded)

@@ -2,6 +2,7 @@
 from dataclasses import replace
 
 from mikrocam.core.laser_geometry import contour_paths, hatch_paths, selected_area
+from mikrocam.core.laser_islands import island_hatch_paths
 from mikrocam.core.laser_job import LaserJob
 from mikrocam.core.laser_paths import (CancelCheck, CopperFeatures, LaserPlan, PlanOptions,
                                       check_cancelled, check_path_count)
@@ -18,11 +19,19 @@ def plan_laser(job: LaserJob, options: PlanOptions, features: CopperFeatures | N
         raise ValueError('Feature source copper must match the job copper')
     check_cancelled(cancelled)
     paths = list(contour_paths(features, options.contour_mode, cancelled))
-    if options.hatch:
+    if options.island is not None:
+        # Contours stay first; each tile keeps its scan order, interlaced within the tile.
         area = selected_area(features, options.region_mode)
-        paths.extend(hatch_paths(area, options.spacing_mm, options.angle_deg, options.cross_hatch, cancelled))
-    check_path_count(len(paths))
-    paths = interlace_paths(tuple(paths), options.interlace_n, cancelled)
+        for tile in island_hatch_paths(area, options.spacing_mm, options.angle_deg,
+                                       options.cross_hatch, options.island, cancelled):
+            paths.extend(interlace_paths(tile.paths, options.interlace_n, cancelled))
+            check_path_count(len(paths))
+    else:
+        if options.hatch:
+            area = selected_area(features, options.region_mode)
+            paths.extend(hatch_paths(area, options.spacing_mm, options.angle_deg, options.cross_hatch, cancelled))
+        check_path_count(len(paths))
+        paths = interlace_paths(tuple(paths), options.interlace_n, cancelled)
     placed = []
     for path in paths:
         check_cancelled(cancelled)
