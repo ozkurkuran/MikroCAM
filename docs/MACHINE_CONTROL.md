@@ -1,6 +1,6 @@
 # Machine paneli: GRBL bağlantısı, jog ve G54 iş sıfırı
 
-Bu panel GRBL 1.1 denetleyicisine seri port üzerinden bağlanır; durum ve konum bilgilerini
+Bu panel GRBL 1.1 (ve 043 ile grblHAL) denetleyicisine seri port üzerinden bağlanır; durum ve konum bilgilerini
 okur. Açık bir kullanıcı eylemiyle tek eksende sınırlı jog, G54 seçimi ve seçilen eksenlerde
 kalıcı G54 iş sıfırı ayarı yapılabilir. Bağlanmak veya paneli açmak hareket başlatmaz,
 G54 seçmez ve iş sıfırını değiştirmez. Homing, unlock, resume, iş gönderimi, çıkış açma
@@ -24,6 +24,104 @@ veya ham komut alanı yoktur. Abort bir durdurma isteğidir; genel bir reset aya
 **Port açılması bazı USB-seri adaptörlerde veya denetleyicilerde donanımsal reset
 oluşturabilir.** MikroCAM bağlantı sırasında reset/wake komutu göndermez ve bağlantı dizisi olarak DTR/RTS
 değiştirmez; sürücü veya kartın port açmaya tepkisi yine de reset olabilir.
+
+## Firmware tanıma (042)
+
+Port açıldıktan sonra MikroCAM ilk ayar okumasından (`$$`) hemen önce tek bir salt okunur `$I`
+sorgusu gönderir; hareket, ayar yazma, wake veya reset göndermez. **Firmware** satırı aileyi,
+sürümü, build tarihini, bildirilen RX tamponunu, karakter sayımı bütçesini ve hareketin açık
+olup olmadığını gerekçesiyle gösterir; ayrıntılar (belgelenmiş gerçek zamanlı komutlar, ek
+durumlar, durum alanları, ham `$I` satırları) ipucunda, ham bayt alışverişi wire log'dadır.
+
+| Gösterim | Anlamı | Hareket |
+| --- | --- | --- |
+| `GRBL 1.1x` | gnea GRBL 1.1 biçimi (`[VER:1.1x.YYYYMMDD:]`, üç alanlı OPT) | Açık (mevcut davranış) |
+| `grblHAL 1.1f` | `GrblHAL` karşılaması veya `[FIRMWARE:grblHAL]` | Açık: 3 eksen XYZ, `RT+`, lathe değil (043); aksi hâlde gerekçeyle kapalı |
+| `FluidNC x.y.z` | `[VER:x.y FluidNC vx.y.z…:]`; karşılama “Grbl” ile başlasa da | 3.x/4.x açık (044, aşağıya bakın); diğer ana sürümler kapalı |
+| `Unknown` | Kanıt yok, bozuk, çelişkili, `error:` veya 3 s içinde cevap yok | Kapalı |
+
+Hareket kapalıyken jog, G54 seçimi/sıfırı, iş, kuyruk ve probe başlatılamaz. Cancel jog, Stop,
+Abort ve Disconnect her zaman kullanılabilir. Salt okunur konsol sorguları tanı için açıktır.
+Karşılama satırı tek başına kimlik sayılmaz: FluidNC karşılaması ayarla değiştirilebilir ve
+grblHAL uyumluluk modunda `Grbl 1.1f` der. Oturum ortasında aynı firmware'in karşılaması gelirse
+yalnız `$$` yeniden okunur; farklı/doğrulanamayan bir karşılama `$I` ile yeniden tanıma başlatır.
+Otomatik tekrar veya yeniden bağlanma yoktur; bilinmeyen sonuçta Disconnect/Connect yapın.
+Gerçek grblHAL/FluidNC kartlarında tanıma henüz doğrulanmadı
+([saha protokolü H042](hardware/GRBL_VALIDATION.md)).
+
+## grblHAL kartları (043)
+
+Tanınan grblHAL kartında GRBL 1.1 ile aynı akışlar kullanılır: jog, G54 seçimi/sıfırı, preflight ve
+iş gönderimi (send-response veya karakter sayımı), Pause/Resume/Stop, dry run, probe grid, autolevel,
+iş kuyruğu ve konsol. Gönderilen baytlar aynıdır (`?`, `!`, `~`, 0x18, 0x84, 0x85); grblHAL'e özgü
+gerçek zamanlı komutlar (0x87 tam durum raporu dahil) gönderilmez. Hareket yalnız kartın kendi `$I`
+cevabı şunları gösterdiğinde açılır; aksi hâlde Firmware satırı gerekçeyi yazar:
+
+- `[OPT:…,<planner>,<rx>,3,<takım>]` ve varsa `[AXS:3:XYZ]` (yalnız 3 eksen XYZ desteklenir),
+- `[NEWOPT:…RT+…]` (legacy gerçek zamanlı komutlar açık; varsayılan) ve `LATHE` yok.
+
+Uyumluluk modunda derlenmiş kart (`Grbl 1.1f` karşılaması, üç alanlı OPT) **Unknown** kalır;
+grblHAL'i varsayılan uyumluluk seviyesi 0 ile kullanın. Karakter sayımı bütçesi grblHAL 1024 bayt RX
+bildirse de `min(rx,128)` bayttır.
+
+grblHAL'in fazladan rapor alanları ve kelimeleri tanınır: `Run:1/2` Run, `Alarm:<kod>` Alarm, `Tool`
+(bekleyen takım değişimi) Unknown olarak görünür ve Idle sayılmaz. `$G`'deki `G98`, `G50`, `M50/M51/M56`,
+G92 bayrağı ve kalıcı delme kipleri (ör. `G81`) yok sayılır; `$#`'taki `G59.1–3` satırları ve X/Y'si sıfır
+olan `TLO` vektörü kabul edilir; `$$`'daki metin/`N/A` ayarlar değerlendirmeye girmez. Ham satırlar wire
+log'da aynen görünür. Şunlar işlem öncesinde reddedilir: bekleyen takım değişimi (`M6`), feed hold kapalı
+(`M53`), ölçekleme (`G51`), lathe çap/radius kipleri (`G7/G8`), takım tablosu ofseti (`G43`, `G43.2`),
+kesici telafisi (`G41/G42`), `G95/G96/G97`, `G59.1–3` etkin koordinat sistemi, X/Y bileşenli takım ofseti.
+
+Durum satırının ipucu `ALARM:N`/`error:N` kodunun aileye göre kısa anlamını gösterir; grblHAL'de
+`ALARM:10` E-stop'tur (GRBL'de çift eksen homing hatası). E-stop etkinken grblHAL reset baytını yok
+sayar; Abort sonucu “stop unverified” kalır. 0x85 jog iptali grblHAL'de okunmamış komut tamponunu da
+temizler: henüz okunmamış jog satırının `ok`'u gelmezse iptal süresi dolar ve Abort yolu çalışır.
+
+Varsayılan rapor ayarları hedeflenir. `$10` ile parser-state push (`[GC:]` kendiliğinden) açılırsa çalışan
+iş/probe/manuel işlem sorgu dışı kanıt nedeniyle durdurulur; `$481` otomatik durum raporu ve MPG modu
+desteklenmez. MikroCAM bu ayarları okumaz veya değiştirmez. Gerçek grblHAL kartında hareket henüz
+doğrulanmadı ([saha protokolü H043](hardware/GRBL_VALIDATION.md)); yazılım kontrolleri fiziksel E-stop
+ve interlock'un yerini tutmaz.
+
+## FluidNC (044)
+
+FluidNC (ESP32) kartı USB seri ile aynı panelden kullanılır: jog, G54 seçimi/sıfırı, preflight'tan
+geçmiş iş (send-response), Pause/Resume/Stop, dry run, iş kuyruğu, probe grid ve autolevel çıktısı,
+salt okunur konsol. Firmware satırı `FluidNC 4.1.1 … motion enabled` gösterir. Doğrulanan biçimler
+FluidNC **v3.9.9** ve **v4.1.1** kaynaklarıdır; 3.x/4.x dışındaki ana sürümler tanınır ama hareket
+kapalıdır. **Gerçek bir FluidNC kartıyla fiziksel doğrulama yapılmadı (H044 NOT_RUN).**
+
+GRBL'den farklı olarak her jog/sıfır/G54/iş/probe öncesi şu salt okunur sorgular gönderilir
+(`$N` FluidNC'ye hiç gönderilmez):
+
+| Sorgu | Beklenen | Neden |
+| --- | --- | --- |
+| `$/macros/startup_line0`, `$/macros/startup_line1` | boş | GRBL `$N0/$N1` karşılığı; boot sonrası ilk Idle'da çalışır |
+| `$/macros/after_reset` | boş | `Ctrl-X` (Stop/Abort'un `0x18`'i) sonrası çalışır |
+| `$RI` | `auto reporting is off` | Otomatik rapor istenmeyen `[GC:]`/`[G54:]` satırları gönderir |
+
+Dolu makro, açık otomatik rapor veya cevapsız `$RI` (ör. `$Message/Level` Info altında) işlemi
+hareket göndermeden reddeder; MikroCAM makroları veya ayarları değiştirmez. Düzeltmeyi başka bir
+araçla yapın (ör. `$/macros/after_reset=` ve `$RI=0`) ve yeniden deneyin. İş kabulü FluidNC'nin
+`$$` vekil ayarlarından `$13` (birim), `$32=0` (lazer modu kapalı) ve `$30` (mevcut iğin azami devri)
+ile yapılır; FluidNC `$31` bildirmediği için alt devir sınırı 0 kabul edilir. Karakter sayımı FluidNC'de
+kullanılamaz (RX tamponu bildirilmez). `$#` içindeki v4 TLO vektörü yalnız X/Y bileşenleri sıfırsa
+kabul edilir. 4+ eksenli yapılandırma, `M56` park override, boş `A:` alanı desteklenmez (kontroller kapanır).
+Alarm/hata kodları ham gösterilir; FluidNC kodları GRBL ve grblHAL kodlarından farklı olduğu için durum ipucu FluidNC için anlam tablosu kullanmaz ve “code not documented for this firmware” der (ör. FluidNC `ALARM:14` homing gerekli).
+Homing/unlock MikroCAM'de yoktur; `ALARM:14` sonrası homing'i başka bir araçla yapıp yeniden bağlanın.
+
+**Port açılışı ESP32'yi yeniden başlatabilir.** USB-seri köprüsünün DTR/RTS hatları ESP32'nin reset
+devresine bağlıdır; MikroCAM DTR/RTS'yi değiştirmez (GRBL davranışı korunur). Boot sırasında
+gönderilen komutlar kaybolur. MikroCAM ESP32 ROM satırlarını (`ets …`, `rst:0x…`, `ESP-ROM:`) ve
+`[MSG:INFO: FluidNC v…]` boot satırını yeniden başlama sayar; kimlik ve birim kanıtını siler, sürmekte
+olan işlemi reset olarak bitirir ve kart hazır olunca (2 s sessizlik + `Starting` olmayan taze durum)
+`$I` ve `$$`'ı yeniden okur. FluidNC karşılaması (`$Start/Message`) değiştirilebildiği için metnine
+güvenilmez: tanınmış FluidNC oturumunda protokol biçiminde olmayan her satır olası reset sayılır,
+sürmekte olan hareket durdurulur ve aynı bekleme yoluyla yeniden tanınır. Boot'ta `startup_line0/1`
+ve `after_reset` makroları MikroCAM kontrol etmeden **önce** çalışabilir; bu makroları boş tutun.
+Özel karşılama ile `$Message/Level` Info altını birlikte kullanırsanız bağlantıdaki ilk tanıma
+başarısız olabilir; Disconnect/Connect yapın (varsayılan karşılama önerilir). FluidNC Macro0–3
+gerçek zamanlı baytları (`0x87`–`0x8A`) hiçbir yoldan gönderilmez.
 
 ## Konumları okuma
 
@@ -56,8 +154,8 @@ bu mm isteğini değiştirmez. Basılı tutarak tekrar veya hareket kuyruğu yok
 yeni jog ve sıfır istekleri kilitlenir. Bu sınırlar güvenli hareket alanını garanti etmez.
 
 Manuel işlem için bağlantı açık, birimler/konum doğrulanmış, durum taze **Idle** ve başka
-işlem bulunmuyor olmalıdır. Denetleyicinin `$N0` / `$N1` başlangıç blokları da okunup ikisinin
-boş olduğu doğrulanır. Dolu veya belirsiz blok varsa işlem reddedilir; uygulama bunları silmez.
+işlem bulunmuyor olmalıdır. Denetleyicinin `$N0` / `$N1` başlangıç blokları (FluidNC'de
+`startup_line0/1` ve `after_reset` makroları ile `$RI`) da okunup boş olduğu doğrulanır. Dolu veya belirsiz blok varsa işlem reddedilir; uygulama bunları silmez.
 Seri port açılışındaki donanımsal reset, bu kontrol yapılmadan önce kayıtlı blokları çalıştırabilir.
 
 Jog öncesinde spindle/lazer ve coolant kapatma komutu gönderilir; kabul ve modal cevapla

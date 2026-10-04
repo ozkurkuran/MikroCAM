@@ -33,7 +33,8 @@ def test_collapsed_inert_exact_query_choices(controls):
     assert isinstance(controls.log_view, QtWidgets.QPlainTextEdit)
     assert controls.log_view.isReadOnly()
     assert not controls.query_combo.isEditable()
-    assert tuple(controls.query_combo.itemText(i) for i in range(controls.query_combo.count())) == CONSOLE_COMMANDS
+    assert tuple(controls.query_combo.itemText(i) for i in range(controls.query_combo.count())) == (
+        CONSOLE_COMMANDS + ('$CD',))  # $CD: FluidNC-only, refused by the owner elsewhere (044)
     assert not controls.send_button.isEnabled()
     controls.toggle_button.click()
     assert not controls.body.isHidden()

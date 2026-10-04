@@ -4,11 +4,12 @@ from enum import Enum
 
 
 CONSOLE_COMMANDS = ('?', '$$', '$G', '$#', '$N', '$I')
+FLUIDNC_CONSOLE_COMMANDS = ('$CD',)  # FluidNC Config/Dump YAML, readonly (spec 044)
 
 
 def _command(value: str) -> None:
-    if type(value) is not str or value not in CONSOLE_COMMANDS:
-        raise ValueError('Console command must be one of ?, $$, $G, $#, $N, $I')
+    if type(value) is not str or value not in CONSOLE_COMMANDS + FLUIDNC_CONSOLE_COMMANDS:
+        raise ValueError('Console command must be one of ?, $$, $G, $#, $N, $I, $CD')
 
 
 @dataclass(frozen=True)

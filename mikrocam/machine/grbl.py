@@ -36,8 +36,15 @@ def _vector(text: str) -> XYZ:
     return vector
 
 
-def parse_status(line: str) -> GrblStatus:
-    """Validate a three-axis report without inventing units, offsets or positions."""
+_GRBLHAL_SUBSTATE = re.compile(r'(?:Run:[12]|Alarm:(?:[1-9][0-9]?|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\Z')
+
+
+def parse_status(line: str, *, grblhal: bool = False) -> GrblStatus:
+    """Validate a three-axis report without inventing units, offsets or positions.
+
+    ``grblhal`` (spec 043 research R4) maps only the documented ``Run:1/2`` and ``Alarm:<code>``
+    sub-states to their base state and accepts grblHAL's value-less ``AR`` field.
+    """
     _ascii_line(line)
     if not line.startswith('<') or not line.endswith('>'):
         raise ValueError('Not a GRBL status report')
@@ -47,6 +54,8 @@ def parse_status(line: str) -> GrblStatus:
         raise ValueError('Malformed GRBL state')
     vectors: dict[str, XYZ] = {}
     for field in parts[1:]:
+        if grblhal and field == 'AR':
+            continue
         match = _FIELD.fullmatch(field)
         if match is None:
             raise ValueError('Malformed GRBL status field')
@@ -59,7 +68,7 @@ def parse_status(line: str) -> GrblStatus:
         raise ValueError('GRBL status requires exactly one MPos or WPos')
     base = raw_state.split(':', 1)[0]
     state = _STATES.get(raw_state, MachineState.UNKNOWN)
-    if base in ('Hold', 'Door'):
+    if base in ('Hold', 'Door') or (grblhal and _GRBLHAL_SUBSTATE.match(raw_state)):
         state = _STATES[base]
     return GrblStatus(state, raw_state, vectors.get('MPos'), vectors.get('WPos'), vectors.get('WCO'))
 

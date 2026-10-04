@@ -7,6 +7,10 @@ from mikrocam.machine.manual_protocol import validate_command
 from mikrocam.machine.job_protocol import validate_job_command
 from mikrocam.machine.fake_job import FakeJob
 from mikrocam.machine.fake_probe import FakeProbe
+from mikrocam.machine import fake_firmware
+from mikrocam.machine.fake_firmware import (FLUIDNC_VERSIONS, GRBLHAL_SETTINGS, grblhal_modal,
+                                             grblhal_parameters, grblhal_status, profile)
+from mikrocam.machine.fake_fluidnc import FakeFluidNC
 from mikrocam.machine.probe_protocol import validate_probe_command
 
 
@@ -19,10 +23,22 @@ class FakeGRBL:
                  work_system: str = 'G54',
                  offsets: dict[str, tuple[float, float, float]] | None = None,
                  g92: tuple[float, float, float] = (0., 0., 0.), tlo: float = 0.,
-                 startup_blocks: tuple[str, str] = ('', '')) -> None:
+                 startup_blocks: tuple[str, str] = ('', ''), firmware: str | None = None,
+                 build_reply: bytes | None = None) -> None:
         if report_units not in ('mm', 'inch'):
             raise ValueError('Expected mm or inch report units')
         self.auto_respond = auto_respond
+        self.firmware = fake_firmware.DEFAULT_PROFILE if firmware is None else firmware
+        self.banner, self.build_reply = profile(self.firmware)
+        self.fluidnc = (FakeFluidNC(self, FLUIDNC_VERSIONS[self.firmware])
+                        if self.firmware in FLUIDNC_VERSIONS else None)
+        self.hal_modal_words: tuple[str, ...] = ()
+        self.hal_tlo_xy = (0., 0.)
+        self._reports = 0
+        if build_reply is not None:
+            if not isinstance(build_reply, bytes):
+                raise ValueError('Build reply must be bytes')
+            self.build_reply = build_reply
         self.report_units = report_units
         self.status = status
         if status is not None and not isinstance(status, bytes):
@@ -77,7 +93,7 @@ class FakeGRBL:
         self.writes.append(data)
         if self.short_write:
             return len(data) - 1
-        if self.auto_respond:
+        if self.auto_respond and not (self.fluidnc and self.fluidnc.booting):
             self._probe.respond(data)
         return len(data)
 
@@ -143,20 +159,32 @@ class FakeGRBL:
             else:
                 self._jog_reported = True
         offset = tuple(self.offsets[self.work_system][i] + self.g92[i]
-                       + (self.tlo if i == 2 else 0.) for i in range(3))
+                       + (self.hal_tlo_xy + (self.tlo,))[i] for i in range(3))
+        if self.firmware == 'grblhal':
+            self._reports += 1
+            return grblhal_status(self.state, self._format(self.machine_position),
+                                  self._format(offset), self._reports == 1)
         return (f'<{self.state}|MPos:{self._format(self.machine_position)}'
-                f'|WCO:{self._format(offset)}>\r\n').encode('ascii')
+                f"{'|FS:0,0' if self.fluidnc else ''}|WCO:{self._format(offset)}>\r\n").encode('ascii')
 
     def _respond(self, data: bytes) -> None:
+        if self.fluidnc is not None and self.fluidnc.respond(data):
+            return
         if data == b'?':
             self.inject(self._status_report())
         elif data == b'$$\n':
-            self.inject(''.join(f'${key}={value}\r\n' for key, value in self.job_settings.items()).encode() + b'ok\r\n')
+            extra = GRBLHAL_SETTINGS if self.firmware == 'grblhal' else ''
+            self.inject((''.join(f'${key}={value}\r\n' for key, value in self.job_settings.items())
+                         + extra).encode() + b'ok\r\n')
         elif data == b'$I\n':
-            self.inject(b'[VER:1.1h:FakeGRBL]\r\n[OPT:V,15,128]\r\nok\r\n')
+            self.inject(self.build_reply)
         elif data == b'$N\n':
             self.inject(''.join(f'$N{i}={block}\r\n' for i, block in enumerate(
                 self.startup_blocks)).encode('ascii') + b'ok\r\n')
+        elif data == b'$G\n' and self.firmware == 'grblhal':
+            self.inject(grblhal_modal(self.work_system, any(self.g92), self.units, self.distance,
+                                      bool(self.tlo or any(self.hal_tlo_xy)), self.program_flow,
+                                      self.spindle, self.coolant, self.hal_modal_words))
         elif data == b'$G\n':
             program = f'{self.program_flow} ' if self.program_flow else ''
             self.inject((f'[GC:G0 {self.work_system} G17 {self.units} {self.distance} '
@@ -164,6 +192,10 @@ class FakeGRBL:
         elif data == b'$#\n':
             rows = ''.join(f'[{name}:{self._format(vector)}]\r\n'
                            for name, vector in self.offsets.items())
+            if self.firmware == 'grblhal':
+                self.inject(grblhal_parameters(rows, self._format(self.g92), self._format(
+                    self.hal_tlo_xy + (self.tlo,)), self._format((0., 0., 0.))))
+                return
             rows += f'[G92:{self._format(self.g92)}]\r\n[TLO:{self._format((self.tlo,))}]\r\n'
             self.inject(rows.encode('ascii') + b'ok\r\n')
         elif data in (b'\x85', b'\x18', b'\x84'):
@@ -209,7 +241,8 @@ class FakeGRBL:
         self.state = 'Idle'
         self.units, self.distance, self.work_system = 'G21', 'G90', 'G54'
         self.g92, self.tlo = (0., 0., 0.), 0.
-        self.inject(b"Grbl 1.1h ['$' for help]\r\n")
+        self._reports = 0
+        self.inject(self.banner)
 
     def close(self) -> None:
         self.is_open = False
@@ -231,6 +264,6 @@ class FakeGRBL:
             self.job_writes.append(data)
         if self.short_write:
             return len(data) - 1
-        if self.auto_respond:
+        if self.auto_respond and not (self.fluidnc and self.fluidnc.booting):
             self._job.accept(data)
         return len(data)

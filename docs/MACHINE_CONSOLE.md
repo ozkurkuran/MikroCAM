@@ -15,6 +15,13 @@ Listeden sorguyu seçip **Send query** düğmesine basın:
 | `$#` | Koordinat/ofset parametreleri |
 | `$N` | Kayıtlı başlangıç blokları; değiştirilmez |
 | `$I` | Denetleyici sürüm/build bilgisi |
+| `$CD` | Yalnız FluidNC (044): `Config/Dump` YAML yapılandırması; salt okunur, uygulama yorumlamaz |
+
+FluidNC'de `$N` gönderilmez: FluidNC'de başlangıç satırı sorgusu değildir, adında “n” geçen
+ayarları listeler. FluidNC başlangıç makroları her hareket işleminden önce otomatik ve salt
+okunur doğrulanır ([Machine rehberi](MACHINE_CONTROL.md#fluidnc-044)). `$CD` GRBL'de reddedilir.
+`$$` cevabındaki `$130-$132` (azami eksen hareketi) satırları `$13` önekini paylaşır ama birim
+kanıtı sayılmaz (044 hotfix; GRBL ve FluidNC).
 
 Serbest komut girişi yoktur. Konsol hareket, spindle/lazer açma, homing, unlock, reset veya
 ayar yazma yolu değildir. Sorgular mevcut tek iletişim worker'ından geçer; konsol ayrı port,

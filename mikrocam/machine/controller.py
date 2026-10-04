@@ -22,6 +22,10 @@ from mikrocam.machine.wire_log import WireLog
 from mikrocam.machine.probe_control import ProbeControl
 from mikrocam.machine.probe_models import StartProbeGridRequest, ProbePhase
 from mikrocam.machine.probe_protocol import validate_probe_command
+from mikrocam.machine.firmware import FirmwareFamily, IdentificationPhase, is_reset_banner
+from mikrocam.machine.firmware_control import FirmwareIdentification
+from mikrocam.machine import fluidnc
+from mikrocam.machine.grblhal import normalize_query_line
 
 POLL_INTERVAL = 0.25
 STATUS_TIMEOUT = 2.0
@@ -49,6 +53,7 @@ class MachineController:
         self._console = ConsoleControl(self)
         self._probe = ProbeControl(self)
         self._queue = QueueControl(self)
+        self._firmware = FirmwareIdentification(self)
         self._interrupted: Callable[[], bool] = lambda: False
         self._pause_requested: Callable[[], bool] = lambda: False
 
@@ -196,6 +201,7 @@ class MachineController:
         try:
             self._transport.open()
             self._snapshot = replace(self._snapshot, connection=ConnectionState.CONNECTED)
+            self._firmware.start()
             self._request_settings()
             self._request_status()
         except Exception as error:
@@ -291,6 +297,7 @@ class MachineController:
         self._console = ConsoleControl(self)
         self._probe = ProbeControl(self)
         self._queue = QueueControl(self, queue)
+        self._firmware = FirmwareIdentification(self)
         self._snapshot = replace(self._snapshot, queue=self._queue.observation)
         if connection is not ConnectionState.CONNECTING:
             self._console.observation = replace(console, can_query=False)
@@ -379,20 +386,38 @@ class MachineController:
             stale=True, last_report_at=None,
             report_units=None if clear_units else self._snapshot.report_units)
 
+    def _grblhal(self) -> bool:
+        firmware = self._snapshot.firmware
+        return (firmware.phase is IdentificationPhase.IDENTIFIED
+                and firmware.capabilities.family is FirmwareFamily.GRBLHAL)
+
     def _consume(self, line: str) -> None:
         _LOG.debug('GRBL RX %r', line[:256])
-        if line.startswith('Grbl '):
+        if self._grblhal() and not line.startswith('<'):
+            line = normalize_query_line(line)  # Raw bytes are already in the wire log (043).
+            if line is None:
+                return
+        if self._firmware.restarting and not line.startswith('<'):
+            self._firmware.chatter()  # FluidNC/ESP32 restart quiet period (044).
+        if is_reset_banner(line):
             self._console.fail('Controller reset interrupted diagnostic query')
             self._manual.lost_evidence('Controller reset interrupted manual operation', reset=True)
             self._job.fail('Controller reset interrupted job', reset=True)
             self._probe.fail('Controller reset interrupted probing', reset=True)
             self._invalidate(clear_units=True)
             self._status_sent_at = None
+            identify = self._firmware.on_banner(line)
             if not self._console.tainted and not self._probe.tainted:
+                if identify:
+                    self._firmware.start()
                 self._request_settings()
             self._diagnose('Controller restarted; awaiting units and fresh status')
+        elif fluidnc.is_boot_marker(line):
+            self._restart('Controller rebooted (boot output); waiting until it reports ready', certain=True)
         elif line.startswith('<'):
             self._consume_status(line)
+        elif self._firmware.consume(line):
+            pass
         elif self._probe.consume(line):
             pass
         elif self._console.consume(line):
@@ -426,6 +451,19 @@ class MachineController:
             self._diagnose(line)
         elif line.startswith('[MSG:'):
             self._diagnose(line)
+        elif self._firmware.fluidnc and fluidnc.is_free_text(line):
+            self._restart('Unexpected FluidNC output (custom greeting or restart?); motion stopped', certain=False)
+
+    def _restart(self, message: str, *, certain: bool) -> None:
+        """Spec 044: like a reset banner, but identify only once the restarted board is ready."""
+        self._console.fail(message)
+        self._manual.lost_evidence(message, reset=certain)
+        self._job.fail(message, reset=certain)
+        self._probe.fail(message, reset=certain)
+        self._invalidate(clear_units=True)
+        self._status_sent_at = self._settings_sent_at = None
+        self._firmware.on_restart()
+        self._diagnose(message)
 
     def _consume_units(self, line: str) -> None:
         try:
@@ -448,7 +486,7 @@ class MachineController:
 
     def _consume_status(self, line: str) -> None:
         try:
-            status = parse_status(line)
+            status = parse_status(line, grblhal=self._grblhal())
         except ValueError as error:
             self._console.fail(f'Invalid status: {error}')
             self._manual.lost_evidence(f'Invalid status: {error}')
@@ -479,6 +517,10 @@ class MachineController:
         self._manual.on_status()
         self._job.on_status()
         self._probe.on_status()
+        if (not self._console.tainted and not self._probe.tainted
+                and self._firmware.settled(status.raw_state)):
+            self._firmware.start()
+            self._request_settings()
 
     @staticmethod
     def _scale(vector: XYZ | None, factor: float) -> XYZ | None:
@@ -488,6 +530,7 @@ class MachineController:
 
     def _expire_and_poll(self) -> None:
         now = self._clock()
+        self._firmware.expire(now)
         last = self._snapshot.last_report_at
         if last is not None and now - last >= STATUS_TIMEOUT:
             self._console.fail('Status became stale during diagnostic query')
@@ -501,7 +544,8 @@ class MachineController:
             self._invalidate(clear_units=True)
             self._diagnose('Settings response timed out; report units are unknown')
         if self._status_sent_at is not None and now - self._status_sent_at >= STATUS_TIMEOUT:
-            self._console.poll_timeout()
+            if not self._firmware.restarting:  # A rebooting board drops polls; not a causality loss.
+                self._console.poll_timeout()
             self._status_sent_at = None
             if not self._snapshot.diagnostic:
                 self._diagnose('Status response timed out')

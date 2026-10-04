@@ -82,7 +82,7 @@ def test_operator_entry_retains_log_and_closes_mock_port(monkeypatch, tmp_path, 
     monkeypatch.setattr(capture.subprocess, "check_output", lambda *a, **kw: b"abc123")
     monkeypatch.setattr(capture, "SerialIO", lambda port: transport)
     queries = []
-    def query(owner, command, transcript):
+    def query(owner, command, transcript, grblhal=False):
         assert owner is transport
         queries.append(command)
         if failure:
@@ -127,3 +127,52 @@ def test_transcript_never_claims_successful_tx_when_write_fails(failure):
     assert transcript and transcript[0]['direction'] == 'tx-attempt'
     assert not any(entry['direction'] == 'tx' for entry in transcript)
     transport.read.assert_not_called()
+
+
+# --- spec 044: FluidNC readonly inventory additions (operator-only capture, NOT_RUN on hardware) ---
+from hardware.test_readonly_grbl import FLUIDNC_COMMANDS, is_fluidnc  # noqa: E402
+from mikrocam.machine.fluidnc import STARTUP_QUERIES  # noqa: E402
+
+
+def test_fluidnc_inventory_adds_only_readonly_macro_report_and_config_queries():
+    assert FLUIDNC_COMMANDS == STARTUP_QUERIES + (b"$CD\n",)
+    assert is_fluidnc(["[VER:4.1 FluidNC v4.1.1 (esp32-wifi) :]", "ok"])
+    assert not is_fluidnc(["[VER:1.1h.20190830:]", "ok"])
+
+
+@pytest.mark.parametrize("command,reply", [
+    (b"$I\n", b"[VER:4.1 FluidNC v4.1.1 (esp32-wifi) :]\r\n[OPT:PHSEW]\r\n[MSG: Machine: x]\r\nok\r\n"),
+    (b"$I\n", b"[VER:3.9 FluidNC v3.9.9:]\r\n[OPT:PHSEW]\r\nok\r\n"),
+    (b"$$\n", b"$13=0\r\n$20=0\r\n$30=1000\r\n$32=0\r\n$100=80.000\r\n$10=1\r\nok\r\n"),
+    (b"$#\n", b"[G54:0.000,0.000,0.000]\r\n[TLO:0.000,0.000,0.000]\r\nok\r\n"),
+    (b"$/macros/startup_line0\n", b"$/macros/startup_line0=\r\nok\r\n"),
+    (b"$/macros/after_reset\n", b"$/macros/after_reset=G0 Z5\r\nok\r\n"),
+    (b"$RI\n", b"[MSG:INFO: uart_channel0 auto reporting is off]\r\nok\r\n"),
+    (b"$CD\n", b"board: Fake\r\naxes:\r\n  x:\r\nok\r\n"),
+])
+def test_fluidnc_readonly_inventory_replies_are_complete(command, reply):
+    transport = MagicMock()
+    transport.write.return_value = len(command)
+    transport.read.side_effect = [bytes([byte]) for byte in reply]
+    assert read_query(transport, command, [], clock=lambda: 0)[-1] == "ok"
+    transport.write.assert_called_once_with(command)
+
+
+def test_operator_entry_adds_fluidnc_queries_only_after_fluidnc_identification(monkeypatch, tmp_path):
+    from hardware import test_readonly_grbl as capture
+    monkeypatch.setenv("MIKROCAM_HW_PORT", "COM_TEST")
+    monkeypatch.setenv("MIKROCAM_HW_LOG", str(tmp_path / "readonly.json"))
+    transport = MagicMock()
+    transport.read.return_value = b""
+    ticks = iter([0, 0, 2.1])
+    monkeypatch.setattr(capture.time, "monotonic", lambda: next(ticks))
+    monkeypatch.setattr(capture.subprocess, "check_output", lambda *a, **kw: b"abc123")
+    monkeypatch.setattr(capture, "SerialIO", lambda port: transport)
+    queries = []
+
+    def query(owner, command, transcript, grblhal=False):
+        queries.append(command)
+        return ["[VER:4.1 FluidNC v4.1.1 (esp32-wifi) :]", "ok"] if command == b"$I\n" else ["x", "ok"]
+    monkeypatch.setattr(capture, "read_query", query)
+    capture.test_readonly_grbl_inventory()
+    assert queries == list(COMMANDS) + list(FLUIDNC_COMMANDS)

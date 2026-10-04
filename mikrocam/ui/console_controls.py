@@ -4,7 +4,7 @@ import gettext
 
 from PyQt6 import QtCore, QtWidgets
 
-from mikrocam.machine.console_models import CONSOLE_COMMANDS, ConsoleRequest
+from mikrocam.machine.console_models import CONSOLE_COMMANDS, FLUIDNC_CONSOLE_COMMANDS, ConsoleRequest
 from mikrocam.machine.models import ConnectionState, MachineSnapshot
 
 
@@ -34,7 +34,7 @@ class ConsoleControls(QtWidgets.QWidget):
         body_layout.setContentsMargins(0, 0, 0, 0)
         actions = QtWidgets.QHBoxLayout()
         self.query_combo = QtWidgets.QComboBox(self.body)
-        self.query_combo.addItems(CONSOLE_COMMANDS)
+        self.query_combo.addItems(CONSOLE_COMMANDS + FLUIDNC_CONSOLE_COMMANDS)
         self.send_button = QtWidgets.QPushButton(_('Send query'), self.body)
         self.clear_button = QtWidgets.QPushButton(_('Clear view'), self.body)
         for widget in (self.query_combo, self.send_button, self.clear_button):

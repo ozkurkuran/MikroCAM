@@ -3,7 +3,8 @@ from dataclasses import replace
 from typing import TYPE_CHECKING
 
 from .manual_models import JogRequest, ZeroRequest, SelectG54Request, PARAMETER_NAMES
-from .manual_protocol import encode_jog, encode_zero, parse_modal, parse_parameter, parse_startup, verify_zero
+from .manual_protocol import encode_jog, encode_zero, parse_modal, parse_parameter, verify_zero
+from .startup_evidence import StartupEvidence
 from .models import ConnectionState, MachineState, ManualObservation, ManualPhase
 
 if TYPE_CHECKING:
@@ -33,6 +34,7 @@ class ManualControl:
         self.before_parameters = ()
         self.expected_position = None
         self.before_work = None
+        self.startup: StartupEvidence | None = None
 
     @property
     def active(self) -> bool:
@@ -48,7 +50,7 @@ class ManualControl:
                 and not self.host._job.tainted and self.host._settings_sent_at is None
                 and value.connection is ConnectionState.CONNECTED and value.state is MachineState.IDLE
                 and fresh and not value.stale and value.report_units is not None
-                and value.machine_position_mm is not None
+                and value.machine_position_mm is not None and value.firmware.motion_allowed
                 and (not zero or value.work_position_mm is not None))
 
     def publish(self) -> None:
@@ -128,8 +130,7 @@ class ManualControl:
 
     def _query_record(self, line: str):
         if self.transaction == 'startup':
-            item = parse_startup(line)
-            return (item.index, item.block) if item is not None else None
+            return self.startup.record(line)
         if self.transaction in ('modal_off', 'modal_zero', 'modal_selected'):
             item = parse_modal(line)
             return ('modal', item) if item is not None else None
@@ -158,10 +159,18 @@ class ManualControl:
     def _advance(self, purpose: str, records: dict) -> None:
         if purpose == 'begin':
             self._write_gate()
-            self._command('startup', b'$N\n')
+            self.startup = StartupEvidence(self.host.snapshot().firmware.capabilities.family)
+            self._command('startup', self.startup.next_query())
         elif purpose == 'startup':
-            if records != {0: '', 1: ''}:
-                raise ValueError('Both startup blocks must be verified empty before manual control')
+            self.startup.add(records)
+            following = self.startup.next_query()
+            if following is not None:  # FluidNC: macros/startup_line0/1, after_reset, $RI (044).
+                self._write_gate()
+                self._command('startup', following)
+                return
+            problem = self.startup.problem('Both startup blocks must be verified empty before manual control')
+            if problem:
+                raise ValueError(problem)
             self.startup_verified = True
             self._after_startup()
         elif purpose == 'off':

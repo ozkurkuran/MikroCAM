@@ -104,7 +104,7 @@ def test_no_action_until_settings_read_is_successfully_acknowledged():
     controller.tick()
     with pytest.raises(ValueError):
         controller.request_manual(JogRequest('X', 1, 100))
-    assert set(fake.writes) <= {b'?', b'$$\n'}
+    assert set(fake.writes) <= {b'?', b'$$\n', b'$I\n'}  # One session identification $I precedes settings (spec 042, UA-1).
 
 
 class AlterReply(FakeGRBL):

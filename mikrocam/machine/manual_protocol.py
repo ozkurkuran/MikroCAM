@@ -11,6 +11,9 @@ from .models import XYZ, _validate_xyz
 ZERO_TOLERANCE_MM = .005
 _FIXED_COMMANDS = (b'?', b'$$\n', b'$G\n', b'$#\n', b'$N\n', b'$I\n', b'M5 M9\n',
                    b'G54\n', b'\x85', b'\x18', b'\x84')
+# FluidNC readonly queries (spec 044): startup macro read-back, auto-report state, config dump.
+_FLUIDNC_QUERIES = (b'$/macros/startup_line0\n', b'$/macros/startup_line1\n',
+                    b'$/macros/after_reset\n', b'$RI\n', b'$CD\n')
 _ZERO_COMMANDS = (b'G10 L20 P1 X0 Y0\n', b'G10 L20 P1 Z0\n', b'G10 L20 P1 X0 Y0 Z0\n')
 _JOG = re.compile(rb'\$J=G21 G91 [XYZ]-?(?:0\.1|1|10) F(?:100|300|600)\n\Z')
 _OPTIONAL_G = ('G0', 'G1', 'G2', 'G3', 'G38.2', 'G38.3', 'G38.4', 'G38.5', 'G80',
@@ -40,7 +43,7 @@ def validate_command(data: bytes) -> None:
     """Shared controller/serial/simulator boundary for the complete bounded command set."""
     if type(data) is not bytes or len(data) > 80:
         raise ValueError('Command must be bytes of at most 80 bytes')
-    if data in _FIXED_COMMANDS or data in _ZERO_COMMANDS or _JOG.fullmatch(data):
+    if data in _FIXED_COMMANDS or data in _FLUIDNC_QUERIES or data in _ZERO_COMMANDS or _JOG.fullmatch(data):
         return
     raise ValueError('Unsupported or noncanonical manual GRBL command')
 
@@ -115,6 +118,11 @@ def parse_parameter(line: str, report_units: str) -> ParameterRecord | None:
         raise ValueError('Malformed recognized parameter record')
     name, text = match.groups()
     factor = 25.4 if report_units == 'inch' else 1.
+    if name == 'TLO' and ',' in text:  # FluidNC v4 reports a per-axis TLO vector (spec 044).
+        x, y, z = _vector(text)
+        if x != 0 or y != 0:
+            raise ValueError('Only a Z tool-length offset is supported')
+        return ParameterRecord(name, z * factor)
     value = _scalar(text) * factor if name == 'TLO' else tuple(axis * factor for axis in _vector(text))
     return ParameterRecord(name, value)
 
