@@ -241,11 +241,12 @@ class JobControl:
         self._command('startup', self.startup.next_query())
 
     def _streaming_capacity(self, records: dict) -> int:
-        """C3 evidence must still verify and match the identified session firmware (042)."""
+        """C3 evidence must still verify and match the identified session VER and OPT (042/043)."""
         capacity = verified_capacity(records)
         firmware = self.host.snapshot().firmware
         budget = firmware.capabilities.streaming_rx_budget
-        if budget is None or f"[VER:{records.get('ver', '')}]" not in firmware.evidence:
+        if budget is None or any(f"[{tag.upper()}:{records.get(tag, '')}]" not in firmware.evidence
+                                 for tag in ('ver', 'opt')):
             raise ValueError('Firmware build evidence changed since identification')
         return min(capacity, budget)
 

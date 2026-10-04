@@ -52,14 +52,14 @@ def test_grbl_mega_255_byte_buffer_budget_stays_capped_at_128():
     assert caps.rx_buffer_bytes == 255 and caps.streaming_rx_budget == 128
 
 
-def test_grblhal_full_build_info_is_identified_but_motion_waits_for_spec_043():
+def test_grblhal_full_build_info_is_identified_with_motion_and_capped_budget():
     caps = identify(HAL_BANNER, HAL_FULL)
     assert caps.family is FirmwareFamily.GRBLHAL
     assert (caps.version, caps.build, caps.protocol) == ('1.1f', '20261004', '1.1f')
     assert (caps.planner_blocks, caps.rx_buffer_bytes) == (35, 1024)
     assert caps.extended_options == ('ENUMS', 'RT+', 'HOME', 'SED')
-    assert caps.streaming_rx_budget is None and not caps.motion_supported
-    assert '043' in caps.note and 'Tool' in caps.extra_states
+    assert caps.streaming_rx_budget == 128 and caps.motion_supported  # spec 043
+    assert caps.note == '' and 'Tool' in caps.extra_states
 
 
 def test_grblhal_banner_identifies_non_extended_reply():
@@ -197,7 +197,9 @@ def test_observation_motion_requires_identified_supported_profile():
     assert not FirmwareObservation(IdentificationPhase.PENDING, caps).motion_allowed
     assert not FirmwareObservation().motion_allowed
     hal = identify(HAL_BANNER, HAL_FULL)
-    assert not FirmwareObservation(IdentificationPhase.IDENTIFIED, hal).motion_allowed
+    assert FirmwareObservation(IdentificationPhase.IDENTIFIED, hal).motion_allowed  # spec 043
+    short = identify(HAL_BANNER, ('[VER:1.1f.20240101:]', '[OPT:VN,35,1024]'))
+    assert not FirmwareObservation(IdentificationPhase.IDENTIFIED, short).motion_allowed
     with pytest.raises(ValueError):
         FirmwareObservation(IdentificationPhase.IDENTIFIED, FirmwareCapabilities())
     with pytest.raises(ValueError):

@@ -53,3 +53,27 @@ Son belge commit'inin (validation/tasks) Windows CI sonucu PR #46'da kayıtlıd�
   DTR/RTS reset davranışı (CP210x/CH340/S3 yerel USB) ölçümü; H3 (GRBL) önkoşulu.
 - **WAITING (karar):** DTR/RTS politikası saha kanıtından sonra ayrı spec/hotfix olabilir.
 - Kapsam dışı: TCP/WebSocket (D4), SD'den iş (D5), homing/unlock, FluidNC kod metin tabloları.
+
+## #45 (043 grblHAL) ile birleştirme — 04.10.2026
+
+Koordinatör isteğiyle `origin/043-grblhal-serial` (332ca0a5) normal merge commit ile alındı (rebase/force
+push yok). Çakışmalar ve çözümleri:
+
+- `mikrocam/machine/controller.py`: iki import birlikte; `_consume` önce grblHAL satır normalizasyonunu
+  (043) sonra FluidNC yeniden başlama sessizlik takibini (044) uygular; `parse_status(..., grblhal=)`,
+  boot işareti/serbest metin dalları ve hazır olunca `$I`+`$$` birlikte durur.
+- `mikrocam/machine/fake.py`: `fake_firmware.DEFAULT_PROFILE`/`self.firmware` (043) korunur; FluidNC
+  yardımcısı `self.firmware` ile seçilir; `hal_tlo_xy`, grblHAL durum biçimi ve FluidNC `FS`/kancaları birlikte.
+- `tests/hardware/test_readonly_grbl.py`: `family_of` ile grblHAL lehçesi; aile FluidNC ise ek salt okunur
+  makro/`$RI`/`$CD` sorguları. Koruma testindeki FluidNC sahte `read_query` imzası `grblhal=` kabul eder.
+- `tests/test_firmware_controller.py`: hareket-kapalı profil listesinde yalnız `unknown` kalır.
+- Belgeler: iki firmware satırı ve iki bölüm (`grblHAL kartları (043)`, `FluidNC (044)`), H043 + H044,
+  hata matrisi dosya listeleri ve gönderim notu birleştirildi. FluidNC için 043 kod ipucu tablo kullanmaz
+  (“code not documented for this firmware”; test eklendi).
+
+| Kontrol (birleşik ağaç) | Sonuç | Kanıt |
+| --- | --- | --- |
+| Odaklı FluidNC + grblHAL + firmware + konsol + H2 koruma | 1255 PASS | yerel |
+| Tam paket (offscreen; mimari 83, grblHAL fault suites 555, FluidNC matris 235 dahil) | 6971 PASS, 3 skip, 310 alt test, 434,97 s | `.venv/044-merge-full.log` |
+| `pip check` | temiz | yerel |
+| Masaüstü `tests/smoke_app.py` | exit 0; `MACHINE_FIRMWARE_GRBLHAL_MOTION_OK`, `MACHINE_FLUIDNC_JOG_OK`, `SHUTDOWN_OK`; yetim yok | `.venv/044-merge-smoke.log` |

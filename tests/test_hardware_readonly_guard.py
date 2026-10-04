@@ -82,7 +82,7 @@ def test_operator_entry_retains_log_and_closes_mock_port(monkeypatch, tmp_path, 
     monkeypatch.setattr(capture.subprocess, "check_output", lambda *a, **kw: b"abc123")
     monkeypatch.setattr(capture, "SerialIO", lambda port: transport)
     queries = []
-    def query(owner, command, transcript):
+    def query(owner, command, transcript, grblhal=False):
         assert owner is transport
         queries.append(command)
         if failure:
@@ -170,7 +170,7 @@ def test_operator_entry_adds_fluidnc_queries_only_after_fluidnc_identification(m
     monkeypatch.setattr(capture, "SerialIO", lambda port: transport)
     queries = []
 
-    def query(owner, command, transcript):
+    def query(owner, command, transcript, grblhal=False):
         queries.append(command)
         return ["[VER:4.1 FluidNC v4.1.1 (esp32-wifi) :]", "ok"] if command == b"$I\n" else ["x", "ok"]
     monkeypatch.setattr(capture, "read_query", query)

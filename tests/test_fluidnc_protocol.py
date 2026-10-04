@@ -155,3 +155,9 @@ def test_fluidnc_settings_use_proxies_and_never_require_31():
                                                 ('2.0', False), ('', False)])
 def test_motion_version_gate(protocol, supported):
     assert fluidnc.motion_version_supported(protocol) is supported
+
+
+@pytest.mark.parametrize('text', ['ALARM:14', 'error:130', 'Controller ALARM:10'])
+def test_fluidnc_codes_never_borrow_grbl_or_grblhal_meanings(text):
+    from mikrocam.machine.firmware_codes import code_meaning
+    assert code_meaning(FirmwareFamily.FLUIDNC, text).endswith('code not documented for this firmware')

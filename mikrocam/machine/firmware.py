@@ -1,8 +1,9 @@
 """Firmware family/version identification and the immutable capability record (spec 042).
 
 Formats come from the primary sources listed in specs/042-firmware-identification/research.md.
-No firmware source code is copied. D2 (grblHAL) and D3 (FluidNC) change only their family entry in
-``_PROFILES`` and, once a budget is proven, ``_streaming_budget``; no separate controller is added.
+No firmware source code is copied. D2 (grblHAL, spec 043) and D3 (FluidNC) change only their family
+entry in ``_PROFILES``, their budget in ``_streaming_budget`` and their own evidence gate; no separate
+controller is added.
 """
 from dataclasses import dataclass, replace
 from enum import Enum
@@ -140,7 +141,7 @@ _PROFILES = {
         realtime_commands=_COMMON_REALTIME + _OVERRIDES + _GRBLHAL_REALTIME, extra_states=('Tool',),
         status_fields=_GRBL_FIELDS + ('WCS', 'MPG', 'H', 'D', 'Sc', 'TLR', 'FW', 'In', 'DTG', 'AR',
                                       'P', 'S', 'T'),
-        note='grblHAL identified; motion stays disabled until spec 043 (D2) validates its profile'),
+        motion_supported=True),
     FirmwareFamily.FLUIDNC: dict(
         realtime_commands=_COMMON_REALTIME + _OVERRIDES + _FLUIDNC_REALTIME, extra_states=('Starting',),
         status_fields=('MPos', 'WPos', 'Bf', 'Ln', 'FS', 'Pn', 'WCO', 'Ov', 'A', 'SD', 'Heap', 'ISRs'),
@@ -155,10 +156,23 @@ def capabilities_for(family: FirmwareFamily) -> FirmwareCapabilities:
 
 
 def _streaming_budget(family: FirmwareFamily, rx: int | None) -> int | None:
-    """Only GRBL 1.1's reported RX feeds C3, capped as before; other families await D2/D3."""
-    if family is FirmwareFamily.GRBL and rx is not None:
+    """A reported RX feeds C3, capped at its validated 128-byte window (043 UA-2); FluidNC awaits D3."""
+    if family in (FirmwareFamily.GRBL, FirmwareFamily.GRBLHAL) and rx is not None:
         return min(rx, GRBL_STREAMING_CAP)
     return None
+
+
+def _grblhal_motion_blocker(fields: list[str], tags: dict[str, str], extended: tuple[str, ...]) -> str:
+    """Spec 043 FR-001: the 3-axis parsers and printable realtime bytes need this board evidence."""
+    if len(fields) < 3 or fields[2] != '3':
+        return 'grblHAL motion requires a reported axis count of 3 (XYZ)'
+    if tags.get('AXS', '3:XYZ') != '3:XYZ':
+        return 'grblHAL motion requires the XYZ axis set [AXS:3:XYZ]'
+    if 'LATHE' in extended:
+        return 'grblHAL lathe mode is not supported for motion'
+    if 'RT+' not in extended:
+        return 'grblHAL motion requires legacy realtime commands enabled (NEWOPT RT+)'
+    return ''
 
 
 _BANNER = re.compile(r'(Grbl|GrblHAL) ([0-9]+\.[0-9]+[a-z]?)(?: .*)?\Z')
@@ -276,10 +290,12 @@ def _grblhal(head: str, info: str, tags: dict[str, str], greeting, version: str)
     extended = tuple(item for item in tags.get('NEWOPT', '').split(',') if item)
     if any(re.fullmatch(r'[A-Za-z0-9=+-]{1,32}', item) is None for item in extended):
         raise _Unknown('Malformed grblHAL NEWOPT record', version)
+    blocker = _grblhal_motion_blocker(fields, tags, extended)
     return replace(capabilities_for(FirmwareFamily.GRBLHAL), version=match[1], build=match[2],
                    protocol=match[1], build_info=info, options=letters, extended_options=extended,
                    planner_blocks=planner, rx_buffer_bytes=rx,
-                   streaming_rx_budget=_streaming_budget(FirmwareFamily.GRBLHAL, rx))
+                   streaming_rx_budget=_streaming_budget(FirmwareFamily.GRBLHAL, rx),
+                   motion_supported=not blocker, note=blocker)
 
 
 def _grbl(head: str, info: str, tags: dict[str, str], banner: str, version: str) -> FirmwareCapabilities:

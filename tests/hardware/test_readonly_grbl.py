@@ -9,7 +9,9 @@ import time
 import pytest
 
 from mikrocam.bridge.serial_transport import SerialIO
+from mikrocam.machine.firmware import FirmwareFamily, identify
 from mikrocam.machine.grbl import parse_status
+from mikrocam.machine.grblhal import normalize_query_line
 from mikrocam.machine.job_preparation import query_record
 from mikrocam.machine.fluidnc import STARTUP_QUERIES, parse_startup_record
 
@@ -28,13 +30,20 @@ def enabled(environ):
         environ.get("CI") or environ.get("GITHUB_ACTIONS"))
 
 
-def inventory_record(command, line):
-    """Validate complete raw inventory syntax without claiming physical positions."""
+def inventory_record(command, line, grblhal=False):
+    """Validate complete raw inventory syntax without claiming physical positions.
+
+    ``grblhal`` (spec 043) applies the controller's grblHAL status mode and query dialect.
+    """
     if len(line) > 512 or any(not 32 <= ord(char) <= 126 for char in line):
         raise ValueError("Inventory record must be bounded printable ASCII")
     if command == b"?" and line.startswith("<"):
-        parse_status(line)
+        parse_status(line, grblhal=grblhal)
         return True
+    if grblhal and command != b"$I\n":
+        line = normalize_query_line(line)
+        if line is None:
+            return False
     if command == b"$I\n" and line.startswith("[VER"):
         if _FLUIDNC_VER.fullmatch(line):
             return True
@@ -54,7 +63,13 @@ def inventory_record(command, line):
     return False
 
 
-def read_query(transport, command, transcript, clock=time.monotonic):
+def family_of(lines):
+    """Classify a captured $I reply with the controller's own rules (042/043)."""
+    evidence = tuple(line for line in lines if line.startswith("[") and not line.startswith("[MSG:"))
+    return identify("", evidence).family
+
+
+def read_query(transport, command, transcript, clock=time.monotonic, grblhal=False):
     """Bounded fragmented-line read; an inventory record alone never consumes an ACK."""
     if type(command) is not bytes or command not in COMMANDS + FLUIDNC_COMMANDS:
         raise ValueError("Only the readonly GRBL/FluidNC inventory queries are allowed")
@@ -87,7 +102,7 @@ def read_query(transport, command, transcript, clock=time.monotonic):
             lines.append(line)
             if line.startswith(("error:", "ALARM:")):
                 raise ValueError(f"Readonly query rejected: {line}")
-            record = inventory_record(command, line) or record
+            record = inventory_record(command, line, grblhal) or record
             if command == b"?" and record and line.startswith("<") and line.endswith(">"):
                 return lines
             if command != b"?" and line == "ok" and record:
@@ -121,9 +136,16 @@ def test_readonly_grbl_inventory():
                 size += len(chunk)
                 if size > 16384:
                     raise ValueError("Startup exceeded readonly capture limit")
+        grblhal = fluid = False
         for command in COMMANDS:
-            evidence["queries"][command.decode().strip()] = read_query(transport, command, evidence["wire"])
-        if is_fluidnc(evidence["queries"]["$I"]):
+            lines = read_query(transport, command, evidence["wire"], grblhal=grblhal)
+            evidence["queries"][command.decode().strip()] = lines
+            if command == b"$I\n":
+                family = family_of(lines)
+                evidence["firmware"] = family.value
+                grblhal = family is FirmwareFamily.GRBLHAL
+                fluid = family is FirmwareFamily.FLUIDNC  # Spec 044 readonly additions.
+        if fluid:
             for command in FLUIDNC_COMMANDS:
                 evidence["queries"][command.decode().strip()] = read_query(transport, command, evidence["wire"])
         evidence["result"] = "passed"
