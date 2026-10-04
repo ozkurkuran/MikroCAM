@@ -16,6 +16,18 @@ _STYLE_GEOMETRY = {'transform', 'transform-origin', 'transform-box', 'width', 'h
                    'x', 'y', 'r', 'rx', 'ry', 'cx', 'cy', 'd'}
 
 
+def _enable_background(value: str) -> None:
+    """Validate SVG 1.1 accumulate | new [x y width height]; it never changes positive material."""
+    words = value.lower().split()
+    if words in (['accumulate'], ['new'], ['inherit']):
+        return
+    if words[:1] == ['new'] and len(words) == 5:
+        numbers = [parse_svg_numbers(word) for word in words[1:]]
+        if all(len(number) == 1 for number in numbers) and numbers[2][0] >= 0 and numbers[3][0] >= 0:
+            return
+    raise ValueError('Malformed SVG enable-background declaration')
+
+
 def _inline(text: str) -> dict[str, str]:
     if len(text) > 16384:
         raise ValueError('SVG inline style exceeds supported limit')
@@ -33,6 +45,9 @@ def _inline(text: str) -> dict[str, str]:
         value = re.sub(r'\s*!important\s*$', '', value).strip()
         if key in _STYLE_GEOMETRY:
             raise ValueError(f'Unsupported SVG CSS geometry property: {key}; use attributes')
+        if key == 'enable-background':
+            _enable_background(value)
+            continue  # Filter-only background setup, written by Illustrator; filters stay unsupported.
         if key not in _DEFAULTS and key not in _UNSUPPORTED and key not in (
                 'overflow', 'stroke-dashoffset', 'paint-order'):
             raise ValueError(f'Unsupported SVG CSS property: {key}')

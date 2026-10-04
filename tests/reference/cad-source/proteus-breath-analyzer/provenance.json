@@ -1,0 +1,50 @@
+{
+  "kind": "genuine third-party vendor export, unmodified bytes",
+  "producer_claim": "Labcenter Proteus Design Suite (PCB layout SVG export)",
+  "repository": "https://github.com/TengoCharlie/breath-analyzer",
+  "upstream_revision": "5872bbe211318a74ec51ccff3bf4ef2fc1d371b7",
+  "upstream_commit_author": "Harsh Tenguriya <32489875+TengoCharlie@users.noreply.github.com>",
+  "upstream_commit_date": "2023-10-04T19:06:18Z",
+  "license": "Apache-2.0",
+  "license_evidence": "Repository LICENSE (Apache License 2.0, unfilled appendix template) present since initial commit 2c8f6a94ccaa42b9dc86c1f074570fbf8feb55f7, before the SVG was added; GitHub reports spdx_id Apache-2.0. No NOTICE file exists upstream. No copyright line is invented here.",
+  "retrieved": "2026-10-04",
+  "retrieved_by": "MikroCAM vendor-fixture search (GitHub code search for the Proteus SVG desc marker)",
+  "files": {
+    "B_A_.svg": {
+      "upstream_path": "pcb bt woled/B_A_.svg",
+      "url": "https://github.com/TengoCharlie/breath-analyzer/blob/5872bbe211318a74ec51ccff3bf4ef2fc1d371b7/pcb%20bt%20woled/B_A_.svg",
+      "raw_url": "https://raw.githubusercontent.com/TengoCharlie/breath-analyzer/5872bbe211318a74ec51ccff3bf4ef2fc1d371b7/pcb%20bt%20woled/B_A_.svg",
+      "bytes": 129249,
+      "sha256": "d383d1859fef5bffdbea3aa2631a03473c049b0366546095855f15d62fab6fbb",
+      "git_blob_sha1": "6f719ef50a681795291ccce2e7db143f6ff5d104"
+    },
+    "LICENSE": {
+      "upstream_path": "LICENSE",
+      "url": "https://github.com/TengoCharlie/breath-analyzer/blob/5872bbe211318a74ec51ccff3bf4ef2fc1d371b7/LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "git_blob_sha1": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    }
+  },
+  "corroborating_upstream_files_not_retained": {
+    "pcb bt woled/B_A_ - CADCAM READ-ME.TXT": {
+      "sha256": "9a56f833e11dd4e85add1f4b697d6ce0f05c61f8cc786392e7484ecb68f795c0",
+      "note": "Starts 'LABCENTER PROTEUS TOOL INFORMATION FILE'; Proteus layout 'B_A_.pdsprj', CADCAM generated 26 September 2023; Drill D21 CIRCLE D=1mm ComponentDrill."
+    },
+    "pcb bt woled/B_A_.dxf": {
+      "sha256": "ced6e205b8c545c85983d2c95a34087f88e4a40c39de88d21630d4dc48fd8b9f",
+      "note": "Rejected as a fixture: no producer marker and the neighbouring DXFINFO.LOG reads like a DXF import log, so its producing application cannot be established."
+    }
+  },
+  "markers": {
+    "svg": {
+      "title": "Proteus Design Suite SVG export",
+      "desc": "Created by Proteus Design Suite",
+      "root": "width=54.11mm height=44.28mm viewBox=0 0 5411 4428 version=1.2 baseProfile=tiny",
+      "line_endings": "CRLF",
+      "vector_effect_values": {"non-scaling-stroke": 209, "none": 142},
+      "white_openings": "unclosed four-cubic Bezier circles, radius 50 user units (0.5 mm); pads are DIL/PPAD shapes, not circles"
+    }
+  },
+  "coverage_note": "Authentic Proteus PCB artwork SVG. Source detection must identify Proteus from the root desc marker. Geometry import currently rejects it explicitly (vector-effect: non-scaling-stroke on filled, unstroked paths), so 018 drill detection on genuine Proteus output remains unverified. Proteus is not a runtime dependency."
+}

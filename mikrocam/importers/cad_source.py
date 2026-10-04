@@ -6,7 +6,7 @@ import re
 from mikrocam.core.cad_source import CadSourceAssessment, MAX_CAD_SOURCE_BYTES
 from .cad_dxf_source import dxf_source_evidence
 from .cad_svg_source import svg_source_evidence
-from .cad_producer import classify_producer, is_inkscape_version, producer_declaration
+from .cad_producer import classify_producer, desc_declaration, is_inkscape_version, producer_declaration
 
 
 def validate_cad_assessment(record: CadSourceAssessment) -> None:
@@ -27,7 +27,7 @@ def validate_cad_assessment(record: CadSourceAssessment) -> None:
             if claim.field == 'dxf.999' and not re.match(
                     r'\s*(?:Generator\s*:|Creator\s*:|Created\s+with\b|Generated\s+by\b)', claim.value, re.I):
                 raise ValueError('Retained DXF comment is not a producer declaration')
-            producer = producer_declaration(claim.value)
+            producer = (desc_declaration if claim.field == 'svg.desc' else producer_declaration)(claim.value)
             if producer is None:
                 raise ValueError('Retained source field is not a producer declaration')
             application = classify_producer(producer)
