@@ -1,6 +1,6 @@
 # Validation — Windows paketleme (040) + 033 T001/T010
 
-check-status: PASS (yerel kaynak/ikili kabul) / RUNNING (PR CI) / WAITING (Release yayını, imzalama).
+check-status: PASS (yerel + PR CI kaynak/ikili kabul) / WAITING (Release yayını, imzalama, merge koordinatörde).
 
 Base `70800e5b`; dal `040-packaging-windows`; worktree `E:/VSCode/Flatcam/MikroCAM-packaging`.
 Makine: Windows 11 Pro 10.0.26200, CPython 3.13.13 x64, Kaspersky (avp) etkin, Windows Defender
@@ -27,7 +27,10 @@ pasif. Kanıt logları worktree `.venv/` altındadır (git dışı). Merkezi kay
 | Mimari testler | PASS | 83 PASS (`tests/architecture`, legacy büyüme dahil) |
 | Tam pytest (offscreen) | PASS | 5867 passed, 3 skipped, 11 mevcut uyarı, 310 alt test, 548.58 s, exit 0 (`.venv/040-full.log`, `.venv/040-full.xml`) |
 | Kaynak `tests/smoke_app.py` native | PASS | exit 0, 68 s, tüm yolculuk işaretleri + RENDER_OK + SHUTDOWN_OK (`.venv/040-smoke-app.log`); ekran görüntüsü incelendi |
-| PR Windows CI + paketleme iş akışı | RUNNING | PR açıldığında doldurulur |
+| PR Windows CI (tests) | PASS | [PR #43](https://github.com/ozkurkuran/MikroCAM/pull/43) head `1a0791b9`: [run 37214085188](https://github.com/ozkurkuran/MikroCAM/actions/runs/37214085188) 5867 passed, 3 skipped, 310 alt test, 425 s |
+| PR paketleme iş akışı (windows-latest) | PASS | [run 37214085168](https://github.com/ozkurkuran/MikroCAM/actions/runs/37214085168): NSIS 3.12, build + manifest, portable/frozen offscreen duman, kurulum→kurulu exe→kaldırma; artifact `mikrocam-windows-x64` (ZIP `bd355d86…`, setup `bb276af6…`). İlk deneme [run 37213266063](https://github.com/ozkurkuran/MikroCAM/actions/runs/37213266063) FAIL: runner TEMP 8.3 kısa adı (`RUNNER~1`) kayıt metni eşleşmesini bozdu; sürücü winreg+samefile ile düzeltildi |
+| `workflow_dispatch` | NOT_RUN | GitHub yalnızca varsayılan dalda bulunan iş akışını elle çalıştırır; dal doğrulaması yol filtreli `pull_request` tetikleyicisiyle yapıldı. Birleşmeden sonra kullanılabilir |
+| Bit-bit tekrarlanabilirlik | N/A | Aynı sabit girdiler aynı dosya kümesini ve manifesti üretir; PyInstaller exe/ZIP baytları derleme ortamına göre değişir (yerel `30765eb1…` ≠ CI `bd355d86…`); iddia edilmez |
 | GitHub Release yayını | WAITING | Tag push ve taslağı yayımlama kullanıcı kararı; bu dilimde tag/Release yok |
 | Kod imzalama | WAITING / N/A | Ücretsiz kalıcı yol yok (A5); SmartScreen uyarısı belgelendi |
 | Fiziksel makine/lazer | N/A | Donanım bağlantısı yok |

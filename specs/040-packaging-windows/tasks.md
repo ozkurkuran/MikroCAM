@@ -47,6 +47,6 @@ Hikâyeler: **US1** portable çalıştırma, **US2** kullanıcı başına kurulu
 
 ## Delivery
 - [x] T029 Mimari testler, pip check, tam pytest (offscreen) ve kaynak `tests/smoke_app.py` native.
-- [ ] T030 validation.md; commit (build çıktısı yok), push, PR.
-- [ ] T031 PR Windows CI + `workflow_dispatch` paketleme iş akışı; hatalar düzeltilir.
-- [ ] T032 Merkezi takip son durumu; tag/Release yayını WAITING (kullanıcı kararı), merge koordinatörde.
+- [x] T030 validation.md; commit (build çıktısı yok), push, PR.
+- [x] T031 PR Windows CI + paketleme iş akışı (yol filtreli PR; `workflow_dispatch` varsayılan dalda); hatalar düzeltilir.
+- [x] T032 Merkezi takip son durumu; tag/Release yayını WAITING (kullanıcı kararı), merge koordinatörde.
