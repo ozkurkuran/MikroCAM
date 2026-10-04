@@ -132,6 +132,35 @@ Record the complete greeting and `$I` reply verbatim (Machine console `$I` or H2
 
 Identification passing does not validate grblHAL/FluidNC motion; that belongs to specs 043/044.
 
+## H044 FluidNC USB serial scenarios (spec 044) — NOT_RUN
+
+Status: prepared on 2026-10-04; **NOT_RUN on every board**. Software was built and tested only against
+the FakeGRBL `fluidnc` (v4.1.1) and `fluidnc3` (v3.9.9) profiles; no FluidNC board was available and
+H3 has not been completed. Use an ESP32 FluidNC board whose firmware is v3.9.x or v4.x, record the
+exact release, board, USB bridge chip (CP210x/CH340/native S3 USB) and driver. Isolate spindle/laser
+power, remove the tool and keep the physical E-stop reachable for every motion row. The optional H2
+readonly inventory now detects FluidNC from `$I` and additionally sends only
+`$/macros/startup_line0`, `$/macros/startup_line1`, `$/macros/after_reset`, `$RI` and `$CD`.
+
+| ID | Operator action and measurable acceptance |
+| --- | --- |
+| H044-1 | Port-open reset: with mechanisms stopped connect 5× and disconnect. Record whether the board reboots on open (ROM lines `ets`/`rst:0x` or `ESP-ROM:` in the wire log), time to the greeting, and that MikroCAM shows `FluidNC x.y.z … motion enabled` only after the greeting/quiet period; no `$I`/`$$` before readiness is acknowledged. Record DTR/RTS behaviour per USB bridge; note any board left in download mode (S3). |
+| H044-2 | Readonly evidence: H2 inventory plus Machine console `$CD`. Compare `$$` (`$13`, `$30`, `$32`), `$#` (TLO scalar on 3.x, vector on 4.x), macros and `$RI` with the YAML. Confirm MikroCAM never sent `$N`, settings writes or `0x87`–`0x8A`. |
+| H044-3 | Startup macros: on the bench set `macros/after_reset` (then `startup_line0`) to a harmless non-motion line, e.g. `G4P0`; jog/job/probe must be refused before any motion with the macro named. Restore the empty values afterwards. With `$RI=200` the same refusal must name `$RI`; restore `$RI=0`. |
+| H044-4 | Smallest bounded jog on each axis, Cancel jog during a 10 mm jog, G54 selection and XY/Z zero: measure distances/direction and offsets as in H011-1…3. Record that Cancel jog returns `ok` (FluidNC suppresses `error:130`). |
+| H044-5 | Short reviewed air job (send-response) with output power disconnected; Pause/Resume, Stop and Abort as in H013-1/2. Record `Hold:0/1`, `Door:n` and whether `after_reset` stayed empty so Stop used `0x18`. Character counting must be refused. |
+| H044-6 | Probe grid on a known plane as in H025-1/2 (contact `[PRB:…:1]`, `ALARM:5` on no-contact) and a reviewed autolevel air run as in H026-1. |
+| H044-7 | Custom greeting: set `$Start/Message` to a text not starting with `Grbl`, reset the board from its button while idle and during a safe air job. Expected: idle → identity/units re-read after ~2 s; job → stopped (`0x18`/`0x84`), no further job lines. Restore the default afterwards. |
+| H044-8 | Power-cycle (or EN button) while connected and idle, then during a safe air job: UI must invalidate units/identity, end the operation as reset, and re-identify only after the board is ready. Observe independently whether the mechanism stopped. |
+| H044-9 | USB cable loss during a safe low-speed air job (as H013-3): failure shown, no automatic replay. |
+
+| Board / FluidNC release / bridge / run ID | H044-1 | H044-2 | H044-3 | H044-4 | H044-5 | H044-6 | H044-7 | H044-8 | H044-9 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Not supplied / not tested | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN |
+
+Spec 044 closes the D1 software gap UA-8 (custom greeting reset detection) in software only; H042-5
+and H044-7 remain the physical evidence and are NOT_RUN.
+
 ## Completion and deferred gates
 
 H1/H2 are agent preparation. H3 is complete only when an operator supplies a completed record
