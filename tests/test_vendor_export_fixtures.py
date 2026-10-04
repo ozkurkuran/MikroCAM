@@ -56,3 +56,64 @@ def test_genuine_proteus_geometry_import_fails_explicitly_not_partially(object_t
     source = (PROTEUS / 'B_A_.svg').read_bytes()
     with pytest.raises(ValueError, match='vector-effect'):
         import_svg_bytes(source, 'B_A_.svg', object_type=object_type)
+
+
+ILLUSTRATOR_XMP = ROOT / 'illustrator-wortschule-hilfsverb'
+_PT = 50 / 141.732  # XMP MaxPageSize 50 mm over the exported 141.732-unit viewBox.
+
+
+def test_illustrator_xmp_export_is_unmodified_mit_licensed_upstream_bytes():
+    provenance = _assert_retained_bytes(ILLUSTRATOR_XMP)
+    assert provenance['license'] == 'MIT'
+    assert provenance['upstream_revision'] == 'eea2cf5d856bff46ebc96b1dd472e869a604c31e'
+    assert 'Copyright (c) 2022 Stefan Wintermeyer' in (ILLUSTRATOR_XMP / 'LICENSE').read_text(encoding='utf-8')
+    source = (ILLUSTRATOR_XMP / 'hilfsverb.svg').read_bytes()
+    assert 0 < source.count(b'\r\n') < source.count(b'\n')  # Exported mixed line endings are retained.
+
+
+def test_genuine_illustrator_xmp_export_identifies_illustrator_from_both_fields():
+    source = (ILLUSTRATOR_XMP / 'hilfsverb.svg').read_bytes()
+    assessment = detect_cad_source(source, 'inkscape.svg', 'SVG')
+    assert assessment.application == 'Illustrator' and assessment.status == 'identified'
+    assert [(item.field, item.application) for item in assessment.evidence] == [
+        ('svg.generator-comment', 'Illustrator'), ('svg.xmp.CreatorTool', 'Illustrator')]
+    assert assessment.evidence[1].value == 'Adobe Illustrator 25.3 (Windows)'
+    validate_cad_assessment(assessment)
+
+
+@pytest.mark.parametrize('object_type', ['geometry', 'gerber'])
+@pytest.mark.parametrize('flip', [False, True])
+def test_genuine_illustrator_page_size_comes_from_xmp_max_page_size(object_type, flip):
+    from shapely import union_all
+    from mikrocam.core.import_report import build_import_report
+    source = (ILLUSTRATOR_XMP / 'hilfsverb.svg').read_bytes()
+    result = import_svg_bytes(source, 'hilfsverb.svg', flip=flip, object_type=object_type)
+    notices = [(item.code, item.message) for item in result.document.notices]
+    assert ('xmp-page-size', 'SVG width uses XMP page dimension 50 mm.') in notices
+    assert ('xmp-page-size', 'SVG height uses XMP page dimension 50 mm.') in notices
+    assert (result.document.viewport.width_mm, result.document.viewport.height_mm) == pytest.approx((50, 50))
+    report = build_import_report(result)
+    assert report.coordinates.source_width is None and report.coordinates.source_units == ('absent', 'absent')
+    assert report.coordinates.view_box == pytest.approx((0, 0, 141.732, 141.732))
+    assert report.source_sha256 == _provenance(ILLUSTRATOR_XMP)['files']['hilfsverb.svg']['sha256']
+    # Colour is positive material: the white disc does not subtract from the red disc.
+    material = union_all(result.geometry_mm)
+    radius, x, y = 52.044 * _PT, 74.098 * _PT, 72.921 * _PT
+    y = 50 - y if flip else y
+    assert material.is_valid and material.bounds == pytest.approx(
+        (x - radius, y - radius, x + radius, y + radius), abs=.01)
+    assert 0.999 * 3.141592653589793 * radius ** 2 <= material.area <= 3.141592653589793 * radius ** 2
+
+
+@pytest.mark.parametrize('flip', [False, True])
+def test_genuine_illustrator_concentric_white_disc_is_one_reviewed_drill_candidate(flip):
+    from mikrocam.core.svg_drills import detect_svg_drills
+    source = (ILLUSTRATOR_XMP / 'hilfsverb.svg').read_bytes()
+    review = detect_svg_drills(import_svg_bytes(source, 'hilfsverb.svg', flip=flip))
+    assert len(review.candidates) == 1
+    candidate = review.candidates[0]
+    y = 72.921 * _PT
+    assert candidate.center_mm == pytest.approx((74.098 * _PT, 50 - y if flip else y), abs=1e-6)
+    assert candidate.diameter_mm == pytest.approx(2 * 26.022 * _PT, abs=1e-6)
+    assert (candidate.opening_id, candidate.pad_id) == ('2:circle', '1:circle')
+    assert any(item.code == 'heuristic' for item in review.notices)
