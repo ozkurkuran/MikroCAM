@@ -18,6 +18,16 @@
 6. Interlace N groups original scan indices by nonnegative modulo N (for example N=3 groups
    rows 0/3/6, then 1/4/7, then 2/5/8). Cross-hatch families remain separate. N=1 preserves
    previous order. This is path ordering, not a calibrated thermal-control claim.
+   **Island tiling** (requires hatch) splits the fill into square tiles anchored at the
+   source origin. Tile size must be at least the hatch spacing; overlap is the total overlap
+   between neighbouring tiles. Odd tiles (column + row odd) add the angle step to the hatch
+   angle, so 90° gives perpendicular neighbours. Checkerboard order scans all even tiles,
+   then all odd tiles, each row by row, so edge-sharing tiles in one colour are never
+   consecutive; Row by row scans tiles in rows. Contours come first; Interlace N then
+   applies inside each tile. With zero overlap a line on a shared tile edge is emitted once,
+   and a zero angle step reproduces ordinary hatch exactly. Island exports write manifest
+   schema 3 with the island settings; exports without islands keep schema 1/2 unchanged.
+   Recipe JSON is unaffected. Tile order is path ordering, not a verified thermal result.
 7. Generate and inspect the Geometry preview. It draws common geometry once even for several
    passes; each planned pass retains its own explicit parameters. Cancel/close invalidates
    unfinished results; changing controls requires a new generation before export.
@@ -37,7 +47,8 @@ placed coordinates.
 Manually transfer **all four parameters** from recipe.json to each target operation. SVG/DXF
 do not automatically configure the laser. Resolve unsupported frequency/pulse-width settings
 in the target application's device configuration. External optimization can reorder imported
-geometry and defeat interlace; inspect or disable it as appropriate in that application.
+geometry and defeat interlace or island tile order; inspect or disable it as appropriate in
+that application.
 
 The exporter writes a temporary ZIP beside the selected destination, flushes it and replaces
 the destination only after success. Cancel before that boundary preserves the previous file.

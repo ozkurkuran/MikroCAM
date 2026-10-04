@@ -10,6 +10,7 @@ CancelCheck = Callable[[], bool] | None
 MAX_SCAN_LINES = 50_000
 MAX_PATHS = 200_000
 CONTOUR_MODES = ('none', 'outer', 'inner', 'trace', 'pad', 'board')
+ISLAND_ORDERS = ('checkerboard', 'raster')
 
 
 class PlanningCancelled(Exception):
@@ -52,6 +53,32 @@ class CopperFeatures:
 
 
 @dataclass(frozen=True)
+class IslandSettings:
+    """Origin-anchored square hatch tiles; odd-parity tiles add ``angle_step_deg``.
+
+    ``overlap_mm`` is the total overlap between two neighbouring tiles. ``checkerboard``
+    scans even-parity tiles before odd-parity ones; ``raster`` scans row by row.
+    """
+    tile_size_mm: float
+    overlap_mm: float = 0.0
+    angle_step_deg: float = 90.0
+    order: str = 'checkerboard'
+
+    def __post_init__(self) -> None:
+        tile = _finite_real(self.tile_size_mm, 'tile_size_mm')
+        overlap = _finite_real(self.overlap_mm, 'overlap_mm')
+        if tile <= 0:
+            raise ValueError('Island tile size must be positive')
+        if not 0 <= overlap < tile:
+            raise ValueError('Island overlap must be at least zero and smaller than the tile size')
+        if type(self.order) is not str or self.order not in ISLAND_ORDERS:
+            raise ValueError('Island order must be checkerboard or raster')
+        object.__setattr__(self, 'tile_size_mm', tile)
+        object.__setattr__(self, 'overlap_mm', overlap)
+        object.__setattr__(self, 'angle_step_deg', _finite_real(self.angle_step_deg, 'angle_step_deg'))
+
+
+@dataclass(frozen=True)
 class PlanOptions:
     """Explicit geometric options; no material/device recipe defaults."""
     contour_mode: str = 'outer'
@@ -61,6 +88,7 @@ class PlanOptions:
     cross_hatch: bool = False
     region_mode: str = 'copper'
     interlace_n: int = 1
+    island: IslandSettings | None = None
 
     def __post_init__(self) -> None:
         validate_interlace_n(self.interlace_n)
@@ -79,6 +107,13 @@ class PlanOptions:
             raise ValueError('Hatch spacing must be positive')
         object.__setattr__(self, 'spacing_mm', spacing)
         object.__setattr__(self, 'angle_deg', _finite_real(self.angle_deg, 'angle_deg'))
+        if self.island is not None:
+            if not isinstance(self.island, IslandSettings):
+                raise ValueError('Island tiling requires IslandSettings or None')
+            if not self.hatch:
+                raise ValueError('Island tiling requires hatch')
+            if self.island.tile_size_mm < spacing:
+                raise ValueError('Island tile size must be at least the hatch spacing')
 
 
 @dataclass(frozen=True)

@@ -9,7 +9,7 @@ import zipfile
 from typing import BinaryIO
 
 from mikrocam.core.laser_json import PASS_FIELDS, DEVICE_PASS_FIELDS, recipe_to_json
-from mikrocam.core.laser_manifest import MAX_PASSES, manifest_to_json
+from mikrocam.core.laser_manifest import MAX_PASSES, island_to_data, manifest_to_json
 from mikrocam.core.laser_paths import CancelCheck, LaserPlan, check_cancelled
 
 
@@ -38,6 +38,13 @@ Target optimization can reorder paths and defeat interlace order; inspect or dis
 Structural/parser checks do not establish target-app import or physical process validation.
 Verify the actual licensed target application and a suitable physical test coupon separately.
 This package connects to no hardware, arms no laser, and performs no motion or emission.
+'''
+ISLAND_README = '''
+Island tiling: hatch is split into origin-anchored square tiles (manifest island settings).
+Paths are ordered contours first, then tile by tile; checkerboard order scans even tiles
+before odd tiles so edge-sharing tiles are not consecutive. Odd tiles add angle_step_deg.
+Target optimization or sorting can reorder paths and defeat island order; disable it.
+Tile order is path ordering only, not a verified thermal result; test on a coupon.
 '''
 
 
@@ -97,15 +104,20 @@ def _write_archive(stream: BinaryIO, plan: LaserPlan, bounds: list[float], forma
                             'path_count': len(plan.paths),
                             'settings': {field: getattr(settings, field) for field in
                                          (DEVICE_PASS_FIELDS if plan.job.recipe.device else PASS_FIELDS)}})
+        island = plan.options.island
         manifest = {'kind': 'mikrocam.laser-export', 'schema_version': 2 if plan.job.recipe.device else 1, 'format': format,
                     'units': 'mm', 'job_name': plan.job.name, 'bounds_mm': bounds,
                     'interlace_n': plan.options.interlace_n,
                     'coordinate_mapping': 'svg-local-y-down' if format == 'svg' else 'placed-xy',
                     'recipe_file': 'recipe.json', 'passes': entries}
         if plan.job.recipe.device: manifest['device'] = json.loads(recipe_to_json(plan.job.recipe))['device']
+        if island is not None:
+            manifest.setdefault('device', None)
+            manifest.update(schema_version=3, island=island_to_data(island))
         _write_entry(archive, 'recipe.json', recipe_to_json(plan.job.recipe).encode('utf-8'), cancelled)
         _write_entry(archive, 'manifest.json', manifest_to_json(manifest).encode('utf-8'), cancelled)
-        _write_entry(archive, 'README.txt', README.encode('utf-8'), cancelled)
+        readme = README + (ISLAND_README if island is not None else '')
+        _write_entry(archive, 'README.txt', readme.encode('utf-8'), cancelled)
 
 
 def export_plan(plan: LaserPlan, destination: Path | str, format: str,

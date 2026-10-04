@@ -8,7 +8,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from mikrocam.bridge.laser_cam import LaserCamHost
 from mikrocam.core.laser_job import LaserJob, LaserRecipe
 from mikrocam.core.laser_json import recipe_from_json
-from mikrocam.core.laser_paths import CopperFeatures, LaserPlan, PlanOptions
+from mikrocam.core.laser_paths import CopperFeatures, IslandSettings, LaserPlan, PlanOptions
 from mikrocam.core.placement import Placement
 from .laser_recipe import LaserRecipeEditor, save_recipe_file
 from .laser_export import LaserExportControls
@@ -132,6 +132,24 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         form.addRow(_('Interlace N'), self.interlace_n)
         self._inputs.append(self.interlace_n)
         layout.addWidget(group)
+        self._build_islands(layout)
+
+    def _build_islands(self, layout: QtWidgets.QVBoxLayout) -> None:
+        group = QtWidgets.QGroupBox(_('Island tiling'))
+        form = QtWidgets.QFormLayout(group)
+        self.island_enabled = self._check(form, 'Split hatch into island tiles')
+        self.island_tile = self._number(form, 'Tile size (mm)', 5, 0.000001, 1e6)
+        self.island_overlap = self._number(form, 'Tile overlap (mm)', 0, 0, 1e6)
+        self.island_angle_step = self._number(form, 'Odd-tile angle step (degrees)', 90, -360000, 360000)
+        self.island_order = self._combo(form, 'Tile order', (
+            ('Checkerboard', 'checkerboard'), ('Row by row', 'raster')))
+        layout.addWidget(group)
+
+    def _island(self) -> IslandSettings | None:
+        if not self.island_enabled.isChecked():
+            return None
+        return IslandSettings(self.island_tile.value(), self.island_overlap.value(),
+                              self.island_angle_step.value(), self.island_order.currentData())
 
     def _build_actions(self, layout: QtWidgets.QVBoxLayout) -> None:
         buttons = QtWidgets.QHBoxLayout()
@@ -238,7 +256,8 @@ class LaserCamPanel(QtWidgets.QDockWidget):
         options = PlanOptions(contour_mode=self.contour_combo.currentData(),
                               region_mode=self.region_combo.currentData(), hatch=self.hatch_enabled.isChecked(),
                               spacing_mm=self.hatch_spacing.value(), angle_deg=self.hatch_angle.value(),
-                              cross_hatch=self.cross_hatch.isChecked(), interlace_n=self.interlace_n.value())
+                              cross_hatch=self.cross_hatch.isChecked(), interlace_n=self.interlace_n.value(),
+                              island=self._island())
         features = self.host.snapshot(source, self.outline_combo.currentData())
         return LaserJob(source, features.copper, recipe, placement), options, features
 
