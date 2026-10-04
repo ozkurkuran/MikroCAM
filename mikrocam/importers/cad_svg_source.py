@@ -3,7 +3,7 @@ import re
 from xml.etree import ElementTree as ET
 
 from mikrocam.core.cad_source import CadSourceEvidence, MAX_CAD_SOURCE_BYTES
-from .cad_producer import classify_producer, is_inkscape_version, producer_declaration
+from .cad_producer import classify_producer, desc_declaration, is_inkscape_version, producer_declaration
 
 
 MAX_XML_ELEMENTS = 10000
@@ -104,7 +104,7 @@ def svg_source_evidence(source: bytes) -> tuple[CadSourceEvidence, ...]:
             _metadata(child, records)
         elif kind == 'comment' or not len(child):
             value = child.text or ''
-            producer = producer_declaration(value)
+            producer = producer_declaration(value) if kind == 'comment' else desc_declaration(value)
             if producer is not None:
                 field = 'svg.generator-comment' if kind == 'comment' else 'svg.desc'
                 _evidence(records, field, value, producer)
