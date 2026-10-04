@@ -258,10 +258,11 @@ def machine_firmware_journey(panel, qapp, errors):
     assert not panel.manual_controls.jog_buttons[('X', 1)].isEnabled()
     assert not panel.last_snapshot.job.can_start and not panel.last_snapshot.probe.can_start
     assert not any(write.startswith((b'$J=', b'G10', b'G54')) for write in hal.writes)
+    shown = panel.firmware_label.text()
     panel.disconnect_machine()
     pump_until(qapp, lambda: not panel.busy, errors, 'grblHAL disconnect')
     assert not hal.is_open and panel.firmware_label.text() == 'Not identified'
-    print('MACHINE_FIRMWARE_GRBLHAL_LOCKED_OK', panel.last_snapshot.firmware.capabilities.note, flush=True)
+    print('MACHINE_FIRMWARE_GRBLHAL_LOCKED_OK', shown, flush=True)
 
 
 def machine_manual_journey(panel, qapp, fake, errors):
