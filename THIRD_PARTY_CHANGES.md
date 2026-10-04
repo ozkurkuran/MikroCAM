@@ -416,3 +416,16 @@ No manufacturer-specific M7 numerical limits or native project encoding inferred
   `Created by` desc marker (`mikrocam/importers/cad_producer.py`, `cad_svg_source.py`,
   `cad_source.py`) and Illustrator `enable-background` no-op (`mikrocam/importers/svg_style.py`).
   Details and remaining gaps: the three feature validation files.
+
+## 2026-10-04 — SVG vendor compatibility (spec 041)
+
+- Data only; no external code copied and no dependency added. One further unmodified export:
+  `tests/reference/cad-source/illustrator-commons-hex-star-doctype/Hex_icon_with_star_white.svg`
+  from https://commons.wikimedia.org/wiki/File:Hex_icon_with_star_white.svg (single version,
+  Commons SHA-1 `22d0ade2a982c214b66cf0383fb7e3399f21e952`), CC0 1.0 by Heatherawalls (own work);
+  statement quoted in the folder's `LICENSE`; file name in canonical Commons URL form.
+- Reason: genuine Illustrator 16.0.4 export carrying the standard SVG 1.1 public DOCTYPE accepted by
+  spec 041. Standards consulted (text only, not code): W3C SVG 1.0/1.1 DTD identifiers, SVG Tiny 1.2
+  §11.5 and SVG 2 §8.13 `vector-effect`. MikroCAM implementation is original
+  (`mikrocam/importers/svg_doctype.py`, `svg_style.py`, `svg_document.py`,
+  `mikrocam/core/svg_transform.py`, `svg_drill_circles.py`, `svg_drills.py`).

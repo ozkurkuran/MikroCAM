@@ -228,3 +228,44 @@ def test_genuine_illustrator_layers_css_compound_fill_and_stroke_import(object_t
     assert material.is_valid and len(material.geoms) == 16
     assert sum(len(polygon.interiors) for polygon in material.geoms) == 25
     assert material.bounds[2] == pytest.approx(x1, abs=1e-6)
+
+
+ILLUSTRATOR_DOCTYPE = ROOT / 'illustrator-commons-hex-star-doctype'
+_HEX = 'Hex_icon_with_star_white.svg'
+_SVG11_DOCTYPE = (b'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" '
+                  b'"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
+
+
+def test_illustrator_doctype_export_is_unmodified_cc0_bytes():
+    provenance = _assert_retained_bytes(ILLUSTRATOR_DOCTYPE)
+    assert provenance['license'] == 'CC0-1.0'
+    source = (ILLUSTRATOR_DOCTYPE / _HEX).read_bytes()
+    assert hashlib.sha1(source).hexdigest() == provenance['commons_versions'][0]['sha1']
+    assert source.count(b'\r\n') == source.count(b'\n') > 0  # Exported CRLF bytes, never normalized.
+    assert source.count(_SVG11_DOCTYPE) == 1 and b'Adobe Illustrator 16.0.4' in source
+    assessment = detect_cad_source(source, 'x.svg', 'SVG')
+    assert assessment.application == 'Illustrator' and assessment.status == 'identified'
+
+
+@pytest.mark.parametrize('object_type', ['geometry', 'gerber'])
+@pytest.mark.parametrize('flip', [False, True])
+def test_genuine_illustrator_standard_svg11_doctype_export_imports(object_type, flip):
+    # Spec 041: the standard public DOCTYPE no longer blocks import; geometry is analytic.
+    from shapely import affinity, union_all
+    from shapely.geometry import Polygon
+    source = (ILLUSTRATOR_DOCTYPE / _HEX).read_bytes()
+    result = import_svg_bytes(source, _HEX, flip=flip, object_type=object_type)
+    width, height = 87.123 * _PX, 100.869 * _PX
+    assert (result.document.viewport.width_mm, result.document.viewport.height_mm) == pytest.approx((width, height))
+    hexagon = Polygon([(85.623, 74.784), (43.562, 99.136), (1.5, 74.784), (1.5, 26.085),
+                       (43.562, 1.733), (85.623, 26.085)])
+    # White fill and 3-unit mitred stroke (ratio 1.155 < miterlimit 10) are both positive material;
+    # the black star lies inside it.
+    expected = affinity.scale(hexagon.buffer(1.5, join_style='mitre', mitre_limit=10),
+                              _PX, -_PX if flip else _PX, origin=(0, 0))
+    if flip:
+        expected = affinity.translate(expected, 0, height)
+    material = union_all(result.geometry_mm)
+    assert material.symmetric_difference(expected).area < 1e-9
+    assert material.bounds == pytest.approx((0, 0, width, height), abs=.001)
+    assert [element.kind for element in result.document.elements] == ['polygon', 'polygon']

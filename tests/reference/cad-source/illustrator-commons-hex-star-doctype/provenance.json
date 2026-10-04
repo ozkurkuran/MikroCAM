@@ -1,0 +1,35 @@
+{
+  "kind": "genuine third-party vendor export, unmodified bytes",
+  "producer_claim": "Adobe Illustrator 16.0.4, SVG Export Plug-In, SVG Version 6.00",
+  "source": "Wikimedia Commons",
+  "file_page": "https://commons.wikimedia.org/wiki/File:Hex_icon_with_star_white.svg",
+  "original_title": "File:Hex icon with star white.svg",
+  "download_url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Hex_icon_with_star_white.svg",
+  "author": "Heatherawalls (Wikimedia Commons user, own work)",
+  "license": "CC0-1.0",
+  "license_evidence": "File page licensing section {{Self|Cc-zero}}; extmetadata LicenseShortName 'CC0', UsageTerms 'Creative Commons Zero, Public Domain Dedication', Credit 'Own work'; description template {{Igen|A|+}} (created with Adobe Illustrator). Statement quoted in LICENSE.",
+  "commons_versions": [
+    {"timestamp": "2014-05-08T00:32:37Z", "user": "Heatherawalls", "bytes": 855, "sha1": "22d0ade2a982c214b66cf0383fb7e3399f21e952", "retained": true}
+  ],
+  "retrieved": "2026-10-04",
+  "retrieved_by": "MikroCAM spec 041; selected from the retained PR #41 scratch probe corpus (Commons 'Valid SVG created with Adobe Illustrator' x CC-Zero), Commons SHA-1 and file page re-verified",
+  "files": {
+    "Hex_icon_with_star_white.svg": {
+      "bytes": 855,
+      "sha1": "22d0ade2a982c214b66cf0383fb7e3399f21e952",
+      "sha256": "113b8014aac012fb4f74c006b05bb3ee3bed9de1287f84f5500cc45ba3775987",
+      "git_blob_sha1": "a19755db6840311d43ed28d41cf5841eb6527394"
+    }
+  },
+  "markers": {
+    "svg": {
+      "generator_comment": " Generator: Adobe Illustrator 16.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  ",
+      "doctype": "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">",
+      "root": "width=87.123px height=100.869px viewBox=0 0 87.123 100.869 enable-background=new 0 0 87.123 100.869",
+      "artwork": "white hexagon polygon with stroke #010101 width 3, miterlimit 10; filled #010101 ten-point star polygon",
+      "line_endings": "CRLF",
+      "xmp": "absent"
+    }
+  },
+  "coverage_note": "Authentic Illustrator SVG 1.1 export carrying the standard public DOCTYPE that the 016 importer rejected before spec 041. Pixel root size (96 px/in). Icon artwork, not a PCB; no manufacturing claim."
+}

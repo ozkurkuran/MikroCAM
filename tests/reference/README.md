@@ -80,7 +80,7 @@ Both behaviors are characterized without changing those original expectations or
 
 ## Genuine vendor SVG exports
 
-`cad-source/` also retains three unmodified third-party SVG exports, retrieved 2026-10-04, as data
+`cad-source/` also retains four unmodified third-party SVG exports, retrieved 2026-10-04, as data
 fixtures only (no runtime dependency, no code). Each folder keeps the original license or license
 statement and a `provenance.json` with exact source URL/revision, author, SHA-256 and Git blob hash;
 `.gitattributes` keeps their bytes, including CRLF and mixed line endings.
@@ -90,6 +90,8 @@ statement and a `provenance.json` with exact source URL/revision, author, SHA-25
 | `proteus-breath-analyzer` | Proteus Design Suite PCB SVG | Apache-2.0 | TengoCharlie/breath-analyzer `5872bbe2` |
 | `illustrator-wortschule-hilfsverb` | Adobe Illustrator 25.3 with XMP | MIT, (c) 2022 Stefan Wintermeyer | wort-schule/wort.schule `eea2cf5d` |
 | `illustrator-commons-history-of-china` | Adobe Illustrator 24.1 | Public domain (PD-self), Lệ Xuân | Wikimedia Commons |
+| `illustrator-commons-hex-star-doctype` | Adobe Illustrator 16.0.4, SVG 1.1 DOCTYPE | CC0 1.0, Heatherawalls | Wikimedia Commons (spec 041) |
 
-Only the Commons file name was changed, to remove Windows-invalid quotes. Search scope, rejected
-candidates and the remaining gaps are recorded in the 018, 019 and 020 validation files.
+Only the History of China file name was changed, to remove Windows-invalid quotes; the hex icon uses the
+canonical Commons URL file name. Search scope, rejected candidates and the remaining gaps are
+recorded in the 018, 019 and 020 validation files and in `specs/041-svg-vendor-compat/validation.md`.
