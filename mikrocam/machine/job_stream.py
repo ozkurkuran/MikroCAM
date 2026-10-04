@@ -6,10 +6,11 @@ import re
 
 
 def verified_capacity(records: dict) -> int:
+    """GRBL 1.1-format VER/OPT capacity; grblHAL appends axis/tool counts (043 research R2)."""
     version, options = records.get("ver", ""), records.get("opt", "")
     if re.fullmatch(r"1\.1[a-z]?(?:\.[0-9]{8})?:[^\r\n]{0,200}", version) is None:
         raise ValueError("Character counting requires verified GRBL 1.1 build evidence")
-    match = re.fullmatch(r"[A-Za-z02+*$#]{0,64},([0-9]{1,5}),([0-9]{1,5})", options)
+    match = re.fullmatch(r"[A-Za-z02+*$#]{0,64},([0-9]{1,5}),([0-9]{1,5})(?:,[0-9]{1,5}){0,2}", options)
     if match is None or not 1 <= int(match[1]) <= 65535 or not 1 <= int(match[2]) <= 65535:
         raise ValueError("Character counting requires valid reported RX capacity")
     return min(int(match[2]), 128)

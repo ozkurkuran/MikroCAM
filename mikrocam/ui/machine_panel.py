@@ -24,7 +24,7 @@ from .queue_controls import QueueControls
 from mikrocam.machine.queue_models import StartQueueRequest
 from .job_prepare_worker import JobPrepareWorker
 from .console_controls import ConsoleControls
-from .machine_firmware import describe_firmware, firmware_details
+from .machine_firmware import controller_code_hint, describe_firmware, firmware_details
 
 
 _ = getattr(builtins, '_', gettext.gettext)
@@ -419,6 +419,7 @@ class MachinePanel(QtWidgets.QDockWidget):
             elif snapshot.stale:
                 status = _('Stale or unverified position')
         self.status_label.setText(status)
+        self.status_label.setToolTip(controller_code_hint(status, snapshot.raw_state, snapshot.firmware))
         self.manual_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
         self.job_controls.set_snapshot(snapshot, self._worker is not None and not self._stopping)
         self.queue_controls.update_snapshot(snapshot)

@@ -61,8 +61,7 @@ def test_grbl_profile_is_identified_and_preserves_existing_motion_eligibility():
     assert snap.manual.can_jog and snap.job.can_start and snap.probe.can_start and snap.console.can_query
 
 
-@pytest.mark.parametrize('profile,family', [('grblhal', FirmwareFamily.GRBLHAL),
-                                            ('fluidnc', FirmwareFamily.FLUIDNC),
+@pytest.mark.parametrize('profile,family', [('fluidnc', FirmwareFamily.FLUIDNC),
                                             ('unknown', FirmwareFamily.UNKNOWN)])
 def test_unsupported_profiles_disable_every_motion_owner_without_writes(profile, family):
     controller, fake, clock = session(profile)
@@ -184,7 +183,7 @@ def test_consistent_mid_session_reset_keeps_identity_and_sends_only_settings():
     assert snap.firmware.phase is IdentificationPhase.IDENTIFIED and snap.manual.can_jog
 
 
-def test_reset_to_different_firmware_reidentifies_and_disables_motion():
+def test_reset_to_different_firmware_reidentifies_before_motion():
     controller, fake, clock = session()
     steps(controller, clock)
     replacement = FakeGRBL(firmware='grblhal')
@@ -195,7 +194,8 @@ def test_reset_to_different_firmware_reidentifies_and_disables_motion():
     assert not controller.snapshot().manual.can_jog
     snap = steps(controller, clock)
     assert fake.writes.count(b'$I\n') == 2
-    assert snap.firmware.capabilities.family is FirmwareFamily.GRBLHAL and not snap.manual.can_jog
+    assert snap.firmware.capabilities.family is FirmwareFamily.GRBLHAL and snap.firmware.motion_allowed
+    assert snap.manual.can_jog  # 043: a validated grblHAL profile enables motion after identification.
 
 
 def test_grblhal_reset_banner_interrupts_an_owned_job():

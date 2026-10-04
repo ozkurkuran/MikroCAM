@@ -3,6 +3,7 @@ import builtins
 import gettext
 
 from mikrocam.machine.firmware import FirmwareFamily, FirmwareObservation, IdentificationPhase
+from mikrocam.machine.firmware_codes import code_meaning
 
 
 _ = getattr(builtins, '_', gettext.gettext)
@@ -50,3 +51,9 @@ def firmware_details(observation: FirmwareObservation) -> str:
         rows.append(_('Greeting') + ': ' + observation.banner)
     rows.extend(observation.evidence)
     return '\n'.join(rows)
+
+
+def controller_code_hint(diagnostic: str, raw_state: str, observation: FirmwareObservation) -> str:
+    """Status tooltip: family-specific meaning of the latest ALARM/error code (spec 043 FR-008)."""
+    family = observation.capabilities.family
+    return code_meaning(family, diagnostic) or code_meaning(family, raw_state)

@@ -22,8 +22,9 @@ from mikrocam.machine.wire_log import WireLog
 from mikrocam.machine.probe_control import ProbeControl
 from mikrocam.machine.probe_models import StartProbeGridRequest, ProbePhase
 from mikrocam.machine.probe_protocol import validate_probe_command
-from mikrocam.machine.firmware import is_reset_banner
+from mikrocam.machine.firmware import FirmwareFamily, IdentificationPhase, is_reset_banner
 from mikrocam.machine.firmware_control import FirmwareIdentification
+from mikrocam.machine.grblhal import normalize_query_line
 
 POLL_INTERVAL = 0.25
 STATUS_TIMEOUT = 2.0
@@ -384,8 +385,17 @@ class MachineController:
             stale=True, last_report_at=None,
             report_units=None if clear_units else self._snapshot.report_units)
 
+    def _grblhal(self) -> bool:
+        firmware = self._snapshot.firmware
+        return (firmware.phase is IdentificationPhase.IDENTIFIED
+                and firmware.capabilities.family is FirmwareFamily.GRBLHAL)
+
     def _consume(self, line: str) -> None:
         _LOG.debug('GRBL RX %r', line[:256])
+        if self._grblhal() and not line.startswith('<'):
+            line = normalize_query_line(line)  # Raw bytes are already in the wire log (043).
+            if line is None:
+                return
         if is_reset_banner(line):
             self._console.fail('Controller reset interrupted diagnostic query')
             self._manual.lost_evidence('Controller reset interrupted manual operation', reset=True)
@@ -458,7 +468,7 @@ class MachineController:
 
     def _consume_status(self, line: str) -> None:
         try:
-            status = parse_status(line)
+            status = parse_status(line, grblhal=self._grblhal())
         except ValueError as error:
             self._console.fail(f'Invalid status: {error}')
             self._manual.lost_evidence(f'Invalid status: {error}')
