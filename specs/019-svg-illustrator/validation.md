@@ -64,3 +64,59 @@ schema migration and immutable Neo MIT adaptation sources.
 ## Delivery
 [PR20](https://github.com/ozkurkuran/MikroCAM/pull/20) merged as `c6a8441256a45414f7d48e4c1748b34bfaf3733c`.
 [Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36294387159) passed in6m51s at final head `70485359f6d34a2dc0934c4026d54cb16ca0bc61`.
+
+## Genuine vendor-export follow-up (2026-10-04)
+Branch `test/vendor-svg-fixtures`; tests in `tests/test_vendor_export_fixtures.py`. Two unmodified
+genuine Illustrator SVG exports now complement the authored analytic fixture above; license,
+source URL, SHA-256 and Git blob hash are in each `provenance.json` under `tests/reference/cad-source/`.
+
+- `illustrator-wortschule-hilfsverb/hilfsverb.svg`: Adobe Illustrator 25.3.0 export (MIT,
+  [wort-schule/wort.schule@eea2cf5d](https://github.com/wort-schule/wort.schule/blob/eea2cf5d856bff46ebc96b1dd472e869a604c31e/app/assets/images/montessori/hilfsverb.svg),
+  retrieved 2026-10-04). The root has only `viewBox="0 0 141.732 141.732"`; the 50x50 mm page comes
+  solely from XMP `MaxPageSize` (Millimeters), reported per axis. Geometry and Gerber, with and
+  without flip, match bounds derived from the exported circle coordinates within 0.01 mm; the
+  report keeps absent source units and the source SHA-256.
+- `illustrator-commons-history-of-china/History_of_China_for_template_heading.svg`: Adobe
+  Illustrator 24.1.0 export (public domain, PD-self by Lá»‡ XuÃ¢n,
+  [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:%22History_of_China%22_for_template_heading.svg),
+  Commons SHA-1 verified; only the Windows-invalid file name was changed). It has nested layer groups,
+  embedded class CSS, a fill:none construction rect, nonzero compound lettering with 25 counters and a
+  stroke-only frame whose bounds and area (exact ring, rel 1e-9) are asserted analytically.
+
+Bug found and fixed (test first): Illustrator SVG 1.1 exports write
+`style="enable-background:new 0 0 W H"` on the root, which the importer rejected as an unsupported
+CSS property. The property only prepares filter background input; filters remain unsupported, so it
+cannot change material. Its SVG 1.1 grammar is now validated and otherwise ignored; malformed values
+still fail. The Commons fixture fails on the pre-fix importer and passes after commit `ae99f4c3`.
+In a scratch probe of 731 Commons SVGs with an Illustrator marker, imports rose from 24 to 91: 67 of
+88 files blocked only by this property now import; 21 fail later on other explicit limits.
+
+Remaining genuine-export limits, unchanged and explicit: 507 of those 731 files (69%) are rejected
+because the 016 import contract refuses every DOCTYPE, even the fixed SVG 1.1 public DOCTYPE that the
+020 detector already inspects offline (459 plain, 48 with internal entity subsets). Next most
+common: pattern (46), gradient/paint-server references (25), font properties or text (23) and the
+complex-fill budget (8). Accepting the fixed public DOCTYPE without an internal subset would need its
+own spec because it changes the 016 contract; it is recommended as follow-up work.
+
+Search record: Commons CirrusSearch `incategory:Valid_SVG_created_with_Adobe_Illustrator` intersected
+with CC-Zero, PD-self, PD-user, PD-author, CC-BY-4.0 and CC-BY-3.0, plus the Diagrams and Unspec
+categories, size below 900 KB (1129 files fetched before Wikimedia rate limiting, 731 with an
+Illustrator marker); GitHub code search for `xmpTPg:MaxPageSize` with `Adobe Illustrator` and
+physical `stDim:unit` values, permissive repositories only. Rejected: `Counting the triangles.svg`
+(CC0 but a derivative of a PNG whose license could not be traced), `Ageha inverted.svg` (current
+bytes hand-corrected by a later editor), `Apple Mac Mini M4.svg` (product depiction, mask
+unsupported), Assemblyline `al-robot.svg` (only copies of government branding with unclear
+provenance), Openclipart Illustrator files (internal entity DTDs) and company or university logos
+in permissively licensed website repositories (the code license does not cover third-party marks).
+
+Still open: genuine Illustrator clipping. Only 18 genuine Illustrator files in the probe contain
+clip paths; 17 fail earlier on other limits and the remaining one carries an Inkscape re-save
+marker, so clipping stays covered by the authored analytic fixture only. Physical manufacturing
+remains unverified.
+
+Local checks at test head `51b65b3d` (CPython 3.13.13, `.venv/repro-a`): new fixture file 18 passed;
+`tests/architecture` 83 passed; `pip check` clean. Full suite: 5856 passed, 3 skipped, 310 subtests,
+12 failed only because the optional `resvg_py` (requirements-visual) is absent from that venv; the
+same 12 fail identically on unmodified origin/main `70800e5b` there, and those five visual test files
+pass (46) with the main `.venv`. Logs: `.venv/vendor-fixtures-*.log` (ignored). PR Windows CI is the
+delivery gate.

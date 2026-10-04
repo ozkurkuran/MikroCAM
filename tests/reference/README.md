@@ -77,3 +77,19 @@ viewBox 200x100 imply physical bounds (10,10)-(30,20) mm, area 200 mm²; flip gi
 `test_svg_reference.py` also exercises the unchanged path fixtures through the new bridge. The old
 helper inferred parity holes; the new importer requires explicit evenodd or nonzero winding.
 Both behaviors are characterized without changing those original expectations or golden data.
+
+## Genuine vendor SVG exports
+
+`cad-source/` also retains three unmodified third-party SVG exports, retrieved 2026-10-04, as data
+fixtures only (no runtime dependency, no code). Each folder keeps the original license or license
+statement and a `provenance.json` with exact source URL/revision, author, SHA-256 and Git blob hash;
+`.gitattributes` keeps their bytes, including CRLF and mixed line endings.
+
+| Folder | Producer | Terms | Source |
+| --- | --- | --- | --- |
+| `proteus-breath-analyzer` | Proteus Design Suite PCB SVG | Apache-2.0 | TengoCharlie/breath-analyzer `5872bbe2` |
+| `illustrator-wortschule-hilfsverb` | Adobe Illustrator 25.3 with XMP | MIT, (c) 2022 Stefan Wintermeyer | wort-schule/wort.schule `eea2cf5d` |
+| `illustrator-commons-history-of-china` | Adobe Illustrator 24.1 | Public domain (PD-self), Lá»‡ XuÃ¢n | Wikimedia Commons |
+
+Only the Commons file name was changed, to remove Windows-invalid quotes. Search scope, rejected
+candidates and the remaining gaps are recorded in the 018, 019 and 020 validation files.

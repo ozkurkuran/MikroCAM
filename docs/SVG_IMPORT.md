@@ -136,12 +136,23 @@ görmezden gelerek benzer bir çizim üretmez:
   Basit gömülü kurallar, genel CSS desteği anlamına gelmez.
 - `clip`, mask, filter, marker, gradient/pattern/paint server ve renk/compositing çıkarımları.
 - Kesikli stroke/dash, non-scaling stroke, özel paint-order ve CSS üzerinden geometri dönüşümü.
+- `DOCTYPE` veya entity bildirimi. Birçok Illustrator sürümü standart SVG 1.1 DOCTYPE satırını
+  yazar; geometri içe aktarıcısı bunu da reddeder. Dosyayı DOCTYPE olmadan yeniden dışa aktarın.
+  Proteus SVG çıktısındaki `vector-effect="non-scaling-stroke"` nitelikleri de non-scaling stroke
+  kapsamında hata verir.
 - Görünür malzemede kısmi opacity ve belirtilen kök/XMP veya bbox-clip kapsamı dışındaki yüzde/font birimleri. Tam saydamlık görünmez malzeme,
   tam opaklık normal malzeme olarak ele alınır; `display:none`/`visibility:hidden` çizilmez.
 
 İçe aktarma hata verirse bildirilen özelliği kaynakta düzeltin. Dosyanın uzantısını değiştirmek
 veya uyarıyı yok saymak fiziksel ölçeği ya da malzeme sınırını doğrulamaz.
 
-Illustrator tarzı örnekler MikroCAM tarafından yazılmış analitik test çizimleridir. Gerçek, lisansı
-doğrulanmış Illustrator dışa aktarım örneği henüz doğrulama kümesinde yoktur; tüm Illustrator
-dosyalarıyla uyumluluk veya fiziksel üretim doğrulaması iddia edilmez.
+Illustrator'ın kökte yazdığı `enable-background` bildirimi yalnız filtre arka planını hazırlar.
+Geçerli SVG 1.1 sözdizimi doğrulanır ve malzemeyi değiştirmediği için yok sayılır; filtreler yine
+desteklenmez ve bozuk değerler hata verir.
+
+Illustrator tarzı clip/compound örnekleri MikroCAM tarafından yazılmış analitik test çizimleridir.
+Ayrıca lisansı ve kaynağı kayıtlı iki gerçek Illustrator dışa aktarımı doğrulanır: yalnız XMP
+`MaxPageSize` ile 50 mm sayfa veren bir çizim ve katman, gömülü CSS, compound harfler ve stroke
+çerçeve içeren bir çizim ([kaynak kayıtları](../tests/reference/cad-source/)). Gerçek Illustrator
+clip örneği bulunamadı; tüm Illustrator dosyalarıyla uyumluluk veya fiziksel üretim doğrulaması
+iddia edilmez.

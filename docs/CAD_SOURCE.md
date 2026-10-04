@@ -32,10 +32,12 @@ birimleri, ölçeği, araçları, varsayılanları ve geometriyi değiştirmez. 
 
 Test verilerinde MIT lisanslı Pico2ROMEmu kartından yerel KiCad 10.0.6 ile üretilmiş gerçek SVG/DXF
 çıktıları vardır. SVG, PCBNEW bildirimiyle KiCad olarak tanınır. DXF üretici bildirmediği için Unknown
-kalır. Mevcut Inkscape uygulama görseli metadata biçimini doğrular; PCB örneği değildir. Illustrator
-ve Proteus bildirim biçimleri özgün test girdileriyle doğrulanır; bu uygulamaların gerçek dışa aktarım
-örnekleriyle genel uyumluluk henüz doğrulanmamıştır. Lisans, komut ve hash kayıtları
-[örnek klasöründedir](../tests/reference/cad-source/kicad-pico2romemu/provenance.json).
+kalır. Mevcut Inkscape uygulama görseli metadata biçimini doğrular; PCB örneği değildir. Ayrıca
+lisansı ve kaynağı kayıtlı, değiştirilmemiş üç gerçek SVG dışa aktarımı vardır: Apache-2.0 lisanslı
+bir Proteus PCB çıktısı Proteus, MIT lisanslı Illustrator 25.3 ve kamu malı Illustrator 24.1 çıktıları
+Illustrator olarak tanınır. Gerçek Illustrator veya Proteus DXF örneği uygun lisansla bulunamadı; DXF
+bildirimleri yalnız özgün test girdileriyle doğrulanır. Lisans, komut ve hash kayıtları
+[örnek klasörlerindedir](../tests/reference/cad-source/).
 
 Kaynak inceleyici, sabit SVG 1.1 dış DTD bildirimini ağdan okumadan inceleyebilir. Bu, geometri
 içe aktarıcısının DTD desteği kazandığı anlamına gelmez; mevcut SVG geometri okuyucusu bu bildirimi
