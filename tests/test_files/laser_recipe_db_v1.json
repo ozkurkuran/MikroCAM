@@ -1,0 +1,72 @@
+{
+  "kind": "mikrocam.laser-recipe-db",
+  "lenses": [
+    {
+      "focal_length_mm": null,
+      "id": "lens-a",
+      "name": "Sentetik lens",
+      "notes": ""
+    }
+  ],
+  "machines": [
+    {
+      "device": {
+        "frequency_range_khz": null,
+        "kind": "mopa",
+        "name": "MOPA M7 100 W",
+        "pulse_width_range_ns": null,
+        "pulse_widths_ns": [],
+        "pwm_frequency_range_khz": null
+      },
+      "id": "mopa-m7",
+      "notes": "Üretici sınırları girilmedi."
+    }
+  ],
+  "materials": [
+    {
+      "id": "fr4-35um",
+      "name": "FR4 35 µm Cu",
+      "notes": "Sentetik test kaydı; fiziksel olarak doğrulanmadı.",
+      "thickness_mm": null
+    }
+  ],
+  "recipes": [
+    {
+      "id": "isolation",
+      "lens_id": null,
+      "machine_id": "mopa-m7",
+      "material_id": "fr4-35um",
+      "name": "Isolation",
+      "notes": "Sentetik değerler; üretim reçetesi değildir.",
+      "passes": [
+        {
+          "frequency_khz": 30.0,
+          "min_power_percent": null,
+          "name": "outline",
+          "power_percent": 20.5,
+          "pulse_width_ns": 100.0,
+          "pwm_frequency_khz": null,
+          "speed_mm_s": 250.0
+        }
+      ]
+    },
+    {
+      "id": "legacy-0-2",
+      "lens_id": null,
+      "machine_id": null,
+      "material_id": null,
+      "name": "Legacy 0.2 import",
+      "notes": "",
+      "passes": [
+        {
+          "frequency_khz": 30.0,
+          "name": "first",
+          "power_percent": 20.0,
+          "pulse_width_ns": 100.0,
+          "speed_mm_s": 250.0
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

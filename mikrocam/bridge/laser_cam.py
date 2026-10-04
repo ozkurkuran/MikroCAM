@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from copy import deepcopy
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from shapely import LineString
@@ -129,6 +130,13 @@ class LaserCamHost:
             return obj.obj_options['name']
         finally:
             self._restore_selection(selected)
+
+    def recipe_database_path(self) -> Path:
+        """The user recipe database inside the host's (sandboxable) application data path."""
+        data_path = getattr(self.app, 'data_path', None)
+        if not isinstance(data_path, str) or not data_path:
+            raise ValueError('Application data directory is unavailable for the recipe database')
+        return Path(data_path) / 'mikrocam' / 'laser_recipe_db.json'
 
     def parent_widget(self) -> object:
         self._gui_thread()

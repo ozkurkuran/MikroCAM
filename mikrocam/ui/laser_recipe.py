@@ -1,14 +1,13 @@
 """Device-aware recipe drafts and atomic versioned recipe file replacement."""
 import builtins
 import gettext
-import os
 from pathlib import Path
-import tempfile
 
 from PyQt6 import QtCore, QtWidgets
 
 from mikrocam.core.laser_job import LaserPass, LaserRecipe
 from mikrocam.core.laser_json import recipe_to_json
+from mikrocam.laser.recipe_db_store import write_text_atomic
 from .laser_device import LaserDeviceEditor
 
 
@@ -139,17 +138,4 @@ class LaserRecipeEditor(QtWidgets.QWidget):
 
 def save_recipe_file(path: str | Path, recipe: LaserRecipe) -> None:
     """Atomically replace a recipe using a flushed same-directory temporary file."""
-    target = Path(path)
-    text = recipe_to_json(recipe)
-    temporary = None
-    try:
-        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', newline='\n', delete=False,
-                                         dir=target.parent, prefix=f'.{target.name}.', suffix='.tmp') as stream:
-            temporary = Path(stream.name)
-            stream.write(text)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temporary, target)
-    finally:
-        if temporary is not None:
-            temporary.unlink(missing_ok=True)
+    write_text_atomic(path, recipe_to_json(recipe))

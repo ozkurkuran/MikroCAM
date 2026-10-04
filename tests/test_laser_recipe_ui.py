@@ -108,20 +108,21 @@ def test_atomic_save_roundtrip_retains_precision_and_no_temporary_files(tmp_path
 @pytest.mark.parametrize('failure', ['replace', 'fsync', 'write'])
 def test_failed_atomic_save_preserves_previous_file_and_cleans_temp(tmp_path, monkeypatch, failure):
     import mikrocam.ui.laser_recipe as ui
+    import mikrocam.laser.recipe_db_store as writer  # shared atomic writer since 037
     target = tmp_path / 'recipe.json'
     previous = b'previous exact bytes\r\n'
     target.write_bytes(previous)
     def fail(*args):
         raise OSError('simulated disk failure')
     if failure == 'write':
-        original = ui.tempfile.NamedTemporaryFile
+        original = writer.tempfile.NamedTemporaryFile
         def failing_stream(**kwargs):
             stream = original(**kwargs)
             stream.write = fail
             return stream
-        monkeypatch.setattr(ui.tempfile, 'NamedTemporaryFile', failing_stream)
+        monkeypatch.setattr(writer.tempfile, 'NamedTemporaryFile', failing_stream)
     else:
-        monkeypatch.setattr(ui.os, failure, fail)
+        monkeypatch.setattr(writer.os, failure, fail)
     with pytest.raises(OSError, match='simulated disk failure'):
         ui.save_recipe_file(target, example())
     assert target.read_bytes() == previous

@@ -1,5 +1,7 @@
 """Offscreen Laser CAM workflow, detached workers and stale-result prevention."""
+import tempfile
 import threading
+from pathlib import Path
 
 import pytest
 from PyQt6 import QtCore, QtWidgets
@@ -15,6 +17,11 @@ class FakeHost:
         self.snapshots = []
         self.publications = []
         self.panel = None
+        # Never created unless a test saves; keeps the host independent of user data.
+        self.database_path = Path(tempfile.gettempdir()) / f'mikrocam-db-{id(self)}' / 'laser_recipe_db.json'
+
+    def recipe_database_path(self):
+        return self.database_path
 
     def source_names(self):
         return ('copper', 'outline')
