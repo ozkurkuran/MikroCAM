@@ -1,0 +1,37 @@
+{
+  "kind": "genuine third-party vendor export, unmodified bytes",
+  "producer_claim": "Adobe Illustrator 24.1.0, SVG Export Plug-In, SVG Version 6.00",
+  "source": "Wikimedia Commons",
+  "file_page": "https://commons.wikimedia.org/wiki/File:%22History_of_China%22_for_template_heading.svg",
+  "original_title": "File:\"History of China\" for template heading.svg",
+  "download_url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/%22History_of_China%22_for_template_heading.svg",
+  "author": "Lệ Xuân (Wikimedia Commons user, own work)",
+  "license": "Public domain (PD-self)",
+  "license_evidence": "File page licensing section {{PD-self}}; extmetadata LicenseShortName 'Public domain', Copyrighted False. Statement quoted in LICENSE.",
+  "commons_versions": [
+    {"timestamp": "2021-04-20T21:58:53Z", "user": "Lệ Xuân", "bytes": 35021, "sha1": "7d7f6de20e33bf80501ba252d8d52ff9f0ab5490", "comment": "change to modern chinese standard word order (left to right instead of right to left)", "retained": true},
+    {"timestamp": "2021-03-23T15:13:52Z", "user": "Lệ Xuân", "bytes": 37598, "sha1": "ae43edec4a92b6a7f18c64445cb39bcce1dd3797", "comment": "Uploaded own work with UploadWizard", "retained": false}
+  ],
+  "retrieved": "2026-10-04",
+  "retrieved_by": "MikroCAM vendor-fixture search (Commons categories 'Valid SVG created with Adobe Illustrator' intersected with PD-self/CC-Zero)",
+  "files": {
+    "History_of_China_for_template_heading.svg": {
+      "bytes": 35021,
+      "sha1": "7d7f6de20e33bf80501ba252d8d52ff9f0ab5490",
+      "sha256": "f5240f0bb51da2ed08c05b7203ff376387f0009c18b535b2b0155e5683a549fb",
+      "git_blob_sha1": "e77c22c66bb96c3d51ba42251d84065a235786ae"
+    }
+  },
+  "markers": {
+    "svg": {
+      "generator_comment": " Generator: Adobe Illustrator 24.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  ",
+      "root": "id=Layer_1, no width/height, viewBox=0 0 3051.3 718.7, style=enable-background:new 0 0 3051.3 718.7",
+      "embedded_css": ".st0{fill:#CC3300} .st1{fill:none} .st2{fill:none;stroke:#CC3300;stroke-width:40;stroke-miterlimit:10}",
+      "groups": "nested ids Layer_2_1_ / Layer_1-2 / Layer_2-2",
+      "artwork": "outlined Latin and seal-script lettering as nonzero compound paths with counters; unpainted st1 rect; st2 stroked frame rect x=2494.7 y=67.7 w=520.1 h=560.9",
+      "line_endings": "LF",
+      "xmp": "absent"
+    }
+  },
+  "coverage_note": "Authentic Illustrator SVG export with root enable-background style, embedded class CSS, nested layer groups, compound fills and a stroked frame. Before the enable-background fix the 019 importer rejected it. No XMP and no physical root size: the viewBox is used as CSS pixels. Artwork, not a PCB; no manufacturing claim."
+}
