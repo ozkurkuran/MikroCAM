@@ -50,6 +50,7 @@ Girdi: [spec](spec.md), [plan](plan.md), [research](research.md). Testler uygula
 
 - [x] T021 Konsol `$CD` (yalnız FluidNC), FluidNC'de `$N` reddi; UI listesi.
 - [x] T022 Hotfix (önce-test): konsol `$$` cevabında `$130-$132` satırları birim sayılmaz.
+- [x] T022b Düzeltme (önce-test): iş başlangıç adımında yarışan öncelik isteği kanıtı tüketmeden yeniden dener.
 - [x] T023 `tests/hardware/test_readonly_grbl.py`: `$I` FluidNC ise makro/`$RI`/`$CD` salt okunur sorguları.
 - [x] T024 `docs/MACHINE_CONTROL.md` FluidNC bölümü; `docs/GRBL_STREAMING.md`, `docs/MACHINE_CONSOLE.md`.
 - [x] T025 `docs/hardware/GRBL_VALIDATION.md` H044 senaryoları ve matrisi NOT_RUN.
@@ -60,4 +61,4 @@ Girdi: [spec](spec.md), [plan](plan.md), [research](research.md). Testler uygula
 - [x] T027 Odaklı testler + `tests/architecture` + `pip check`.
 - [x] T028 Tam paket (offscreen) ve masaüstü `tests/smoke_app.py` (120 s watchdog).
 - [x] T029 validation.md (RED/GREEN, kanıt, WAITING); IS_TAKIP güncellemesi.
-- [ ] T030 Commit/push, PR (main hedefli, #44'e bağımlı), son-head Windows CI; merge yok.
+- [x] T030 Commit/push, [PR #46](https://github.com/ozkurkuran/MikroCAM/pull/46) (main hedefli, #44'e bağımlı), son-head Windows CI; merge yok.
