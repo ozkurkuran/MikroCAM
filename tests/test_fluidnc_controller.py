@@ -304,3 +304,22 @@ def test_console_settings_query_ignores_130_series_rows():
     controller.request_console(ConsoleRequest('$$'))
     until(controller, clock, lambda: controller.snapshot().console.phase is not ConsolePhase.PENDING)
     assert controller.snapshot().console.phase is ConsolePhase.COMPLETE, controller.snapshot().console
+
+
+@pytest.mark.parametrize('firmware', ['grbl', 'fluidnc'])
+def test_priority_race_at_a_startup_step_retries_without_losing_evidence(firmware):
+    """A pause/stop intent racing the owner between its tick check and the next write retries."""
+    controller, fake, clock = connected(firmware)
+    controller.request_job(StartJobRequest(prepared(), True))
+    until(controller, clock, lambda: controller._job.transaction == 'startup')
+    calls = []
+
+    def racing():
+        calls.append(1)
+        return len(calls) == 2  # The tick's own check passes; the guard before the write does not.
+    controller.set_pause_check(racing)
+    step(controller, clock)
+    assert len(calls) >= 2 and controller.snapshot().job.phase is not JobPhase.FAILED
+    controller.set_pause_check(lambda: False)
+    until(controller, clock, lambda: controller.snapshot().job.phase in (JobPhase.COMPLETE, JobPhase.FAILED), 400)
+    assert controller.snapshot().job.phase is JobPhase.COMPLETE, controller.snapshot().job.diagnostic

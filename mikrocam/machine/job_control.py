@@ -205,6 +205,7 @@ class JobControl:
                 raise ValueError('Reviewed source block exceeds verified GRBL RX capacity')
             self._begin_startup()
         elif purpose == 'startup':
+            self._guard()  # A racing priority intent retries this step before evidence is consumed.
             self.startup.add(records)
             following = self.startup.next_query()
             if following is not None:  # FluidNC: macros/startup_line0/1, after_reset, $RI (044).
