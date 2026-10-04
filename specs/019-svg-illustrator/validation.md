@@ -77,7 +77,7 @@ source URL, SHA-256 and Git blob hash are in each `provenance.json` under `tests
   without flip, match bounds derived from the exported circle coordinates within 0.01 mm; the
   report keeps absent source units and the source SHA-256.
 - `illustrator-commons-history-of-china/History_of_China_for_template_heading.svg`: Adobe
-  Illustrator 24.1.0 export (public domain, PD-self by Lá»‡ XuÃ¢n,
+  Illustrator 24.1.0 export (public domain, PD-self by Lệ Xuân,
   [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:%22History_of_China%22_for_template_heading.svg),
   Commons SHA-1 verified; only the Windows-invalid file name was changed). It has nested layer groups,
   embedded class CSS, a fill:none construction rect, nonzero compound lettering with 25 counters and a

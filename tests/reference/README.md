@@ -89,7 +89,7 @@ statement and a `provenance.json` with exact source URL/revision, author, SHA-25
 | --- | --- | --- | --- |
 | `proteus-breath-analyzer` | Proteus Design Suite PCB SVG | Apache-2.0 | TengoCharlie/breath-analyzer `5872bbe2` |
 | `illustrator-wortschule-hilfsverb` | Adobe Illustrator 25.3 with XMP | MIT, (c) 2022 Stefan Wintermeyer | wort-schule/wort.schule `eea2cf5d` |
-| `illustrator-commons-history-of-china` | Adobe Illustrator 24.1 | Public domain (PD-self), Lá»‡ XuÃ¢n | Wikimedia Commons |
+| `illustrator-commons-history-of-china` | Adobe Illustrator 24.1 | Public domain (PD-self), Lệ Xuân | Wikimedia Commons |
 
 Only the Commons file name was changed, to remove Windows-invalid quotes. Search scope, rejected
 candidates and the remaining gaps are recorded in the 018, 019 and 020 validation files.

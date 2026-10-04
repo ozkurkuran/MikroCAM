@@ -399,7 +399,7 @@ documentation informed parameter names, units and family distinctions. Links
 and scope are recorded in docs/LASER_RECIPES.md and the feature research.md.
 No manufacturer-specific M7 numerical limits or native project encoding inferred.
 
-## 2026-10-04 â€” Genuine vendor SVG export fixtures (018/019/020 follow-up)
+## 2026-10-04 — Genuine vendor SVG export fixtures (018/019/020 follow-up)
 
 - Data only; no external code copied and no dependency added. Unmodified files are retained under
   `tests/reference/cad-source/` with their notices and `provenance.json` (URL, revision, author,
@@ -410,7 +410,7 @@ No manufacturer-specific M7 numerical limits or native project encoding inferred
     at `eea2cf5d856bff46ebc96b1dd472e869a604c31e`, MIT, Copyright (c) 2022 Stefan Wintermeyer.
   - `illustrator-commons-history-of-china/History_of_China_for_template_heading.svg`:
     https://commons.wikimedia.org/wiki/File:%22History_of_China%22_for_template_heading.svg ,
-    public domain (PD-self) by Lá»‡ XuÃ¢n; statement quoted in the folder's `LICENSE`; renamed only.
+    public domain (PD-self) by Lệ Xuân; statement quoted in the folder's `LICENSE`; renamed only.
 - Reason: replace authored-only vendor evidence for 018/019/020 where licensed genuine exports exist.
 - Behaviour changes found by these files (original MikroCAM fixes, tests first): Proteus
   `Created by` desc marker (`mikrocam/importers/cad_producer.py`, `cad_svg_source.py`,

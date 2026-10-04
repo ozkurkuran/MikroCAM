@@ -83,7 +83,7 @@ and Git blob hash, kept byte-stable by the existing `.gitattributes` rule. They 
 | --- | --- | --- | --- |
 | `proteus-breath-analyzer/B_A_.svg` (129249 B) | root desc `Created by Proteus Design Suite` | Apache-2.0, [TengoCharlie/breath-analyzer@5872bbe2](https://github.com/TengoCharlie/breath-analyzer/blob/5872bbe211318a74ec51ccff3bf4ef2fc1d371b7/pcb%20bt%20woled/B_A_.svg) | Proteus, identified (after fix) |
 | `illustrator-wortschule-hilfsverb/hilfsverb.svg` (53005 B) | generator comment + XMP CreatorTool `Adobe Illustrator 25.3 (Windows)` | MIT, [wort-schule/wort.schule@eea2cf5d](https://github.com/wort-schule/wort.schule/blob/eea2cf5d856bff46ebc96b1dd472e869a604c31e/app/assets/images/montessori/hilfsverb.svg) | Illustrator, identified |
-| `illustrator-commons-history-of-china/â€¦svg` (35021 B) | generator comment `Adobe Illustrator 24.1.0` | Public domain (PD-self), [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:%22History_of_China%22_for_template_heading.svg) | Illustrator, identified |
+| `illustrator-commons-history-of-china/…svg` (35021 B) | generator comment `Adobe Illustrator 24.1.0` | Public domain (PD-self), [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:%22History_of_China%22_for_template_heading.svg) | Illustrator, identified |
 
 Bug found and fixed (test first): every genuine Proteus SVG export found declares itself only as
 `<desc>Created by Proteus Design Suite</desc>`, which the authored marker grammar did not admit,
