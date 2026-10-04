@@ -38,7 +38,7 @@ def queue_journey(app, qapp, errors, pump_until, root):
                errors, 'three reviewed queue jobs complete', timeout=15)
     assert fake.job_writes == [b.wire for job in jobs for b in job.blocks]
     assert fake.open_count == 1 and not ui.draft.entries
-    assert fake.writes.count(b'$I\n') == 3
+    assert fake.writes.count(b'$I\n') == 4  # Session identification (042) + one per queued job.
     print('CHAR_COUNTING_QUEUE_COMPLETE_OK', flush=True)
     screenshot = Path(root) / '.venv/queue-smoke.png'
     assert ui.grab().save(str(screenshot))

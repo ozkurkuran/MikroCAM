@@ -108,11 +108,63 @@ Cell format: `passed/failed/not-tested/not-applicable — evidence path; observa
 A failed case opens a test-first hotfix when existing behavior is wrong, or a separate spec
 proposal when new behavior is required. Keep the raw failure evidence.
 
+## H042 firmware identification scenarios (spec 042) — NOT_RUN
+
+Status: prepared on 2026-10-04; **NOT_RUN on every board**. Software was built and tested only
+against FakeGRBL profiles; no grblHAL or FluidNC board was available. These rows are readonly:
+the operator only connects, reads the Machine **Firmware** row/tooltip and the wire log, and
+disconnects. Keep spindle/laser power isolated anyway because opening a port may reset a board.
+Record the complete greeting and `$I` reply verbatim (Machine console `$I` or H2 inventory JSON).
+
+| ID | Board / firmware | Operator action and measurable acceptance |
+| --- | --- | --- |
+| H042-1 | GRBL 1.1 (gnea, e.g. Uno 1.1h) | Connect. TX begins `$I`, `$$`, `?`. Firmware row shows `GRBL 1.1x (build YYYYMMDD)`, RX matching `[OPT:…,rx]`, budget `min(rx,128)`, motion enabled. Repeat with a board that resets on open: one extra `$I` after the greeting, then identified. |
+| H042-2 | grblHAL, default compatibility level 0 | Greeting `GrblHAL 1.1f ['$' or '$HELP' for help]`; `$I` lists `[FIRMWARE:grblHAL]`, NEWOPT, DRIVER/BOARD. Row shows `grblHAL 1.1f`, reported RX, char-counting budget `min(rx,128)`. Since spec 043 a 3-axis XYZ, `RT+`, non-lathe build shows motion enabled; otherwise the stated reason. Console works. |
+| H042-3 | grblHAL with `COMPATIBILITY_LEVEL` ≥ 1 | Greeting `Grbl 1.1f ['$' for help]`, plain `$I` has a three-field OPT (RX usually 1024). Expected: **Unknown** with the 255-limit note, motion disabled. Record whether RX ≤ 255 on that build (would be classified GRBL; report it). |
+| H042-4 | FluidNC v3.x and v4.x, default start message | Greeting `Grbl <x.y> [FluidNC v<x.y.z> (…) '$' for help]`. Row shows `FluidNC x.y.z`, RX unknown, motion disabled (044) — never `GRBL`. Record `[MSG:INFO:` boot lines seen. |
+| H042-5 | FluidNC with a custom `$Start/Message` | Set a custom start message on the bench only, reset the board while connected. Record whether a reset was detected (known D1 gap UA-8: greetings not starting with `Grbl `/`GrblHAL ` are not reset evidence). Restore the setting afterwards. |
+| H042-6 | Any unsupported firmware (e.g. GRBL 0.9, Grbl_ESP32 1.3a) | Row shows **Unknown** with a reason; all motion controls disabled; Stop/Abort/Disconnect usable; no automatic retry of `$I`. |
+| H042-7 | Any identified board | Reset the controller from its button while connected and idle. Same firmware: only `$$` is re-read. After reflashing to a different family between sessions, reconnect shows the new family. |
+
+| Board / firmware / run ID | H042-1 | H042-2 | H042-3 | H042-4 | H042-5 | H042-6 | H042-7 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Not supplied / not tested | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN |
+
+Identification passing does not validate grblHAL/FluidNC motion; that belongs to specs 043/044.
+
+## H043 grblHAL motion scenarios (spec 043) — NOT_RUN
+
+Status: prepared on 2026-10-04; **NOT_RUN**. No grblHAL board was available; software was validated
+only against FakeGRBL's `grblhal` profile. These rows **move the machine**: apply every safety
+precondition above (no tool, spindle/laser power isolated, E-stop within reach, Z raised, soft limits
+and homing state recorded, first job in air). Use grblHAL compatibility level 0 with default report
+settings (`$10` parser-state push off, `$481=0`) unless a row says otherwise. First run the H2
+read-only capture (`MIKROCAM_HW_PORT=COMx pytest -m hardware tests/hardware/test_readonly_grbl.py`):
+it identifies grblHAL from `$I` and validates `?`, `$$`, `$G`, `$#` with the grblHAL dialect; keep the
+JSON. Record the board, driver, `$I` reply, `$10`, `$32`, `$481`, NEWOPT and the wire log path.
+
+| ID | Scenario | Operator action and measurable acceptance |
+| --- | --- | --- |
+| H043-1 | Identification and motion gate | Connect. Firmware row shows `grblHAL 1.1f (build …)`, RX from `[OPT:]`, budget `min(rx,128)`, motion enabled; with a 4-axis/lathe/`RT-` build, motion disabled with that reason. |
+| H043-2 | Bounded jog, cancel | 1 mm and 10 mm jogs in air on X/Y/Z: endpoint matches DRO within 0.005 mm. Cancel a 10 mm jog mid-move: decelerates, `0x85` in wire log, Idle verified. Repeat cancel immediately after clicking (UA-4): either verified Idle or Abort with stop unverified and no motion. |
+| H043-3 | G54 select and zero with tool offset | Select G54, set XY then Z zero. Repeat with `G43.1 Z1` active: `$#` shows `[TLO:0.000,0.000,1.000]`, zero verifies; with `G43.1 X1` zero is refused before any `G10`. Power-cycle: G54 retained. |
+| H043-4 | Job send-response and character counting | Same 026-style short-segment air job in both modes: complete, `M5 M9` + final Idle verified, wire log shows ≤128 bytes in flight; compare duration. |
+| H043-5 | Pause/resume/stop | Pause mid-job: `Hold:1`→`Hold:0` verified; resume completes. Stop mid-job: `0x18`, `GrblHAL` greeting, only `$$` re-read, motion stops (observe). |
+| H043-6 | Probe grid and autolevel | Probe a 3×2 grid on a conductive plate; heights recorded; autolevel job in air. Disable `$10` probe-coordinate bit on the bench only: probing is refused for missing contact evidence (UA-7); restore. |
+| H043-7 | Alarms and states | Trigger a soft limit (`ALARM:2`) and, if wired, E-stop (`ALARM:10`): status tooltip shows the grblHAL meaning; Abort with E-stop active stays stop-unverified (UA-6). With alarm sub-state enabled, `Alarm:<code>` shows as Alarm. |
+| H043-8 | Unsupported modes refuse motion | With `M6` pending (tool change mode ≠ 0), `M53`, `G51`, `G59.1`: jog/zero/job/probe are refused before motion. With `$10` parser-state push enabled, a running air job stops fail-closed; restore the setting. |
+| H043-9 | USB unplug and reconnect | Unplug during an air job: communication error, job failed, no automatic reconnect; reconnect identifies again. Native USB boards may not reset on open; record whether the greeting appears. |
+
+| Board / grblHAL build / run ID | H043-1 | H043-2 | H043-3 | H043-4 | H043-5 | H043-6 | H043-7 | H043-8 | H043-9 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Not supplied / not tested | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN |
+
 ## Completion and deferred gates
 
 H1/H2 are agent preparation. H3 is complete only when an operator supplies a completed record
 and matrix for at least one GRBL 1.1 board with sufficient evidence for each applicable row.
 Only then can relevant ROADMAP physical-validation annotations be changed. C3 additionally
-needs measured segment stalls tied to send-response timing. D additionally needs the target
-FluidNC/grblHAL board and explicit removal of relevant items from ROADMAP's deferred list.
-No such evidence or authorization is asserted by this document.
+needs measured segment stalls tied to send-response timing. The user explicitly started grblHAL
+and FluidNC software work on 2026-10-04 (docs/IS_TAKIP.md); physical D validation still needs
+the target FluidNC/grblHAL board and the H042 rows above.
+No physical evidence is asserted by this document.

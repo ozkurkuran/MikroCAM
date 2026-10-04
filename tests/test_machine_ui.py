@@ -93,7 +93,7 @@ def test_ten_owned_thread_sessions_and_no_duplicate_connect(panel, qtbot):
         assert not fake.is_open and fake.open_count == 1
         assert {identity for _, identity in fake.calls} == {thread_id}
         assert {name for name, _ in fake.calls} >= {'open', 'read', 'write', 'close'}
-        assert set(fake.writes) <= {b'?', b'$$\n'}
+        assert set(fake.writes) <= {b'?', b'$$\n', b'$I\n'}  # One session identification $I precedes settings (spec 042, UA-1).
 
 
 def test_worker_stop_before_start_never_constructs_or_opens(qtbot):

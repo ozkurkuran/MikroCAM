@@ -220,10 +220,12 @@ def machine_journey(app, qapp, errors):
         panel = app._mikrocam_machine_panel
         assert not fake.is_open and not fake.writes
         assert open_machine_panel(app) is panel
+        machine_firmware_journey(panel, qapp, errors)
         panel.controller_factory = lambda port: MachineController(fake)
         panel.connect_machine()
         pump_until(qapp, lambda: panel.last_snapshot.machine_position_mm == (3., 4., 5.),
                    errors, 'simulated machine connection')
+        assert panel.firmware_label.text().startswith('GRBL 1.1h'), panel.firmware_label.text()
         assert panel.last_snapshot.work_position_mm == (2., 2., 2.)
         assert panel.last_snapshot.state is MachineState.IDLE
         assert tuple(label.text() for label in panel.machine_labels) == ('3.000', '4.000', '5.000')
@@ -235,13 +237,39 @@ def machine_journey(app, qapp, errors):
         panel.connect_machine()
         pump_until(qapp, lambda: panel.last_snapshot.machine_position_mm == (3., 4., 5.),
                    errors, 'simulated machine reconnection')
-    assert set(fake.writes) == {b'?', b'$$\n'}
+    assert set(fake.writes) == {b'?', b'$$\n', b'$I\n'}  # Read-only identification (042).
     print('MACHINE_READ_ONLY_OK', flush=True)
     machine_manual_journey(panel, qapp, fake, errors)
     screenshot = ROOT / '.venv/machine-smoke.png'
     assert app.ui.grab().save(str(screenshot))
     print('MACHINE_MANUAL_OK', screenshot, flush=True)
     return fake
+
+
+def machine_firmware_journey(panel, qapp, errors):
+    """042/043: an identified 3-axis grblHAL board enables motion; one bounded jog is verified."""
+    from mikrocam.machine.controller import MachineController
+    from mikrocam.machine.fake import FakeGRBL
+    from mikrocam.machine.models import ManualPhase
+    hal = FakeGRBL(firmware='grblhal')
+    panel.controller_factory = lambda port: MachineController(hal)
+    panel.connect_machine()
+    pump_until(qapp, lambda: panel.firmware_label.text().startswith('grblHAL 1.1f')
+               and panel.last_snapshot.machine_position_mm is not None, errors, 'grblHAL identification')
+    jog = panel.manual_controls.jog_buttons[('X', 1)]
+    pump_until(qapp, jog.isEnabled, errors, 'grblHAL motion admission')
+    assert 'motion enabled' in panel.firmware_label.text()
+    assert panel.last_snapshot.job.can_start and panel.last_snapshot.probe.can_start
+    jog.click()
+    pump_until(qapp, lambda: panel.last_snapshot.manual.phase is ManualPhase.COMPLETE
+               and panel.last_snapshot.manual.action == 'jog', errors, 'grblHAL bounded jog')
+    assert any(write.startswith(b'$J=G21 G91 X') for write in hal.writes)
+    assert not any(write in (b'\x87', b'\x80') for write in hal.writes)
+    shown = panel.firmware_label.text()
+    panel.disconnect_machine()
+    pump_until(qapp, lambda: not panel.busy, errors, 'grblHAL disconnect')
+    assert not hal.is_open and panel.firmware_label.text() == 'Not identified'
+    print('MACHINE_FIRMWARE_GRBLHAL_MOTION_OK', shown, flush=True)
 
 
 def machine_manual_journey(panel, qapp, fake, errors):

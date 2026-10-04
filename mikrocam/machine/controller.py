@@ -22,6 +22,9 @@ from mikrocam.machine.wire_log import WireLog
 from mikrocam.machine.probe_control import ProbeControl
 from mikrocam.machine.probe_models import StartProbeGridRequest, ProbePhase
 from mikrocam.machine.probe_protocol import validate_probe_command
+from mikrocam.machine.firmware import FirmwareFamily, IdentificationPhase, is_reset_banner
+from mikrocam.machine.firmware_control import FirmwareIdentification
+from mikrocam.machine.grblhal import normalize_query_line
 
 POLL_INTERVAL = 0.25
 STATUS_TIMEOUT = 2.0
@@ -49,6 +52,7 @@ class MachineController:
         self._console = ConsoleControl(self)
         self._probe = ProbeControl(self)
         self._queue = QueueControl(self)
+        self._firmware = FirmwareIdentification(self)
         self._interrupted: Callable[[], bool] = lambda: False
         self._pause_requested: Callable[[], bool] = lambda: False
 
@@ -196,6 +200,7 @@ class MachineController:
         try:
             self._transport.open()
             self._snapshot = replace(self._snapshot, connection=ConnectionState.CONNECTED)
+            self._firmware.start()
             self._request_settings()
             self._request_status()
         except Exception as error:
@@ -291,6 +296,7 @@ class MachineController:
         self._console = ConsoleControl(self)
         self._probe = ProbeControl(self)
         self._queue = QueueControl(self, queue)
+        self._firmware = FirmwareIdentification(self)
         self._snapshot = replace(self._snapshot, queue=self._queue.observation)
         if connection is not ConnectionState.CONNECTING:
             self._console.observation = replace(console, can_query=False)
@@ -379,20 +385,34 @@ class MachineController:
             stale=True, last_report_at=None,
             report_units=None if clear_units else self._snapshot.report_units)
 
+    def _grblhal(self) -> bool:
+        firmware = self._snapshot.firmware
+        return (firmware.phase is IdentificationPhase.IDENTIFIED
+                and firmware.capabilities.family is FirmwareFamily.GRBLHAL)
+
     def _consume(self, line: str) -> None:
         _LOG.debug('GRBL RX %r', line[:256])
-        if line.startswith('Grbl '):
+        if self._grblhal() and not line.startswith('<'):
+            line = normalize_query_line(line)  # Raw bytes are already in the wire log (043).
+            if line is None:
+                return
+        if is_reset_banner(line):
             self._console.fail('Controller reset interrupted diagnostic query')
             self._manual.lost_evidence('Controller reset interrupted manual operation', reset=True)
             self._job.fail('Controller reset interrupted job', reset=True)
             self._probe.fail('Controller reset interrupted probing', reset=True)
             self._invalidate(clear_units=True)
             self._status_sent_at = None
+            identify = self._firmware.on_banner(line)
             if not self._console.tainted and not self._probe.tainted:
+                if identify:
+                    self._firmware.start()
                 self._request_settings()
             self._diagnose('Controller restarted; awaiting units and fresh status')
         elif line.startswith('<'):
             self._consume_status(line)
+        elif self._firmware.consume(line):
+            pass
         elif self._probe.consume(line):
             pass
         elif self._console.consume(line):
@@ -448,7 +468,7 @@ class MachineController:
 
     def _consume_status(self, line: str) -> None:
         try:
-            status = parse_status(line)
+            status = parse_status(line, grblhal=self._grblhal())
         except ValueError as error:
             self._console.fail(f'Invalid status: {error}')
             self._manual.lost_evidence(f'Invalid status: {error}')
@@ -488,6 +508,7 @@ class MachineController:
 
     def _expire_and_poll(self) -> None:
         now = self._clock()
+        self._firmware.expire(now)
         last = self._snapshot.last_report_at
         if last is not None and now - last >= STATUS_TIMEOUT:
             self._console.fail('Status became stale during diagnostic query')

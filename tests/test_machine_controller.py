@@ -13,11 +13,17 @@ class Clock:
         return self.now
 
 
+# Spec 042 (UA-1): the read-only $I identification precedes $$; settle it before settings.
+IDENTIFIED = b'[VER:1.1h.20190830:]\r\n[OPT:V,15,128]\r\nok\r\n'
+
+
 def session(auto=False):
     clock = Clock()
     fake = FakeGRBL(auto_respond=auto)
     controller = MachineController(fake, clock)
     controller.connect()
+    if not auto:
+        receive(controller, fake, IDENTIFIED)
     return controller, fake, clock
 
 
@@ -41,7 +47,7 @@ def test_explicit_lifecycle_exact_allowlist_and_clean_reconnect():
     controller.tick()
     assert controller.snapshot().connection is ConnectionState.CONNECTED
     assert controller.snapshot().state is MachineState.IDLE
-    assert fake.writes == [b'$$\n', b'?']
+    assert fake.writes == [b'$I\n', b'$$\n', b'?']  # Identification first (042, UA-1).
     with pytest.raises(ValueError):
         controller.connect()
     controller.disconnect()
@@ -52,7 +58,7 @@ def test_explicit_lifecycle_exact_allowlist_and_clean_reconnect():
     assert controller.snapshot().report_units is None
     controller.tick()
     controller.disconnect()
-    assert set(fake.writes) == {b'$$\n', b'?'}
+    assert set(fake.writes) == {b'$I\n', b'$$\n', b'?'}
 
 
 @pytest.mark.parametrize('inches', [False, True])
