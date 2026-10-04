@@ -9,11 +9,23 @@ _DEFAULTS = {'fill': 'black', 'stroke': 'none', 'stroke-width': '1',
              'stroke-linecap': 'butt', 'stroke-linejoin': 'miter', 'stroke-miterlimit': '4',
              'fill-rule': 'nonzero', 'fill-opacity': '1', 'stroke-opacity': '1',
              'visibility': 'visible', 'display': 'inline', 'opacity': '1', 'color': 'black',
-             'clip-path': 'none', 'clip-rule': 'nonzero'}
+             'clip-path': 'none', 'clip-rule': 'nonzero', 'vector-effect': 'none'}
 _UNSUPPORTED = {'clip', 'mask', 'filter', 'marker', 'marker-start', 'marker-mid',
-                'marker-end', 'stroke-dasharray', 'vector-effect', 'mix-blend-mode'}
+                'marker-end', 'stroke-dasharray', 'mix-blend-mode'}
 _STYLE_GEOMETRY = {'transform', 'transform-origin', 'transform-box', 'width', 'height',
                    'x', 'y', 'r', 'rx', 'ry', 'cx', 'cy', 'd'}
+
+
+def _enable_background(value: str) -> None:
+    """Validate SVG 1.1 accumulate | new [x y width height]; it never changes positive material."""
+    words = value.lower().split()
+    if words in (['accumulate'], ['new'], ['inherit']):
+        return
+    if words[:1] == ['new'] and len(words) == 5:
+        numbers = [parse_svg_numbers(word) for word in words[1:]]
+        if all(len(number) == 1 for number in numbers) and numbers[2][0] >= 0 and numbers[3][0] >= 0:
+            return
+    raise ValueError('Malformed SVG enable-background declaration')
 
 
 def _inline(text: str) -> dict[str, str]:
@@ -33,6 +45,9 @@ def _inline(text: str) -> dict[str, str]:
         value = re.sub(r'\s*!important\s*$', '', value).strip()
         if key in _STYLE_GEOMETRY:
             raise ValueError(f'Unsupported SVG CSS geometry property: {key}; use attributes')
+        if key == 'enable-background':
+            _enable_background(value)
+            continue  # Filter-only background setup, written by Illustrator; filters stay unsupported.
         if key not in _DEFAULTS and key not in _UNSUPPORTED and key not in (
                 'overflow', 'stroke-dashoffset', 'paint-order'):
             raise ValueError(f'Unsupported SVG CSS property: {key}')
@@ -79,7 +94,7 @@ def resolve_style(attributes: dict[str, str], parent: dict[str, str] | None = No
     """Resolve supported inherited presentation values without evaluating external CSS."""
     parent = _DEFAULTS if parent is None else parent
     result = dict(parent)
-    result.update(display='inline', opacity='1')
+    result.update({'display': 'inline', 'opacity': '1', 'vector-effect': 'none'})  # Not inherited.
     result['clip-path'] = 'none'  # Application scopes, rather than inheritance, clip descendants.
     supplied = {key: value for key, value in attributes.items()
                 if key in _DEFAULTS or key in _UNSUPPORTED or key in ('overflow', 'stroke-dashoffset', 'paint-order')}
@@ -109,6 +124,10 @@ def resolve_style(attributes: dict[str, str], parent: dict[str, str] | None = No
                 result[key] = value
     if result['clip-rule'] not in ('nonzero', 'evenodd'):
         raise ValueError('Unsupported SVG clip-rule')
+    result['vector-effect'] = result['vector-effect'].lower()
+    if result['vector-effect'] not in ('none', 'non-scaling-stroke'):
+        raise ValueError(f"Unsupported SVG vector-effect: {result['vector-effect'][:64]}; "
+                         'only none or non-scaling-stroke is supported')
     result['clip-path'] = _clip_reference(result['clip-path'])
     for key in ('opacity', 'fill-opacity', 'stroke-opacity'):
         result[key] = _opacity(result[key])

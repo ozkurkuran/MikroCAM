@@ -72,3 +72,58 @@ Final reviewed head: `38822cb4e8d360cd4a25654fdd37889d3c8d1c6f`.
 `5406a0e3148ca059456f6b107f2affc3d9402f0c` after final-head
 [Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36295494584)
 passed in 6m37s. Delivery documentation changes no runtime.
+
+## Genuine vendor-export follow-up (2026-10-04)
+Branch `test/vendor-svg-fixtures`. Three unmodified third-party exports were added under
+`tests/reference/cad-source/`, each with its original license notice, provenance.json, SHA-256
+and Git blob hash, kept byte-stable by the existing `.gitattributes` rule. They supersede the
+"authored only" statement above for SVG; tests are in `tests/test_vendor_export_fixtures.py`.
+
+| Fixture | Producer evidence | License / source | Result |
+| --- | --- | --- | --- |
+| `proteus-breath-analyzer/B_A_.svg` (129249 B) | root desc `Created by Proteus Design Suite` | Apache-2.0, [TengoCharlie/breath-analyzer@5872bbe2](https://github.com/TengoCharlie/breath-analyzer/blob/5872bbe211318a74ec51ccff3bf4ef2fc1d371b7/pcb%20bt%20woled/B_A_.svg) | Proteus, identified (after fix) |
+| `illustrator-wortschule-hilfsverb/hilfsverb.svg` (53005 B) | generator comment + XMP CreatorTool `Adobe Illustrator 25.3 (Windows)` | MIT, [wort-schule/wort.schule@eea2cf5d](https://github.com/wort-schule/wort.schule/blob/eea2cf5d856bff46ebc96b1dd472e869a604c31e/app/assets/images/montessori/hilfsverb.svg) | Illustrator, identified |
+| `illustrator-commons-history-of-china/…svg` (35021 B) | generator comment `Adobe Illustrator 24.1.0` | Public domain (PD-self), [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:%22History_of_China%22_for_template_heading.svg) | Illustrator, identified |
+
+Bug found and fixed (test first): every genuine Proteus SVG export found declares itself only as
+`<desc>Created by Proteus Design Suite</desc>`, which the authored marker grammar did not admit,
+so real Proteus output was Unknown. Root desc now also admits an anchored `Created by` only when it
+names a supported application (authorship text such as `Created by Jane Doe` is neither a claim
+nor a new conflict); comments and DXF 999 keep the original grammar; Proteus accepts the optional
+`Design Suite` suffix. The stored-claim validator applies the same rule. Fix commit `892f0952`.
+
+Corpus probe (scratch only, not retained): of 731 Wikimedia Commons SVGs carrying an Illustrator
+marker (PD/CC0/CC-BY categories), 583 were identified as Illustrator, 74 conflicting (Inkscape
+version from a later re-save, correctly Unknown), 72 unavailable (internal-subset entity DTDs or
+non-UTF-8 declarations, correctly not guessed) and 2 unknown. All 35 permissively licensed Proteus
+SVGs found on GitHub carry the same desc marker and are now identified.
+
+Search record and rejections: GitHub code search `"Created by Proteus Design Suite"` (231 hits,
+106 repositories; only 20 MIT/Apache-2.0/CC-BY-4.0 repositories, 35 files, one PCB layout; GPL,
+AGPL, LGPL, WTFPL, unlicensed and copied Proteus installation `DATA` files were rejected).
+`Labcenter`/`PROTEUS`/`Proteus Design Suite` with `extension:dxf` found no Proteus DXF; the
+breath-analyzer `B_A_.dxf` has no marker and its neighbouring `DXFINFO.LOG` reads like an import
+log, so its producer cannot be established and it was not retained. Illustrator DXF search
+(`"Adobe Illustrator" extension:dxf`, `"Adobe Illustrator Linetype"`, `"AI-LINETYPE"`; 60 hits,
+13 repositories) left two permissive candidates: MakerWear/MakerWear (no license when the file was
+committed; current terms "MIT for Software, CC 4.0 for Hardware" name no CC 4.0 variant) and
+AleBiCi/PPSE_2024 (MIT repository, but the drawing accompanies a third-party RND enclosure
+datasheet). Both were rejected. Such DXFs carry only `Adobe Illustrator Linetype No. N` LTYPE
+descriptions, which this contract deliberately treats as table values, so they would stay Unknown.
+
+Still open: genuine Illustrator DXF and genuine Proteus DXF detection evidence (none with an
+acceptable license found); geometry import of genuine Proteus SVG (see 018 follow-up).
+
+Local checks at test head `51b65b3d` (CPython 3.13.13, `.venv/repro-a`): new fixture file 18 passed;
+`tests/architecture` 83 passed; `pip check` clean. Full suite: 5856 passed, 3 skipped, 310 subtests,
+12 failed only because the optional `resvg_py` (requirements-visual) is absent from that venv; the
+same 12 fail identically on unmodified origin/main `70800e5b` there, and those five visual test files
+pass (46) with the main `.venv`. Logs: `.venv/vendor-fixtures-*.log` (ignored). PR Windows CI is the
+delivery gate.
+
+## Spec 041 takibi (2026-10-04)
+Kaynak algılayıcı artık geometri içe aktarıcısıyla aynı DOCTYPE izin listesini kullanır
+([spec 041](../041-svg-vendor-compat/validation.md)): SVG 1.1'e ek olarak standart SVG 1.0 public DOCTYPE de çevrim dışı kabul edilir; DOCTYPE
+yalnız kök elemandan önce ve bir kez bulunabilir, ayrıştırıcı silinmiş metni görür. İç alt küme,
+entity, yalnız `SYSTEM`, bilinmeyen tanımlayıcı veya ikinci DOCTYPE açık hatayla Unknown/unavailable
+kalır. "Geometry import of genuine Proteus SVG" boşluğu kapandı (018 takibi). DXF boşlukları açık.

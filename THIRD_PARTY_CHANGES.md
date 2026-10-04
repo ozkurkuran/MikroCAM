@@ -398,3 +398,34 @@ GalvoSpecificCutSettings, SharedSettings, LineMode PWM override and GalvoPorts
 documentation informed parameter names, units and family distinctions. Links
 and scope are recorded in docs/LASER_RECIPES.md and the feature research.md.
 No manufacturer-specific M7 numerical limits or native project encoding inferred.
+
+## 2026-10-04 — Genuine vendor SVG export fixtures (018/019/020 follow-up)
+
+- Data only; no external code copied and no dependency added. Unmodified files are retained under
+  `tests/reference/cad-source/` with their notices and `provenance.json` (URL, revision, author,
+  SHA-256, Git blob hash):
+  - `proteus-breath-analyzer/B_A_.svg` and `LICENSE`: https://github.com/TengoCharlie/breath-analyzer
+    at `5872bbe211318a74ec51ccff3bf4ef2fc1d371b7`, Apache-2.0 (no upstream NOTICE file).
+  - `illustrator-wortschule-hilfsverb/hilfsverb.svg` and `LICENSE`: https://github.com/wort-schule/wort.schule
+    at `eea2cf5d856bff46ebc96b1dd472e869a604c31e`, MIT, Copyright (c) 2022 Stefan Wintermeyer.
+  - `illustrator-commons-history-of-china/History_of_China_for_template_heading.svg`:
+    https://commons.wikimedia.org/wiki/File:%22History_of_China%22_for_template_heading.svg ,
+    public domain (PD-self) by Lệ Xuân; statement quoted in the folder's `LICENSE`; renamed only.
+- Reason: replace authored-only vendor evidence for 018/019/020 where licensed genuine exports exist.
+- Behaviour changes found by these files (original MikroCAM fixes, tests first): Proteus
+  `Created by` desc marker (`mikrocam/importers/cad_producer.py`, `cad_svg_source.py`,
+  `cad_source.py`) and Illustrator `enable-background` no-op (`mikrocam/importers/svg_style.py`).
+  Details and remaining gaps: the three feature validation files.
+
+## 2026-10-04 — SVG vendor compatibility (spec 041)
+
+- Data only; no external code copied and no dependency added. One further unmodified export:
+  `tests/reference/cad-source/illustrator-commons-hex-star-doctype/Hex_icon_with_star_white.svg`
+  from https://commons.wikimedia.org/wiki/File:Hex_icon_with_star_white.svg (single version,
+  Commons SHA-1 `22d0ade2a982c214b66cf0383fb7e3399f21e952`), CC0 1.0 by Heatherawalls (own work);
+  statement quoted in the folder's `LICENSE`; file name in canonical Commons URL form.
+- Reason: genuine Illustrator 16.0.4 export carrying the standard SVG 1.1 public DOCTYPE accepted by
+  spec 041. Standards consulted (text only, not code): W3C SVG 1.0/1.1 DTD identifiers, SVG Tiny 1.2
+  §11.5 and SVG 2 §8.13 `vector-effect`. MikroCAM implementation is original
+  (`mikrocam/importers/svg_doctype.py`, `svg_style.py`, `svg_document.py`,
+  `mikrocam/core/svg_transform.py`, `svg_drill_circles.py`, `svg_drills.py`).

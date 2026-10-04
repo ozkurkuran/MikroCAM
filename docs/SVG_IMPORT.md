@@ -76,6 +76,26 @@ uygulanır. Böylece eşit olmayan ölçekleme çizgi kalınlığını da SVG d�
 Miter oranı sınırı aşarsa birleşim bevel olur. `stroke="none"` veya sıfır genişlik katı stroke
 eklemez; negatif genişlik hata verir.
 
+### `vector-effect="non-scaling-stroke"` (spec 041)
+
+Bu nitelik miras alınmaz ve yalnız şekil elemanlarında `none` veya `non-scaling-stroke` olarak
+kabul edilir. Anlamı yalnız stroke ana hattıyla ilgilidir:
+
+- Stroke boyanmıyorsa (`stroke="none"`, sıfır genişlik veya tam saydam stroke) nitelik malzemeyi
+  değiştirmez; dönüşüm ne olursa olsun nitelik yokmuş gibi içe aktarılır. Proteus PCB SVG'leri bu
+  niteliği her dolgu yoluna yazar; bu durumda belge başına tek bir bilgi bildirimi gösterilir.
+- Stroke boyanıyorsa genişlik, SVG Tiny 1.2/SVG 2'deki ana (ekran) koordinat uzayının yakınlaştırma
+  1'deki karşılığı olan **kök viewport CSS pikselinde** ölçülür: `stroke-width="3"` = 3 × 25,4/96 =
+  0,79375 mm, `stroke-width="0.5mm"` = 0,5 mm. viewBox ölçeği, grup/eleman `transform`'u ve `use`
+  ötelemesi kalınlığı değiştirmez. Örneğin `width="100mm" viewBox="0 0 1000 1000"` kökünde normal
+  `stroke-width="3"` 0,3 mm, non-scaling ise 0,79375 mm olur.
+- Eleman ile kök arasında eşit olmayan ölçek veya eğiklik varsa (`scale(2,1)`, `skewX`, farklı eksen
+  ölçekli `preserveAspectRatio="none"`) ya da kökte ölçekleyen bir `transform` varsa, boyanan
+  non-scaling stroke tahmin edilmez; içe aktarma açık hatayla durur. Stroke'u kaynak editörde
+  outline'a çevirin veya dönüşümü tek biçimli yapın.
+- SVG 2'nin `non-scaling-size`, `non-rotation`, `fixed-position`, `viewport` ve `screen` değerleri ve
+  grup/`use`/kök üzerindeki etkin değer desteklenmez.
+
 `nonzero` ve `evenodd` dolgu kuralları desteklenir; iç içe, dokunan, örtüşen veya kendi kendini
 kesen compound konturlar kaynak yönü ve dolgu kuralıyla değerlendirilir. Kesişimler için sınırlı
 topoloji hesabı yapılır; keyfi snapping veya geometri onarımı uygulanmaz. En az üç farklı noktası olan açık bir yol dolgu için
@@ -135,13 +155,44 @@ görmezden gelerek benzer bir çizim üretmez:
 - Harici/koşullu stylesheet, karmaşık CSS seçicileri, harici referanslar, fontlar, görüntüler ve script.
   Basit gömülü kurallar, genel CSS desteği anlamına gelmez.
 - `clip`, mask, filter, marker, gradient/pattern/paint server ve renk/compositing çıkarımları.
-- Kesikli stroke/dash, non-scaling stroke, özel paint-order ve CSS üzerinden geometri dönüşümü.
+- Kesikli stroke/dash, yukarıda tanımlanan kapsam dışındaki non-scaling stroke, özel paint-order ve
+  CSS üzerinden geometri dönüşümü.
+- Standart olmayan `DOCTYPE` veya herhangi bir entity bildirimi (aşağıya bakın).
 - Görünür malzemede kısmi opacity ve belirtilen kök/XMP veya bbox-clip kapsamı dışındaki yüzde/font birimleri. Tam saydamlık görünmez malzeme,
   tam opaklık normal malzeme olarak ele alınır; `display:none`/`visibility:hidden` çizilmez.
+
+## DOCTYPE (spec 041)
+
+Birçok Illustrator sürümü standart SVG DOCTYPE satırını yazar. Yalnız şu iki W3C bildirimi kabul
+edilir; kök elemandan önce, en fazla bir kez ve iç alt küme (`[...]`) olmadan bulunmalıdır:
+
+```xml
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+```
+
+Satır ayrıştırmadan önce silinir: DTD ağdan veya diskten okunmaz, entity tanımlanmaz ve açılmaz.
+İç alt küme veya entity bildirimi (eski Illustrator sürümlerinin `ns_svg` gibi entity'leri dahil),
+yalnız `SYSTEM` tanımlayıcısı, bilinmeyen/uyuşmayan public-system çifti, SVG 1.1 Tiny/Basic ya da
+SVG 1.2 bildirimi, kök sonrası ikinci DOCTYPE ve tanımsız `&ad;` başvurusu açık hatayla reddedilir.
+Böyle bir dosyayı DOCTYPE olmadan veya güncel bir SVG 1.1 profiliyle yeniden dışa aktarın. Aynı izin
+listesi kaynak tespiti (CAD source) için de kullanılır. Görsel (raster) SVG akışı bu kuralı ayrıca
+uygulamaz; orada DOCTYPE hâlâ reddedilir.
 
 İçe aktarma hata verirse bildirilen özelliği kaynakta düzeltin. Dosyanın uzantısını değiştirmek
 veya uyarıyı yok saymak fiziksel ölçeği ya da malzeme sınırını doğrulamaz.
 
-Illustrator tarzı örnekler MikroCAM tarafından yazılmış analitik test çizimleridir. Gerçek, lisansı
-doğrulanmış Illustrator dışa aktarım örneği henüz doğrulama kümesinde yoktur; tüm Illustrator
-dosyalarıyla uyumluluk veya fiziksel üretim doğrulaması iddia edilmez.
+Illustrator'ın kökte yazdığı `enable-background` bildirimi yalnız filtre arka planını hazırlar.
+Geçerli SVG 1.1 sözdizimi doğrulanır ve malzemeyi değiştirmediği için yok sayılır; filtreler yine
+desteklenmez ve bozuk değerler hata verir.
+
+Illustrator tarzı clip/compound örnekleri MikroCAM tarafından yazılmış analitik test çizimleridir.
+Ayrıca lisansı ve kaynağı kayıtlı üç gerçek Illustrator dışa aktarımı doğrulanır: yalnız XMP
+`MaxPageSize` ile 50 mm sayfa veren bir çizim; katman, gömülü CSS, compound harfler ve stroke
+çerçeve içeren bir çizim; standart SVG 1.1 DOCTYPE satırı taşıyan bir ikon
+([kaynak kayıtları](../tests/reference/cad-source/)). Gerçek bir Proteus PCB SVG'si
+(`non-scaling-stroke` nitelikli) Geometry ve Gerber olarak içe aktarılır. PR #41'in Wikimedia
+Commons taramasında Illustrator işaretli 731 dosyanın içe aktarılabilen sayısı DOCTYPE desteğiyle
+91'den 367'ye çıktı; kalanlar pattern, gradient, kısmi opaklık, dash, metin gibi açıkça
+desteklenmeyen özellikler nedeniyle hata verir. Gerçek Illustrator clip örneği bulunamadı; tüm
+Illustrator dosyalarıyla uyumluluk veya fiziksel üretim doğrulaması iddia edilmez.

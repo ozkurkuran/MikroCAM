@@ -65,3 +65,48 @@ Neo behavior adaptation implementation commit: `60c16b76603c191707982ebd0aec5d07
 source/license details in THIRD_PARTY_CHANGES.md.
 [PR19](https://github.com/ozkurkuran/MikroCAM/pull/19) merged as `8d79706b506d29e14f1d5d2eebd3f21fa16cb258`.
 [Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36292864325) passed in 6m52s at final head `082f15bd3566a41aeda75799db0baa7377b239d0`.
+
+## Genuine vendor-export follow-up (2026-10-04)
+Branch `test/vendor-svg-fixtures`; tests in `tests/test_vendor_export_fixtures.py`; fixture
+license, source URL and hashes in each `provenance.json` under `tests/reference/cad-source/`.
+
+Genuine drill review evidence (Illustrator, not Proteus): the unmodified Adobe Illustrator 25.3.0
+export `illustrator-wortschule-hilfsverb/hilfsverb.svg` (MIT,
+[wort-schule/wort.schule@eea2cf5d](https://github.com/wort-schule/wort.schule/blob/eea2cf5d856bff46ebc96b1dd472e869a604c31e/app/assets/images/montessori/hilfsverb.svg))
+draws a white disc concentric with a red disc. With its XMP 50 mm page, drill review returns exactly
+one candidate, centre and diameter (18.3600 mm) within 1e-6 mm of values derived from the exported
+coordinates, before and after flip, with the heuristic notice. This is artwork, not a PCB.
+
+Genuine Proteus evidence: `proteus-breath-analyzer/B_A_.svg` is an unmodified Proteus Design Suite
+PCB SVG export (Apache-2.0,
+[TengoCharlie/breath-analyzer@5872bbe2](https://github.com/TengoCharlie/breath-analyzer/blob/5872bbe211318a74ec51ccff3bf4ef2fc1d371b7/pcb%20bt%20woled/B_A_.svg)).
+Source detection now identifies it as Proteus (see 020 follow-up). Geometry import, and therefore
+drill review, still fails explicitly and atomically: 209 filled, unstroked paths carry
+`vector-effect="non-scaling-stroke"`, which the 016 importer contract rejects; a test records that
+error for Geometry and Gerber. The same failure affects 30 of the 35 permissively licensed Proteus
+SVGs found (the other 5 contain text). A scratch-only diagnostic on a modified copy with
+`vector-effect` removed (not retained, not evidence of compatibility) imported 351 shapes but gave
+no drill candidate: Proteus writes holes as unclosed four-cubic circles (no `Z`) and this board's
+pads are DIL/PPAD shapes, not circular pads, so the conservative heuristic would not apply anyway.
+
+Still open: drill review on genuine Proteus output and physical drilling. Changing the
+vector-effect policy or recognising coincident-endpoint circles changes established contracts and
+needs its own spec; no behaviour was changed for 018.
+
+Local checks at test head `51b65b3d` (CPython 3.13.13, `.venv/repro-a`): new fixture file 18 passed;
+`tests/architecture` 83 passed; `pip check` clean. Full suite: 5856 passed, 3 skipped, 310 subtests,
+12 failed only because the optional `resvg_py` (requirements-visual) is absent from that venv; the
+same 12 fail identically on unmodified origin/main `70800e5b` there, and those five visual test files
+pass (46) with the main `.venv`. Logs: `.venv/vendor-fixtures-*.log` (ignored). PR Windows CI is the
+delivery gate.
+
+## Spec 041 takibi (2026-10-04)
+Yukarıdaki "Still open: drill review on genuine Proteus output" boşluğu [spec 041](../041-svg-vendor-compat/validation.md) ile kapandı.
+Gerçek `proteus-breath-analyzer/B_A_.svg` içe aktarılır ve drill incelemesi 25 adayın tamamını
+bulur: merkezler testte dosyanın ham `d` metninden bağımsız hesaplananlarla 1e-6 mm içinde
+(flip açık/kapalı), çap 1,0001–1,00014 mm (dört kübik Bezier yaklaşımı), tek takım grubu ~1,00 mm.
+Bu, dosyanın yanındaki Proteus CADCAM notundaki `D=1mm` ile uyumludur. Değişen sözleşme: tek alt
+yol uçları 1e-6 mm içinde çakışıyorsa kapalı sayılıp aynı daire uyumuyla sınanır (360° şartı
+korunur); dairesel destek yoksa ağırlık merkezi ≤0,02 mm ve deliği 0,01 mm payla içeren beyaz
+olmayan dolu poligon pad destek olur. Delik merkezi/çapı yalnız beyaz daireden gelir.
+Hâlâ açık: fiziksel delme, başka Proteus sürümleri ve diğer EDA araçlarının delik çizim biçimleri.

@@ -8,6 +8,9 @@ from .svg_transform import apply_svg_point, parse_svg_length
 
 
 Circle = tuple[tuple[float, float], float]
+# A subpath whose end returns to its start within numerical noise is a closed contour candidate
+# (Proteus writes drill circles without Z). Real gaps, even 1 um, remain open geometry.
+COINCIDENT_ENDPOINT_MM = 1e-6
 
 
 def _primitive(element: SvgElement) -> Circle | None:
@@ -32,13 +35,19 @@ def _primitive(element: SvgElement) -> Circle | None:
 
 
 def _fitted(rendered: SvgRendered) -> Circle | None:
-    if len(rendered.paths_mm) != 1 or not rendered.paths_mm[0].closed:
+    if len(rendered.paths_mm) != 1:
         return None
-    return fit_closed_circle(rendered.paths_mm[0].points)
+    path = rendered.paths_mm[0]
+    points = path.points
+    if not path.closed:
+        if len(points) < 4 or math.dist(points[0], points[-1]) > COINCIDENT_ENDPOINT_MM:
+            return None
+        points = points[:-1] + points[:1]  # The fit still requires one turn of exactly 2*pi.
+    return fit_closed_circle(points)
 
 
 def circle_evidence(element: SvgElement, rendered: SvgRendered) -> Circle | None:
-    """Return a physical circle only from exact native axes or a fully resolved closed path."""
+    """Return a physical circle only from exact native axes or one fully resolved closed contour."""
     if (element.clips or not element.paint.fill or element.fill_is_white is None
             or not rendered.paths_mm or not rendered.geometry_mm):
         return None

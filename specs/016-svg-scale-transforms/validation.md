@@ -64,3 +64,14 @@ opacity remain explicit errors. Positive color is CAM material; white is not a s
 [PR17](https://github.com/ozkurkuran/MikroCAM/pull/17) merged as `59c967b7806c6c8dab14bd6d92ef943bfa364099`.
 [Windows CI](https://github.com/ozkurkuran/MikroCAM/actions/runs/36290710905) passed on final head
 `295fd53ac4ea3a52438c0a78acafe51aa5944bae` in 6m10s. Physical-machine validation was not performed.
+
+## Spec 041 takibi (2026-10-04)
+[spec 041](../041-svg-vendor-compat/validation.md) bu sözleşmenin iki noktasını bilinçli olarak değiştirdi; ayrıntı ve testler oradadır.
+- DOCTYPE: kök elemandan önce, iç alt kümesiz tek standart SVG 1.0/1.1 public DOCTYPE kabul edilir
+  ve ayrıştırmadan önce silinir (`mikrocam/importers/svg_doctype.py`). Diğer tüm DTD/entity
+  biçimleri açık hatayla reddedilmeye devam eder; dış kaynak okunmaz, entity açılmaz.
+- `vector-effect`: miras alınmaz; `non-scaling-stroke` boyanmayan stroke'ta kesin no-op, boyanan
+  stroke'ta kök viewport CSS pikselinde (1 px = 25,4/96 mm) ölçülen genişliktir; benzerlik olmayan
+  dönüşüm, ölçekleyen kök `transform` ve diğer değerler hata verir.
+Gerçek Proteus PCB SVG'si artık Geometry/Gerber olarak içe aktarılır. Dash, kısmi opaklık, metin,
+pattern/gradient gibi diğer sınırlar değişmedi.

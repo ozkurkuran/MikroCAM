@@ -4,14 +4,15 @@ import hashlib
 import re
 import xml.etree.ElementTree as ET
 
-from mikrocam.core.svg_models import (SvgDocument, SvgElement, SvgNotice, MAX_SVG_BYTES,
+from mikrocam.core.svg_models import (SvgDocument, SvgElement, SvgNotice, SvgPaint, MAX_SVG_BYTES,
                                      MAX_SVG_ELEMENTS, MAX_SVG_DEPTH, MAX_SVG_REFERENCE_DEPTH)
-from mikrocam.core.svg_transform import (compose_affine, parse_svg_transform, parse_svg_length,
-                                        resolve_svg_viewport)
+from mikrocam.core.svg_transform import (compose_affine, non_scaling_stroke_width, parse_svg_transform,
+                                        parse_svg_length, resolve_svg_viewport)
 from .svg_style import resolve_style, style_paint, style_fill_is_white
 from .svg_metadata import resolve_page_attributes
 from .svg_css import parse_stylesheets, cascade_attributes
 from .svg_clips import SvgClipBuilder
+from .svg_doctype import strip_svg_doctype
 
 
 _SVG = 'http://www.w3.org/2000/svg'
@@ -31,8 +32,7 @@ def _parse_xml(source: bytes) -> ET.Element:
         text = source.decode('utf-8-sig')
     except UnicodeDecodeError as error:
         raise ValueError('SVG source must use UTF-8 encoding') from error
-    if '<!DOCTYPE' in text.upper() or '<!ENTITY' in text.upper():
-        raise ValueError('SVG document/entity declarations are unsupported')
+    text = strip_svg_doctype(text)  # Only the standard SVG 1.0/1.1 DOCTYPE, never parsed or fetched.
     if re.search(r'<\?xml-stylesheet\b', text, re.IGNORECASE):
         raise ValueError('SVG external stylesheet instructions are unsupported')
     declaration = re.match(r'\s*<\?xml\s+[^?]*encoding\s*=\s*[\'"]([^\'"]+)', text)
@@ -80,6 +80,9 @@ class _Traversal:
         self.layers: set[tuple[str, ...]] = set()
         self.elements: list[SvgElement] = []
         self.visits = 0
+        # A scaling root transform makes the non-scaling-stroke host space ambiguous (viewport vs screen).
+        self.root_scaled = parse_svg_transform(root.get('transform'))[:4] != (1., 0., 0., 1.)
+        self.non_scaling = [0, 0]  # Painted, unpainted uses of vector-effect: non-scaling-stroke.
 
     def walk(self, node: ET.Element, matrix: tuple, parent_style: dict | None,
              references: tuple[str, ...] = (), depth: int = 0, clips: tuple = (),
@@ -96,6 +99,8 @@ class _Traversal:
         style = resolve_style(attributes, parent_style)
         if style['display'] == 'none' or style['opacity'] == '0':
             return
+        if kind not in _SHAPES and style['vector-effect'] != 'none':
+            raise ValueError(f'SVG vector-effect applies only to shapes, not {kind[:32]}')
         matrix = compose_affine(matrix, parse_svg_transform(node.get('transform')))
         if style['clip-path'] != 'none':
             if len(clips) >= 8:
@@ -128,10 +133,24 @@ class _Traversal:
             raise ValueError('SVG expanded element limit exceeded')
         name = node.get('id', kind)
         identifier = f'{len(self.elements) + 1}:{name}'[:256]
+        paint = style_paint(style)
+        if style['vector-effect'] == 'non-scaling-stroke':
+            paint = self._non_scaling(paint, matrix)
         self.elements.append(SvgElement(identifier, kind, tuple(node.attrib.items()), matrix,
-                                        style_paint(style), style_fill_is_white(style), clips, layers))
+                                        paint, style_fill_is_white(style), clips, layers))
         if layers:
             self.layers.add(layers)
+
+    def _non_scaling(self, paint: SvgPaint, matrix: tuple) -> SvgPaint:
+        """Stroke width in root viewport CSS px; an unpainted stroke is an exact no-op."""
+        if not paint.stroke or paint.width == 0:
+            self.non_scaling[1] += 1
+            return paint
+        if self.root_scaled:
+            raise ValueError('SVG non-scaling-stroke with a scaling root transform is ambiguous; '
+                             'remove the root transform or outline the stroke in the source editor')
+        self.non_scaling[0] += 1
+        return replace(paint, width=non_scaling_stroke_width(paint.width, matrix))
 
     def _use(self, node: ET.Element, matrix: tuple, style: dict,
              references: tuple[str, ...], depth: int, clips: tuple,
@@ -150,6 +169,19 @@ class _Traversal:
                   references + (identifier,), depth + 1, clips, layers)
 
 
+def _non_scaling_notices(painted: int, unpainted: int) -> tuple[SvgNotice, ...]:
+    notices = ()
+    if painted:
+        notices += (SvgNotice('non-scaling-stroke', f'{painted} painted stroke(s) use vector-effect '
+                              'non-scaling-stroke: width is measured in root viewport CSS px '
+                              '(1 px = 25.4/96 mm), independent of viewBox and transforms.'),)
+    if unpainted:
+        notices += (SvgNotice('non-scaling-stroke-unpainted', f'{unpainted} element(s) declare '
+                              'vector-effect non-scaling-stroke without a painted stroke; '
+                              'it does not change material.'),)
+    return notices
+
+
 def parse_svg_document(source: bytes, source_name: str) -> SvgDocument:
     """Resolve a finite source without reading files, loading fonts or following URLs."""
     root = _parse_xml(source)
@@ -157,6 +189,8 @@ def parse_svg_document(source: bytes, source_name: str) -> SvgDocument:
     viewport = resolve_svg_viewport(effective)
     traversal = _Traversal(root)
     style = resolve_style(cascade_attributes('svg', dict(root.attrib), traversal.rules))
+    if style['vector-effect'] != 'none':
+        raise ValueError('SVG vector-effect applies only to shapes, not the root svg')
     # A root SVG transform is outside its viewBox, in viewport CSS-pixel coordinates.
     px_mm = 25.4 / 96
     to_mm = (px_mm, 0., 0., px_mm, 0., 0.)
@@ -170,10 +204,12 @@ def parse_svg_document(source: bytes, source_name: str) -> SvgDocument:
             traversal.walk(child, matrix, style, depth=1, clips=clips)
     notices = (SvgNotice('positive-material', 'Solid colors indicate positive CAM material; color overpainting '
                          'and viewport clipping are not inferred.'),) + page_notices
+    notices += _non_scaling_notices(*traversal.non_scaling)
     # Reserve one omission notice and one later physical-flip notice.
+    base = len(notices)
     notices += tuple(SvgNotice('visible-layer', 'Visible source group/layer: ' + ' / '.join(path)[:470])
-                     for path in sorted(traversal.layers)[:198 - len(notices)])
-    if len(traversal.layers) + len(page_notices) + 1 > 198:
+                     for path in sorted(traversal.layers)[:198 - base])
+    if len(traversal.layers) + base > 198:
         notices += (SvgNotice('layers-truncated', 'Further source group/layer labels omitted.'),)
     return SvgDocument(source_name, hashlib.sha256(source).hexdigest(),
                         replace(viewport, matrix=matrix), tuple(traversal.elements), notices,
