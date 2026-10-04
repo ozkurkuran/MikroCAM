@@ -48,7 +48,7 @@ class ManualControl:
                 and not self.host._job.tainted and self.host._settings_sent_at is None
                 and value.connection is ConnectionState.CONNECTED and value.state is MachineState.IDLE
                 and fresh and not value.stale and value.report_units is not None
-                and value.machine_position_mm is not None
+                and value.machine_position_mm is not None and value.firmware.motion_allowed
                 and (not zero or value.work_position_mm is not None))
 
     def publish(self) -> None:

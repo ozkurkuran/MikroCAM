@@ -30,7 +30,7 @@ class ConsoleControl:
                 and not self.host._manual.active and not self.host._manual.tainted
                 and not self.host._job.active and not self.host._job.tainted
                 and not self.host._probe.active and not self.host._probe.tainted
-                and self.host._settings_sent_at is None)
+                and self.host._settings_sent_at is None and not self.host._firmware.pending)
 
     def publish(self) -> None:
         self.observation = replace(self.observation,

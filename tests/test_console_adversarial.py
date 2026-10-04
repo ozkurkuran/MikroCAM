@@ -121,7 +121,8 @@ def test_worker_typed_query_priority_and_final_raw_evidence(qtbot):
         assert worker.wait(4000)
         result = worker.final_snapshot
         assert result.console.phase is ConsolePhase.FAILED and (not result.console.can_query)
-        assert any((record.payload == b'$I\n' and record.outcome == 'complete' for record in result.wire.records))
+        assert sum(record.payload == b'$I\n' and record.outcome == 'complete'
+                   for record in result.wire.records) == 2  # One session identification $I precedes settings (spec 042, UA-1).
         assert not fake.is_open
     finally:
         worker.stop()
@@ -140,7 +141,7 @@ def test_worker_pre_admission_priority_publishes_cancelled_query_not_silent_read
     worker._publish(controller.snapshot())
     result = worker._latest.console
     assert result.phase is ConsolePhase.FAILED and result.command == '$I'
-    assert result.diagnostic and b'$I\n' not in fake.writes
+    assert result.diagnostic and fake.writes.count(b'$I\n') == 1  # One session identification $I precedes settings (spec 042, UA-1).
 
 def test_manual_reservation_immediately_closes_console_eligibility():
     controller, fake, clock = connected()
@@ -191,7 +192,8 @@ def test_unexpected_owner_exception_preserves_query_and_existing_wire_evidence(q
         assert 'unexpected owner intent failure' in result.diagnostic
         assert result.console.command == '$I'
         assert result.console.phase is ConsolePhase.FAILED and not result.console.can_query
-        assert any((record.payload == b'$I\n' and record.outcome == 'complete' for record in result.wire.records))
+        assert sum(record.payload == b'$I\n' and record.outcome == 'complete'
+                   for record in result.wire.records) == 2  # One session identification $I precedes settings (spec 042, UA-1).
         assert not fake.is_open
     finally:
         worker.stop()

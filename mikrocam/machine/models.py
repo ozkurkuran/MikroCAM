@@ -8,6 +8,7 @@ from .queue_models import QueueObservation
 from .console_models import ConsoleObservation
 from .wire_log import WireSnapshot
 from .probe_models import ProbeObservation
+from .firmware import FirmwareObservation
 
 
 XYZ = tuple[float, float, float]
@@ -118,8 +119,11 @@ class MachineSnapshot:
     wire: WireSnapshot = WireSnapshot()
     probe: ProbeObservation = ProbeObservation()
     queue: QueueObservation = QueueObservation()
+    firmware: FirmwareObservation = FirmwareObservation()
 
     def __post_init__(self) -> None:
+        if type(self.firmware) is not FirmwareObservation:
+            raise ValueError('Snapshot requires an immutable firmware observation')
         if type(self.queue) is not QueueObservation:
             raise ValueError('Snapshot requires an immutable queue observation')
         if type(self.probe) is not ProbeObservation:

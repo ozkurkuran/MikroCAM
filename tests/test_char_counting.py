@@ -44,7 +44,7 @@ def test_multiple_blocks_never_exceed_verified_capacity_and_complete_planner_sat
     assert fake.job_writes == [b.wire for b in job.blocks]
     assert controller.snapshot().job.acknowledged == len(job.blocks)
     assert fake.machine_position == job.final_machine_mm
-    assert fake.writes.count(b'$I\n') == 1
+    assert fake.writes.count(b'$I\n') == 2  # Session identification (042) + job capability query.
 
 
 def test_default_source_mode_still_waits_for_each_ack():
@@ -54,7 +54,7 @@ def test_default_source_mode_still_waits_for_each_ack():
     fake.auto_respond = False
     fake._incoming.clear()
     for _ in range(3): step(controller, clock)
-    assert len(fake.job_writes) == 1 and b'$I\n' not in fake.writes
+    assert len(fake.job_writes) == 1 and fake.writes.count(b'$I\n') == 1  # One session identification $I precedes settings (spec 042, UA-1).
 
 
 @pytest.mark.parametrize('evidence', [b'ok\n', b'[VER:0.9j:]\n[OPT:V,15,128]\nok\n',
@@ -170,7 +170,7 @@ def test_queue_rediscovers_capacity_and_completes_each_job_before_advancing():
     request = StartQueueRequest(draft.entries, True, StreamingMode.CHARACTER_COUNTING)
     controller.request_queue(request)
     until(controller, clock, lambda: controller.snapshot().queue.phase is QueuePhase.COMPLETE)
-    assert fake.writes.count(b'$I\n') == 3
+    assert fake.writes.count(b'$I\n') == 4  # Session identification (042) + one per queued job.
     assert fake.writes.count(b'$G\n') == 6
     assert fake.job_writes == [b.wire for e in request.entries for b in e.job.blocks]
 

@@ -5,7 +5,10 @@ her kaynak bloğu için ACK bekler. **Character counting** açıkça seçilirse 
 birden fazla tam kaynak satırını gönderir. Seçim bağlantı veya hareket başlatmaz; Start
 hazırlanmış kaynak ve mekanik onayla birlikte modu değişmez istek içine alır.
 
-Her işte salt okunur `$I` sorgusu GRBL1.1 build ve `[OPT:flags,planner,rx]` kapasitesini doğrular.
+Mod yalnız bağlantıda tanınan firmware'in yetenek kaydında kanıtlanmış bir RX bütçesi varsa
+başlar (042: bugün yalnız GRBL 1.1 için `min(rx,128)`; grblHAL/FluidNC D2/D3'e kadar yok).
+Her işte salt okunur `$I` sorgusu GRBL1.1 build ve `[OPT:flags,planner,rx]` kapasitesini doğrular;
+VER satırı oturumdaki tanımayla aynı olmalıdır, değişmişse kaynak gönderilmez.
 Kapasite `min(rx,128)` byte olarak sınırlanır; eksik/hatalı kanıt veya bütçeden büyük kaynak
 bloğu hareket gönderilmeden reddedilir. Varsayılan mod bu kapasite sorgusuna ihtiyaç duymaz.
 
