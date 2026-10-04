@@ -150,6 +150,8 @@ Kullanıcı kararı değildir; kod ve testte sabitlenmiştir, saha kanıtıyla d
   işlenirken düz karakter olarak tampona girebilir; bu nedenle hareket `RT+` ister.
 - **UA-10** Otomatik/push durum raporları sorguya atfedilebilir; atıf yalnız referans olaydan (ACK veya
   yazma) sonra alınan rapora dayanır, en kötü durumda işlem fail-closed biter.
+- **UA-11** `$#`'taki `G59.1–3`, `G28/G30`, `[HOME:]`, `[T:]`, `[TLR:]` satırları kanıt dışıdır; sıfır sonrası
+  değişmezlik doğrulaması GRBL'deki envanterle (G54–G59, G92, TLO) sınırlıdır. MikroCAM bu kayıtları yazmaz.
 
 ## Clarifications
 

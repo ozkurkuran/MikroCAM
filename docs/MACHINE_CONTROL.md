@@ -1,6 +1,6 @@
 # Machine paneli: GRBL bağlantısı, jog ve G54 iş sıfırı
 
-Bu panel GRBL 1.1 denetleyicisine seri port üzerinden bağlanır; durum ve konum bilgilerini
+Bu panel GRBL 1.1 (ve 043 ile grblHAL) denetleyicisine seri port üzerinden bağlanır; durum ve konum bilgilerini
 okur. Açık bir kullanıcı eylemiyle tek eksende sınırlı jog, G54 seçimi ve seçilen eksenlerde
 kalıcı G54 iş sıfırı ayarı yapılabilir. Bağlanmak veya paneli açmak hareket başlatmaz,
 G54 seçmez ve iş sıfırını değiştirmez. Homing, unlock, resume, iş gönderimi, çıkış açma
@@ -36,7 +36,7 @@ durumlar, durum alanları, ham `$I` satırları) ipucunda, ham bayt alışveriş
 | Gösterim | Anlamı | Hareket |
 | --- | --- | --- |
 | `GRBL 1.1x` | gnea GRBL 1.1 biçimi (`[VER:1.1x.YYYYMMDD:]`, üç alanlı OPT) | Açık (mevcut davranış) |
-| `grblHAL 1.1f` | `GrblHAL` karşılaması veya `[FIRMWARE:grblHAL]` | Kapalı; spec 043 (D2) doğrulayana kadar |
+| `grblHAL 1.1f` | `GrblHAL` karşılaması veya `[FIRMWARE:grblHAL]` | Açık: 3 eksen XYZ, `RT+`, lathe değil (043); aksi hâlde gerekçeyle kapalı |
 | `FluidNC x.y.z` | `[VER:x.y FluidNC vx.y.z…:]`; karşılama “Grbl” ile başlasa da | Kapalı; spec 044 (D3) doğrulayana kadar |
 | `Unknown` | Kanıt yok, bozuk, çelişkili, `error:` veya 3 s içinde cevap yok | Kapalı |
 
@@ -48,6 +48,40 @@ yalnız `$$` yeniden okunur; farklı/doğrulanamayan bir karşılama `$I` ile ye
 Otomatik tekrar veya yeniden bağlanma yoktur; bilinmeyen sonuçta Disconnect/Connect yapın.
 Gerçek grblHAL/FluidNC kartlarında tanıma henüz doğrulanmadı
 ([saha protokolü H042](hardware/GRBL_VALIDATION.md)).
+
+## grblHAL kartları (043)
+
+Tanınan grblHAL kartında GRBL 1.1 ile aynı akışlar kullanılır: jog, G54 seçimi/sıfırı, preflight ve
+iş gönderimi (send-response veya karakter sayımı), Pause/Resume/Stop, dry run, probe grid, autolevel,
+iş kuyruğu ve konsol. Gönderilen baytlar aynıdır (`?`, `!`, `~`, 0x18, 0x84, 0x85); grblHAL'e özgü
+gerçek zamanlı komutlar (0x87 tam durum raporu dahil) gönderilmez. Hareket yalnız kartın kendi `$I`
+cevabı şunları gösterdiğinde açılır; aksi hâlde Firmware satırı gerekçeyi yazar:
+
+- `[OPT:…,<planner>,<rx>,3,<takım>]` ve varsa `[AXS:3:XYZ]` (yalnız 3 eksen XYZ desteklenir),
+- `[NEWOPT:…RT+…]` (legacy gerçek zamanlı komutlar açık; varsayılan) ve `LATHE` yok.
+
+Uyumluluk modunda derlenmiş kart (`Grbl 1.1f` karşılaması, üç alanlı OPT) **Unknown** kalır;
+grblHAL'i varsayılan uyumluluk seviyesi 0 ile kullanın. Karakter sayımı bütçesi grblHAL 1024 bayt RX
+bildirse de `min(rx,128)` bayttır.
+
+grblHAL'in fazladan rapor alanları ve kelimeleri tanınır: `Run:1/2` Run, `Alarm:<kod>` Alarm, `Tool`
+(bekleyen takım değişimi) Unknown olarak görünür ve Idle sayılmaz. `$G`'deki `G98`, `G50`, `M50/M51/M56`,
+G92 bayrağı ve kalıcı delme kipleri (ör. `G81`) yok sayılır; `$#`'taki `G59.1–3` satırları ve X/Y'si sıfır
+olan `TLO` vektörü kabul edilir; `$$`'daki metin/`N/A` ayarlar değerlendirmeye girmez. Ham satırlar wire
+log'da aynen görünür. Şunlar işlem öncesinde reddedilir: bekleyen takım değişimi (`M6`), feed hold kapalı
+(`M53`), ölçekleme (`G51`), lathe çap/radius kipleri (`G7/G8`), takım tablosu ofseti (`G43`, `G43.2`),
+kesici telafisi (`G41/G42`), `G95/G96/G97`, `G59.1–3` etkin koordinat sistemi, X/Y bileşenli takım ofseti.
+
+Durum satırının ipucu `ALARM:N`/`error:N` kodunun aileye göre kısa anlamını gösterir; grblHAL'de
+`ALARM:10` E-stop'tur (GRBL'de çift eksen homing hatası). E-stop etkinken grblHAL reset baytını yok
+sayar; Abort sonucu “stop unverified” kalır. 0x85 jog iptali grblHAL'de okunmamış komut tamponunu da
+temizler: henüz okunmamış jog satırının `ok`'u gelmezse iptal süresi dolar ve Abort yolu çalışır.
+
+Varsayılan rapor ayarları hedeflenir. `$10` ile parser-state push (`[GC:]` kendiliğinden) açılırsa çalışan
+iş/probe/manuel işlem sorgu dışı kanıt nedeniyle durdurulur; `$481` otomatik durum raporu ve MPG modu
+desteklenmez. MikroCAM bu ayarları okumaz veya değiştirmez. Gerçek grblHAL kartında hareket henüz
+doğrulanmadı ([saha protokolü H043](hardware/GRBL_VALIDATION.md)); yazılım kontrolleri fiziksel E-stop
+ve interlock'un yerini tutmaz.
 
 ## Konumları okuma
 

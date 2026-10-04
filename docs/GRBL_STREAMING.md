@@ -6,9 +6,11 @@ birden fazla tam kaynak satırını gönderir. Seçim bağlantı veya hareket ba
 hazırlanmış kaynak ve mekanik onayla birlikte modu değişmez istek içine alır.
 
 Mod yalnız bağlantıda tanınan firmware'in yetenek kaydında kanıtlanmış bir RX bütçesi varsa
-başlar (042: bugün yalnız GRBL 1.1 için `min(rx,128)`; grblHAL/FluidNC D2/D3'e kadar yok).
-Her işte salt okunur `$I` sorgusu GRBL1.1 build ve `[OPT:flags,planner,rx]` kapasitesini doğrular;
-VER satırı oturumdaki tanımayla aynı olmalıdır, değişmişse kaynak gönderilmez.
+başlar (GRBL 1.1 ve grblHAL için `min(rx,128)`; grblHAL 1024 bildirse de pencere 128 bayttır (043);
+FluidNC D3'e kadar yok).
+Her işte salt okunur `$I` sorgusu GRBL1.1 build ve `[OPT:flags,planner,rx]` kapasitesini doğrular
+(grblHAL'in ek eksen/takım alanları kabul edilir); VER ve OPT satırları oturumdaki tanımayla birebir
+aynı olmalıdır, değişmişse kaynak gönderilmez.
 Kapasite `min(rx,128)` byte olarak sınırlanır; eksik/hatalı kanıt veya bütçeden büyük kaynak
 bloğu hareket gönderilmeden reddedilir. Varsayılan mod bu kapasite sorgusuna ihtiyaç duymaz.
 
@@ -26,4 +28,5 @@ zaten alınmış hareketler yürümüş olabilir; reset girişimi fiziksel duru�
 Protokol bilgileri: [GRBL 1.1 Interface](https://github.com/gnea/grbl/wiki/Grbl-v1.1-Interface).
 Firmware kaynak kodu kopyalanmadı. Fake'in bounded RX/planner modeli donanım/süre emülatörü
 ve hız kazancı ölçümü değildir. Gerçek GRBL doğrulaması [saha protokolündedir](hardware/GRBL_VALIDATION.md);
-son durum [iş takibinde](IS_TAKIP.md). FluidNC/grblHAL/TCP/SD kapsam dışı ertelenmiş işlerdir.
+son durum [iş takibinde](IS_TAKIP.md). grblHAL farkları [Machine panelinde](MACHINE_CONTROL.md#grblhal-kartları-043);
+FluidNC/TCP/SD ayrı işlerdir.

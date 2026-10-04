@@ -67,4 +67,4 @@ FR-005 T005/T007/T014/T015 · FR-006 T007 · FR-007 T007 · FR-008 T006/T010/T01
 FR-010 T008 · FR-011 T007/T008 · FR-012 T009/T019/T023 · FR-013 T026.
 
 Analyze (2026-10-04): 13 FR'nin her biri en az bir test ve bir uygulama/belge görevine eşlendi;
-kritik/yüksek bulgu yok. Terimler (lehçe, kanıt kapısı, UA-1…UA-10) spec/plan/tasks'ta tutarlı.
+kritik/yüksek bulgu yok. Terimler (lehçe, kanıt kapısı, UA-1…UA-11) spec/plan/tasks'ta tutarlı.

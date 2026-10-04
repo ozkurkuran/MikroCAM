@@ -89,6 +89,8 @@ kipini açıkça verir veya hareket içermez). Geri kalan ek kelimeler mevcut s�
 `[T:…|…]` takım tablosu, `[HOME:…:<maske>]` (homing açıksa), `[TLO:]`, `[PRB:…:<0|1>]`, `[TLR:]`/`[TLR@:]`.
 TLO: `TOOL_LENGTH_OFFSET_AXIS -1` varsayılandır (“all axes”, `config.h:302`) → `[TLO:x,y,z]` vektörü
 (`report.c:563-572`); seviye >2'de Z (`grbl.h:240-243`). Karar: vektör yalnız X=Y=0 ise Z'ye indirgenir.
+G59.1–3 satırları kanıt dışıdır: MikroCAM yalnız `G10 L20 P1` (G54) yazar ve sıfır sonrası G54–G59, G92, TLO
+envanterini doğrular; G59.1–3'ün değişmediği ayrıca doğrulanmaz (yazılmadıkları için risk düşük, UA-11).
 
 ## R7 — `$$`, `$N`, `$13`, `$32`
 
