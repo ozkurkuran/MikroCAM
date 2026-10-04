@@ -7,7 +7,8 @@ from mikrocam.machine.manual_protocol import validate_command
 from mikrocam.machine.job_protocol import validate_job_command
 from mikrocam.machine.fake_job import FakeJob
 from mikrocam.machine.fake_probe import FakeProbe
-from mikrocam.machine.fake_firmware import profile
+from mikrocam.machine.fake_firmware import FLUIDNC_VERSIONS, profile
+from mikrocam.machine.fake_fluidnc import FakeFluidNC
 from mikrocam.machine.probe_protocol import validate_probe_command
 
 
@@ -26,6 +27,7 @@ class FakeGRBL:
             raise ValueError('Expected mm or inch report units')
         self.auto_respond = auto_respond
         self.banner, self.build_reply = profile(firmware)
+        self.fluidnc = FakeFluidNC(self, FLUIDNC_VERSIONS[firmware]) if firmware in FLUIDNC_VERSIONS else None
         if build_reply is not None:
             if not isinstance(build_reply, bytes):
                 raise ValueError('Build reply must be bytes')
@@ -84,7 +86,7 @@ class FakeGRBL:
         self.writes.append(data)
         if self.short_write:
             return len(data) - 1
-        if self.auto_respond:
+        if self.auto_respond and not (self.fluidnc and self.fluidnc.booting):
             self._probe.respond(data)
         return len(data)
 
@@ -152,9 +154,11 @@ class FakeGRBL:
         offset = tuple(self.offsets[self.work_system][i] + self.g92[i]
                        + (self.tlo if i == 2 else 0.) for i in range(3))
         return (f'<{self.state}|MPos:{self._format(self.machine_position)}'
-                f'|WCO:{self._format(offset)}>\r\n').encode('ascii')
+                f"{'|FS:0,0' if self.fluidnc else ''}|WCO:{self._format(offset)}>\r\n").encode('ascii')
 
     def _respond(self, data: bytes) -> None:
+        if self.fluidnc is not None and self.fluidnc.respond(data):
+            return
         if data == b'?':
             self.inject(self._status_report())
         elif data == b'$$\n':
@@ -238,6 +242,6 @@ class FakeGRBL:
             self.job_writes.append(data)
         if self.short_write:
             return len(data) - 1
-        if self.auto_respond:
+        if self.auto_respond and not (self.fluidnc and self.fluidnc.booting):
             self._job.accept(data)
         return len(data)

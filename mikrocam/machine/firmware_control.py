@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from .firmware import (MAX_EVIDENCE_LINES, MAX_TEXT, FirmwareFamily, FirmwareObservation,
                        IdentificationPhase, banner_consistent, capabilities_for, identify)
+from .fluidnc import RESTART_QUIET_SECONDS
 
 if TYPE_CHECKING:
     from .controller import MachineController
@@ -22,10 +23,39 @@ class FirmwareIdentification:
         self.invalid = ''
         self.banner = ''
         self.observation = FirmwareObservation()
+        self.restarting = False
+        self.quiet_since = 0.
 
     @property
     def pending(self) -> bool:
         return self.sent_at is not None
+
+    @property
+    def fluidnc(self) -> bool:
+        return (self.observation.phase is IdentificationPhase.IDENTIFIED
+                and self.observation.capabilities.family is FirmwareFamily.FLUIDNC)
+
+    def on_restart(self) -> None:
+        """Boot output or FluidNC free text (spec 044): identity is void until the board is ready."""
+        self.sent_at, self.lines, self.invalid, self.banner = None, [], '', ''
+        self.restarting, self.quiet_since = True, self.host._clock()
+        self.observation = FirmwareObservation(
+            IdentificationPhase.FAILED, capabilities_for(FirmwareFamily.UNKNOWN),
+            diagnostic='Controller restarting; identification resumes once it reports ready')
+        self.publish()
+
+    def chatter(self) -> None:
+        """Any non-status line while restarting (boot log, greeting, MSG) restarts the quiet time."""
+        if self.restarting:
+            self.quiet_since = self.host._clock()
+
+    def settled(self, raw_state: str) -> bool:
+        """Ready after a quiet period and a fresh status that is not FluidNC's Starting state."""
+        if (not self.restarting or raw_state == 'Starting'
+                or self.host._clock() - self.quiet_since < RESTART_QUIET_SECONDS):
+            return False
+        self.restarting = False
+        return True
 
     def publish(self) -> None:
         self.host._snapshot = replace(self.host._snapshot, firmware=self.observation)
@@ -33,6 +63,7 @@ class FirmwareIdentification:
     def start(self) -> None:
         """Write $I immediately before the session settings request; never retried."""
         self.sent_at, self.lines, self.invalid = self.host._clock(), [], ''
+        self.restarting = False
         self.observation = FirmwareObservation(IdentificationPhase.PENDING, banner=self.banner)
         self.publish()
         self.host._send(IDENTIFY_COMMAND)

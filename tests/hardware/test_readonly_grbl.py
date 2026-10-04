@@ -11,8 +11,16 @@ import pytest
 from mikrocam.bridge.serial_transport import SerialIO
 from mikrocam.machine.grbl import parse_status
 from mikrocam.machine.job_preparation import query_record
+from mikrocam.machine.fluidnc import STARTUP_QUERIES, parse_startup_record
 
 COMMANDS = (b"?", b"$I\n", b"$$\n", b"$G\n", b"$#\n")
+# Spec 044: only after $I identified FluidNC; readonly macro/auto-report read-back and YAML dump.
+FLUIDNC_COMMANDS = STARTUP_QUERIES + (b"$CD\n",)
+_FLUIDNC_VER = re.compile(r"\[VER:[0-9]+\.[0-9]+ FluidNC v[0-9]+\.[0-9]+\.[0-9]+[ -~]{0,200}\]")
+
+
+def is_fluidnc(lines):
+    return any(_FLUIDNC_VER.fullmatch(line) for line in lines)
 
 
 def enabled(environ):
@@ -28,21 +36,28 @@ def inventory_record(command, line):
         parse_status(line)
         return True
     if command == b"$I\n" and line.startswith("[VER"):
+        if _FLUIDNC_VER.fullmatch(line):
+            return True
         if re.fullmatch(r"\[VER:1\.1[a-z]?(?:\.[0-9]{8})?:[^\[\]]{0,200}\]", line) is None:
             raise ValueError("Malformed GRBL build record")
         return True
+    if command in STARTUP_QUERIES:
+        return parse_startup_record(line) is not None
+    if command == b"$CD\n":
+        return line != "ok"
     purpose = {b"$$\n": "settings", b"$G\n": "modal", b"$#\n": "parameters"}.get(command)
     if purpose:
         # Only validate parameter syntax; the returned converted value is never retained.
         record = query_record(purpose, line, "mm")
-        return record is not None and record[0] == {"settings": 0, "modal": "modal", "parameters": "G54"}[purpose]
+        # Any numeric setting proves a $$ reply: FluidNC lists $13 first and has no $0 (spec 044).
+        return record is not None and (purpose == "settings" or record[0] == {"modal": "modal", "parameters": "G54"}[purpose])
     return False
 
 
 def read_query(transport, command, transcript, clock=time.monotonic):
     """Bounded fragmented-line read; an inventory record alone never consumes an ACK."""
-    if type(command) is not bytes or command not in COMMANDS:
-        raise ValueError("Only the five readonly GRBL queries are allowed")
+    if type(command) is not bytes or command not in COMMANDS + FLUIDNC_COMMANDS:
+        raise ValueError("Only the readonly GRBL/FluidNC inventory queries are allowed")
     transcript.append({"direction": "tx-attempt", "hex": command.hex()})
     if transport.write(command) != len(command):
         raise OSError("Incomplete readonly query write")
@@ -108,6 +123,9 @@ def test_readonly_grbl_inventory():
                     raise ValueError("Startup exceeded readonly capture limit")
         for command in COMMANDS:
             evidence["queries"][command.decode().strip()] = read_query(transport, command, evidence["wire"])
+        if is_fluidnc(evidence["queries"]["$I"]):
+            for command in FLUIDNC_COMMANDS:
+                evidence["queries"][command.decode().strip()] = read_query(transport, command, evidence["wire"])
         evidence["result"] = "passed"
     finally:
         try:

@@ -12,11 +12,17 @@ PROFILES: dict[str, tuple[bytes, bytes]] = {
                 b'[VER:1.1f.20250101:]\r\n[OPT:VNMSL,35,1024,3,0]\r\n[AXS:3:XYZ]\r\n'
                 b'[NEWOPT:ENUMS,RT+,HOME,SED]\r\n[FIRMWARE:grblHAL]\r\n[SIGNALS:XYZ]\r\n'
                 b'[DRIVER:FakeHAL@168MHz]\r\n[BOARD:Fake board]\r\nok\r\n'),
-    'fluidnc': (b"Grbl 3.9 [FluidNC v3.9.9 (fake-noradio) '$' for help]\r\n",
-                b'[VER:3.9 FluidNC v3.9.9 (fake-noradio) :]\r\n[OPT:PHSEW]\r\n[CLUSTER:16]\r\n'
-                b'[MSG: Machine: Fake FluidNC]\r\nok\r\n'),
+    # FluidNC (spec 044): v4.1.1 Report.cpp:137-187,363-405; v3.9.9 Report.cpp:149-196,379-417.
+    'fluidnc': (b"Grbl 4.1 [FluidNC v4.1.1 (esp32-wifi) '$' for help]\r\n",
+                b'[VER:4.1 FluidNC v4.1.1 (esp32-wifi) :]\r\n[OPT:PHSEW]\r\n[CLUSTER:16]\r\n'
+                b'[MSG: Machine: Fake FluidNC]\r\n[MSG: No Wifi]\r\nok\r\n'),
+    'fluidnc3': (b"Grbl 3.9 [FluidNC v3.9.9 (noradio) '$' for help]\r\n",
+                 b'[VER:3.9 FluidNC v3.9.9:]\r\n[OPT:PHSEW]\r\n[MSG: Machine: Fake FluidNC]\r\nok\r\n'),
     'unknown': (b"Grbl 0.9j ['$' for help]\r\n", b'[0.9j.20160316:]\r\nok\r\n'),
 }
+
+
+FLUIDNC_VERSIONS = {'fluidnc': '4.1.1', 'fluidnc3': '3.9.9'}
 
 
 def profile(name: str) -> tuple[bytes, bytes]:

@@ -24,6 +24,7 @@ from mikrocam.machine.probe_models import StartProbeGridRequest, ProbePhase
 from mikrocam.machine.probe_protocol import validate_probe_command
 from mikrocam.machine.firmware import is_reset_banner
 from mikrocam.machine.firmware_control import FirmwareIdentification
+from mikrocam.machine import fluidnc
 
 POLL_INTERVAL = 0.25
 STATUS_TIMEOUT = 2.0
@@ -386,6 +387,8 @@ class MachineController:
 
     def _consume(self, line: str) -> None:
         _LOG.debug('GRBL RX %r', line[:256])
+        if self._firmware.restarting and not line.startswith('<'):
+            self._firmware.chatter()
         if is_reset_banner(line):
             self._console.fail('Controller reset interrupted diagnostic query')
             self._manual.lost_evidence('Controller reset interrupted manual operation', reset=True)
@@ -399,6 +402,8 @@ class MachineController:
                     self._firmware.start()
                 self._request_settings()
             self._diagnose('Controller restarted; awaiting units and fresh status')
+        elif fluidnc.is_boot_marker(line):
+            self._restart('Controller rebooted (boot output); waiting until it reports ready', certain=True)
         elif line.startswith('<'):
             self._consume_status(line)
         elif self._firmware.consume(line):
@@ -436,6 +441,19 @@ class MachineController:
             self._diagnose(line)
         elif line.startswith('[MSG:'):
             self._diagnose(line)
+        elif self._firmware.fluidnc and fluidnc.is_free_text(line):
+            self._restart('Unexpected FluidNC output (custom greeting or restart?); motion stopped', certain=False)
+
+    def _restart(self, message: str, *, certain: bool) -> None:
+        """Spec 044: like a reset banner, but identify only once the restarted board is ready."""
+        self._console.fail(message)
+        self._manual.lost_evidence(message, reset=certain)
+        self._job.fail(message, reset=certain)
+        self._probe.fail(message, reset=certain)
+        self._invalidate(clear_units=True)
+        self._status_sent_at = self._settings_sent_at = None
+        self._firmware.on_restart()
+        self._diagnose(message)
 
     def _consume_units(self, line: str) -> None:
         try:
@@ -489,6 +507,10 @@ class MachineController:
         self._manual.on_status()
         self._job.on_status()
         self._probe.on_status()
+        if (not self._console.tainted and not self._probe.tainted
+                and self._firmware.settled(status.raw_state)):
+            self._firmware.start()
+            self._request_settings()
 
     @staticmethod
     def _scale(vector: XYZ | None, factor: float) -> XYZ | None:
@@ -512,7 +534,8 @@ class MachineController:
             self._invalidate(clear_units=True)
             self._diagnose('Settings response timed out; report units are unknown')
         if self._status_sent_at is not None and now - self._status_sent_at >= STATUS_TIMEOUT:
-            self._console.poll_timeout()
+            if not self._firmware.restarting:  # A rebooting board drops polls; not a causality loss.
+                self._console.poll_timeout()
             self._status_sent_at = None
             if not self._snapshot.diagnostic:
                 self._diagnose('Status response timed out')

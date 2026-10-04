@@ -8,6 +8,8 @@ from dataclasses import dataclass, replace
 from enum import Enum
 import re
 
+from .fluidnc import motion_version_supported
+
 
 MAX_EVIDENCE_LINES = 32
 MAX_TEXT = 256
@@ -141,8 +143,8 @@ _PROFILES = {
         note='grblHAL identified; motion stays disabled until spec 043 (D2) validates its profile'),
     FirmwareFamily.FLUIDNC: dict(
         realtime_commands=_COMMON_REALTIME + _OVERRIDES + _FLUIDNC_REALTIME, extra_states=('Starting',),
-        status_fields=('MPos', 'WPos', 'Bf', 'Ln', 'FS', 'Pn', 'WCO', 'Ov', 'A', 'Heap', 'ISRs'),
-        note='FluidNC identified; motion stays disabled until spec 044 (D3) validates its profile'),
+        status_fields=('MPos', 'WPos', 'Bf', 'Ln', 'FS', 'Pn', 'WCO', 'Ov', 'A', 'SD', 'Heap', 'ISRs'),
+        motion_supported=True),  # Spec 044 (D3): 3.x/4.x formats; macro/$RI/$$ proxy evidence per op.
     FirmwareFamily.UNKNOWN: dict(note='Firmware not identified; motion features are disabled'),
 }
 
@@ -249,8 +251,12 @@ def _fluidnc(fluid: re.Match, info: str, tags: dict[str, str], greeting) -> Firm
     options = tags.get('OPT', '')
     if re.fullmatch(r'[A-Za-z]*', options) is None:
         raise _Unknown('FluidNC OPT record must contain option letters only', release)
-    return replace(capabilities_for(FirmwareFamily.FLUIDNC), version=release, protocol=protocol,
+    caps = replace(capabilities_for(FirmwareFamily.FLUIDNC), version=release, protocol=protocol,
                    build_info=info, options=options)
+    if not motion_version_supported(protocol):
+        return replace(caps, motion_supported=False, note=(
+            f'FluidNC protocol {protocol} is outside the validated 3.x/4.x formats; motion disabled'))
+    return caps
 
 
 def _grblhal(head: str, info: str, tags: dict[str, str], greeting, version: str) -> FirmwareCapabilities:

@@ -81,7 +81,7 @@ def test_fluidnc_presents_as_grbl_but_is_identified_as_fluidnc(banner, lines):
     caps = identify(banner, lines)
     assert caps.family is FirmwareFamily.FLUIDNC
     assert caps.rx_buffer_bytes is None and caps.streaming_rx_budget is None
-    assert not caps.motion_supported and '044' in caps.note
+    assert caps.motion_supported and caps.note == ''  # Enabled by spec 044 (D3).
     assert 'Starting' in caps.extra_states
 
 

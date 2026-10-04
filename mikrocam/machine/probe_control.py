@@ -7,6 +7,7 @@ from .probe_protocol import probe_move, parse_probe_result, parse_probe_record
 from .job_preparation import near, query_record, verify_modal
 from .manual_models import PARAMETER_NAMES
 from .models import ConnectionState, MachineState
+from .startup_evidence import StartupEvidence
 
 if TYPE_CHECKING:
     from .controller import MachineController
@@ -25,6 +26,7 @@ class ProbeControl:
         self.minimum_query = 0
         self.deadline = 0.
         self.report_units = None
+        self.startup: StartupEvidence | None = None
 
     @property
     def active(self) -> bool:
@@ -111,7 +113,10 @@ class ProbeControl:
                 else:
                     raise ValueError('Unsolicited or late probe result')
             else:
-                item = query_record(self.transaction, line, self.report_units)
+                if self.transaction == 'startup':
+                    item = self.startup.record(line)
+                else:
+                    item = query_record(self.transaction, line, self.report_units)
                 if item is None:
                     if line.startswith(('$', '[GC', '[G5', '[G92', '[TLO')):
                         raise ValueError('Unsolicited probe setup evidence')
@@ -165,10 +170,17 @@ class ProbeControl:
 
     def _advance(self, purpose: str, records: dict) -> None:
         if purpose == 'begin':
-            self._command('startup', b'$N\n')
+            self.startup = StartupEvidence(self.host.snapshot().firmware.capabilities.family)
+            self._command('startup', self.startup.next_query())
         elif purpose == 'startup':
-            if records != {0: '', 1: ''}:
-                raise ValueError('Both startup blocks must be empty for probing')
+            self.startup.add(records)
+            following = self.startup.next_query()
+            if following is not None:  # FluidNC: macros/startup_line0/1, after_reset, $RI (044).
+                self._command('startup', following)
+                return
+            problem = self.startup.problem('Both startup blocks must be empty for probing')
+            if problem:
+                raise ValueError(problem)
             self.startup_verified = True
             self._command('settings', b'$$\n')
         elif purpose == 'settings':

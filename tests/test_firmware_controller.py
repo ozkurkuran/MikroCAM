@@ -62,8 +62,7 @@ def test_grbl_profile_is_identified_and_preserves_existing_motion_eligibility():
 
 
 @pytest.mark.parametrize('profile,family', [('grblhal', FirmwareFamily.GRBLHAL),
-                                            ('fluidnc', FirmwareFamily.FLUIDNC),
-                                            ('unknown', FirmwareFamily.UNKNOWN)])
+                                            ('unknown', FirmwareFamily.UNKNOWN)])  # FluidNC: spec 044
 def test_unsupported_profiles_disable_every_motion_owner_without_writes(profile, family):
     controller, fake, clock = session(profile)
     snap = steps(controller, clock)
@@ -261,7 +260,7 @@ def test_character_counting_uses_identified_grbl_budget():
 
 
 def test_manual_phase_unchanged_when_motion_refused():
-    controller, fake, clock = session('fluidnc')
+    controller, fake, clock = session('unknown')
     steps(controller, clock)
     with pytest.raises(ValueError):
         controller.request_manual(JogRequest('X', 1, 100))

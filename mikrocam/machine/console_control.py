@@ -3,6 +3,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING
 
 from .console_models import ConsoleObservation, ConsolePhase, ConsoleRequest
+from .firmware import FirmwareFamily
 from .grbl import parse_report_units
 from .models import ConnectionState, MachineState
 
@@ -40,6 +41,11 @@ class ConsoleControl:
     def start(self, request: ConsoleRequest) -> None:
         if type(request) is not ConsoleRequest or self.active or self.tainted or not self._idle():
             raise ValueError('Query requires fresh verified Idle and no competing or uncertain operation')
+        fluid = self.host.snapshot().firmware.capabilities.family is FirmwareFamily.FLUIDNC
+        if request.command == '$CD' and not fluid:
+            raise ValueError('$CD (Config/Dump) is a FluidNC-only query')
+        if request.command == '$N' and fluid:
+            raise ValueError('FluidNC has no $N startup lines; its startup macros are verified per operation')
         self.active, self.sent, self.acknowledged, self.saw_units = True, False, False, False
         self.deadline = self.host._clock() + 3
         self.minimum_query = self.host._query_sequence + 1

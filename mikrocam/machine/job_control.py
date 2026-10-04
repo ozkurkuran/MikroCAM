@@ -6,6 +6,8 @@ from .job_models import JobObservation, JobPhase, StartJobRequest, StreamingMode
 from .job_preparation import near, query_record, verify_modal, verify_parameters, verify_settings
 from .job_stream import JobStream, verified_capacity
 from .models import ConnectionState, MachineState
+from . import fluidnc
+from .startup_evidence import StartupEvidence
 
 if TYPE_CHECKING:
     from .controller import MachineController
@@ -32,6 +34,7 @@ class JobControl:
         self.pause_query = 0
         self.resume_query = 0
         self.stream = None
+        self.startup: StartupEvidence | None = None
 
     @property
     def active(self) -> bool:
@@ -130,7 +133,9 @@ class JobControl:
                                                source_line=self.request.job.blocks[count - 1].source_line)
             return True
         try:
-            if self.transaction == 'firmware' and line.startswith(('[VER:', '[OPT:')):
+            if self.transaction == 'startup':
+                record = self.startup.record(line)
+            elif self.transaction == 'firmware' and line.startswith(('[VER:', '[OPT:')):
                 if not line.endswith(']') or len(line) > 256:
                     raise ValueError('Malformed GRBL capacity evidence')
                 record = (line[1:4].lower(), line[5:-1])
@@ -193,19 +198,26 @@ class JobControl:
                     raise ValueError('Character counting requires a proven firmware RX budget')
                 self._command('firmware', b'$I\n')
             else:
-                self._command('startup', b'$N\n')
+                self._begin_startup()
         elif purpose == 'firmware':
             self.stream = JobStream(self._streaming_capacity(records))
             if any(len(block.wire) > self.stream.capacity for block in job.blocks):
                 raise ValueError('Reviewed source block exceeds verified GRBL RX capacity')
-            self._command('startup', b'$N\n')
+            self._begin_startup()
         elif purpose == 'startup':
-            if records != {0: '', 1: ''}:
-                raise ValueError('Both startup blocks must be empty before job execution')
+            self.startup.add(records)
+            following = self.startup.next_query()
+            if following is not None:  # FluidNC: macros/startup_line0/1, after_reset, $RI (044).
+                self._command('startup', following)
+                return
+            problem = self.startup.problem('Both startup blocks must be empty before job execution')
+            if problem:
+                raise ValueError(problem)
             self.startup_verified = True
             self._command('settings', b'$$\n')
         elif purpose == 'settings':
-            verify_settings(records, job, self.host.snapshot().report_units)
+            check = fluidnc.verify_settings if self.startup.fluidnc else verify_settings
+            check(records, job, self.host.snapshot().report_units)
             self._command('off', b'M5 M9\n')
         elif purpose == 'off':
             self._command('modal', b'$G\n')
@@ -222,6 +234,10 @@ class JobControl:
         elif purpose == 'final_modal':
             verify_modal(records)
             self._await_status('final', job.ack_timeout_seconds)
+
+    def _begin_startup(self) -> None:
+        self.startup = StartupEvidence(self.host.snapshot().firmware.capabilities.family)
+        self._command('startup', self.startup.next_query())
 
     def _streaming_capacity(self, records: dict) -> int:
         """C3 evidence must still verify and match the identified session firmware (042)."""
