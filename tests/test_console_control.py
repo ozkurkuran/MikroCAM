@@ -206,3 +206,13 @@ def test_operation_reservation_immediately_closes_console_eligibility(kind):
     else:
         controller.request_job(StartJobRequest(prepared(), True))
     assert not controller.snapshot().console.can_query
+
+
+def test_settings_query_ignores_130_series_rows_sharing_the_13_prefix():
+    """Hotfix (found by spec 044): real GRBL $$ lists $130-$132 (max travel) after $13."""
+    controller, fake, clock = connected()
+    fake.job_settings.update({130: 200., 131: 200., 132: 200.})
+    controller.request_console(ConsoleRequest('$$'))
+    until(controller, clock, lambda: controller.snapshot().console.phase is not ConsolePhase.PENDING)
+    assert controller.snapshot().console.phase is ConsolePhase.COMPLETE, controller.snapshot().console
+    assert controller.snapshot().report_units == 'mm' and controller.snapshot().manual.can_jog

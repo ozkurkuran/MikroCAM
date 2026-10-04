@@ -95,6 +95,8 @@ class ConsoleControl:
         elif self.observation.command == '$$' and line.startswith('$13'):
             try:
                 units = parse_report_units(line)
+                if units is None and self.sent and not self.acknowledged:
+                    return True  # $130-$132 (max travel) share the '$13' prefix; not report units.
                 if (not self.sent or self.acknowledged or self.saw_units
                         or units is None or units != self.host.snapshot().report_units):
                     raise ValueError('Duplicate, late or changed report units in settings query')
