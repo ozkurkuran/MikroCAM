@@ -11,6 +11,7 @@ from vispy.app.backends._pyqt6 import CanvasBackendDesktop
 from vispy.visuals.axis import Ticker, _get_ticks_talbot
 from vispy.scene.widgets import Grid
 import numpy as np
+import sys
 
 
 def apply_patches():
@@ -153,3 +154,17 @@ def apply_patches():
 
     CanvasBackendDesktop.keyPressEvent = _safe_keyPressEvent
     CanvasBackendDesktop.keyReleaseEvent = _safe_keyReleaseEvent
+
+    # FreeType's narrow fopen cannot open non-ASCII Windows paths (e.g. C:\Users\Şükrü\...).
+    # freetype-py reads the font through Python instead when filename encoding fails.
+    import freetype
+    if sys.platform == 'win32' and not getattr(freetype._encode_filename, 'ascii_only', False):
+        _encode = freetype._encode_filename
+
+        def _ascii_or_memory(filename):
+            if not str(filename).isascii():
+                raise UnicodeError(filename)
+            return _encode(filename)
+
+        _ascii_or_memory.ascii_only = True
+        freetype._encode_filename = _ascii_or_memory
