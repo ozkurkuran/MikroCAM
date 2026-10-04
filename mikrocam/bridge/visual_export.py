@@ -33,7 +33,7 @@ def export_png_package(job: VisualInterlaceJob, plan: InterlacePlan, destination
                 manifest = {'kind': 'visual_interlace_png', 'schema_version': 1, 'units': 'mm',
                             'dpi': job.preparation.requested_dpi, 'pitch_mm': job.mask.grid.pitch_mm,
                             'canvas_mm': [job.mask.grid.canvas_width_mm, job.mask.grid.canvas_height_mm],
-                            'placement': asdict(job.placement), 'passes': [asdict(p) for p in plan.passes],
+                            'placement': job.placement.rigid_data(), 'passes': [asdict(p) for p in plan.passes],
                             'native_lightburn_settings_applied': False}
                 archive.writestr('manifest.json', json.dumps(manifest, allow_nan=False))
             stream.flush(); os.fsync(stream.fileno())

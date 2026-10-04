@@ -1,0 +1,14 @@
+{
+  "kind": "mikrocam.fiducial-set",
+  "method": "affine",
+  "name": "Board A top fixture",
+  "pairs": [
+    {"design_mm": [0.0, 0.0], "enabled": true, "machine_mm": [-150.0, -100.0], "name": "F1"},
+    {"design_mm": [80.0, 0.0], "enabled": true, "machine_mm": [-70.01, -99.8], "name": "F2"},
+    {"design_mm": [80.0, 60.0], "enabled": true, "machine_mm": [-70.2, -39.79], "name": "F3"},
+    {"design_mm": [0.0, 60.0], "enabled": false, "machine_mm": null, "name": "F4"}
+  ],
+  "policy": {"max_residual_mm": 0.05, "max_scale_deviation": 0.005, "min_separation_mm": 10.0},
+  "schema_version": 1,
+  "units": "mm"
+}

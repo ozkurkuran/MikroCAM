@@ -65,18 +65,23 @@ def placed_point(point: XYZ, placement: Placement, z_offset: float) -> XYZ:
 
 def motion_bounds(start: XYZ, end: XYZ, placement: Placement, z_offset: float,
                   arc: Arc | None = None) -> tuple[XYZ, XYZ]:
-    """Include endpoints and every transformed circle extremum lying on the actual sweep."""
+    """Include endpoints and every transformed circle extremum lying on the actual sweep.
+
+    Extrema are found from source angles, so a general affine image (an ellipse) is exact:
+    machine X is extreme where tan(theta)=b/a and machine Y where tan(theta)=e/d.
+    """
     first,last=placed_point(start,placement,z_offset),placed_point(end,placement,z_offset)
     points=[first,last]
     if arc is not None:
-        center=placement.apply_point(arc.center)
-        angle=math.atan2(first[1]-center[1],first[0]-center[0])
-        sweep=-arc.sweep if placement.mirror_x else arc.sweep
-        for cardinal in (0., math.pi/2, math.pi, 3*math.pi/2):
-            distance=((angle-cardinal) if sweep<0 else (cardinal-angle)) % _TAU
-            if distance<=abs(sweep)+1e-12:
-                points.append((center[0]+arc.radius*math.cos(cardinal),
-                               center[1]+arc.radius*math.sin(cardinal),first[2]))
+        a,b,d,e=placement.matrix[:4]
+        angle=math.atan2(start[1]-arc.center[1],start[0]-arc.center[0])
+        for base in (math.atan2(b,a), math.atan2(e,d)):
+            for candidate in (base, base+math.pi):
+                distance=((angle-candidate) if arc.sweep<0 else (candidate-angle)) % _TAU
+                if distance<=abs(arc.sweep)+1e-12:
+                    x,y=placement.apply_point((arc.center[0]+arc.radius*math.cos(candidate),
+                                               arc.center[1]+arc.radius*math.sin(candidate)))
+                    points.append((x,y,first[2]))
     return (tuple(min(p[i] for p in points) for i in range(3)),
             tuple(max(p[i] for p in points) for i in range(3)))
 

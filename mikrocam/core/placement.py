@@ -12,6 +12,8 @@ from shapely.geometry.base import BaseGeometry
 
 Point2D = tuple[float, float]
 Affine2D = tuple[float, float, float, float, float, float]
+RIGID_FIELDS = ('origin', 'translation', 'rotation_deg', 'mirror_x')
+MIN_DETERMINANT = 1e-12
 
 
 def _finite_real(value: object, label: str) -> float:
@@ -54,12 +56,17 @@ class Placement:
     Positive angles rotate counterclockwise. ``mirror_x`` negates the local X coordinate,
     reflecting about the local Y axis before rotation. The source origin always maps to
     the destination translation. No unit conversion or hardware operation occurs here.
+
+    ``affine`` optionally replaces the rigid fields with full invertible coefficients
+    (a, b, d, e, xoff, yoff), e.g. a fiducial similarity/affine correction. It is the same
+    transform type, never combined with the rigid fields.
     """
 
     origin: Point2D = (0.0, 0.0)
     translation: Point2D = (0.0, 0.0)
     rotation_deg: float = 0.0
     mirror_x: bool = False
+    affine: Affine2D | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, 'origin', _point(self.origin, 'origin'))
@@ -67,10 +74,31 @@ class Placement:
         object.__setattr__(self, 'rotation_deg', _finite_real(self.rotation_deg, 'rotation_deg'))
         if type(self.mirror_x) is not bool:
             raise ValueError('mirror_x must be a boolean')
+        if self.affine is not None:
+            object.__setattr__(self, 'affine', self._affine(self.affine))
+
+    def _affine(self, value: object) -> Affine2D:
+        if (self.origin, self.translation, self.rotation_deg, self.mirror_x) != ((0., 0.), (0., 0.), 0., False):
+            raise ValueError('Affine placement replaces origin, translation, rotation and mirror')
+        if isinstance(value, (str, bytes)):
+            raise ValueError('Affine placement requires six finite coefficients')
+        try:
+            values = tuple(value)
+        except TypeError as error:
+            raise ValueError('Affine placement requires six finite coefficients') from error
+        if len(values) != 6:
+            raise ValueError('Affine placement requires six finite coefficients')
+        result = tuple(_finite_real(item, f'affine[{index}]') for index, item in enumerate(values))
+        determinant = result[0] * result[3] - result[1] * result[2]
+        if not math.isfinite(determinant) or abs(determinant) < MIN_DETERMINANT:
+            raise ValueError('Affine placement must be invertible')
+        return result
 
     @property
     def matrix(self) -> Affine2D:
         """Return Shapely-compatible coefficients (a, b, d, e, xoff, yoff)."""
+        if self.affine is not None:
+            return self.affine
         degrees = self.rotation_deg % 360.0
         if degrees in (0.0, 90.0, 180.0, 270.0):
             cosine, sine = ((1.0, 0.0), (0.0, 1.0), (-1.0, 0.0), (0.0, -1.0))[int(degrees / 90)]
@@ -112,6 +140,17 @@ class Placement:
 
     def inverse(self) -> 'Placement':
         """Return the placement from destination coordinates back to source coordinates."""
+        if self.affine is not None:
+            a, b, d, e, xoff, yoff = self.affine
+            det = a * e - b * d
+            ia, ib, id_, ie = e / det, -b / det, -d / det, a / det
+            return Placement(affine=(ia, ib, id_, ie, -(ia * xoff + ib * yoff), -(id_ * xoff + ie * yoff)))
         angle = self.rotation_deg if self.mirror_x else -self.rotation_deg
         return Placement(origin=self.translation, translation=self.origin,
                          rotation_deg=angle, mirror_x=self.mirror_x)
+
+    def rigid_data(self) -> dict:
+        """Rigid fields for formats that store rigid placement only; affine is refused."""
+        if self.affine is not None:
+            raise ValueError('This format stores rigid placement only; affine fiducial placement is unsupported')
+        return {name: getattr(self, name) for name in RIGID_FIELDS}

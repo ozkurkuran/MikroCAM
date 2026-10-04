@@ -35,6 +35,14 @@ class PreflightSetupWidget(QtWidgets.QWidget):
         self.mirror_checkbox = QtWidgets.QCheckBox(_('Mirror local X'), self)
         self.mirror_checkbox.toggled.connect(lambda checked: self.changed.emit())
         placement.addWidget(self.mirror_checkbox, 5, 1)
+        self._alignment: Placement | None = None
+        self.alignment_label = QtWidgets.QLabel(_('Fiducial alignment: not used'), self)
+        self.alignment_label.setWordWrap(True)
+        self.clear_alignment_button = QtWidgets.QPushButton(_('Clear fiducial alignment'), self)
+        self.clear_alignment_button.clicked.connect(self.clear_alignment)
+        self.clear_alignment_button.setEnabled(False)
+        placement.addWidget(self.alignment_label, 6, 0, 1, 2)
+        placement.addWidget(self.clear_alignment_button, 7, 0, 1, 2)
         rapid = self._group(_('Optional rapid rates (mm/min): all axes or none'), layout)
         self._axis_row(rapid, 0, 'rapid', _('Rapid'), 'XYZ', optional=True)
         layout.addStretch(1)
@@ -60,6 +68,27 @@ class PreflightSetupWidget(QtWidgets.QWidget):
         for column, axis in enumerate(axes):
             self._field(grid, row, column, f'{prefix}_{axis.lower()}',
                         f'{label} {axis}', optional)
+
+    def set_alignment(self, placement: Placement, summary: str) -> None:
+        """Use an accepted fiducial Placement instead of the rigid placement fields."""
+        if not isinstance(placement, Placement):
+            raise ValueError(_('An accepted fiducial Placement is required'))
+        self._alignment = placement
+        self.alignment_label.setText(_('Fiducial alignment active (machine MPos frame): ') + summary)
+        self._sync_alignment()
+
+    def clear_alignment(self) -> None:
+        self._alignment = None
+        self.alignment_label.setText(_('Fiducial alignment: not used'))
+        self._sync_alignment()
+
+    def _sync_alignment(self) -> None:
+        rigid = self._alignment is None
+        for key in ('origin_x', 'origin_y', 'translation_x', 'translation_y', 'rotation'):
+            self.fields[key].setEnabled(rigid)
+        self.mirror_checkbox.setEnabled(rigid)
+        self.clear_alignment_button.setEnabled(not rigid)
+        self.changed.emit()
 
     def _number(self, key: str) -> float:
         text = self.fields[key].text().strip()
@@ -87,16 +116,19 @@ class PreflightSetupWidget(QtWidgets.QWidget):
 
     def value(self) -> PreflightSetup:
         """Gather explicit inputs and let the existing core authorities validate them."""
-        numbers = {key: self._number(key) for key in self.fields if not key.startswith('rapid_')}
+        rigid_keys = ('origin_x', 'origin_y', 'translation_x', 'translation_y', 'rotation')
+        numbers = {key: self._number(key) for key in self.fields if not key.startswith('rapid_')
+                   and (self._alignment is None or key not in rigid_keys)}
         rapid_keys = ('rapid_x', 'rapid_y', 'rapid_z')
         present = tuple(bool(self.fields[key].text().strip()) for key in rapid_keys)
         if any(present) and not all(present):
             raise ValueError(_('Enter all three rapid rates or leave all three empty'))
         rapid = tuple(self._number(key) for key in rapid_keys) if all(present) else None
         try:
-            placement = Placement(origin=(numbers['origin_x'], numbers['origin_y']),
-                                  translation=(numbers['translation_x'], numbers['translation_y']),
-                                  rotation_deg=numbers['rotation'], mirror_x=self.mirror_checkbox.isChecked())
+            placement = self._alignment or Placement(
+                origin=(numbers['origin_x'], numbers['origin_y']),
+                translation=(numbers['translation_x'], numbers['translation_y']),
+                rotation_deg=numbers['rotation'], mirror_x=self.mirror_checkbox.isChecked())
             return PreflightSetup(
                 initial_position_mm=tuple(numbers[f'initial_{axis}'] for axis in 'xyz'),
                 placement=placement, z_offset_mm=numbers['z_offset'],
