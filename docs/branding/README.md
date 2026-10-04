@@ -13,6 +13,11 @@ uygulamanın ortak logosudur. Tasarım mevcut yerel geometri betiğinden üretil
 | `mikrocam.ico` | 16, 24, 32, 48, 64, 128 ve 256 piksel Windows ikon katmanları. |
 | `make_splash.py` | Açılış görseli, logo ve ikonları aynı geometriyle üreten betik. |
 
+Açılış görselinin renkleri (05.10.2026) mikrofab.com tasarım değişkenlerinden esinlenir:
+lacivert zemin `#0A1628` → `#102243`, çerçeve/ayırıcı `#1e3a64`, "CAM" ve üst çizgi
+`#1C74BA` → `#5aa9f0`, izolasyon hattı ve DRO `#5aa9f0`, lazer taraması `#d7e8fb`,
+alt yazı `#9aa7b8`. Bakır PCB izleri, logo ve uygulama ikonları değişmedi.
+
 Açık ve koyu temadaki `assets/resources/` marka dosyaları aynı tasarımı kullanır.
 Eski `flatcam_icon*.png/.ico` tüketicileri de yeni işareti gösterir. `assets/icon.png`,
 `app.svg` ve `app_small.svg` günceldir. Açılışta sol alt alan yükleme mesajlarına ayrılmıştır.

@@ -1,8 +1,9 @@
 """MikroCAM splash screen generator.
 
-Draws the splash procedurally: copper traces are real Shapely geometry, the cyan
+Draws the splash procedurally: copper traces are real Shapely geometry, the blue
 isolation path is their buffered outline (what the CAM actually computes) and the
-amber lines are a laser hatch of the copper-free area.
+pale blue lines are a laser hatch of the copper-free area. The splash palette follows
+the mikrofab.com navy/blue design tokens; the shared logo and icons keep their colours.
 
 Usage: python make_splash.py <font_dir> <out_dir>
 Fonts (SIL OFL 1.1): ChakraPetch-{Bold,SemiBold,Medium}.ttf, JetBrainsMono.ttf
@@ -21,14 +22,21 @@ SS = 4                   # supersampling factor for the master render
 FONT_DIR = Path(sys.argv[1])
 OUT_DIR = Path(sys.argv[2])
 
-BG_TOP = (9, 13, 20)
-BG_BOT = (14, 22, 32)
+# mikrofab.com tokens: navy-900 #0A1628, navy-800 #102243, navy-600 #1e3a64,
+# blue-500 #1f7fe0, accent #5aa9f0, logo #1C74BA, blue-100 #d7e8fb, slate-400 #9aa7b8.
+BG_TOP = (10, 22, 40)
+BG_BOT = (16, 34, 67)
+NAVY_600 = (30, 58, 100)
+BLUE_500 = (31, 127, 224)
+ACCENT = (90, 169, 240)
+LOGO_BLUE = (28, 116, 186)
+PALE = (215, 232, 251)
+SLATE = (154, 167, 184)
 COPPER = (205, 124, 58)
 COPPER_HI = (242, 170, 98)
 CYAN = (70, 214, 232)
-AMBER = (255, 181, 71)
 WHITE = (238, 242, 246)
-MUTED = (132, 146, 160)
+MUTED = SLATE
 
 
 def s(v):
@@ -201,7 +209,7 @@ for y in range(s(H)):
 # soft radial light behind the PCB art
 halo = layer()
 hd = ImageDraw.Draw(halo)
-hd.ellipse([s(430), s(-40), s(760), s(360)], fill=(40, 72, 92, 90))
+hd.ellipse([s(430), s(-40), s(760), s(360)], fill=(31, 92, 170, 85))
 img.alpha_composite(halo.filter(ImageFilter.GaussianBlur(s(60))))
 
 # CAM grid (dots every 10 units, crosses every 50)
@@ -210,11 +218,11 @@ gd = ImageDraw.Draw(grid)
 for gx in range(0, W + 1, 10):
     for gy in range(0, H + 1, 10):
         if gx % 50 == 0 and gy % 50 == 0:
-            gd.line([(s(gx - 2), s(gy)), (s(gx + 2), s(gy))], fill=(120, 150, 175, 70), width=sw(0.5))
-            gd.line([(s(gx), s(gy - 2)), (s(gx), s(gy + 2))], fill=(120, 150, 175, 70), width=sw(0.5))
+            gd.line([(s(gx - 2), s(gy)), (s(gx + 2), s(gy))], fill=ACCENT + (60,), width=sw(0.5))
+            gd.line([(s(gx), s(gy - 2)), (s(gx), s(gy + 2))], fill=ACCENT + (60,), width=sw(0.5))
         else:
             r = s(0.35)
-            gd.ellipse([s(gx) - r, s(gy) - r, s(gx) + r, s(gy) + r], fill=(120, 150, 175, 45))
+            gd.ellipse([s(gx) - r, s(gy) - r, s(gx) + r, s(gy) + r], fill=ACCENT + (40,))
 
 # horizontal fade mask for the art: clean on the left where the text lives
 fade = Image.new("L", (s(W), s(H)), 0)
@@ -253,10 +261,10 @@ chip = layer()
 chd = ImageDraw.Draw(chip)
 b = BODY / 2
 chd.rounded_rectangle([s(CX - b), s(CY - b), s(CX + b), s(CY + b)], radius=s(2.5),
-                      fill=(22, 27, 34, 255), outline=(70, 82, 96, 255), width=sw(0.8))
-chd.ellipse([s(CX - b + 5), s(CY - b + 5), s(CX - b + 9), s(CY - b + 9)], fill=(60, 70, 82, 255))
-chd.text((s(CX), s(CY - 3)), "MCU", font=font("ChakraPetch-SemiBold.ttf", 11), fill=(120, 134, 150, 255), anchor="mm")
-chd.text((s(CX), s(CY + 10)), "LQFP-32", font=mono(5.5), fill=(90, 102, 116, 255), anchor="mm")
+                      fill=(13, 29, 51, 255), outline=(51, 72, 104, 255), width=sw(0.8))
+chd.ellipse([s(CX - b + 5), s(CY - b + 5), s(CX - b + 9), s(CY - b + 9)], fill=(51, 72, 104, 255))
+chd.text((s(CX), s(CY - 3)), "MCU", font=font("ChakraPetch-SemiBold.ttf", 11), fill=SLATE + (255,), anchor="mm")
+chd.text((s(CX), s(CY + 10)), "LQFP-32", font=mono(5.5), fill=(105, 122, 144, 255), anchor="mm")
 img.alpha_composite(chip)
 
 # --------------------------------------------------------------------------- CNC isolation path
@@ -264,7 +272,7 @@ img.alpha_composite(chip)
 iso_region = Polygon([(300, 150), (560, 150), (560, H), (300, H)])
 iso = COPPER_GEOM.buffer(1.6, quad_segs=12).intersection(iso_region.buffer(0))
 iso_l = layer()
-stroke_geom(ImageDraw.Draw(iso_l), iso, CYAN + (235,), 0.55)
+stroke_geom(ImageDraw.Draw(iso_l), iso, ACCENT + (235,), 0.55)
 iso_l.putalpha(ImageChops.multiply(iso_l.getchannel("A"), fade))
 img.alpha_composite(glow(iso_l, 2.2, 1.6))
 img.alpha_composite(iso_l)
@@ -292,7 +300,7 @@ for i, seg in hatch_lines:
         continue
     age = FRONT - i
     alpha = 255 if age == 0 else max(110, 235 - age * 2)
-    col = (255, 236, 200) if age == 0 else AMBER
+    col = (255, 255, 255) if age == 0 else PALE
     for part in getattr(seg, "geoms", [seg]):
         if part.length < 0.5:
             continue
@@ -308,34 +316,34 @@ LX, LY = part.interpolate(0.55, normalized=True).coords[0]
 spot = layer()
 spd = ImageDraw.Draw(spot)
 for r, a in ((26, 40), (14, 90), (7, 170)):
-    spd.ellipse([s(LX - r), s(LY - r), s(LX + r), s(LY + r)], fill=(255, 150, 60, a))
+    spd.ellipse([s(LX - r), s(LY - r), s(LX + r), s(LY + r)], fill=BLUE_500 + (a,))
 spot = spot.filter(ImageFilter.GaussianBlur(s(6)))
 img.alpha_composite(spot)
 core = layer()
 crd = ImageDraw.Draw(core)
-crd.ellipse([s(LX - 2.6), s(LY - 2.6), s(LX + 2.6), s(LY + 2.6)], fill=(255, 250, 240, 255))
+crd.ellipse([s(LX - 2.6), s(LY - 2.6), s(LX + 2.6), s(LY + 2.6)], fill=(250, 252, 255, 255))
 img.alpha_composite(glow(core, 2.5, 2.0))
 img.alpha_composite(core)
 # thin beam streak (galvo scan direction)
 streak = layer()
 std = ImageDraw.Draw(streak)
-std.line([(s(LX - dx * 30), s(LY - dy * 30)), (s(LX + dx * 30), s(LY + dy * 30))], fill=(255, 220, 170, 120), width=sw(0.8))
+std.line([(s(LX - dx * 30), s(LY - dy * 30)), (s(LX + dx * 30), s(LY + dy * 30))], fill=PALE + (120,), width=sw(0.8))
 img.alpha_composite(glow(streak, 1.5, 1.2))
 
 # tool position + DRO readout
 TX, TY = 515.0, 236.0
 tool = layer()
 td = ImageDraw.Draw(tool)
-td.ellipse([s(TX - 5), s(TY - 5), s(TX + 5), s(TY + 5)], outline=CYAN + (255,), width=sw(0.8))
+td.ellipse([s(TX - 5), s(TY - 5), s(TX + 5), s(TY + 5)], outline=ACCENT + (255,), width=sw(0.8))
 td.ellipse([s(TX - 1.2), s(TY - 1.2), s(TX + 1.2), s(TY + 1.2)], fill=(255, 255, 255, 255))
 for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-    td.line([(s(TX + dx * 7), s(TY + dy * 7)), (s(TX + dx * 12), s(TY + dy * 12))], fill=CYAN + (255,), width=sw(0.8))
-td.line([(s(TX + 8), s(TY + 8)), (s(TX + 18), s(TY + 18)), (s(TX + 26), s(TY + 18))], fill=CYAN + (170,), width=sw(0.6))
+    td.line([(s(TX + dx * 7), s(TY + dy * 7)), (s(TX + dx * 12), s(TY + dy * 12))], fill=ACCENT + (255,), width=sw(0.8))
+td.line([(s(TX + 8), s(TY + 8)), (s(TX + 18), s(TY + 18)), (s(TX + 26), s(TY + 18))], fill=ACCENT + (170,), width=sw(0.6))
 dro = "X 42.195  Y 18.730  Z -0.050"
 dro_w = td.textlength(dro, font=mono(6.4, 500)) / SS
 td.rounded_rectangle([s(TX + 26), s(TY + 12), s(TX + 32 + dro_w), s(TY + 24)], radius=s(2),
-                     fill=(8, 14, 20, 240), outline=CYAN + (120,), width=sw(0.5))
-td.text((s(TX + 29), s(TY + 18)), dro, font=mono(6.4, 500), fill=CYAN + (230,), anchor="lm")
+                     fill=BG_TOP + (240,), outline=ACCENT + (120,), width=sw(0.5))
+td.text((s(TX + 29), s(TY + 18)), dro, font=mono(6.4, 500), fill=ACCENT + (230,), anchor="lm")
 img.alpha_composite(glow(tool, 3, 1.4))
 img.alpha_composite(tool)
 
@@ -416,7 +424,7 @@ gdraw = ImageDraw.Draw(grad)
 bbox = cam_mask.getbbox()
 for x in range(bbox[0], bbox[2] + 1):
     t = (x - bbox[0]) / max(1, bbox[2] - bbox[0])
-    c = tuple(round(COPPER[i] + (AMBER[i] - COPPER[i]) * t) for i in range(3))
+    c = tuple(round(LOGO_BLUE[i] + (ACCENT[i] - LOGO_BLUE[i]) * t) for i in range(3))
     gdraw.line([(x, bbox[1]), (x, bbox[3])], fill=c + (255,))
 grad.putalpha(cam_mask)
 img.alpha_composite(glow(grad, 6, 0.45))
@@ -427,15 +435,15 @@ tag_y = LOGO_Y + LOGO + 3
 tx = s(TX0 + 2)
 for i, word in enumerate(("PCB CAM", "CNC CONTROL", "FIBER LASER")):
     if i:
-        tdraw.ellipse([tx + s(5), s(tag_y - 1.6), tx + s(8.2), s(tag_y + 1.6)], fill=(AMBER if i == 2 else CYAN) + (255,))
+        tdraw.ellipse([tx + s(5), s(tag_y - 1.6), tx + s(8.2), s(tag_y + 1.6)], fill=(ACCENT if i == 2 else BLUE_500) + (255,))
         tx += s(13.2)
     for ch in word:
-        tdraw.text((tx, s(tag_y)), ch, font=tag_font, fill=(196, 206, 216, 255), anchor="lm")
+        tdraw.text((tx, s(tag_y)), ch, font=tag_font, fill=(200, 216, 236, 255), anchor="lm")
         tx += tdraw.textlength(ch, font=tag_font) + s(1.3)
 
 # thin rule between title and tagline
-tdraw.line([(s(TX0 + 2), s(LOGO_Y + 55)), (s(TX0 + 60), s(LOGO_Y + 55))], fill=COPPER + (255,), width=sw(1))
-tdraw.line([(s(TX0 + 64), s(LOGO_Y + 55)), (s(TX0 + 245), s(LOGO_Y + 55))], fill=(60, 74, 90, 255), width=sw(1))
+tdraw.line([(s(TX0 + 2), s(LOGO_Y + 55)), (s(TX0 + 60), s(LOGO_Y + 55))], fill=LOGO_BLUE + (255,), width=sw(1))
+tdraw.line([(s(TX0 + 64), s(LOGO_Y + 55)), (s(TX0 + 245), s(LOGO_Y + 55))], fill=NAVY_600 + (255,), width=sw(1))
 
 # footer (bottom-right; bottom-left is reserved for QSplashScreen messages)
 foot = font("ChakraPetch-Medium.ttf", 9.5)
@@ -449,12 +457,12 @@ frd = ImageDraw.Draw(fr)
 for x in range(s(W)):
     t = x / s(W)
     if t < 0.5:
-        c, a = COPPER, round(255 * (t / 0.5))
+        c, a = LOGO_BLUE, round(255 * (t / 0.5))
     else:
         u = (t - 0.5) / 0.5
-        c, a = tuple(round(COPPER[i] + (AMBER[i] - COPPER[i]) * u) for i in range(3)), 255
+        c, a = tuple(round(LOGO_BLUE[i] + (ACCENT[i] - LOGO_BLUE[i]) * u) for i in range(3)), 255
     frd.line([(x, 0), (x, s(1.5))], fill=c + (a,))
-frd.rectangle([0, 0, s(W) - 1, s(H) - 1], outline=(52, 64, 78, 255), width=sw(1))
+frd.rectangle([0, 0, s(W) - 1, s(H) - 1], outline=NAVY_600 + (255,), width=sw(1))
 img.alpha_composite(fr)
 
 # --------------------------------------------------------------------------- export
