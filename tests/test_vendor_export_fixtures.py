@@ -50,12 +50,23 @@ def test_genuine_proteus_svg_desc_marker_identifies_proteus():
 
 
 @pytest.mark.parametrize('object_type', ['geometry', 'gerber'])
-def test_genuine_proteus_geometry_import_fails_explicitly_not_partially(object_type):
-    # Real Proteus exports mark every filled path with vector-effect:non-scaling-stroke; the
-    # importer's documented policy rejects vector-effect, so 018 drill review cannot run yet.
+@pytest.mark.parametrize('flip', [False, True])
+def test_genuine_proteus_geometry_imports_with_unpainted_non_scaling_stroke(object_type, flip):
+    # Spec 041: all 209 vector-effect="non-scaling-stroke" uses sit on filled, unstroked paths,
+    # where the effect cannot change material; 142 further elements say vector-effect="none".
+    from shapely import union_all
     source = (PROTEUS / 'B_A_.svg').read_bytes()
-    with pytest.raises(ValueError, match='vector-effect'):
-        import_svg_bytes(source, 'B_A_.svg', object_type=object_type)
+    assert source.count(b'vector-effect="non-scaling-stroke"') == 209
+    result = import_svg_bytes(source, 'B_A_.svg', flip=flip, object_type=object_type)
+    assert len(result.document.elements) == 351
+    assert (result.document.viewport.width_mm, result.document.viewport.height_mm) == pytest.approx((54.11, 44.28))
+    notices = {item.code: item.message for item in result.notices}
+    assert notices['non-scaling-stroke-unpainted'].startswith('209 ')
+    assert 'non-scaling-stroke' not in notices  # No painted stroke uses the effect.
+    # The white board rectangle is positive material too (016 colour policy).
+    assert union_all(result.geometry_mm).bounds == pytest.approx((0, 0, 54.11, 44.28), abs=1e-9)
+    tracks = [element for element in result.document.elements if element.kind == 'polyline']
+    assert len(tracks) == 140 and {round(e.paint.width) for e in tracks} == {25, 102}
 
 
 ILLUSTRATOR_XMP = ROOT / 'illustrator-wortschule-hilfsverb'

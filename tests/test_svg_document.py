@@ -68,7 +68,7 @@ def test_unsupported_or_ambiguous_source_rejected(body):
         document(body)
 
 
-@pytest.mark.parametrize('style', ['stroke-dasharray:1 2', 'vector-effect:non-scaling-stroke',
+@pytest.mark.parametrize('style', ['stroke-dasharray:1 2', 'vector-effect:non-scaling-size',
                                   'clip-path:url(#clip)', 'fill:url(#gradient)', 'opacity:0.5',
                                   'filter:url(#filter)', 'stroke-width:10%', 'transform:scale(2)',
                                   'stroke-linejoin:arcs', 'stroke-miterlimit:-.1', 'stroke-width:-1',
@@ -79,8 +79,8 @@ def test_unsupported_or_invalid_paint_is_never_silently_guessed(style):
         document(f'<line x2="1" style="{style}"/>')
 
 
-@pytest.mark.parametrize('style', ['VECTOR-EFFECT:non-scaling-stroke', 'STROKE-DASHARRAY:2 3',
-                                  '/* comment */ vector-effect:non-scaling-stroke',
+@pytest.mark.parametrize('style', ['VECTOR-EFFECT:non-scaling-size', 'STROKE-DASHARRAY:2 3',
+                                  '/* comment */ vector-effect:fixed-position',
                                   r'vector-\65 ffect:non-scaling-stroke', 'stroke-alignment:inner'])
 def test_css_spelling_cannot_bypass_unsupported_appearance(style):
     with pytest.raises(ValueError):

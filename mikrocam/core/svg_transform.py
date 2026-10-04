@@ -72,6 +72,23 @@ def affine_scale_bound(matrix: Affine2D) -> float:
     validate_affine(matrix)
     return math.hypot(*matrix[:4])
 
+def non_scaling_stroke_width(width_px: float, matrix: Affine2D) -> float:
+    """Map a root-viewport CSS-pixel stroke width to user units through a similarity user->mm matrix.
+
+    Stroking a similarity-mapped path in user space with the returned width equals stroking the
+    mapped path in the physical frame with width_px * 25.4/96 mm (SVG non-scaling-stroke at zoom 1).
+    """
+    validate_affine(matrix)
+    if type(width_px) not in (int, float) or not math.isfinite(width_px) or width_px < 0:
+        raise ValueError('Non-scaling stroke width must be a finite nonnegative number')
+    a, b, d, e = matrix[:4]
+    first, second = math.hypot(a, d), math.hypot(b, e)
+    if (not math.isclose(first, second, rel_tol=1e-9)
+            or abs(a * b + d * e) > first * second * 1e-9):
+        raise ValueError('SVG non-scaling-stroke under non-uniform scale or skew is ambiguous for '
+                         'CAM; use a uniform transform or outline the stroke in the source editor')
+    return width_px * 25.4 / 96 / ((first + second) / 2)
+
 def _operation(name: str, values: tuple[float, ...]) -> Affine2D:
     if name == 'translate' and len(values) in (1, 2):
         result = (1.0, 0.0, 0.0, 1.0, values[0], values[1] if len(values) == 2 else 0.0)
