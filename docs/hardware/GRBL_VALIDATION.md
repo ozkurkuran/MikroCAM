@@ -108,11 +108,36 @@ Cell format: `passed/failed/not-tested/not-applicable — evidence path; observa
 A failed case opens a test-first hotfix when existing behavior is wrong, or a separate spec
 proposal when new behavior is required. Keep the raw failure evidence.
 
+## H042 firmware identification scenarios (spec 042) — NOT_RUN
+
+Status: prepared on 2026-10-04; **NOT_RUN on every board**. Software was built and tested only
+against FakeGRBL profiles; no grblHAL or FluidNC board was available. These rows are readonly:
+the operator only connects, reads the Machine **Firmware** row/tooltip and the wire log, and
+disconnects. Keep spindle/laser power isolated anyway because opening a port may reset a board.
+Record the complete greeting and `$I` reply verbatim (Machine console `$I` or H2 inventory JSON).
+
+| ID | Board / firmware | Operator action and measurable acceptance |
+| --- | --- | --- |
+| H042-1 | GRBL 1.1 (gnea, e.g. Uno 1.1h) | Connect. TX begins `$I`, `$$`, `?`. Firmware row shows `GRBL 1.1x (build YYYYMMDD)`, RX matching `[OPT:…,rx]`, budget `min(rx,128)`, motion enabled. Repeat with a board that resets on open: one extra `$I` after the greeting, then identified. |
+| H042-2 | grblHAL, default compatibility level 0 | Greeting `GrblHAL 1.1f ['$' or '$HELP' for help]`; `$I` lists `[FIRMWARE:grblHAL]`, NEWOPT, DRIVER/BOARD. Row shows `grblHAL 1.1f`, reported RX, char-counting unavailable, motion disabled (043). Jog/zero/job/probe stay disabled; console works. |
+| H042-3 | grblHAL with `COMPATIBILITY_LEVEL` ≥ 1 | Greeting `Grbl 1.1f ['$' for help]`, plain `$I` has a three-field OPT (RX usually 1024). Expected: **Unknown** with the 255-limit note, motion disabled. Record whether RX ≤ 255 on that build (would be classified GRBL; report it). |
+| H042-4 | FluidNC v3.x and v4.x, default start message | Greeting `Grbl <x.y> [FluidNC v<x.y.z> (…) '$' for help]`. Row shows `FluidNC x.y.z`, RX unknown, motion disabled (044) — never `GRBL`. Record `[MSG:INFO:` boot lines seen. |
+| H042-5 | FluidNC with a custom `$Start/Message` | Set a custom start message on the bench only, reset the board while connected. Record whether a reset was detected (known D1 gap UA-8: greetings not starting with `Grbl `/`GrblHAL ` are not reset evidence). Restore the setting afterwards. |
+| H042-6 | Any unsupported firmware (e.g. GRBL 0.9, Grbl_ESP32 1.3a) | Row shows **Unknown** with a reason; all motion controls disabled; Stop/Abort/Disconnect usable; no automatic retry of `$I`. |
+| H042-7 | Any identified board | Reset the controller from its button while connected and idle. Same firmware: only `$$` is re-read. After reflashing to a different family between sessions, reconnect shows the new family. |
+
+| Board / firmware / run ID | H042-1 | H042-2 | H042-3 | H042-4 | H042-5 | H042-6 | H042-7 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Not supplied / not tested | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN | NOT_RUN |
+
+Identification passing does not validate grblHAL/FluidNC motion; that belongs to specs 043/044.
+
 ## Completion and deferred gates
 
 H1/H2 are agent preparation. H3 is complete only when an operator supplies a completed record
 and matrix for at least one GRBL 1.1 board with sufficient evidence for each applicable row.
 Only then can relevant ROADMAP physical-validation annotations be changed. C3 additionally
-needs measured segment stalls tied to send-response timing. D additionally needs the target
-FluidNC/grblHAL board and explicit removal of relevant items from ROADMAP's deferred list.
-No such evidence or authorization is asserted by this document.
+needs measured segment stalls tied to send-response timing. The user explicitly started grblHAL
+and FluidNC software work on 2026-10-04 (docs/IS_TAKIP.md); physical D validation still needs
+the target FluidNC/grblHAL board and the H042 rows above.
+No physical evidence is asserted by this document.

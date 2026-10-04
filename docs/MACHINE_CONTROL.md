@@ -25,6 +25,30 @@ veya ham komut alanı yoktur. Abort bir durdurma isteğidir; genel bir reset aya
 oluşturabilir.** MikroCAM bağlantı sırasında reset/wake komutu göndermez ve bağlantı dizisi olarak DTR/RTS
 değiştirmez; sürücü veya kartın port açmaya tepkisi yine de reset olabilir.
 
+## Firmware tanıma (042)
+
+Port açıldıktan sonra MikroCAM ilk ayar okumasından (`$$`) hemen önce tek bir salt okunur `$I`
+sorgusu gönderir; hareket, ayar yazma, wake veya reset göndermez. **Firmware** satırı aileyi,
+sürümü, build tarihini, bildirilen RX tamponunu, karakter sayımı bütçesini ve hareketin açık
+olup olmadığını gerekçesiyle gösterir; ayrıntılar (belgelenmiş gerçek zamanlı komutlar, ek
+durumlar, durum alanları, ham `$I` satırları) ipucunda, ham bayt alışverişi wire log'dadır.
+
+| Gösterim | Anlamı | Hareket |
+| --- | --- | --- |
+| `GRBL 1.1x` | gnea GRBL 1.1 biçimi (`[VER:1.1x.YYYYMMDD:]`, üç alanlı OPT) | Açık (mevcut davranış) |
+| `grblHAL 1.1f` | `GrblHAL` karşılaması veya `[FIRMWARE:grblHAL]` | Kapalı; spec 043 (D2) doğrulayana kadar |
+| `FluidNC x.y.z` | `[VER:x.y FluidNC vx.y.z…:]`; karşılama “Grbl” ile başlasa da | Kapalı; spec 044 (D3) doğrulayana kadar |
+| `Unknown` | Kanıt yok, bozuk, çelişkili, `error:` veya 3 s içinde cevap yok | Kapalı |
+
+Hareket kapalıyken jog, G54 seçimi/sıfırı, iş, kuyruk ve probe başlatılamaz. Cancel jog, Stop,
+Abort ve Disconnect her zaman kullanılabilir. Salt okunur konsol sorguları tanı için açıktır.
+Karşılama satırı tek başına kimlik sayılmaz: FluidNC karşılaması ayarla değiştirilebilir ve
+grblHAL uyumluluk modunda `Grbl 1.1f` der. Oturum ortasında aynı firmware'in karşılaması gelirse
+yalnız `$$` yeniden okunur; farklı/doğrulanamayan bir karşılama `$I` ile yeniden tanıma başlatır.
+Otomatik tekrar veya yeniden bağlanma yoktur; bilinmeyen sonuçta Disconnect/Connect yapın.
+Gerçek grblHAL/FluidNC kartlarında tanıma henüz doğrulanmadı
+([saha protokolü H042](hardware/GRBL_VALIDATION.md)).
+
 ## Konumları okuma
 
 **Machine XYZ (mm)** makine, **Work XYZ (mm)** çalışma koordinat sistemindeki X/Y/Z
