@@ -1,7 +1,7 @@
 # Exact-version dependency notices
 
-[inventory.json](inventory.json), schema version 1, covers every one of the 60 exact
-runtime, development and optional image pins. Groups include inherited `-r` requirements:
+[inventory.json](inventory.json), schema version 1, covers every one of the 65 exact
+runtime, development, optional image and Windows build-tool pins. Groups include inherited `-r` requirements:
 runtime pins also belong to development and optional-image installs. Five baseline source-vendored/bundled components have separate records. Visual
 interlace additionally records 75 exact Rust source crates and their source manifest. No optional dependency imports
 are needed to check this inventory.
@@ -68,3 +68,29 @@ Both PyPI wheel and sdist build-provenance endpoints returned 404. The exact sou
 is recorded without claiming a proven mapping from every stripped binary component to
 that graph. Final bundle composition and binary build provenance remain a release audit.
 Offline coverage is checked by tests/test_visual_notices.py and test_dependency_notices.py.
+
+## Windows binary distribution (spec 040)
+
+`requirements-build.txt` pins the build tools in the `build` group: PyInstaller 6.22.3
+(GPL-2.0-or-later with the bootloader exception that covers the bootloader embedded in
+MikroCAM.exe), pyinstaller-hooks-contrib, altgraph, pefile and pywin32-ctypes. Their exact
+wheel license files are retained like every other pin.
+
+Components shipped only by the Windows binary are recorded as inventory components:
+
+- `cpython` 3.13.13: the official Windows build's LICENSE.txt (PSF plus bundled library
+  notices and the Microsoft Distributable Code conditions). `release/windows/build.py`
+  refuses an interpreter whose LICENSE.txt hash differs.
+- `qt-third-party` 6.11.2: the Qt "Third-Party Code Used in Qt" page and the attribution pages
+  for the shipped Core, GUI, Image Formats, Network, PDF (PDFium), SVG and Test modules and
+  Mesa llvmpipe, kept byte-for-byte as fetched from doc.qt.io.
+- `nsis` 3.12: COPYING for the installer stub (zlib compressor only).
+
+`inherited-assets/provenance.json` records the git provenance (SHA-256, adding and last commit,
+author, date) of every shipped file under `assets/resources`, `assets/examples` and
+`assets/icon.png`. It does not identify original artwork authors or per-icon licenses.
+
+The whole directory ships in the binary as `licenses/`. `audit_gaps` entries carry a
+`windows_binary` status; Rasterio, OR-Tools and PyOpenGL's GLUT/GLE DLLs are excluded from the
+binary. Regenerate these records with `release/windows/collect_notices.py` from the isolated
+build environment and verify them with `tests/test_binary_notices.py`.

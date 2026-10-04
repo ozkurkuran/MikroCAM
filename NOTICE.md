@@ -86,15 +86,45 @@ Evo's About credits name these artwork providers; the credits remain attributed 
 - [Anggara](https://www.flaticon.com/authors/anggara), through Flaticon.
 - [Kharisma](https://www.flaticon.com/authors/kharisma), through Flaticon.
 
-The inherited `assets/resources` artwork lacks complete **per-file provenance** linking
-each image to its origin, applicable license version and required notices. These inherited
-credits do not establish a blanket MIT license or permission for every asset. This is an
-open release audit item, including artwork outside that directory where evidence is absent.
+Evo did not record **per-file provenance** linking each inherited image to its original
+author, applicable license version and required notices. Since the Windows packaging slice,
+[a git provenance record](THIRD_PARTY_LICENSES/inherited-assets/provenance.json) lists every
+shipped file under `assets/resources`, `assets/examples` and `assets/icon.png` with its SHA-256,
+adding and last commit, author and date (722 unchanged FlatCAM/Evo files, 46 replaced by
+MikroCAM branding). Git history names who committed a file, not who drew it; these credits do
+not establish a blanket MIT license or permission for every asset. Per-icon license
+verification remains an open audit item.
 
 **Rasterio native-library audit gap:** all notices supplied by the pinned Windows wheel
 are preserved, including its package, GDAL data and PROJ data notices. That wheel does not
 provide an aggregate license inventory for every DLL in `rasterio.libs`; native library
 versions, sources and their full license/notice obligations require a distribution audit.
-More generally, retaining supplied notices does not establish that every transitive native
-binary's source and redistribution obligations have been audited. Installer/binary release
-work must resolve these gaps, resource revisions and any missing component evidence.
+This gap applies to optional source installations only: the Windows binary excludes Rasterio.
+
+## Windows binary distribution
+
+The Windows portable ZIP and installer (built by `release/windows/build.py`, spec 040) ship
+`LICENSE.txt`, this file, `NOTICE-BINARY.txt`, the complete `THIRD_PARTY_LICENSES` folder as
+`licenses/`, and `bundle-manifest.json`, which maps every packaged file to the component that
+supplied it. The build fails if a file comes from outside the pinned interpreter, the pinned
+wheels (verified against their installed RECORD hashes) or this repository, or if its owner
+has no retained license text.
+
+- Because the package includes **PyQt6 (GPLv3)**, the binary package as a whole is conveyed
+  under GPLv3 terms; MikroCAM's own source remains MIT. `NOTICE-BINARY.txt` names the
+  corresponding source locations. Qt DLLs stay replaceable files (LGPLv3) and svglib
+  (LGPL-3.0-or-later) is shipped as plain `.py` source.
+- Third-party code inside the Qt 6.11.2 modules (PDFium, FreeType, HarfBuzz, PCRE2, libpng,
+  libjpeg, zlib, Mesa llvmpipe and others) is covered by Qt's retained attribution pages.
+- The CPython 3.13.13 Windows `LICENSE.txt`, including bundled library notices and the
+  Microsoft Distributable Code conditions for the Visual C++ runtime DLLs, is retained.
+- The PyInstaller bootloader is embedded under its bootloader exception; the NSIS 3.12
+  installer stub uses only zlib/libpng-licensed modules. Build tools are pinned in
+  `requirements-build.txt` and inventoried in the `build` group.
+- **Not shipped:** the optional image stack (Rasterio/GDAL, svgtrace, Playwright), PyOpenGL's
+  GLUT/GLE DLLs and **Google OR-Tools**. OR-Tools statically links EPL-2.0 COIN-OR code that
+  cannot be conveyed together with GPLv3 PyQt6 as one work; the binary uses the built-in RTree
+  path ordering instead. Source installations are unchanged.
+- The resvg_py extension ships unchanged with all 152 retained crate notices; its wheel build
+  provenance remains unavailable upstream. The inventory's `audit_gaps` records each item's
+  `windows_binary` status. Executables are not code-signed.
