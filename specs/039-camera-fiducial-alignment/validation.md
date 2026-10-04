@@ -23,7 +23,9 @@ bu ortamda kurulu olmadığı için görsel SVG testlerindedir; aynı 12 test de
 (`test_large_program_completes_with_bounded_storage_and_prompt_cancellation`, <10 s sınırı)
 paralel ajan yükü altında 11.4 s sürdü; tek başına 6.0 s (main'de 6.5 s) PASS.
 Görsel ekstraları kurulu ana `.venv` ile bu 5 görsel dosya + preflight: 118 PASS.
-Ana `.venv` ile tam suite sonucu aşağıdadır.
+Görsel ekstraları kurulu, sabitlenmiş ana `.venv` ile kaynak commit `960f8b77` üzerinde
+tam suite: **5947 PASS, 0 FAIL, 3 skip, 310 alt test PASS, 11 mevcut uyarı, 539.66 s, exit 0**
+(`fiducial-full-mainenv.log`/`.xml`).
 
 ## Masaüstü
 
