@@ -111,11 +111,11 @@ def job_to_json(job: LaserJob) -> str:
     """Serialize source mm copper and placement separately, never preplacing the source."""
     if not isinstance(job, LaserJob):
         raise ValueError('Expected LaserJob')
-    placement = job.placement
+    placement = job.placement.rigid_data()
     return _dump({'kind': 'mikrocam.laser-job', 'schema_version': 2 if job.recipe.device else 1, 'units': 'mm',
                   'name': job.name, 'region_wkb_hex': job.region.wkb_hex, 'recipe': _recipe_data(job.recipe),
-                  'placement': {'origin': list(placement.origin), 'translation': list(placement.translation),
-                                'rotation_deg': placement.rotation_deg, 'mirror_x': placement.mirror_x}})
+                  'placement': {'origin': list(placement['origin']), 'translation': list(placement['translation']),
+                                'rotation_deg': placement['rotation_deg'], 'mirror_x': placement['mirror_x']}})
 
 
 def job_from_json(text: str) -> LaserJob:

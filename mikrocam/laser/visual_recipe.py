@@ -4,7 +4,7 @@ from dataclasses import asdict
 import json
 from mikrocam.core.visual import BurnMask, MAX_JSON_BYTES, MAX_SOURCE_BYTES, PreparationSettings, RasterGrid, SourceAsset, SourceInfo, build_grid
 from mikrocam.core.interlace_job import InterlaceSettings, VisualInterlaceJob
-from mikrocam.core.placement import Placement
+from mikrocam.core.placement import Placement, RIGID_FIELDS
 from mikrocam.core.laser_json import _fields, _load, recipe_from_json, recipe_to_json
 from .visual_plan import build_plan
 
@@ -36,7 +36,7 @@ def job_to_data(job: VisualInterlaceJob, mask_png: bytes) -> dict:
             'mask': {'encoding': 'png-1bit', 'data_base64': b64encode(mask_png).decode('ascii'),
                      'sha256': job.mask.sha256, 'black_pixel_count': job.mask.black_pixel_count},
             'interlace': {**asdict(job.interlace), 'effective_orders': [list(x) for x in plan.effective_orders]},
-            'placement': asdict(job.placement), 'laser_recipe': None if job.laser_recipe is None else
+            'placement': job.placement.rigid_data(), 'laser_recipe': None if job.laser_recipe is None else
                 json.loads(recipe_to_json(job.laser_recipe)), 'revision': job.revision,
             'provenance': {'normalizer_version': 1, 'renderer_name': job.renderer_name,
                            'renderer_version': job.renderer_version}}
@@ -100,7 +100,7 @@ def job_from_data(data: dict, mask: BurnMask) -> VisualInterlaceJob:
     interlace = InterlaceSettings(**settings)
     expected = build_plan(mask, interlace, data['revision']).effective_orders
     if orders is not None and orders != [list(x) for x in expected]: raise ValueError('RECIPE_CORRUPT: orders')
-    placed = dict(_fields(data['placement'], set(Placement.__dataclass_fields__), 'placement'))
+    placed = dict(_fields(data['placement'], set(RIGID_FIELDS), 'placement'))
     for field in ('origin', 'translation'):
         if type(placed[field]) not in (tuple, list): raise ValueError('RECIPE_CORRUPT: placement')
         placed[field] = tuple(placed[field])

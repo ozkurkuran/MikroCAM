@@ -7,12 +7,15 @@ from time import monotonic
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
+from mikrocam.bridge.fiducial_points import design_points
 from mikrocam.bridge.gcode_source import load_gcode_file, snapshot_cncjob
 from mikrocam.core.gcode_models import MAX_FINDINGS, PreflightReport, SourceSnapshot
 from .preflight_setup import PreflightSetupWidget
 from .preflight_worker import PreflightWorker
 from .dry_run_panel import DryRunPanel
 from .autolevel_panel import AutoLevelPanel
+from .aligned_job_panel import AlignedJobPanel
+from .fiducial_panel import FiducialPanel
 
 
 _ = getattr(builtins, '_', gettext.gettext)
@@ -31,6 +34,10 @@ class PreflightPanel(QtWidgets.QDockWidget):
         self._transfer_alive = True
         self._dry_run_panel: DryRunPanel | None = None
         self._autolevel_panel: AutoLevelPanel | None = None
+        self._fiducial_panel: FiducialPanel | None = None
+        self._aligned_panel: AlignedJobPanel | None = None
+        self.design_points_provider: Callable | None = None
+        self.snapshot_provider: Callable | None = None
         self.source: SourceSnapshot | None = None
         self.source_path: Path | None = None
         self.report: PreflightReport | None = None
@@ -75,6 +82,10 @@ class PreflightPanel(QtWidgets.QDockWidget):
         self.dry_run_button.clicked.connect(self.open_dry_run)
         self.autolevel_button = QtWidgets.QPushButton(_('Auto-level'))
         self.autolevel_button.clicked.connect(self.open_autolevel)
+        self.fiducial_button = QtWidgets.QPushButton(_('Fiducial alignment…'))
+        self.fiducial_button.clicked.connect(self.open_fiducial)
+        self.aligned_button = QtWidgets.QPushButton(_('Aligned job…'))
+        self.aligned_button.clicked.connect(self.open_aligned_job)
         self.transfer_button.clicked.connect(self.transfer_to_machine)
         self.analyze_button.clicked.connect(self.analyze)
         self.cancel_button.clicked.connect(self.cancel)
@@ -84,6 +95,10 @@ class PreflightPanel(QtWidgets.QDockWidget):
         actions.addWidget(self.dry_run_button)
         actions.addWidget(self.autolevel_button)
         layout.addLayout(actions)
+        alignment_actions = QtWidgets.QHBoxLayout()
+        alignment_actions.addWidget(self.fiducial_button)
+        alignment_actions.addWidget(self.aligned_button)
+        layout.addLayout(alignment_actions)
         self.result_label = QtWidgets.QLabel(_('Supply explicit setup values before analysis.'))
         self.result_label.setWordWrap(True)
         self.result_label.setTextFormat(QtCore.Qt.TextFormat.PlainText)
@@ -112,6 +127,43 @@ class PreflightPanel(QtWidgets.QDockWidget):
 
         self.autolevel_button.setEnabled(self._transfer_alive and self.report is not None
                                          and self.report.allowed and not self.busy)
+        self.aligned_button.setEnabled(self._transfer_alive and self.report is not None and self.report.allowed
+                                       and not self.busy
+                                       and self.report.setup.placement.matrix[:4] != (1., 0., 0., 1.))
+
+    def open_fiducial(self) -> FiducialPanel:
+        if self._fiducial_panel is None:
+            parent = self.parentWidget()
+            self._fiducial_panel = FiducialPanel(parent or self, alignment_receiver=self.setup_widget.set_alignment,
+                                                 design_points_provider=self.design_points_provider,
+                                                 snapshot_provider=self.snapshot_provider)
+            if isinstance(parent, QtWidgets.QMainWindow):
+                parent.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self._fiducial_panel)
+            else:
+                self._fiducial_panel.setFloating(True)
+        self._fiducial_panel.show()
+        self._fiducial_panel.raise_()
+        return self._fiducial_panel
+
+    def open_aligned_job(self) -> AlignedJobPanel | None:
+        binding = self._execution_binding()
+        if binding is None or binding[1].setup.placement.matrix[:4] == (1., 0., 0., 1.):
+            return None
+        if self._aligned_panel is None:
+            parent = self.parentWidget()
+            self._aligned_panel = AlignedJobPanel(parent or self, source=binding[0], report=binding[1],
+                binding_provider=self._execution_binding, job_receiver=self.job_receiver,
+                snapshot_provider=self.snapshot_provider)
+            if isinstance(parent, QtWidgets.QMainWindow):
+                parent.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, self._aligned_panel)
+            else:
+                self._aligned_panel.setFloating(True)
+        else:
+            self._aligned_panel.set_source(*binding, self._execution_binding)
+            self._aligned_panel.job_receiver = self.job_receiver
+        self._aligned_panel.show()
+        self._aligned_panel.raise_()
+        return self._aligned_panel
 
     def open_autolevel(self) -> AutoLevelPanel | None:
         binding = self._execution_binding()
@@ -354,9 +406,11 @@ class PreflightPanel(QtWidgets.QDockWidget):
             max(0, int((deadline - monotonic()) * 1000))))
         auto_closed = (self._autolevel_panel is None or self._autolevel_panel.shutdown(
             max(0, int((deadline - monotonic()) * 1000))))
+        aligned_closed = (self._aligned_panel is None or self._aligned_panel.shutdown(
+            max(0, int((deadline - monotonic()) * 1000))))
         own_closed = (self._worker is None or self._release_worker(
             self._worker, max(0, int((deadline - monotonic()) * 1000))))
-        return dry_closed and auto_closed and own_closed
+        return dry_closed and auto_closed and aligned_closed and own_closed
 
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         if not self.shutdown():
@@ -380,6 +434,9 @@ def open_preflight_panel(app: object) -> PreflightPanel:
             from .machine_panel import open_machine_panel
             open_machine_panel(app).load_preflight(source, report, binding)
         panel = PreflightPanel(app.ui, source_provider=provider, job_receiver=receiver)
+        panel.design_points_provider = lambda: design_points(app.collection.get_active())
+        panel.snapshot_provider = lambda: getattr(getattr(app, '_mikrocam_machine_panel', None),
+                                                  'last_snapshot', None)
         app.ui.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, panel)
         app._mikrocam_preflight_panel = panel
     panel.show()
