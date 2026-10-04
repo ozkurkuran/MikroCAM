@@ -57,6 +57,15 @@ def test_fixed_external_svg11_doctype_is_inspected_offline():
     assert svg_source_evidence(payload)[0].application == 'KiCad'
 
 
+def test_old_illustrator_svg10_doctype_and_generator_comment_are_inspected_offline():
+    # Spec 041: the detector shares the geometry importer's SVG 1.0/1.1 allowlist.
+    payload = (b'<?xml version="1.0" encoding="utf-8"?>\n'
+               b'<!-- Generator: Adobe Illustrator 10.0, SVG Export Plug-In . SVG Version: 3.0.0 -->\n'
+               b'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" '
+               b'"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">\n' + source())
+    assert [item.application for item in svg_source_evidence(payload)] == ['Illustrator']
+
+
 @pytest.mark.parametrize('payload', [b'<svg', b'<html/>', b'\xff',
     b'<!DOCTYPE svg SYSTEM "https://example.invalid/a.dtd"><svg/>',
     b'<!DOCTYPE svg [<!ENTITY tool "KiCad">]><svg><desc>&tool;</desc></svg>',

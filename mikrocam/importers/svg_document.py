@@ -12,6 +12,7 @@ from .svg_style import resolve_style, style_paint, style_fill_is_white
 from .svg_metadata import resolve_page_attributes
 from .svg_css import parse_stylesheets, cascade_attributes
 from .svg_clips import SvgClipBuilder
+from .svg_doctype import strip_svg_doctype
 
 
 _SVG = 'http://www.w3.org/2000/svg'
@@ -31,8 +32,7 @@ def _parse_xml(source: bytes) -> ET.Element:
         text = source.decode('utf-8-sig')
     except UnicodeDecodeError as error:
         raise ValueError('SVG source must use UTF-8 encoding') from error
-    if '<!DOCTYPE' in text.upper() or '<!ENTITY' in text.upper():
-        raise ValueError('SVG document/entity declarations are unsupported')
+    text = strip_svg_doctype(text)  # Only the standard SVG 1.0/1.1 DOCTYPE, never parsed or fetched.
     if re.search(r'<\?xml-stylesheet\b', text, re.IGNORECASE):
         raise ValueError('SVG external stylesheet instructions are unsupported')
     declaration = re.match(r'\s*<\?xml\s+[^?]*encoding\s*=\s*[\'"]([^\'"]+)', text)

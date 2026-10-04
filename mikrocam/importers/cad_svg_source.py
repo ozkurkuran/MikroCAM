@@ -3,6 +3,7 @@ import re
 from xml.etree import ElementTree as ET
 
 from mikrocam.core.cad_source import CadSourceEvidence, MAX_CAD_SOURCE_BYTES
+from .svg_doctype import strip_svg_doctype
 from .cad_producer import classify_producer, desc_declaration, is_inkscape_version, producer_declaration
 
 
@@ -11,8 +12,6 @@ MAX_XML_DEPTH = 64
 _SVG = 'http://www.w3.org/2000/svg'
 _INK_VERSION = '{http://www.inkscape.org/namespaces/inkscape}version'
 _CREATOR = '{http://ns.adobe.com/xap/1.0/}CreatorTool'
-_DOCTYPE = re.compile(r'''<!DOCTYPE\s+svg\s+PUBLIC\s+(["'])-//W3C//DTD SVG 1\.1//EN\1\s+'''
-                      r'''(["'])http://www\.w3\.org/Graphics/SVG/1\.1/DTD/svg11\.dtd\2\s*>''')
 
 
 def _text(source: bytes) -> str:
@@ -25,10 +24,7 @@ def _text(source: bytes) -> str:
     declaration = re.match(r'''\s*<\?xml\s+[^?]*encoding\s*=\s*["']([^"']+)''', text)
     if declaration and declaration[1].lower() not in ('utf-8', 'utf8', 'us-ascii', 'ascii'):
         raise ValueError('SVG producer inspection requires UTF-8 declaration')
-    checked, count = _DOCTYPE.subn('', text)
-    if count > 1 or '<!DOCTYPE' in checked.upper() or '<!ENTITY' in checked.upper():
-        raise ValueError('Unsupported SVG declaration in producer inspection')
-    return text
+    return strip_svg_doctype(text)  # Shared offline SVG 1.0/1.1 allowlist (spec 041).
 
 
 def _parse(source: bytes) -> tuple[ET.Element, tuple[tuple[str, ET.Element], ...]]:
