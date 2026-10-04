@@ -221,6 +221,7 @@ def machine_journey(app, qapp, errors):
         assert not fake.is_open and not fake.writes
         assert open_machine_panel(app) is panel
         machine_firmware_journey(panel, qapp, errors)
+        machine_fluidnc_journey(panel, qapp, errors)
         panel.controller_factory = lambda port: MachineController(fake)
         panel.connect_machine()
         pump_until(qapp, lambda: panel.last_snapshot.machine_position_mm == (3., 4., 5.),
@@ -263,6 +264,28 @@ def machine_firmware_journey(panel, qapp, errors):
     pump_until(qapp, lambda: not panel.busy, errors, 'grblHAL disconnect')
     assert not hal.is_open and panel.firmware_label.text() == 'Not identified'
     print('MACHINE_FIRMWARE_GRBLHAL_LOCKED_OK', shown, flush=True)
+
+
+def machine_fluidnc_journey(panel, qapp, errors):
+    """044: FluidNC is identified with motion enabled; startup macros are verified before a jog."""
+    from mikrocam.machine.controller import MachineController
+    from mikrocam.machine.fake import FakeGRBL
+    from mikrocam.machine.models import ManualPhase
+    fnc = FakeGRBL(firmware='fluidnc')
+    panel.controller_factory = lambda port: MachineController(fnc)
+    panel.connect_machine()
+    pump_until(qapp, lambda: panel.firmware_label.text().startswith('FluidNC 4.1.1')
+               and panel.manual_controls.jog_buttons[('X', 1)].isEnabled(), errors, 'FluidNC identification')
+    assert 'motion enabled' in panel.firmware_label.text()
+    panel.manual_controls.jog_buttons[('X', 1)].click()
+    pump_until(qapp, lambda: panel.last_snapshot.manual.phase is ManualPhase.COMPLETE, errors, 'FluidNC jog')
+    assert b'$RI\n' in fnc.writes and b'$N\n' not in fnc.writes
+    assert not any(code in write for write in fnc.writes for code in (b'\x87', b'\x88', b'\x89', b'\x8a'))
+    shown = panel.firmware_label.text()
+    panel.disconnect_machine()
+    pump_until(qapp, lambda: not panel.busy, errors, 'FluidNC disconnect')
+    assert not fnc.is_open and panel.firmware_label.text() == 'Not identified'
+    print('MACHINE_FLUIDNC_JOG_OK', shown, flush=True)
 
 
 def machine_manual_journey(panel, qapp, fake, errors):
