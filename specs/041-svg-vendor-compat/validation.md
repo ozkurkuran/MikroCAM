@@ -67,7 +67,7 @@ Yerel (kaynak checkpoint, commit öncesi çalışma ağacı):
 - Gerçek masaüstü `tests/smoke_app.py` (OpenGL, 120 s watchdog): **exit 0, 98,8 s**, SVG drill
   dialog/Excellon/yeniden içe aktarma dahil tüm yolculuklar ve normal kapanış (`.venv/041-smoke.log`).
   Yetim worker kalmadı.
-- Windows CI: PR final head için aşağıdaki teslim bölümüne bakın.
+- Windows CI: aşağıdaki Teslim bölümü.
 
 ## Açık kalanlar
 - Benzerlik olmayan dönüşümde boyanan non-scaling stroke (standartta tanımlı, bu dilimde açık hata);
@@ -76,3 +76,10 @@ Yerel (kaynak checkpoint, commit öncesi çalışma ağacı):
 - Görsel (033, resvg) SVG yolu DOCTYPE'ı hâlâ reddeder; ayrı güvenlik değerlendirmesi gerekir.
 - Gerçek Illustrator clip örneği, gerçek Illustrator/Proteus DXF, diğer Proteus sürümleri.
 - Fiziksel delme/üretim doğrulaması yapılmadı (donanım gerektirmez kapsamı dışında).
+
+## Teslim
+[PR #42](https://github.com/ozkurkuran/MikroCAM/pull/42), `main` hedefli; PR #41'e bağımlıdır ve
+ondan sonra birleştirilmelidir (dal PR #41'in commit'lerini içerir). Birleştirme yapılmadı.
+Final-head Windows CI sonucu, bu belge commit'inden sonra değişmeyeceği için PR'da ve merkezi takip
+dosyasında (`docs/IS_TAKIP.md`, "SVG üretici uyumluluğu (041)") kayıtlıdır; eski bir head'in sonucu
+yeni head'e aktarılmaz.

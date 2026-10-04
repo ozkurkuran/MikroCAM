@@ -52,5 +52,5 @@ Girdi: spec.md, plan.md, research.md. 3 hikâye, 28 görev; testler uygulamadan 
 - [x] T024 Odaklı testler, `tests/architecture`, `pip check`, 600/80 satır sınırı.
 - [x] T025 Tam test paketi (offscreen) ve masaüstü `tests/smoke_app.py`.
 - [x] T026 `validation.md` sonuçları.
-- [ ] T027 Commit/push, PR (PR #41'e bağımlılık notu), final-head Windows CI.
-- [ ] T028 Merkezi takip dosyasına sonuç satırları (merge yok).
+- [x] T027 Commit/push, PR (PR #41'e bağımlılık notu), final-head Windows CI.
+- [x] T028 Merkezi takip dosyasına sonuç satırları (merge yok).
