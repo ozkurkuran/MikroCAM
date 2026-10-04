@@ -488,6 +488,8 @@ class AppLifecycle(QtCore.QObject):
 
         # quit app directly - do NOT call back to App
         QtWidgets.QApplication.quit()
+        # Qt ignores quit() before exec(); startup scripts and arguments quit from App.__init__.
+        QtCore.QTimer.singleShot(0, QtWidgets.QApplication.quit)
         return True
 
     # --------------------------------------------------------------------------
