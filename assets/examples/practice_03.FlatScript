@@ -1,0 +1,20 @@
+# Copper pour and isolated islands. See assets/examples/README.md for practice tasks.
+# All dimensions and tool diameters are in millimetres.
+if {[get_sys units] ne "MM"} {
+    error "Select MM project units before running this example."
+}
+# Keep repeated runs from referring to an older object with the same name.
+foreach name [list ex03_copper ex03_outline ex03_drill ex03_iso ex03_cutout] {
+    if {[lsearch -exact [split [get_names] "\n"] $name] >= 0} {
+        error "Example objects already exist. Save your work and use a new project."
+    }
+}
+set PRACTICE_PATH [file join [get_sys root_folder_path] assets examples practice 03_copper_pour]
+open_gerber [file join $PRACTICE_PATH copper.gbr] -outname ex03_copper
+open_gerber [file join $PRACTICE_PATH outline.gbr] -outname ex03_outline
+open_excellon [file join $PRACTICE_PATH drill.drl] -outname ex03_drill
+isolate ex03_copper -dia 0.2 -passes 3 -overlap 30 -combine True -iso_type 2 -outname ex03_iso
+# Cut outside the 0.1 mm outline stroke (a negative margin cuts inside the board).
+cutout ex03_outline -dia 1.0 -margin 0 -gapsize 2.0 -gaps 4 -outname ex03_cutout
+plot_all
+puts "ex03: copper, outline, drill, isolation and cutout ready."

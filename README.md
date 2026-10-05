@@ -92,6 +92,15 @@ newer svgtrace releases require NumPy 1.x. Missing optional packages/browser are
 when invoking the tool. Chromium may also be installed by svgtrace on first use; it is
 not needed for the baseline smoke test.
 
+## Practice examples
+
+Three practice boards with matching Gerber, outline and Excellon files are available
+in `assets/examples/practice`. See the [Turkish exercise guide](assets/examples/README.md)
+for tasks and expected results. Run `assets/examples/practice_01.FlatScript`,
+`practice_02.FlatScript` or `practice_03.FlatScript` through **File → Scripting → Run Script**
+in an MM project to load a board and generate isolation and cutout geometry.
+`tests/smoke_practice_examples.py` checks all three in the desktop application.
+
 ## Development checks
 
 ```powershell
